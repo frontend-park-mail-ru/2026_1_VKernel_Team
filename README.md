@@ -2,6 +2,7 @@
 
 Репозиторий команды VKernel_Team
 Проект – Юла
+Рабочий процесс – [github-flow](https://docs.github.com/en/get-started/using-github/github-flow)
 
 ## Участники
 
