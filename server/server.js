@@ -21,7 +21,7 @@ const MIME_TYPES = {
     '.txt': 'text/plain; charset=UTF-8',
 };
 if (!fs.existsSync(PUBLIC_DIR)) {
-    console.warn(`⚠️  Внимание: Папка ${PUBLIC_DIR} не существует!`);
+    console.warn(` Внимание: Папка ${PUBLIC_DIR} не существует!`);
     console.warn(`   Создай её командой: mkdir ${publicDirPath}`);
 }
 console.log('Конфигурация сервера:');
