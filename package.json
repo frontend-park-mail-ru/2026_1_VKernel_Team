@@ -1,0 +1,27 @@
+{
+  "name": "2026_1_vkernel_team",
+  "version": "1.0.0",
+  "description": "Репозиторий команды VKernel_Team\\ Проект – Юла\\ Рабочий процесс – [github-flow](https://docs.github.com/en/get-started/using-github/github-flow)",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server/server.js",
+    "dev": "node --watch server/server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PrincepsMontis/2026_1_VKernel_Team.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/PrincepsMontis/2026_1_VKernel_Team/issues"
+  },
+  "homepage": "https://github.com/PrincepsMontis/2026_1_VKernel_Team#readme",
+  "dependencies": {
+    "dotenv": "^17.3.1"
+  }
+}
+

@@ -3,10 +3,12 @@ import fs from 'node:fs';
 import path from 'node:path';
 import url from 'node:url';
 import dotenv from 'dotenv';
-dotenv.config();
+import { fileURLToPath } from 'node:url';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+dotenv.config({ path: path.join(__dirname, '.env') });
 const PORT = process.env.PORT || 3000;
-const publicDirPath = process.env.PUBLIC_DIR || './public';
-const PUBLIC_DIR = path.resolve(process.cwd(), publicDirPath);
+const PUBLIC_DIR = path.join(__dirname, '..', process.env.PUBLIC_DIR || 'public');
 const MIME_TYPES = {
     '.html': 'text/html; charset=UTF-8',
     '.css': 'text/css',
