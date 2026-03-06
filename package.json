@@ -21,7 +21,7 @@
   },
   "homepage": "https://github.com/PrincepsMontis/2026_1_VKernel_Team#readme",
   "dependencies": {
-    "dotenv": "^17.3.1"
+    "dotenv": "^17.3.1",
+    "handlebars": "^4.7.8"
   }
 }
-

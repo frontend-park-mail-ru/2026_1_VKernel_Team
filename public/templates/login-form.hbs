@@ -1,0 +1,45 @@
+
+
+<div class="auth-container">
+    <nav class="main-nav">
+        <a href="/" class="nav-link">Главная</a>
+    </nav>
+    <h2>Вход в аккаунт</h2>
+    <form id="login-form" class="auth-form">
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input 
+                type="email" 
+                id="email" 
+                name="email" 
+                placeholder="your@email.com"
+                value="{{email}}"
+                required
+            >
+        </div>
+        
+        <div class="form-group">
+            <label for="password">Пароль</label>
+            <input 
+                type="password" 
+                id="password" 
+                name="password" 
+                placeholder="••••••"
+                required
+            >
+        </div>
+        
+        <button type="submit" class="btn btn-primary btn-block">
+            Войти
+        </button>
+        
+        {{#if error}}
+            <div class="alert alert-error">{{error}}</div>
+        {{/if}}
+    </form>
+    
+    <div class="auth-footer">
+        Нет аккаунта? 
+        <a href="#" onclick="App.showRegister()">Зарегистрироваться</a>
+    </div>
+</div>
