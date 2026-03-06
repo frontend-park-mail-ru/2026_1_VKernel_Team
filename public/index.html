@@ -1,20 +1,18 @@
-<!--тестовый файл для проверки работы статического сервера -->
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Клевер</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.8/handlebars.min.js"></script>
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-    <h1>Static Server</h1>
-    <div class="info">
-        <p>Сервер успешно работает!</p>
-        <p>Текущая конфигурация:</p>
-        <ul>
-            <li>Порт: 3000</li>
-            <li>Папка public: /server/public</li>
-        </ul>
-    </div>
+    <div id="app"></div>
+    
+    <script src="/js/utils/storage.js"></script>
+    <script src="/js/validators/authValidator.js"></script>
+    <script src="/js/services/authService.js"></script>
+    <script src="/js/app.js"></script>
 </body>
 </html>
