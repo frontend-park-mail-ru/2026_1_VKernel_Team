@@ -1,10 +1,7 @@
 <div class="auth-container">
-    <nav class="main-nav">
-        <a href="/" class="nav-link">Главная</a>\
-    </nav>
     <h2>Регистрация</h2>
     
-    <form id="register-form" class="auth-form">
+    <form id="register-form" class="auth-form" novalidate>
         <div class="form-group">
             <label for="username">Имя пользователя</label>
             <input 
@@ -23,10 +20,10 @@
                 type="email" 
                 id="email" 
                 name="email" 
-                placeholder="your@email.com"
+                placeholder="Введите почту"
                 value="{{email}}"
                 required
-            >
+            >           
         </div>
         
         <div class="form-group">
@@ -35,7 +32,7 @@
                 type="password" 
                 id="password" 
                 name="password" 
-                placeholder="Минимум 6 символов"
+                placeholder="Минимум 8 символов"
                 required
             >
         </div>
@@ -54,14 +51,6 @@
         <button type="submit" class="btn btn-primary btn-block">
             Зарегистрироваться
         </button>
-        
-        {{#if error}}
-            <div class="alert alert-error">{{error}}</div>
-        {{/if}}
-        
-        {{#if success}}
-            <div class="alert alert-success">{{success}}</div>
-        {{/if}}
     </form>
     
     <div class="auth-footer">

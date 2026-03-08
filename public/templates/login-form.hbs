@@ -1,18 +1,15 @@
 
 
 <div class="auth-container">
-    <nav class="main-nav">
-        <a href="/" class="nav-link">Главная</a>
-    </nav>
-    <h2>Вход в аккаунт</h2>
-    <form id="login-form" class="auth-form">
+    <h2>Вход в Клевер</h2>
+    <form id="login-form" class="auth-form" novalidate>
         <div class="form-group">
             <label for="email">Email</label>
             <input 
                 type="email" 
                 id="email" 
                 name="email" 
-                placeholder="your@email.com"
+                placeholder="Введите почту"
                 value="{{email}}"
                 required
             >
@@ -24,18 +21,14 @@
                 type="password" 
                 id="password" 
                 name="password" 
-                placeholder="••••••"
+                placeholder="Введите пароль"
                 required
             >
         </div>
-        
         <button type="submit" class="btn btn-primary btn-block">
             Войти
         </button>
         
-        {{#if error}}
-            <div class="alert alert-error">{{error}}</div>
-        {{/if}}
     </form>
     
     <div class="auth-footer">
