@@ -1,0 +1,71 @@
+<div class="auth-container">
+    <nav class="main-nav">
+        <a href="/" class="nav-link">Главная</a>\
+    </nav>
+    <h2>Регистрация</h2>
+    
+    <form id="register-form" class="auth-form">
+        <div class="form-group">
+            <label for="username">Имя пользователя</label>
+            <input 
+                type="text" 
+                id="username" 
+                name="username" 
+                placeholder="Введите имя"
+                value="{{username}}"
+                required
+            >
+        </div>
+        
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input 
+                type="email" 
+                id="email" 
+                name="email" 
+                placeholder="your@email.com"
+                value="{{email}}"
+                required
+            >
+        </div>
+        
+        <div class="form-group">
+            <label for="password">Пароль</label>
+            <input 
+                type="password" 
+                id="password" 
+                name="password" 
+                placeholder="Минимум 6 символов"
+                required
+            >
+        </div>
+        
+        <div class="form-group">
+            <label for="confirm-password">Подтверждение пароля</label>
+            <input 
+                type="password" 
+                id="confirm-password" 
+                name="confirmPassword" 
+                placeholder="Повторите пароль"
+                required
+            >
+        </div>
+        
+        <button type="submit" class="btn btn-primary btn-block">
+            Зарегистрироваться
+        </button>
+        
+        {{#if error}}
+            <div class="alert alert-error">{{error}}</div>
+        {{/if}}
+        
+        {{#if success}}
+            <div class="alert alert-success">{{success}}</div>
+        {{/if}}
+    </form>
+    
+    <div class="auth-footer">
+        Уже есть аккаунт? 
+        <a href="#" onclick="App.showLogin()">Войти</a>
+    </div>
+</div>

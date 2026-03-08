@@ -1,0 +1,20 @@
+<div class="profile-container">
+    <nav class="main-nav">
+        <a href="/" class="nav-link">Главная</a>
+        <a href="/profile" class="nav-link active">Профиль</a>
+    </nav>
+    <h2>Добро пожаловать, {{username}}!</h2>
+    
+    <div class="profile-card">
+        <div class="profile-info">
+            <p><strong>Email:</strong> {{email}}</p>
+            <p><strong>Дата регистрации:</strong> {{createdAt}}</p>
+        </div>
+        
+        <div class="profile-actions">
+            <button class="btn btn-danger" onclick="App.logout()">
+                Выйти из аккаунта
+            </button>
+        </div>
+    </div>
+</div>
