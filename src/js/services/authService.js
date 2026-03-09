@@ -138,7 +138,7 @@ const AuthService = {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(userData),
+            //body: JSON.stringify(userData),
             credentials: 'include',
         })
         console.log('Ответ от сервера:', response);
