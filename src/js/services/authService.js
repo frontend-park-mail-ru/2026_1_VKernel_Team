@@ -53,7 +53,7 @@
 // };
 
 const AuthService = {
-    API_URL: '',
+    API_URL: '0.0.0.0:8000/api/v1',
     
     // Мок-база данных пользователей
     mockUsers: [
@@ -73,8 +73,15 @@ const AuthService = {
         console.log('Попытка регистрации:', userData);
         
         // Имитация задержки сервера
-        await new Promise(resolve => setTimeout(resolve, 500));
-        
+         
+       const response =  await fetch(`${this.API_URL}/auth/register`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(userData)
+        })
+         console.log('Ответ от сервера:', response);
         try {
             // Проверяем, не занят ли email
             const existingUser = this.mockUsers.find(u => u.email === userData.email);
