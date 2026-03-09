@@ -53,7 +53,7 @@
 // };
 
 const AuthService = {
-    API_URL: '0.0.0.0:8000/api/v1',
+    API_URL: 'http://clover-go.ru:8000/api/v1',
     
     // Мок-база данных пользователей
     mockUsers: [
@@ -71,17 +71,17 @@ const AuthService = {
     
     async register(userData) {
         console.log('Попытка регистрации:', userData);
-        
-        // Имитация задержки сервера
          
-       const response =  await fetch(`${this.API_URL}/auth/register`, {
+        const response =  await fetch(`${this.API_URL}/auth/register`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(userData)
+            body: JSON.stringify(userData),
+            credentials: 'include',
         })
-         console.log('Ответ от сервера:', response);
+        console.log('Ответ от сервера:', response);
+        
         try {
             // Проверяем, не занят ли email
             const existingUser = this.mockUsers.find(u => u.email === userData.email);
@@ -133,8 +133,15 @@ const AuthService = {
     async login(credentials) {
         console.log('Попытка входа:', credentials.email);
         
-        // Имитация задержки сервера
-        await new Promise(resolve => setTimeout(resolve, 500));
+        const response =  await fetch(`${this.API_URL}/auth/login`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(userData),
+            credentials: 'include',
+        })
+        console.log('Ответ от сервера:', response);
         
         try {
             // Ищем пользователя в мок-данных
