@@ -25,7 +25,6 @@ const MIME_TYPES = {
 };
 if (!fs.existsSync(PUBLIC_DIR)) {
     console.warn(` Внимание: Папка ${PUBLIC_DIR} не существует!`);
-    console.warn(`   Создай её командой: mkdir ${publicDirPath}`);
 }
 console.log('Конфигурация сервера:');
 console.log(`   Порт: ${PORT}`);
@@ -38,6 +37,33 @@ const server = http.createServer(async (req, res) => {
         if (pathname === '/') {
             pathname = '/index.html';
         }
+        if (pathname.startsWith('/src/')) {
+            const srcFilePath = path.join(__dirname, '..', pathname);
+            const SRC_DIR = path.join(__dirname, '..', 'src');
+            if (!srcFilePath.startsWith(SRC_DIR)) {
+                console.warn(`Заблокирована попытка доступа к: ${srcFilePath}`);
+                res.writeHead(403, { 'Content-Type': 'text/plain' });
+                return res.end('403 Forbidden');
+            }
+            try {
+                const data = await fs.promises.readFile(srcFilePath);
+                const ext = path.extname(srcFilePath);
+                const contentType = MIME_TYPES[ext] || 'application/octet-stream';
+                
+                res.writeHead(200, { 'Content-Type': contentType });
+                res.end(data);
+                console.log(`${req.method} ${req.url}`);
+                return;
+            } catch (srcError) {
+                if (srcError.code === 'ENOENT') {
+                    console.log(`404 ${req.url} - файл не найден в src`);
+                    res.writeHead(404, { 'Content-Type': 'text/html; charset=UTF-8' });
+                    return res.end('<h1>404 - Файл не найден</h1>');
+                } else {
+                    throw srcError;
+                }
+            }
+        }
         const filePath = path.join(PUBLIC_DIR, pathname);
         if (!filePath.startsWith(PUBLIC_DIR)) {
             console.warn(`Заблокирована попытка доступа к: ${filePath}`);
@@ -47,7 +73,6 @@ const server = http.createServer(async (req, res) => {
         const data = await fs.promises.readFile(filePath);
         const ext = path.extname(filePath);
         const contentType = MIME_TYPES[ext] || 'application/octet-stream';
-        
         res.writeHead(200, { 'Content-Type': contentType });
         res.end(data);
         console.log(`${req.method} ${req.url}`);
@@ -67,4 +92,3 @@ server.listen(PORT, () => {
     console.log(`Сервер запущен на http://localhost:${PORT}`);
     console.log(`Отдаю файлы из папки: ${PUBLIC_DIR}`);
 });
-

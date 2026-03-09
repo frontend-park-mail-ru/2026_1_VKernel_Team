@@ -18,7 +18,7 @@ const App = {
         ];
         
         for (const name of templateNames) {
-            const response = await fetch(`./templates/${name}.hbs`);
+            const response = await fetch(`src/templates/${name}.hbs`);
             const source = await response.text();
             this.templates[name] = Handlebars.compile(source);
         }
