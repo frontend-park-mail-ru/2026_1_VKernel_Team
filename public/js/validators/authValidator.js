@@ -37,18 +37,22 @@
 // };
 
 const AuthValidator = {
+    validateUsername(username) {
+        if (!username) return false;
+        const usernameRegex = /^[a-zA-Z0-9_]+$/;
+        return username.length >= 3 && usernameRegex.test(username);
+    },
     validateEmail(email) {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return emailRegex.test(email);
+        if (!email) return false;
+        const emailRegex = /^[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$/;
+        return emailRegex.test(email.toLowerCase());
     },
     validatePassword(password) {
-        return password && password.length >= 8;
+        if (!password || password.length < 8) return false;
+        const hasLetter = /[a-zA-Z]/.test(password);
+        const hasDigit = /[0-9]/.test(password);
+        return hasLetter && hasDigit;
     },
-    validateUsername(username) {
-        return username && username.length >= 3;
-    },
-    
-    // Для логина — оставляем общую ошибку
     validateLogin(email, password) {
         const errors = [];
         
@@ -59,12 +63,9 @@ const AuthValidator = {
         return {
             isValid: errors.length === 0,
             errors: errors,
-            // Добавляем поле для общей ошибки
             generalError: errors.length > 0 ? 'Неверный email или пароль' : null
         };
     },
-    
-    // Для регистрации — ошибки по полям
     validateRegister(username, email, password, confirmPassword) {
         const fieldErrors = {
             username: null,
@@ -72,41 +73,62 @@ const AuthValidator = {
             password: null,
             confirmPassword: null
         };
-        
-        // Проверка username
         if (!username) {
             fieldErrors.username = 'Имя пользователя обязательно';
         } else if (!this.validateUsername(username)) {
-            fieldErrors.username = 'Имя должно содержать не менее 3 символов';
+            fieldErrors.username = 'Имя должно содержать только латиницу, цифры и _, минимум 3 символа';
         }
-        
-        // Проверка email
         if (!email) {
             fieldErrors.email = 'Email обязателен';
         } else if (!this.validateEmail(email)) {
             fieldErrors.email = 'Некорректный email';
         }
-        
-        // Проверка password
         if (!password) {
             fieldErrors.password = 'Пароль обязателен';
-        } else if (!this.validatePassword(password)) {
+        } else if (password.length < 8) {
             fieldErrors.password = 'Пароль должен быть не менее 8 символов';
+        } else {
+            const hasLetter = /[a-zA-Z]/.test(password);
+            const hasDigit = /[0-9]/.test(password);
+            
+            if (!hasLetter && !hasDigit) {
+                fieldErrors.password = 'Пароль должен содержать хотя бы одну букву и одну цифру';
+            } else if (!hasLetter) {
+                fieldErrors.password = 'Пароль должен содержать хотя бы одну букву';
+            } else if (!hasDigit) {
+                fieldErrors.password = 'Пароль должен содержать хотя бы одну цифру';
+            }
         }
-        
-        // Проверка confirmPassword
         if (password !== confirmPassword) {
             fieldErrors.confirmPassword = 'Пароли не совпадают';
         }
-        
-        // Есть ли хоть одна ошибка?
         const hasErrors = Object.values(fieldErrors).some(error => error !== null);
-        
         return {
             isValid: !hasErrors,
             fieldErrors: fieldErrors,
-            // Для совместимости с существующим кодом
             errors: Object.values(fieldErrors).filter(e => e !== null)
         };
+    },
+    validatePasswordStrength(password) {
+        const result = {
+            isValid: false,
+            errors: []
+        };
+        if (!password) {
+            result.errors.push('Пароль обязателен');
+            return result;
+        }
+        if (password.length < 8) {
+            result.errors.push('Минимум 8 символов');
+        }
+        if (!/[a-zA-Z]/.test(password)) {
+            result.errors.push('Хотя бы одна буква');
+        }
+        if (!/[0-9]/.test(password)) {
+            result.errors.push('Хотя бы одна цифра');
+        }
+        result.isValid = result.errors.length === 0;
+        return result;
     }
 };
+

@@ -1,8 +1,8 @@
 {
-  "name": "2026_1_vkernel_team",
+  "name": "klever-project",
   "version": "1.0.0",
-  "description": "Репозиторий команды VKernel_Team\\ Проект – Юла\\ Рабочий процесс – [github-flow](https://docs.github.com/en/get-started/using-github/github-flow)",
-  "main": "index.js",
+  "description": "Клевер",
+  "main": "server/server.js",
   "type": "module",
   "scripts": {
     "start": "node server/server.js",
@@ -11,15 +11,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/PrincepsMontis/2026_1_VKernel_Team.git"
+    "url": "git+https://github.com/frontend-park-mail-ru/2026_1_VKernel_Team.git"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": ["klever", "classifieds", "express", "static-server"],
+  "author": "VKernel_Team",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/PrincepsMontis/2026_1_VKernel_Team/issues"
+    "url": "https://github.com/frontend-park-mail-ru/2026_1_VKernel_Team/issues"
   },
-  "homepage": "https://github.com/PrincepsMontis/2026_1_VKernel_Team#readme",
+  "homepage": "https://github.com/frontend-park-mail-ru/2026_1_VKernel_Team#readme",
   "dependencies": {
     "dotenv": "^17.3.1",
     "handlebars": "^4.7.8"
