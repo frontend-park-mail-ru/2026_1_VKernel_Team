@@ -12,19 +12,19 @@ const AuthValidator = {
     },
 
     validatePasswordStrength(password) {
-        if (!password) return { isValid: false, message: 'Пароль обязателен' };
-        if (password.length < 8) return { isValid: false, message: 'Пароль должен быть не менее 8 символов' };
-        
-        const hasLetter = /[a-zA-Z]/.test(password);
-        const hasDigit = /[0-9]/.test(password);
-        const hasForbidden = /[^a-zA-Z0-9]/.test(password);
-        
-        if (hasForbidden) return { isValid: false, message: 'Пароль может содержать только латинские буквы и цифры' };
-        if (!hasLetter && !hasDigit) return { isValid: false, message: 'Пароль должен содержать хотя бы одну букву и одну цифру' };
-        if (!hasLetter) return { isValid: false, message: 'Пароль должен содержать хотя бы одну букву' };
-        if (!hasDigit) return { isValid: false, message: 'Пароль должен содержать хотя бы одну цифру' };
-        
-        return { isValid: true };
+    if (!password) return { isValid: false, message: 'Пароль обязателен' };
+    if (password.length < 8) return { isValid: false, message: 'Пароль должен быть не менее 8 символов' };
+    
+    const hasLetter = /[a-zA-Z]/.test(password);
+    const hasDigit = /[0-9]/.test(password);
+    const hasForbidden = /[^a-zA-Z0-9_]/.test(password);
+    
+    if (hasForbidden) return { isValid: false, message: 'Пароль может содержать только латинские буквы, цифры и нижнее подчёркивание' };
+    if (!hasLetter && !hasDigit) return { isValid: false, message: 'Пароль должен содержать хотя бы одну букву и одну цифру' };
+    if (!hasLetter) return { isValid: false, message: 'Пароль должен содержать хотя бы одну букву' };
+    if (!hasDigit) return { isValid: false, message: 'Пароль должен содержать хотя бы одну цифру' };
+    
+    return { isValid: true };
     },
 
     validatePassword(password) {
