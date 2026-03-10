@@ -69,24 +69,24 @@ const AuthService = {
             }
             
             if (data.password) {
-    const pwd = data.password.toLowerCase();
-    
-    if (pwd.includes('forbidden') || pwd.includes('characters') || pwd.includes('символ')) {
-        fieldErrors.password = 'Пароль может содержать только латинские буквы и цифры';
-    } else if (pwd.includes('special') || pwd.includes('спец')) {
-        fieldErrors.password = 'Пароль не должен содержать специальные символы';
-    } else if (pwd.includes('digit') || pwd.includes('цифр')) {
-        fieldErrors.password = 'Пароль должен содержать хотя бы одну цифру';
-    } else if (pwd.includes('letter') || pwd.includes('букв')) {
-        fieldErrors.password = 'Пароль должен содержать хотя бы одну букву';
-    } else if (pwd.includes('short') || pwd.includes('корот')) {
-        fieldErrors.password = 'Пароль должен быть не менее 8 символов';
-    } else if (pwd.includes('одну букву и одну цифру')) {
-        fieldErrors.password = 'Пароль должен содержать хотя бы одну букву и одну цифру';
-    } else {
-        fieldErrors.password = data.password;
-    }
-}
+                const pwd = data.password.toLowerCase();
+                
+                if (pwd.includes('forbidden') || pwd.includes('characters') || pwd.includes('символ')) {
+                    fieldErrors.password = 'Пароль может содержать только латинские буквы и цифры';
+                } else if (pwd.includes('special') || pwd.includes('спец')) {
+                    fieldErrors.password = 'Пароль не должен содержать специальные символы';
+                } else if (pwd.includes('digit') || pwd.includes('цифр')) {
+                    fieldErrors.password = 'Пароль должен содержать хотя бы одну цифру';
+                } else if (pwd.includes('letter') || pwd.includes('букв')) {
+                    fieldErrors.password = 'Пароль должен содержать хотя бы одну букву';
+                } else if (pwd.includes('short') || pwd.includes('корот')) {
+                    fieldErrors.password = 'Пароль должен быть не менее 8 символов';
+                } else if (pwd.includes('одну букву и одну цифру')) {
+                    fieldErrors.password = 'Пароль должен содержать хотя бы одну букву и одну цифру';
+                } else {
+                    fieldErrors.password = data.password;
+                }
+            }
             
             return {
                 success: false,
@@ -147,8 +147,9 @@ const AuthService = {
             console.log('Ошибка входа:', data);
             return {
                 success: false,
-                error: data.error || data.message || 'Неверный email или пароль',
-                fieldErrors: data.email || data.password ? data : null
+                error: 'Неверный email или пароль',
+                fieldErrors: null,
+                status: response.status
             };
         }
         
