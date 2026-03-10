@@ -340,21 +340,23 @@ const App = {
     },
 
     showFieldErrors(fieldErrors) {
-        this.clearFieldErrors();
+    this.clearFieldErrors();
+    
+    for (const [field, error] of Object.entries(fieldErrors)) {
+        if (!error) continue;
         
-        for (const [field, error] of Object.entries(fieldErrors)) {
-            if (!error) continue;
+        const inputId = field === 'confirmPassword' ? 'confirm-password' : field;
+        const input = document.getElementById(inputId);
+        
+        if (input) {
+            input.classList.add('error');
             
-            const input = document.getElementById(field);
-            if (input) {
-                input.classList.add('error');
-                
-                const errorDiv = document.createElement('div');
-                errorDiv.className = 'field-error';
-                errorDiv.textContent = error;
-                input.parentNode.appendChild(errorDiv);
-            }
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'field-error';
+            errorDiv.textContent = error;
+            input.parentNode.appendChild(errorDiv);
         }
+    }
     },
 
     showSuccessMessage(message) {
