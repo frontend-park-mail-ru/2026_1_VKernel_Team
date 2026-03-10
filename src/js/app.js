@@ -169,7 +169,7 @@ const App = {
             const confirmPassword = document.getElementById('confirm-password').value;
 
             // Валидация без username
-            const validation = AuthValidator.validateRegister(
+            const validation = AuthValidator.validateRegister( //тут тоже добавить username
                 email, password, confirmPassword
             );
             
@@ -313,3 +313,4 @@ const App = {
 };
 
 document.addEventListener('DOMContentLoaded', () => App.init());
+

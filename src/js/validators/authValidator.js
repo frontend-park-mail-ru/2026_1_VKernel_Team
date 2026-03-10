@@ -28,19 +28,19 @@ const AuthValidator = {
             generalError: errors.length > 0 ? 'Неверный email или пароль' : null
         };
     },
-    validateRegister(username, email, password, confirmPassword) {
+    validateRegister(email, password, confirmPassword) { //тут добавить username
         const fieldErrors = {
-            username: null,
+            // username: null,
             email: null,
             password: null,
             confirmPassword: null
         };
         
-        if (!username) {
-            fieldErrors.username = 'Имя пользователя обязательно';
-        } else if (!this.validateUsername(username)) {
-            fieldErrors.username = 'Имя должно содержать только латиницу, цифры и _, минимум 3 символа';
-        }
+        // if (!username) {
+        //     fieldErrors.username = 'Имя пользователя обязательно';
+        // } else if (!this.validateUsername(username)) {
+        //     fieldErrors.username = 'Имя должно содержать только латиницу, цифры и _, минимум 3 символа';
+        // }
         
         if (!email) {
             fieldErrors.email = 'Email обязателен';
