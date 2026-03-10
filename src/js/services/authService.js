@@ -1,61 +1,7 @@
-// const AuthService = {
-//     API_URL: '',
-//     async register(userData) {
-//         try {
-//             const response = await fetch(`${this.API_URL}/api/register`, {
-//                 method: 'POST',
-//                 headers: {
-//                     'Content-Type': 'application/json',
-//                 },
-//                 body: JSON.stringify(userData)
-//             });
-//             const data = await response.json();
-//             return {
-//                 success: response.ok,
-//                 data: data,
-//                 error: data.error
-//             };
-//         } catch (error) {
-//             return {
-//                 success: false,
-//                 error: 'Ошибка соединения с сервером'
-//             };
-//         }
-//     },
-//     async login(credentials) {
-//         try {
-//             const response = await fetch(`${this.API_URL}/api/login`, {
-//                 method: 'POST',
-//                 headers: {
-//                     'Content-Type': 'application/json',
-//                 },
-//                 body: JSON.stringify(credentials)
-//             });
-//             const data = await response.json();
-//             if (response.ok && data.token) {
-//                 Storage.setToken(data.token);
-//                 if (data.user) {
-//                     Storage.setUser(data.user);
-//                 }
-//             }
-//             return {
-//                 success: response.ok,
-//                 data: data,
-//                 error: data.error
-//             };
-//         } catch (error) {
-//             return {
-//                 success: false,
-//                 error: 'Ошибка соединения с сервером'
-//             };
-//         }
-//     }
-// };
-
 const AuthService = {
-    API_URL: 'http://clover-go.ru:8000/api/v1',
+    API_URL: 'http://212.233.96.172:8000/api/v1',
     
-    // Мок-база данных пользователей
+    // Мок-база данных пользователей (keep this from your version)
     mockUsers: [
         {
             email: 'test@test.com',
@@ -70,119 +16,139 @@ const AuthService = {
     ],
     
     async register(userData) {
-        console.log('Попытка регистрации:', userData);
-         
-        const response =  await fetch(`${this.API_URL}/auth/register`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(userData),
-            credentials: 'include',
-        })
-        console.log('Ответ от сервера:', response);
-        
+        console.log('Попытка регистрации:', userData); // Keep your log
         try {
-            // Проверяем, не занят ли email
-            const existingUser = this.mockUsers.find(u => u.email === userData.email);
+            const response = await fetch(`${this.API_URL}/auth/register`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(userData),
+                credentials: 'include'
+            });
+            console.log('Статус ответа:', response.status); // Keep your log
             
-            if (existingUser) {
-                console.log('Email уже занят');
+            let data;
+            try {
+                data = await response.json();
+            } catch (e) {
+                console.error('Ответ не в JSON:', e);
                 return {
                     success: false,
-                    error: 'Пользователь с таким email уже существует'
+                    error: 'Ошибка формата ответа от сервера'
                 };
             }
             
-            // Создаём нового пользователя
-            const newUser = {
-                id: this.mockUsers.length + 1,
-                username: userData.username,
-                email: userData.email,
-                createdAt: new Date().toISOString()
-            };
-            
-            // Сохраняем в мок-базу
-            this.mockUsers.push({
-                email: userData.email,
-                password: userData.password,
-                user: newUser
-            });
-            
-            console.log('Регистрация успешна:', newUser);
-            console.log('Все пользователи:', this.mockUsers);
-            
-            return {
-                success: true,
-                data: {
-                    message: 'Регистрация успешна',
-                    user: newUser
-                },
-                error: null
-            };
-            
+            if (response.ok) {
+                console.log('Регистрация успешна:', data); // Keep your log
+                return {
+                    success: true,
+                    data: data,
+                    error: null
+                };
+            } else {
+                console.log('Ошибка регистрации:', data); // Keep your log
+                return {
+                    success: false,
+                    error: data.error || data.message || 'Ошибка при регистрации'
+                };
+            }
         } catch (error) {
-            console.error('Ошибка в register:', error);
+            console.error('Ошибка сети в register:', error);
             return {
                 success: false,
-                error: 'Ошибка при регистрации'
+                error: 'Не удалось соединиться с сервером. Проверьте, запущен ли бекенд.'
             };
         }
     },
     
     async login(credentials) {
-        console.log('Попытка входа:', credentials.email);
-        
-        const response =  await fetch(`${this.API_URL}/auth/login`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            //body: JSON.stringify(userData),
-            credentials: 'include',
-        })
-        console.log('Ответ от сервера:', response);
-        
+        console.log('Попытка входа:', credentials.email); // Keep your log
         try {
-            // Ищем пользователя в мок-данных
-            console.log('Поиск в mockUsers:', this.mockUsers);
+            const response = await fetch(`${this.API_URL}/auth/login`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(credentials),
+                credentials: 'include'
+            });
             
-            const mockUser = this.mockUsers.find(
-                u => u.email === credentials.email && u.password === credentials.password
-            );
+            console.log('Статус ответа:', response.status); // Keep your log
             
-            if (mockUser) {
-                // Создаём фейковый токен
-                const token = 'mock-jwt-token-' + Date.now() + '-' + Math.random().toString(36);
-                
-                // Сохраняем в localStorage
-                Storage.setToken(token);
-                Storage.setUser(mockUser.user);
-                
-                console.log('Вход успешен:', mockUser.user);
-                
+            let data;
+            try {
+                data = await response.json();
+            } catch (e) {
+                console.error('Ответ не в JSON:', e);
                 return {
-                    success: true,
-                    data: {
-                        token: token,
-                        user: mockUser.user
-                    },
-                    error: null
+                    success: false,
+                    error: 'Ошибка формата ответа от сервера'
                 };
             }
             
-            console.log('Неверные учетные данные');
-            return {
-                success: false,
-                error: 'Неверный email или пароль'
-            };
-            
+            if (response.ok && data.token) {
+                console.log('Вход успешен:', data.user);
+                
+                // Сохраняем токен и данные пользователя
+                if (Storage && Storage.setToken) Storage.setToken(data.token);
+                if (data.user && Storage && Storage.setUser) Storage.setUser(data.user);
+                
+                return {
+                    success: true,
+                    data: data,
+                    error: null
+                };
+            } else {
+                console.log('Ошибка входа:', data);
+                return {
+                    success: false,
+                    error: data.error || data.message || 'Неверный email или пароль'
+                };
+            }
         } catch (error) {
-            console.error('Ошибка в login:', error);
+            console.error('Ошибка сети в login:', error);
             return {
                 success: false,
-                error: 'Ошибка при входе'
+                error: 'Не удалось соединиться с сервером.'
             };
+        }
+    },
+    
+    async checkAuth() {
+        if (!Storage || !Storage.getToken) return false;
+        const token = Storage.getToken();
+        if (!token) return false;
+        
+        try {
+            const response = await fetch(`${this.API_URL}/auth/check`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            
+            return response.ok;
+        } catch (error) {
+            console.error('Ошибка проверки авторизации:', error);
+            return false;
+        }
+    },
+    
+    async logout() {
+        try {
+            const token = Storage && Storage.getToken ? Storage.getToken() : null;
+            if (token) {
+                await fetch(`${this.API_URL}/auth/logout`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+            }
+        } catch (error) {
+            console.error('Ошибка при выходе:', error);
+        } finally {
+            if (Storage && Storage.logout) Storage.logout();
         }
     }
 };
