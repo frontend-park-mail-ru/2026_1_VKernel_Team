@@ -309,13 +309,69 @@ const App = {
         form.addEventListener('submit', this._registerHandler);
     },
     
-    clearLoginError() { /* ... */ },
-    showLoginError(message) { /* ... */ },
-    clearFieldErrors() { /* ... */ },
-    clearMessages() { /* ... */ },
-    showFieldErrors(fieldErrors) { /* ... */ },
-    showSuccessMessage(message) { /* ... */ },
-    showGeneralError(message) { /* ... */ },
+    // clearLoginError() { /* ... */ },
+    // showLoginError(message) { /* ... */ },
+    // clearFieldErrors() { /* ... */ },
+    // clearMessages() { /* ... */ },
+    // showFieldErrors(fieldErrors) { /* ... */ },
+    // showSuccessMessage(message) { /* ... */ },
+    // showGeneralError(message) { /* ... */ },
+    clearLoginError() {
+        const errorDiv = document.querySelector('.login-error');
+        if (errorDiv) errorDiv.remove();
+    },
+
+    showLoginError(message) {
+        this.clearLoginError();
+        const form = document.getElementById('login-form');
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'login-error';
+        errorDiv.textContent = message;
+        form.parentNode.insertBefore(errorDiv, form);
+    },
+
+    clearFieldErrors() {
+        document.querySelectorAll('.field-error').forEach(el => el.remove());
+        document.querySelectorAll('.error').forEach(el => el.classList.remove('error'));
+    },
+
+    clearMessages() {
+        document.querySelectorAll('.alert').forEach(el => el.remove());
+    },
+
+    showFieldErrors(fieldErrors) {
+        this.clearFieldErrors();
+        
+        for (const [field, error] of Object.entries(fieldErrors)) {
+            if (!error) continue;
+            
+            const input = document.getElementById(field);
+            if (input) {
+                input.classList.add('error');
+                
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'field-error';
+                errorDiv.textContent = error;
+                input.parentNode.appendChild(errorDiv);
+            }
+        }
+    },
+
+    showSuccessMessage(message) {
+        const container = document.querySelector('.auth-container');
+        const alertDiv = document.createElement('div');
+        alertDiv.className = 'alert alert-success';
+        alertDiv.textContent = message;
+        container.appendChild(alertDiv);
+    },
+
+    showGeneralError(message) {
+        const container = document.querySelector('.auth-container');
+        const alertDiv = document.createElement('div');
+        alertDiv.className = 'alert alert-error';
+        alertDiv.textContent = message;
+        container.appendChild(alertDiv);
+    },
     
     logout() {
         AuthService.logout();
