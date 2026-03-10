@@ -379,7 +379,20 @@ const App = {
         AuthService.logout();
         this.checkAuth();
         this.navigateTo('/'); 
-    }
+    },
+    async renderMain() {
+    document.body.classList.remove('auth-page');
+    const app = document.getElementById('app');
+    const adsResult = await AdsService.getAllAds();
+    const ads = adsResult.success ? adsResult.ads : [];
+    const formattedAds = ads.map(ad => AdsService.formatAdCard(ad));
+    
+    app.innerHTML = this.templates['main-page']({ 
+        isAuthenticated: this.isAuthenticated,
+        recommendations: formattedAds  
+    });
+    this.attachMainEventListeners();
+}
 };
 
 document.addEventListener('DOMContentLoaded', () => App.init());
