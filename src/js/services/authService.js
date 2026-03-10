@@ -1,5 +1,5 @@
 const AuthService = {
-    API_URL: 'http://212.233.96.172:8000/api/v1',
+    API_URL: 'http://clover-go.ru:8000/api/v1',
     
     async register(userData) {
     console.log('Попытка регистрации:', userData);
