@@ -10,13 +10,13 @@ const AuthValidator = {
         return emailRegex.test(email.toLowerCase());
     },
     validatePassword(password) {
-    if (!password || password.length < 8) return false;
-    
-    const hasLetter = /[a-zA-Z]/.test(password);
-    const hasDigit = /[0-9]/.test(password);
-    const onlyAllowedChars = /^[a-zA-Z0-9]+$/.test(password);
-    
-    return hasLetter && hasDigit && onlyAllowedChars;
+        if (!password || password.length < 8) return false;
+        
+        const hasLetter = /[a-zA-Z]/.test(password);
+        const hasDigit = /[0-9]/.test(password);
+        const onlyAllowedChars = /^[a-zA-Z0-9]+$/.test(password);
+        
+        return hasLetter && hasDigit && onlyAllowedChars;
     },
     validateLogin(email, password) {
         const errors = [];
@@ -31,19 +31,12 @@ const AuthValidator = {
             generalError: errors.length > 0 ? 'Неверный email или пароль' : null
         };
     },
-    validateRegister(email, password, confirmPassword) { //тут добавить username
+    validateRegister(email, password, confirmPassword) {
         const fieldErrors = {
-            // username: null,
             email: null,
             password: null,
             confirmPassword: null
         };
-        
-        // if (!username) {
-        //     fieldErrors.username = 'Имя пользователя обязательно';
-        // } else if (!this.validateUsername(username)) {
-        //     fieldErrors.username = 'Имя должно содержать только латиницу, цифры и _, минимум 3 символа';
-        // }
         
         if (!email) {
             fieldErrors.email = 'Email обязателен';
