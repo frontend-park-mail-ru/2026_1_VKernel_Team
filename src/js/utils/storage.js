@@ -25,7 +25,8 @@ const Storage = {
     },
     
     isAuthenticated() {
-        return !!this.getToken();
+        // Проверяем наличие ИЛИ токена, ИЛИ пользователя
+        return !!(this.getToken() || this.getUser());
     },
     
     logout() {
