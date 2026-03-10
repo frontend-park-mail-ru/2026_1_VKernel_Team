@@ -33,17 +33,19 @@ const AuthValidator = {
     },
 
     validateLogin(email, password) {
-        const errors = [];
-        
-        if (!email || !this.validateEmail(email) || !password || !this.validatePassword(password)) {
-            errors.push('Неверный email или пароль');
-        }
-        
-        return {
-            isValid: errors.length === 0,
-            errors: errors,
-            generalError: errors.length > 0 ? 'Неверный email или пароль' : null
-        };
+    const errors = [];
+    
+    if (!email || !password) {
+        errors.push('Заполните поля');
+    } else if (!this.validateEmail(email) || !this.validatePassword(password)) {
+        errors.push('Неверный email или пароль');
+    }
+    
+    return {
+        isValid: errors.length === 0,
+        errors: errors,
+        generalError: errors.length > 0 ? errors[0] : null
+    };
     },
 
     validateRegister(email, password, confirmPassword) {
