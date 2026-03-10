@@ -47,7 +47,16 @@ const AuthService = {
         } else {
             console.log('Ошибка регистрации. Статус:', response.status);
             console.log('Тело ответа:', data);
+            
             const fieldErrors = {};
+            
+            if (data.error) {
+                if (data.error.includes('already exists') || data.error.includes('exists')) {
+                    fieldErrors.email = 'Этот email уже занят';
+                } else {
+                    fieldErrors.general = data.error;
+                }
+            }
             
             if (data.email) {
                 if (data.email.includes('already exists') || data.email.includes('exists')) {
@@ -55,7 +64,7 @@ const AuthService = {
                 } else if (data.email.includes('format')) {
                     fieldErrors.email = 'Некорректный формат email';
                 } else {
-                    fieldErrors.email = data.email; 
+                    fieldErrors.email = data.email;
                 }
             }
             
@@ -103,16 +112,13 @@ const AuthService = {
         if (response.ok) {
             console.log('Вход успешен, данные:', data);
             
-            // Сохраняем ВСЁ, что прислал сервер
             if (data.token) {
                 Storage.setToken(data.token);
             }
             
-            // Если сервер прислал пользователя
             if (data.user) {
                 Storage.setUser(data.user);
             } else {
-                // Если нет - сохраняем хотя бы email
                 Storage.setUser({ email: credentials.email });
             }
             
@@ -157,14 +163,11 @@ const AuthService = {
     } catch (error) {
         console.error('Ошибка при выходе:', error);
     } finally {
-        // В любом случае чистим localStorage
         Storage.logout();
-        // Перенаправляем на главную
         window.location.href = '/';
     }
     },
     
-    // Метод для получения данных текущего пользователя (если есть эндпоинт)
     async getCurrentUser() {
         try {
             const response = await fetch(`${this.API_URL}/auth/me`, {
@@ -189,3 +192,4 @@ const AuthService = {
         }
     }
 };
+
