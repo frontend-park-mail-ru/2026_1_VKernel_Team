@@ -50,8 +50,8 @@ const App = {
             profileIcon.addEventListener('click', (e) => {
                 e.preventDefault();
                 if (this.isAuthenticated) {
-                    // Если авторизован - показываем профиль (позже)
-                    console.log('Профиль пользователя');
+                    // Если авторизован - показываем профиль
+                    this.showProfile();
                 } else {
                     // Если нет - показываем страницу входа
                     this.showLogin();
@@ -66,11 +66,24 @@ const App = {
                 e.preventDefault();
                 if (this.isAuthenticated) {
                     console.log('Форма размещения');
+                    // TODO: showCreateAdForm()
                 } else {
                     this.showLogin();
                 }
             });
         }
+    },
+
+    showProfile() {
+        // TODO: загрузить данные профиля с бекенда
+        const app = document.getElementById('app');
+        app.innerHTML = this.templates['user-profile']({ 
+            email: this.user?.email || 'Неизвестно',
+            // username может отсутствовать, так как бек его не хранит
+            username: this.user?.email?.split('@')[0] || 'Пользователь' 
+        });
+        document.body.classList.add('auth-page');
+        // Добавить кнопку "На главную" и обработчик выхода
     },
 
     showLogin(error, formData) {
@@ -90,8 +103,8 @@ const App = {
         app.innerHTML = this.templates['register-form']({ 
             error: error,
             success: success,
-            username: formData?.username || '',
             email: formData?.email || ''
+            // username убран, так как его нет в API
         });
         document.body.classList.add('auth-page');
         this.attachRegisterHandler();
@@ -109,7 +122,6 @@ const App = {
             
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
-            //const formData = { email };
             
             const validation = AuthValidator.validateLogin(email, password);
             
@@ -125,10 +137,17 @@ const App = {
             
             if (result.success) {
                 this.checkAuth();
-                //this.currentView = null;
-                this.render();
+                this.render(); // Возвращаемся на главную
             } else {
-                this.showLoginError(result.error || 'Ошибка при входе');
+                // Если есть fieldErrors (для email/password)
+                if (result.fieldErrors) {
+                    this.showFieldErrors({
+                        email: result.fieldErrors.email,
+                        password: result.fieldErrors.password
+                    });
+                } else {
+                    this.showLoginError(result.error || 'Ошибка при входе');
+                }
             }
         };
         
@@ -145,13 +164,13 @@ const App = {
         this._registerHandler = async (e) => {
             e.preventDefault();
             
-            const username = document.getElementById('username').value;
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
             const confirmPassword = document.getElementById('confirm-password').value;
 
+            // Валидация без username
             const validation = AuthValidator.validateRegister(
-                username, email, password, confirmPassword
+                email, password, confirmPassword
             );
             
             // Очищаем старые ошибки и сообщения
@@ -163,27 +182,29 @@ const App = {
                 return;
             }
             
-            const result = await AuthService.register({ 
-                username, email, password 
-            });
+            const result = await AuthService.register({ email, password });
             
             if (result.success) {
                 // Автоматически входим после успешной регистрации
-                const loginResult = await AuthService.login({ 
-                    email: email, 
-                    password: password 
-                });
+                const loginResult = await AuthService.login({ email, password });
                 
                 if (loginResult.success) {
                     this.checkAuth();
-                    //this.currentView = null;
-                    this.render();
+                    this.render(); // Возвращаемся на главную
                 } else {
                     this.showSuccessMessage('Регистрация успешна! Теперь войдите в аккаунт.');
                     setTimeout(() => this.showLogin(), 2000);
                 }
             } else {
-                this.showGeneralError(result.error || 'Ошибка при регистрации');
+                // Показываем ошибки полей, если они есть
+                if (result.fieldErrors) {
+                    this.showFieldErrors({
+                        email: result.fieldErrors.email,
+                        password: result.fieldErrors.password
+                    });
+                } else {
+                    this.showGeneralError(result.error || 'Ошибка при регистрации');
+                }
             }
         };
         
@@ -207,7 +228,7 @@ const App = {
             errorMessages.forEach(el => el.remove());
         }
         
-        // Также удаляем возможные старые сообщения в других местах (на всякий случай)
+        // Также удаляем возможные старые сообщения
         document.querySelectorAll('.login-error, .alert-error').forEach(el => el.remove());
     },
     
@@ -221,9 +242,9 @@ const App = {
         if (emailField) emailField.classList.add('error');
         if (passwordField) passwordField.classList.add('error');
         
-        // Создаём сообщение об ошибке (без иконки)
+        // Создаём сообщение об ошибке
         const errorDiv = document.createElement('div');
-        errorDiv.className = 'login-error';  // Специальный класс для ошибки входа
+        errorDiv.className = 'login-error';
         errorDiv.textContent = message;
         
         // Вставляем после поля пароля
@@ -285,12 +306,10 @@ const App = {
     },
     
     logout() {
-        Storage.logout();
+        AuthService.logout(); // Вызываем logout из сервиса
         this.checkAuth();
-        //this.currentView = null;
         this.render();
     }
 };
 
 document.addEventListener('DOMContentLoaded', () => App.init());
-

@@ -1,154 +1,178 @@
 const AuthService = {
     API_URL: 'http://212.233.96.172:8000/api/v1',
     
-    // Мок-база данных пользователей (keep this from your version)
-    mockUsers: [
-        {
-            email: 'test@test.com',
-            password: '12345678',
-            user: {
-                id: 1,
-                username: 'Тестовый',
-                email: 'test@test.com',
-                createdAt: '2024-01-01'
-            }
-        }
-    ],
-    
     async register(userData) {
-        console.log('Попытка регистрации:', userData); // Keep your log
+        console.log('Попытка регистрации:', userData);
+        
         try {
+            // Swagger принимает только email и password
+            const requestBody = {
+                email: userData.email,
+                password: userData.password
+            };
+            
             const response = await fetch(`${this.API_URL}/auth/register`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(userData),
-                credentials: 'include'
+                body: JSON.stringify(requestBody),
+                credentials: 'include' // важно для куки
             });
-            console.log('Статус ответа:', response.status); // Keep your log
             
-            let data;
-            try {
-                data = await response.json();
-            } catch (e) {
-                console.error('Ответ не в JSON:', e);
-                return {
-                    success: false,
-                    error: 'Ошибка формата ответа от сервера'
-                };
-            }
+            console.log('Статус ответа:', response.status);
+            
+            const data = await response.json();
             
             if (response.ok) {
-                console.log('Регистрация успешна:', data); // Keep your log
+                console.log('Регистрация успешна, user_id:', data.user_id);
+                
+                // После успешной регистрации бек автоматически входит
+                // Можно сразу получить данные пользователя через отдельный запрос
+                // или пока просто вернуть успех
                 return {
                     success: true,
-                    data: data,
+                    data: {
+                        message: 'Регистрация успешна',
+                        user_id: data.user_id
+                    },
                     error: null
                 };
             } else {
-                console.log('Ошибка регистрации:', data); // Keep your log
-                return {
-                    success: false,
-                    error: data.error || data.message || 'Ошибка при регистрации'
-                };
+                // Обработка ошибок валидации (400)
+                if (response.status === 400 || response.status === 401) {
+                    // Формат ошибки: { "email": "...", "password": "..." }
+                    const errorMessage = data.email || data.password || 'Ошибка валидации';
+                    return {
+                        success: false,
+                        error: errorMessage,
+                        fieldErrors: data // сохраняем для детальной валидации
+                    };
+                } else {
+                    // Обычная ошибка (500)
+                    return {
+                        success: false,
+                        error: data.error || 'Ошибка сервера'
+                    };
+                }
             }
+            
         } catch (error) {
-            console.error('Ошибка сети в register:', error);
+            console.error('Ошибка сети:', error);
             return {
                 success: false,
-                error: 'Не удалось соединиться с сервером. Проверьте, запущен ли бекенд.'
+                error: 'Не удалось соединиться с сервером'
             };
         }
     },
     
     async login(credentials) {
-        console.log('Попытка входа:', credentials.email); // Keep your log
+        console.log('Попытка входа:', credentials.email);
+        
         try {
             const response = await fetch(`${this.API_URL}/auth/login`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(credentials),
-                credentials: 'include'
+                body: JSON.stringify({
+                    email: credentials.email,
+                    password: credentials.password
+                }),
+                credentials: 'include' // важно! токен в куке
             });
             
-            console.log('Статус ответа:', response.status); // Keep your log
+            console.log('Статус ответа:', response.status);
             
-            let data;
-            try {
-                data = await response.json();
-            } catch (e) {
-                console.error('Ответ не в JSON:', e);
-                return {
-                    success: false,
-                    error: 'Ошибка формата ответа от сервера'
-                };
-            }
+            const data = await response.json();
             
-            if (response.ok && data.token) {
-                console.log('Вход успешен:', data.user);
+            if (response.ok) {
+                console.log('Вход успешен');
                 
-                // Сохраняем токен и данные пользователя
-                if (Storage && Storage.setToken) Storage.setToken(data.token);
-                if (data.user && Storage && Storage.setUser) Storage.setUser(data.user);
+                // Так как токен в куке, нам не нужно его сохранять в localStorage
+                // Но можем сохранить информацию о пользователе, если нужно
+                
+                // TODO: сделать отдельный запрос /auth/me для получения данных пользователя
+                // Пока сохраняем только email из запроса
+                Storage.setUser({
+                    email: credentials.email,
+                    // username пока неизвестен
+                });
                 
                 return {
                     success: true,
-                    data: data,
+                    data: {
+                        message: 'Вход выполнен успешно'
+                    },
                     error: null
                 };
             } else {
-                console.log('Ошибка входа:', data);
-                return {
-                    success: false,
-                    error: data.error || data.message || 'Неверный email или пароль'
-                };
+                // Обработка ошибок валидации (401)
+                if (response.status === 401) {
+                    // Формат: { "email": "...", "password": "..." }
+                    const errorMessage = data.email || data.password || 'Неверный email или пароль';
+                    return {
+                        success: false,
+                        error: errorMessage,
+                        fieldErrors: data
+                    };
+                } else {
+                    return {
+                        success: false,
+                        error: data.error || 'Ошибка сервера'
+                    };
+                }
             }
+            
         } catch (error) {
-            console.error('Ошибка сети в login:', error);
+            console.error('Ошибка сети:', error);
             return {
                 success: false,
-                error: 'Не удалось соединиться с сервером.'
+                error: 'Не удалось соединиться с сервером'
             };
-        }
-    },
-    
-    async checkAuth() {
-        if (!Storage || !Storage.getToken) return false;
-        const token = Storage.getToken();
-        if (!token) return false;
-        
-        try {
-            const response = await fetch(`${this.API_URL}/auth/check`, {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-            
-            return response.ok;
-        } catch (error) {
-            console.error('Ошибка проверки авторизации:', error);
-            return false;
         }
     },
     
     async logout() {
         try {
-            const token = Storage && Storage.getToken ? Storage.getToken() : null;
-            if (token) {
-                await fetch(`${this.API_URL}/auth/logout`, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
+            const response = await fetch(`${this.API_URL}/auth/logout`, {
+                method: 'POST',
+                credentials: 'include'
+            });
+            
+            if (response.ok) {
+                console.log('Выход успешен');
             }
         } catch (error) {
             console.error('Ошибка при выходе:', error);
         } finally {
-            if (Storage && Storage.logout) Storage.logout();
+            // В любом случае чистим localStorage
+            Storage.logout();
+        }
+    },
+    
+    // Метод для получения данных текущего пользователя (если есть эндпоинт)
+    async getCurrentUser() {
+        try {
+            const response = await fetch(`${this.API_URL}/auth/me`, {
+                credentials: 'include'
+            });
+            
+            if (response.ok) {
+                const data = await response.json();
+                return {
+                    success: true,
+                    user: data
+                };
+            }
+            return {
+                success: false
+            };
+        } catch (error) {
+            console.error('Ошибка получения пользователя:', error);
+            return {
+                success: false
+            };
         }
     }
 };
