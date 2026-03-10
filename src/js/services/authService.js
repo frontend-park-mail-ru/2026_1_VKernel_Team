@@ -10,7 +10,7 @@ const AuthService = {
             password: userData.password
         };
         
-        console.log('Отправляю тело:', JSON.stringify(requestBody)); // Добавь эту строку
+        console.log('Отправляю тело:', JSON.stringify(requestBody));
         
         const response = await fetch(`${this.API_URL}/auth/register`, {
             method: 'POST',
@@ -23,11 +23,9 @@ const AuthService = {
         
         console.log('Статус ответа:', response.status);
         
-        // Важно! Сначала проверь текст ответа
         const responseText = await response.text();
         console.log('Текст ответа:', responseText);
         
-        // Пытаемся распарсить JSON
         let data;
         try {
             data = JSON.parse(responseText);
@@ -49,11 +47,26 @@ const AuthService = {
         } else {
             console.log('Ошибка регистрации. Статус:', response.status);
             console.log('Тело ответа:', data);
+            const fieldErrors = {};
+            
+            if (data.email) {
+                if (data.email.includes('already exists') || data.email.includes('exists')) {
+                    fieldErrors.email = 'Этот email уже занят';
+                } else if (data.email.includes('format')) {
+                    fieldErrors.email = 'Некорректный формат email';
+                } else {
+                    fieldErrors.email = data.email; 
+                }
+            }
+            
+            if (data.password) {
+                fieldErrors.password = data.password;
+            }
             
             return {
                 success: false,
                 error: data.error || 'Ошибка при регистрации',
-                fieldErrors: data,
+                fieldErrors: fieldErrors,
                 status: response.status
             };
         }
