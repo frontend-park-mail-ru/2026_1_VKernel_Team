@@ -18,7 +18,7 @@
                 </div>
                 <div class="nav-icon">
                     <a href="#" class="nav-link">
-                        <span class="icon">❤️</span>                        
+                        <span class="icon">❤️</span>
                         <span class="nav-text">Избранное</span>
                     </a>
                 </div>
@@ -29,11 +29,11 @@
                     </a>
                 </div>
             </div>
-            
+
             <!-- Правая часть -->
             <div class="header-right">
                 <button class="btn place-ad-btn">Разместить объявление</button>
-                
+
                 {{#if isAuthenticated}}
                     <div class="profile-icon">
                         <span class="icon">👤</span>
@@ -64,9 +64,9 @@
                 </div>
 
                 <div class="search-wrapper">
-                    <input 
-                        type="text" 
-                        class="search-input" 
+                    <input
+                        type="text"
+                        class="search-input"
                         placeholder="Поиск объявлений..."
                     >
                     <button class="btn place-ad-btn">Найти</button>
@@ -143,7 +143,7 @@
                             <div class="rec-card-content">
                                 <div class="rec-card-info">
                                     <span class="rec-card-title">{{title}}</span>
-                                    <span class="rec-card-price">{{price}}</span>
+                                    <span class="rec-card-price">{{formatPrice price}}</span>
                                     <span class="rec-card-location">
                                         <span class="location-icon">📍</span>
                                         {{location}}
@@ -163,7 +163,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <div class="ad-column">
                 Рекламное место
             </div>

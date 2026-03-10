@@ -1,6 +1,6 @@
 const AdsService = {
     API_URL: 'http://clover-go.ru:8000/api/v1',
-    
+
     async getAllAds() {
         try {
             const response = await fetch(`${this.API_URL}/ads`, {
@@ -9,11 +9,11 @@ const AdsService = {
                     'Content-Type': 'application/json',
                 }
             });
-            
+
             if (!response.ok) {
                 throw new Error('Ошибка загрузки объявлений');
             }
-            
+
             const data = await response.json();
             return {
                 success: true,
@@ -27,7 +27,7 @@ const AdsService = {
             };
         }
     },
-    
+
     async getAdById(id) {
         try {
             const response = await fetch(`${this.API_URL}/ads/${id}`, {
@@ -36,11 +36,11 @@ const AdsService = {
                     'Content-Type': 'application/json',
                 }
             });
-            
+
             if (!response.ok) {
                 throw new Error('Объявление не найдено');
             }
-            
+
             const data = await response.json();
             return {
                 success: true,
@@ -54,14 +54,14 @@ const AdsService = {
             };
         }
     },
-    
+
     formatAdCard(ad) {
     const STATIC_URL = 'http://clover-go.ru:8000';
     const firstPhoto = ad.photos?.[0] || '';
-    const imageUrl = firstPhoto 
-        ? `${STATIC_URL}${firstPhoto}` 
+    const imageUrl = firstPhoto
+        ? `${STATIC_URL}${firstPhoto}`
         : '/images/placeholder.jpg';
-    
+
     return {
         id: ad.id,
         title: ad.title,
