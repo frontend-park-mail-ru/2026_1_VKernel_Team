@@ -10,10 +10,13 @@ const AuthValidator = {
         return emailRegex.test(email.toLowerCase());
     },
     validatePassword(password) {
-        if (!password || password.length < 8) return false;
-        const hasLetter = /[a-zA-Z]/.test(password);
-        const hasDigit = /[0-9]/.test(password);
-        return hasLetter && hasDigit;
+    if (!password || password.length < 8) return false;
+    
+    const hasLetter = /[a-zA-Z]/.test(password);
+    const hasDigit = /[0-9]/.test(password);
+    const onlyAllowedChars = /^[a-zA-Z0-9]+$/.test(password);
+    
+    return hasLetter && hasDigit && onlyAllowedChars;
     },
     validateLogin(email, password) {
         const errors = [];
