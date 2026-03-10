@@ -110,21 +110,28 @@ const AuthService = {
     },
     
     async logout() {
-        try {
-            const response = await fetch(`${this.API_URL}/auth/logout`, {
-                method: 'POST',
-                credentials: 'include'
-            });
-            
-            if (response.ok) {
-                console.log('Выход успешен');
+    try {
+        const response = await fetch(`${this.API_URL}/auth/logout`, {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
             }
-        } catch (error) {
-            console.error('Ошибка при выходе:', error);
-        } finally {
-            // В любом случае чистим localStorage
-            Storage.logout();
+        });
+        
+        if (response.ok) {
+            console.log('Выход успешен');
+        } else if (response.status === 401) {
+            console.log('Токен не валиден, но всё равно выходим');
         }
+    } catch (error) {
+        console.error('Ошибка при выходе:', error);
+    } finally {
+        // В любом случае чистим localStorage
+        Storage.logout();
+        // Перенаправляем на главную
+        window.location.href = '/';
+    }
     },
     
     // Метод для получения данных текущего пользователя (если есть эндпоинт)
