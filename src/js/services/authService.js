@@ -10,6 +10,8 @@ const AuthService = {
             password: userData.password
         };
         
+        console.log('Отправляю тело:', JSON.stringify(requestBody)); // Добавь эту строку
+        
         const response = await fetch(`${this.API_URL}/auth/register`, {
             method: 'POST',
             headers: {
@@ -21,7 +23,18 @@ const AuthService = {
         
         console.log('Статус ответа:', response.status);
         
-        const data = await response.json();
+        // Важно! Сначала проверь текст ответа
+        const responseText = await response.text();
+        console.log('Текст ответа:', responseText);
+        
+        // Пытаемся распарсить JSON
+        let data;
+        try {
+            data = JSON.parse(responseText);
+        } catch (e) {
+            console.log('Ответ не в JSON, это текст:', responseText);
+            data = { error: responseText };
+        }
         
         if (response.ok) {
             console.log('Регистрация успешна, user_id:', data.user_id);
@@ -34,10 +47,14 @@ const AuthService = {
                 error: null
             };
         } else {
+            console.log('Ошибка регистрации. Статус:', response.status);
+            console.log('Тело ответа:', data);
+            
             return {
                 success: false,
                 error: data.error || 'Ошибка при регистрации',
-                fieldErrors: data
+                fieldErrors: data,
+                status: response.status
             };
         }
         
