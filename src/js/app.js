@@ -1,3 +1,47 @@
+document.addEventListener('click', function(e) {
+    // Находим ссылку, по которой кликнули
+    const link = e.target.closest('a');
+    if (!link) return;
+    
+    const href = link.getAttribute('href');
+    
+    // Пропускаем:
+    // - пустые ссылки
+    // - внешние ссылки (http, https, //)
+    // - якоря (#)
+    // - mailto:, tel:
+    if (!href || href.startsWith('http') || href.startsWith('//') || href.startsWith('mailto:') || href.startsWith('tel:') || href === '#') {
+        return;
+    }
+    
+    // Проверяем, есть ли у ссылки атрибут data-back-link
+    // Если есть - пропускаем, пусть обрабатывается своим обработчиком
+    if (link.hasAttribute('data-back-link')) {
+        return;
+    }
+    
+    // Для всех остальных внутренних ссылок (начинаются с /)
+    if (href.startsWith('/')) {
+        e.preventDefault(); // Останавливаем переход браузера
+        
+        // Если App уже загружен
+        if (window.App) {
+            App.navigateTo(href);
+        } else {
+            // Если еще не загружен - ждем
+            console.log('App еще не загружен, ждем...');
+            setTimeout(function() {
+                if (window.App) {
+                    App.navigateTo(href);
+                } else {
+                    // Если совсем не загрузился - делаем обычный переход
+                    window.location.href = href;
+                }
+            }, 100);
+        }
+    }
+});
+
 const App = {
     templates: {},
     currentView: 'main-page',
@@ -134,6 +178,46 @@ const App = {
         }
     },
 
+    // showLogin(error, formData) {
+    //     this.currentView = 'login';
+    //     document.body.classList.add('auth-page');
+    //     const app = document.getElementById('app');
+    //     app.innerHTML = this.templates['login-form']({ 
+    //         error: error,
+    //         email: formData?.email || ''
+    //     });
+    //     this.attachLoginHandler();
+        
+    //     // Кнопка "На главную" через роутер
+    //     const backLink = document.querySelector('.back-to-main a');
+    //     if (backLink) {
+    //         backLink.addEventListener('click', (e) => {
+    //             e.preventDefault();
+    //             this.navigateTo('/');
+    //         });
+    //     }
+    // },
+    
+    // showRegister(error, success, formData) {
+    //     this.currentView = 'register';
+    //     document.body.classList.add('auth-page');
+    //     const app = document.getElementById('app');
+    //     app.innerHTML = this.templates['register-form']({ 
+    //         error: error,
+    //         success: success,
+    //         email: formData?.email || ''
+    //     });
+    //     this.attachRegisterHandler();
+        
+    //     const backLink = document.querySelector('.back-to-main a');
+    //     if (backLink) {
+    //         backLink.addEventListener('click', (e) => {
+    //             e.preventDefault();
+    //             this.navigateTo('/');
+    //         });
+    //     }
+    // },
+
     showLogin(error, formData) {
         this.currentView = 'login';
         document.body.classList.add('auth-page');
@@ -144,16 +228,16 @@ const App = {
         });
         this.attachLoginHandler();
         
-        // Кнопка "На главную" через роутер
         const backLink = document.querySelector('.back-to-main a');
         if (backLink) {
             backLink.addEventListener('click', (e) => {
                 e.preventDefault();
+                e.stopPropagation(); // Останавливаем всплытие события
                 this.navigateTo('/');
             });
         }
     },
-    
+
     showRegister(error, success, formData) {
         this.currentView = 'register';
         document.body.classList.add('auth-page');
@@ -169,6 +253,7 @@ const App = {
         if (backLink) {
             backLink.addEventListener('click', (e) => {
                 e.preventDefault();
+                e.stopPropagation(); // Останавливаем всплытие события
                 this.navigateTo('/');
             });
         }
