@@ -37,10 +37,36 @@ console.log(`   Порт: ${PORT}`);
 console.log(`   Папка со статикой: ${PUBLIC_DIR}`);
 console.log(`   Файл .env ${fs.existsSync('.env') ? 'найден' : 'не найден'}`);
 
+process.on('uncaughtException', (err) => {
+    console.error('Неперехваченная ошибка:', err);
+    console.log('Сервер продолжает работу...');
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+    console.error('Необработанный reject:', reason);
+});
+
 const server = http.createServer(async (req, res) => {
+    req.on('error', (err) => {
+        console.error('Ошибка запроса:', err.message);
+    });
+    
+    res.on('error', (err) => {
+        console.error('Ошибка ответа:', err.message);
+    });
+    
     try {
-        const parsedUrl = url.parse(req.url);
-        let pathname = parsedUrl.pathname;
+        let pathname;
+        try {
+            pathname = decodeURIComponent(url.parse(req.url).pathname || '');
+        } catch (e) {
+            console.warn('Некорректный URI:', req.url);
+            if (!res.headersSent) {
+                res.writeHead(400, { 'Content-Type': 'text/plain' });
+                res.end('Bad Request');
+            }
+            return;
+        }
         
         if (pathname.startsWith('/src/')) {
             const srcFilePath = path.join(__dirname, '..', pathname);
@@ -48,8 +74,11 @@ const server = http.createServer(async (req, res) => {
             
             if (!srcFilePath.startsWith(SRC_DIR)) {
                 console.warn(`Заблокирована попытка доступа к: ${srcFilePath}`);
-                res.writeHead(403, { 'Content-Type': 'text/plain' });
-                return res.end('403 Forbidden');
+                if (!res.headersSent) {
+                    res.writeHead(403, { 'Content-Type': 'text/plain' });
+                    res.end('403 Forbidden');
+                }
+                return;
             }
             
             try {
@@ -57,15 +86,20 @@ const server = http.createServer(async (req, res) => {
                 const ext = path.extname(srcFilePath);
                 const contentType = MIME_TYPES[ext] || 'application/octet-stream';
                 
-                res.writeHead(200, { 'Content-Type': contentType });
-                res.end(data);
-                console.log(`${req.method} ${req.url}`);
+                if (!res.headersSent) {
+                    res.writeHead(200, { 'Content-Type': contentType });
+                    res.end(data);
+                    console.log(`${req.method} ${req.url}`);
+                }
                 return;
             } catch (srcError) {
                 if (srcError.code === 'ENOENT') {
                     console.log(`404 ${req.url} - файл не найден в src`);
-                    res.writeHead(404, { 'Content-Type': 'text/html; charset=UTF-8' });
-                    return res.end('<h1>404 - Файл не найден</h1>');
+                    if (!res.headersSent) {
+                        res.writeHead(404, { 'Content-Type': 'text/html; charset=UTF-8' });
+                        res.end('<h1>404 - Файл не найден</h1>');
+                    }
+                    return;
                 } else {
                     throw srcError;
                 }
@@ -95,27 +129,34 @@ const server = http.createServer(async (req, res) => {
         
         if (!filePath.startsWith(PUBLIC_DIR)) {
             console.warn(`Заблокирована попытка доступа к: ${filePath}`);
-            res.writeHead(403, { 'Content-Type': 'text/plain' });
-            return res.end('403 Forbidden');
+            if (!res.headersSent) {
+                res.writeHead(403, { 'Content-Type': 'text/plain' });
+                res.end('403 Forbidden');
+            }
+            return;
         }
         
         const data = await fs.promises.readFile(filePath);
         const ext = path.extname(filePath);
         const contentType = MIME_TYPES[ext] || 'application/octet-stream';
         
-        res.writeHead(200, { 'Content-Type': contentType });
-        res.end(data);
-        console.log(`${req.method} ${req.url}`);
+        if (!res.headersSent) {
+            res.writeHead(200, { 'Content-Type': contentType });
+            res.end(data);
+            console.log(`${req.method} ${req.url}`);
+        }
         
     } catch (error) {
-        if (error.code === 'ENOENT') {
-            console.log(`404 ${req.url} - файл не найден`);
-            res.writeHead(404, { 'Content-Type': 'text/html; charset=UTF-8' });
-            res.end('<h1>404 - Файл не найден</h1>');
-        } else {
-            console.error(`Ошибка сервера:`, error);
-            res.writeHead(500, { 'Content-Type': 'text/plain' });
-            res.end('Internal Server Error');
+        console.error('Ошибка сервера:', error);
+        
+        if (!res.headersSent) {
+            if (error.code === 'ENOENT') {
+                res.writeHead(404, { 'Content-Type': 'text/html; charset=UTF-8' });
+                res.end('<h1>404 - Файл не найден</h1>');
+            } else {
+                res.writeHead(500, { 'Content-Type': 'text/plain' });
+                res.end('Internal Server Error');
+            }
         }
     }
 });
