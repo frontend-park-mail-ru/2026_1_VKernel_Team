@@ -6,6 +6,7 @@ const AuthService = {
     
     try {
         const requestBody = {
+            name: userData.name,
             email: userData.email,
             password: userData.password
         };

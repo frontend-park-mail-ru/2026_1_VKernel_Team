@@ -258,56 +258,65 @@ const App = {
     },
     
     attachRegisterHandler() {
-        const form = document.getElementById('register-form');
-        if (!form) return;
+    const form = document.getElementById('register-form');
+    if (!form) return;
+    
+    form.removeEventListener('submit', this._registerHandler);
+    
+    this._registerHandler = async (e) => {
+        e.preventDefault();
         
-        form.removeEventListener('submit', this._registerHandler);
-        
-        this._registerHandler = async (e) => {
-            e.preventDefault();
-            
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const confirmPassword = document.getElementById('confirm-password').value;
+        // Получаем значение имени
+        const name = document.getElementById('name').value;
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirm-password').value;
 
-            const validation = AuthValidator.validateRegister(
-                email, password, confirmPassword
-            );
-            
-            this.clearFieldErrors();
-            this.clearMessages();
-            
-            if (!validation.isValid) {
-                this.showFieldErrors(validation.fieldErrors);
-                return;
-            }
-            
-            const result = await AuthService.register({ email, password });
-            
-            if (result.success) {
-                const loginResult = await AuthService.login({ email, password });
-                
-                if (loginResult.success) {
-                    this.checkAuth();
-                    this.navigateTo('/'); 
-                } else {
-                    this.showSuccessMessage('Регистрация успешна! Теперь войдите в аккаунт.');
-                    setTimeout(() => this.navigateTo('/login'), 2000);
-                }
-            } else {
-                if (result.fieldErrors) {
-                    this.showFieldErrors({
-                        email: result.fieldErrors.email,
-                        password: result.fieldErrors.password
-                    });
-                } else {
-                    this.showGeneralError(result.error || 'Ошибка при регистрации');
-                }
-            }
-        };
+        // Передаём все 4 параметра
+        const validation = AuthValidator.validateRegister(
+            name, email, password, confirmPassword
+        );
         
-        form.addEventListener('submit', this._registerHandler);
-    },
+        this.clearFieldErrors();
+        this.clearMessages();
+        
+        if (!validation.isValid) {
+            this.showFieldErrors(validation.fieldErrors);
+            return;
+        }
+        
+        // Отправляем имя на сервер
+        const result = await AuthService.register({ 
+            name,  // добавили
+            email, 
+            password 
+        });
+        
+        if (result.success) {
+            const loginResult = await AuthService.login({ email, password });
+            
+            if (loginResult.success) {
+                this.checkAuth();
+                this.navigateTo('/'); 
+            } else {
+                this.showSuccessMessage('Регистрация успешна! Теперь войдите в аккаунт.');
+                setTimeout(() => this.navigateTo('/login'), 2000);
+            }
+        } else {
+            if (result.fieldErrors) {
+                this.showFieldErrors({
+                    name: result.fieldErrors.name,
+                    email: result.fieldErrors.email,
+                    password: result.fieldErrors.password
+                });
+            } else {
+                this.showGeneralError(result.error || 'Ошибка при регистрации');
+            }
+        }
+    };
+    
+    form.addEventListener('submit', this._registerHandler);
+},
     
     // clearLoginError() { /* ... */ },
     // showLoginError(message) { /* ... */ },
@@ -379,7 +388,20 @@ const App = {
         AuthService.logout();
         this.checkAuth();
         this.navigateTo('/'); 
-    }
+    },
+    async renderMain() {
+    document.body.classList.remove('auth-page');
+    const app = document.getElementById('app');
+    const adsResult = await AdsService.getAllAds();
+    const ads = adsResult.success ? adsResult.ads : [];
+    const formattedAds = ads.map(ad => AdsService.formatAdCard(ad));
+    
+    app.innerHTML = this.templates['main-page']({ 
+        isAuthenticated: this.isAuthenticated,
+        recommendations: formattedAds  
+    });
+    this.attachMainEventListeners();
+}
 };
 
 document.addEventListener('DOMContentLoaded', () => App.init());
