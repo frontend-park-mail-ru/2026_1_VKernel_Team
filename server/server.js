@@ -5,13 +5,11 @@ import path from 'node:path';
 import url from 'node:url';
 import dotenv from 'dotenv';
 import { fileURLToPath } from 'node:url';
-
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 dotenv.config({ path: path.join(__dirname, '.env') });
 const PORT = process.env.PORT || 80;
 const PUBLIC_DIR = path.join(__dirname, '..', process.env.PUBLIC_DIR || 'public');
-
 const MIME_TYPES = {
     '.html': 'text/html; charset=UTF-8',
     '.css': 'text/css',
@@ -25,78 +23,27 @@ const MIME_TYPES = {
     '.ico': 'image/x-icon',
     '.txt': 'text/plain; charset=UTF-8',
 };
-
 if (!fs.existsSync(PUBLIC_DIR)) {
     console.warn(` Внимание: Папка ${PUBLIC_DIR} не существует!`);
+    console.warn(`   Создай её командой: mkdir ${publicDirPath}`);
 }
-
 console.log('Конфигурация сервера:');
 console.log(`   Порт: ${PORT}`);
 console.log(`   Папка со статикой: ${PUBLIC_DIR}`);
-console.log(`   Файл .env ${fs.existsSync('.env') ? 'найден' : 'не найден'}`);
-
+console.log(`   Файл .env ${fs.existsSync('.env') ? 'найден' : 'не найден (используются значения по умолчанию)'}`);
 const server = http.createServer(async (req, res) => {
     try {
         const parsedUrl = url.parse(req.url);
         let pathname = parsedUrl.pathname;
-        
-        if (pathname.startsWith('/src/')) {
-            const srcFilePath = path.join(__dirname, '..', pathname);
-            const SRC_DIR = path.join(__dirname, '..', 'src');
-            
-            if (!srcFilePath.startsWith(SRC_DIR)) {
-                console.warn(`Заблокирована попытка доступа к: ${srcFilePath}`);
-                res.writeHead(403, { 'Content-Type': 'text/plain' });
-                return res.end('403 Forbidden');
-            }
-            
-            try {
-                const data = await fs.promises.readFile(srcFilePath);
-                const ext = path.extname(srcFilePath);
-                const contentType = MIME_TYPES[ext] || 'application/octet-stream';
-                
-                res.writeHead(200, { 'Content-Type': contentType });
-                res.end(data);
-                console.log(`${req.method} ${req.url}`);
-                return;
-            } catch (srcError) {
-                if (srcError.code === 'ENOENT') {
-                    console.log(`404 ${req.url} - файл не найден в src`);
-                    res.writeHead(404, { 'Content-Type': 'text/html; charset=UTF-8' });
-                    return res.end('<h1>404 - Файл не найден</h1>');
-                } else {
-                    throw srcError;
-                }
-            }
+        if (pathname === '/') {
+            pathname = '/index.html';
         }
-        
-        let filePath;
-        let fileExists = false;
-        
-        if (pathname === '/' || pathname === '/index.html') {
-            filePath = path.join(PUBLIC_DIR, 'index.html');
-            fileExists = true;
-        } else {
-            const testPath = path.join(PUBLIC_DIR, pathname);
-            try {
-                await fs.promises.access(testPath, fs.constants.F_OK);
-                filePath = testPath;
-                fileExists = true;
-            } catch {
-                fileExists = false;
-            }
-        }
-        
-        if (!fileExists) {
-            filePath = path.join(PUBLIC_DIR, 'index.html');
-        }
-        
+        const filePath = path.join(PUBLIC_DIR, pathname);
         if (!filePath.startsWith(PUBLIC_DIR)) {
             console.warn(`Заблокирована попытка доступа к: ${filePath}`);
             res.writeHead(403, { 'Content-Type': 'text/plain' });
             return res.end('403 Forbidden');
         }
-        
         const data = await fs.promises.readFile(filePath);
         const ext = path.extname(filePath);
         const contentType = MIME_TYPES[ext] || 'application/octet-stream';
@@ -104,7 +51,6 @@ const server = http.createServer(async (req, res) => {
         res.writeHead(200, { 'Content-Type': contentType });
         res.end(data);
         console.log(`${req.method} ${req.url}`);
-        
     } catch (error) {
         if (error.code === 'ENOENT') {
             console.log(`404 ${req.url} - файл не найден`);
@@ -117,7 +63,6 @@ const server = http.createServer(async (req, res) => {
         }
     }
 });
-
 server.listen(PORT, () => {
     console.log(`Сервер запущен на http://localhost:${PORT}`);
     console.log(`Отдаю файлы из папки: ${PUBLIC_DIR}`);
