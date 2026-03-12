@@ -70,18 +70,21 @@ const AuthValidator = {
     },
 
     validateLogin(email, password) {
-        const errors = [];
-        
         if (!email || !password) {
-            errors.push('Заполните поля');
-        } else if (!this.validateEmail(email) || !this.validatePassword(password).isValid) {
-            errors.push('Неверный email или пароль');
+            return {
+                isValid: false,
+                error: 'Заполните поля'
+            };
         }
-        
+        if (!this.validateEmail(email)) {
+            return {
+                isValid: false,
+                error: 'Неверный email или пароль'
+            };
+        }
         return {
-            isValid: errors.length === 0,
-            errors: errors,
-            generalError: errors.length > 0 ? errors[0] : null
+            isValid: true,
+            error: null
         };
     },
 
