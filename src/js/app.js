@@ -67,6 +67,7 @@ const App = {
         this.router(); // вызываем роутер для обновления страницы
     },
     
+    
     // Рендерим главную
     renderMain() {
         document.body.classList.remove('auth-page');
