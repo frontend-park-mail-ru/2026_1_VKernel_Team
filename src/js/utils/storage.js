@@ -1,36 +1,29 @@
 const Storage = {
-    setToken(token) {
-        localStorage.setItem('auth_token', token);
-    },
-    
-    getToken() {
-        return localStorage.getItem('auth_token');
-    },
-    
-    removeToken() {
-        localStorage.removeItem('auth_token');
-    },
-    
     setUser(user) {
         localStorage.setItem('user', JSON.stringify(user));
     },
-    
     getUser() {
         const user = localStorage.getItem('user');
         return user ? JSON.parse(user) : null;
     },
-    
     removeUser() {
         localStorage.removeItem('user');
     },
-    
     isAuthenticated() {
-        // Проверяем наличие ИЛИ токена, ИЛИ пользователя
-        return !!(this.getToken() || this.getUser());
+        const cookies = document.cookie.split(';').reduce((acc, cookie) => {
+            const [key, value] = cookie.trim().split('=');
+            acc[key] = value;
+            return acc;
+        }, {});
+        
+        // Проверяем возможные названия сессионных кук
+        const sessionCookies = ['session_id', 'sessionid', 'connect.sid', 'token', 'auth_token'];
+        return sessionCookies.some(cookieName => cookies[cookieName] !== undefined);
     },
-    
     logout() {
-        this.removeToken();
         this.removeUser();
     }
 };
+if (typeof window !== 'undefined') {
+    window.Storage = Storage;
+}

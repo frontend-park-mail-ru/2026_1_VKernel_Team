@@ -238,34 +238,6 @@ input.error {
     transform: translateX(-3px);
 }
 
-
-/* .back-link {
-    display: inline-flex;
-    align-items: center;
-    color: #667eea;
-    text-decoration: none;
-    font-size: 14px;
-    font-weight: 500;
-    padding: 8px 0;
-    transition: all 0.2s ease;
-}
-
-.back-link:hover {
-    color: #5a67d8;
-    transform: translateX(-3px);
-}
-
-.back-link::before {
-    margin-right: 5px;
-    font-size: 16px;
-    transition: transform 0.2s;
-}
-
-.back-link:hover::before {
-    transform: translateX(-2px);
-} */
-
-
 /* ========== ПОЛЕ ПАРОЛЯ С ГЛАЗИКОМ ========== */
 /* Контейнер для выравнивания */
 .password-wrapper {
