@@ -176,7 +176,7 @@ input.error {
 }
 
 /* ========== ССЫЛКИ ========== */
-.auth-links {
+/* .auth-links {
     display: flex;
     gap: 20px;
     justify-content: center;
@@ -201,7 +201,7 @@ input.error {
 .nav-link.active {
     color: white;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-}
+} */
 
 
 /* Заголовок формы с кнопкой назад */
