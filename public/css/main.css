@@ -145,11 +145,11 @@ body .main-container {
     right: 0;
     z-index: 999;
     
-    /* Чтобы поиск был на одной линии с контентом */
-    /* max-width: 1400px;       как у main-content */
-    /* width: 1360;
+    /*Чтобы поиск был на одной линии с контентом */
+    max-width: 1400px;       /*как у main-content*/
+    width: calc(100% - 80px);
     margin-left: auto;
-    margin-right: auto; */
+    margin-right: auto;
 }
 
 .search-row {
@@ -417,17 +417,26 @@ body .main-container {
     height: 40%;
     padding: 12px;
     display: flex;
+    flex-direction: column;
     gap: 8px;
 }
 
-.rec-card-info {
-    flex: 1;
+.rec-card-footer {
+    display: grid;
+    grid-template-columns: 1fr auto;  /* левая колонка тянется, правая под контент */
+    gap: 10px;
+    align-items: center;
+    margin-top: auto;  /* прижимаем к низу */
+}
+
+.rec-card-footer-info {
+    /* flex: 1;
+    justify-content: space-between;
+    margin-top: 5px;*/
     display: flex;
     flex-direction: column;
     gap: 4px;
     min-width: 0;
-    justify-content: space-between;
-    margin-top: 5px;
 }
 
 .rec-card-title {
@@ -506,9 +515,16 @@ body .main-container {
     transition: all 0.2s;
 }
 
+.rec-card-views {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+
 .rec-card-actions .num_views {
     font-size: 12px;
     color: #666;
+    margin: 0;
 }
 
 .rec-card-actions .views {
