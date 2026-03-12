@@ -264,3 +264,58 @@ input.error {
 .back-link:hover::before {
     transform: translateX(-2px);
 } */
+
+
+/* ========== ПОЛЕ ПАРОЛЯ С ГЛАЗИКОМ ========== */
+.password-field {
+    position: relative;
+}
+
+.password-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.password-wrapper input {
+    padding-right: 45px; /* Место для кнопки */
+}
+
+.toggle-password {
+    position: absolute;
+    right: 12px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #666;
+    font-size: 20px;
+    transition: color 0.2s;
+    z-index: 10;
+}
+
+.toggle-password:hover {
+    color: #2bc0de;
+}
+
+.toggle-password:focus {
+    outline: none;
+}
+
+.eye-icon {
+    display: inline-block;
+    line-height: 1;
+}
+
+.eye-slash {
+    opacity: 0.7;
+}
+
+.eye {
+    width: 10px;
+    height: 10px;
+    object-fit: cover;
+}

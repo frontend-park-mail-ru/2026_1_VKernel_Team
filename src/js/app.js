@@ -67,7 +67,7 @@ const App = {
         this.router(); // вызываем роутер для обновления страницы
     },
     
-    
+
     // Рендерим главную
     renderMain() {
         document.body.classList.remove('auth-page');
@@ -112,6 +112,46 @@ const App = {
         }
     },
 
+    initPasswordToggles() {
+        // Находим все кнопки с глазиками на странице
+        const toggleButtons = document.querySelectorAll('.toggle-password');
+        
+        // Для каждой кнопки делаем...
+        toggleButtons.forEach(button => {
+            // Удаляем старый обработчик, чтобы не было дублей
+            button.removeEventListener('click', this._passwordToggleHandler);
+            
+            // Создаём новый обработчик
+            this._passwordToggleHandler = (e) => {
+                e.preventDefault(); // Не даём кнопке отправить форму
+                
+                // Берём ID поля (password или confirm-password)
+                const targetId = button.dataset.target;
+                // Находим само поле ввода
+                const passwordInput = document.getElementById(targetId);
+                
+                // Находим открытый и закрытый глазик внутри кнопки
+                const eyeOpen = button.querySelector('.eye-icon:not(.eye-slash)');
+                const eyeClosed = button.querySelector('.eye-slash');
+                
+                // Если поле сейчас скрыто (тип password)
+                if (passwordInput.type === 'password') {
+                    passwordInput.type = 'text';      // Показываем текст
+                    eyeOpen.style.display = 'none';    // Прячем открытый глазик
+                    eyeClosed.style.display = 'inline-block'; // Показываем закрытый
+                } else {
+                    // Иначе - скрываем текст
+                    passwordInput.type = 'password';
+                    eyeOpen.style.display = 'inline-block';
+                    eyeClosed.style.display = 'none';
+                }
+            };
+            
+            // Вешаем новый обработчик на кнопку
+            button.addEventListener('click', this._passwordToggleHandler);
+        });
+    },
+
     showProfile() {
         document.body.classList.add('auth-page');
         const app = document.getElementById('app');
@@ -144,6 +184,7 @@ const App = {
             email: formData?.email || ''
         });
         this.attachLoginHandler();
+        this.initPasswordToggles();
         
         // Кнопка "На главную" через роутер
         const backLink = document.querySelector('.back-to-main a');
@@ -165,6 +206,7 @@ const App = {
             email: formData?.email || ''
         });
         this.attachRegisterHandler();
+        this.initPasswordToggles()
         
         const backLink = document.querySelector('.back-to-main a');
         if (backLink) {
