@@ -204,12 +204,47 @@ input.error {
 }
 
 
-.back-to-main {
-    margin-bottom: 20px;
-    text-align: left;
+/* Заголовок формы с кнопкой назад */
+.auth-header {
+    position: relative;
+    margin-bottom: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-.back-link {
+.auth-header h2 {
+    margin: 0;
+    text-align: center;
+    font-size: 1.8em;
+    color: #333;
+}
+
+.auth-header .back-link {
+    position: absolute;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    color: #667eea;
+    text-decoration: none;
+    font-size: 24px;
+    font-weight: 500;
+    transition: all 0.3s;
+    line-height: 1;
+}
+
+.auth-header .back-link:hover {
+    background: #5a67d8;
+    transform: translateX(-3px);
+}
+
+
+/* .back-link {
     display: inline-flex;
     align-items: center;
     color: #667eea;
@@ -233,4 +268,4 @@ input.error {
 
 .back-link:hover::before {
     transform: translateX(-2px);
-}
+} */
