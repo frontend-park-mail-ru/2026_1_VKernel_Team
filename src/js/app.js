@@ -4,8 +4,6 @@ const App = {
 
     async init() {
         await this.loadTemplates();
-
-        // Пытаемся получить пользователя по куки если его нет в Storage
         if (!Storage.isAuthenticated()) {
             const result = await AuthService.getCurrentUser();
             if (result.success && result.user) {
@@ -14,11 +12,7 @@ const App = {
         }
 
         this.checkAuth();
-
-        // Запускаем роутер
         this.router();
-
-        // Слушаем изменения URL (кнопки назад/вперёд)
         window.addEventListener('popstate', () => this.router());
     },
 
@@ -47,7 +41,6 @@ const App = {
     router() {
         const path = window.location.pathname;
 
-        // Определяем, что показать
         switch (path) {
             case '/':
             case '/index.html':
@@ -76,12 +69,9 @@ const App = {
         this.router();
     },
 
-    // Рендерим главную с объявлениями
     async renderMain() {
         document.body.classList.remove('auth-page');
         const app = document.getElementById('app');
-        
-        // Получаем объявления
         const adsResult = await AdsService.getAllAds();
         const ads = adsResult.success ? adsResult.ads : [];
         const formattedAds = ads.map(ad => AdsService.formatAdCard(ad));
@@ -107,7 +97,6 @@ const App = {
             });
         }
 
-        // Обработчик для кнопки "Разместить объявление"
         const placeAdBtn = document.querySelector('.place-ad-btn');
         if (placeAdBtn) {
             placeAdBtn.addEventListener('click', (e) => {
@@ -128,8 +117,6 @@ const App = {
             email: this.user?.email || 'Неизвестно',
             username: this.user?.email?.split('@')[0] || 'Пользователь'
         });
-
-        // Добавляем кнопку "На главную" и обработчик выхода
         const logoutBtn = document.querySelector('.logout-btn');
         if (logoutBtn) {
             logoutBtn.addEventListener('click', () => this.logout());
@@ -153,8 +140,6 @@ const App = {
             email: formData?.email || ''
         });
         this.attachLoginHandler();
-
-        // Кнопка "На главную" через роутер
         const backLink = document.querySelector('.back-to-main a');
         if (backLink) {
             backLink.addEventListener('click', (e) => {
@@ -184,6 +169,87 @@ const App = {
             });
         }
     },
+    async handleLoginSubmit(e) {
+        e.preventDefault();
+
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+
+        const validation = AuthValidator.validateLogin(email, password);
+        this.clearLoginError();
+
+        if (!validation.isValid) {
+            this.showLoginError(validation.errors[0]);
+            return;
+        }
+
+        const result = await AuthService.login({ email, password });
+
+        if (result.success) {
+            this.checkAuth();
+            this.navigateTo('/');
+            return;
+        }
+
+        if (result.fieldErrors) {
+            this.showFieldErrors({
+                email: result.fieldErrors.email,
+                password: result.fieldErrors.password
+            });
+            return;
+        }
+
+        this.showLoginError(result.error || 'Ошибка при входе');
+    },
+
+    async handleRegisterSubmit(e) {
+        e.preventDefault();
+
+        const name = document.getElementById('name').value;
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirm-password').value;
+
+        const validation = AuthValidator.validateRegister(
+            name, email, password, confirmPassword
+        );
+
+        this.clearFieldErrors();
+        this.clearMessages();
+
+        if (!validation.isValid) {
+            this.showFieldErrors(validation.fieldErrors);
+            return;
+        }
+
+        const result = await AuthService.register({ name, email, password });
+
+        if (!result.success) {
+            if (result.fieldErrors) {
+                this.showFieldErrors({
+                    name: result.fieldErrors.name,
+                    email: result.fieldErrors.email,
+                    password: result.fieldErrors.password
+                });
+                return;
+            }
+            
+            this.showGeneralError(result.error || 'Ошибка при регистрации');
+            return;
+        }
+
+        // Регистрация успешна
+        const loginResult = await AuthService.login({ email, password });
+
+        if (loginResult.success) {
+            this.checkAuth();
+            this.navigateTo('/');
+            return;
+        }
+
+        this.showSuccessMessage('Регистрация успешна! Теперь войдите в аккаунт.');
+        setTimeout(() => this.navigateTo('/login'), 2000);
+    },
 
     attachLoginHandler() {
         const form = document.getElementById('login-form');
@@ -194,37 +260,8 @@ const App = {
             form.removeEventListener('submit', this._loginHandler);
         }
 
-        this._loginHandler = async (e) => {
-            e.preventDefault();
-
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-
-            const validation = AuthValidator.validateLogin(email, password);
-            this.clearLoginError();
-
-            if (!validation.isValid) {
-                this.showLoginError(validation.errors[0]);
-                return;
-            }
-
-            const result = await AuthService.login({ email, password });
-
-            if (result.success) {
-                this.checkAuth();
-                this.navigateTo('/');
-            } else {
-                if (result.fieldErrors) {
-                    this.showFieldErrors({
-                        email: result.fieldErrors.email,
-                        password: result.fieldErrors.password
-                    });
-                } else {
-                    this.showLoginError(result.error || 'Ошибка при входе');
-                }
-            }
-        };
-
+        // Привязываем вынесенный метод
+        this._loginHandler = this.handleLoginSubmit.bind(this);
         form.addEventListener('submit', this._loginHandler);
     },
 
@@ -237,58 +274,8 @@ const App = {
             form.removeEventListener('submit', this._registerHandler);
         }
 
-        this._registerHandler = async (e) => {
-            e.preventDefault();
-
-            // Получаем значение имени
-            const name = document.getElementById('name').value;
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const confirmPassword = document.getElementById('confirm-password').value;
-
-            // Передаём все 4 параметра
-            const validation = AuthValidator.validateRegister(
-                name, email, password, confirmPassword
-            );
-
-            this.clearFieldErrors();
-            this.clearMessages();
-
-            if (!validation.isValid) {
-                this.showFieldErrors(validation.fieldErrors);
-                return;
-            }
-
-            // Отправляем имя на сервер
-            const result = await AuthService.register({
-                name,  // добавили
-                email,
-                password
-            });
-
-            if (result.success) {
-                const loginResult = await AuthService.login({ email, password });
-
-                if (loginResult.success) {
-                    this.checkAuth();
-                    this.navigateTo('/');
-                } else {
-                    this.showSuccessMessage('Регистрация успешна! Теперь войдите в аккаунт.');
-                    setTimeout(() => this.navigateTo('/login'), 2000);
-                }
-            } else {
-                if (result.fieldErrors) {
-                    this.showFieldErrors({
-                        name: result.fieldErrors.name,
-                        email: result.fieldErrors.email,
-                        password: result.fieldErrors.password
-                    });
-                } else {
-                    this.showGeneralError(result.error || 'Ошибка при регистрации');
-                }
-            }
-        };
-
+        // Привязываем вынесенный метод
+        this._registerHandler = this.handleRegisterSubmit.bind(this);
         form.addEventListener('submit', this._registerHandler);
     },
 

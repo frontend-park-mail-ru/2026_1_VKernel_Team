@@ -1,3 +1,9 @@
+import { apiClient, API_ENDPOINTS } from '../api/aliClient.js';
+
+const HTTP_STATUS = {
+    UNAUTHORIZED: 401
+};
+
 const AuthErrorMap = {
     'invalid input': 'Некорректный ввод',
     'wrong email or password': 'Неверный email или пароль',
@@ -20,136 +26,127 @@ const AuthErrorMap = {
 };
 
 const AuthService = {
-    ENDPOINTS: {
-        REGISTER: '/auth/register',
-        LOGIN: '/auth/login',
-        LOGOUT: '/auth/logout',
-        ME: '/auth/check'
-    },
-    
     async register(userData) {
         console.log('Попытка регистрации:', userData);
 
-        const result = await apiClient.post(this.ENDPOINTS.REGISTER, {
+        const result = await apiClient.post(API_ENDPOINTS.AUTH.REGISTER, {
             name: userData.name || userData.username,
             email: userData.email,
             password: userData.password
         });
 
-        if (result.success) {
-            console.log('Регистрация успешна, user_id:', result.data.user_id);
+        if (!result.success) {
+            console.log('Ошибка регистрации. Статус:', result.status, 'Ошибка:', result.error);
 
-            if (result.data.token) {
-                Storage.setToken(result.data.token);
+            // Обработка ошибок по Swagger
+            const fieldErrors = {};
+            const errorMsg = result.error.toLowerCase();
+            const translatedError = AuthErrorMap[result.error] || result.error;
+
+            if (errorMsg.includes('email') || errorMsg.includes('exists') || errorMsg.includes('format')) {
+                fieldErrors.email = translatedError;
+            } else if (errorMsg.includes('password') || errorMsg.includes('short') || errorMsg.includes('digit') || errorMsg.includes('letter') || errorMsg.includes('special')) {
+                fieldErrors.password = translatedError;
+            } else if (errorMsg.includes('name')) {
+                fieldErrors.name = translatedError;
             }
-            if (result.data.user) {
-                Storage.setUser(result.data.user);
+            if (result.data) {
+                if (result.data.email) fieldErrors.email = AuthErrorMap[result.data.email] || result.data.email;
+                if (result.data.password) fieldErrors.password = AuthErrorMap[result.data.password] || result.data.password;
             }
 
             return {
-                success: true,
-                data: {
-                    message: 'Регистрация успешна',
-                    user_id: result.data.user_id
-                },
-                error: null
+                success: false,
+                error: Object.keys(fieldErrors).length ? 'Ошибка в полях' : translatedError,
+                fieldErrors: fieldErrors,
+                status: result.status
             };
         }
 
-        console.log('Ошибка регистрации. Статус:', result.status, 'Ошибка:', result.error);
-
-        // Обработка ошибок по Swagger
-        const fieldErrors = {};
-        const errorMsg = result.error.toLowerCase();
-        const translatedError = AuthErrorMap[result.error] || result.error;
-
-        if (errorMsg.includes('email') || errorMsg.includes('exists') || errorMsg.includes('format')) {
-            fieldErrors.email = translatedError;
-        } else if (errorMsg.includes('password') || errorMsg.includes('short') || errorMsg.includes('digit') || errorMsg.includes('letter') || errorMsg.includes('special')) {
-            fieldErrors.password = translatedError;
-        } else if (errorMsg.includes('name')) {
-            fieldErrors.name = translatedError;
-        }
-        if (result.data) {
-            if (result.data.email) fieldErrors.email = AuthErrorMap[result.data.email] || result.data.email;
-            if (result.data.password) fieldErrors.password = AuthErrorMap[result.data.password] || result.data.password;
+        console.log('Регистрация успешна, user_id:', result.data.user_id);
+        
+        if (result.data.user) {
+            Storage.setUser(result.data.user);
         }
 
         return {
-            success: false,
-            error: Object.keys(fieldErrors).length ? 'Ошибка в полях' : translatedError,
-            fieldErrors: fieldErrors,
-            status: result.status
+            success: true,
+            data: {
+                message: 'Регистрация успешна',
+                user_id: result.data.user_id
+            },
+            error: null
         };
     },
 
     async login(credentials) {
         console.log('Попытка входа:', credentials.email);
 
-        const result = await apiClient.post(this.ENDPOINTS.LOGIN, {
+        const result = await apiClient.post(API_ENDPOINTS.AUTH.LOGIN, {
             email: credentials.email,
             password: credentials.password
         });
 
-        if (result.success) {
-            console.log('Вход успешен, данные:', result.data);
-
-            if (result.data.token) {
-                Storage.setToken(result.data.token);
-            }
-
-            if (result.data.user) {
-                Storage.setUser(result.data.user);
-            } else {
-                Storage.setUser({ email: credentials.email });
-            }
+        if (!result.success) {
+            console.log('Ошибка входа:', result.error);
+            const translatedError = AuthErrorMap[result.error] || result.error;
 
             return {
-                success: true,
-                data: result.data,
-                error: null
+                success: false,
+                error: translatedError,
+                fieldErrors: null,
+                status: result.status
             };
         }
 
-        console.log('Ошибка входа:', result.error);
-        const translatedError = AuthErrorMap[result.error] || result.error;
+        console.log('Вход успешен, данные:', result.data);
+        
+        if (result.data.user) {
+            Storage.setUser(result.data.user);
+        } else {
+            Storage.setUser({ email: credentials.email });
+        }
 
         return {
-            success: false,
-            error: translatedError,
-            fieldErrors: null,
-            status: result.status
+            success: true,
+            data: result.data,
+            error: null
         };
     },
 
     async logout() {
-        const result = await apiClient.post(this.ENDPOINTS.LOGOUT);
+        const result = await apiClient.post(API_ENDPOINTS.AUTH.LOGOUT);
 
         if (result.success) {
             console.log('Выход успешен');
-        } else if (result.status === 401) {
+        } else if (result.status === HTTP_STATUS.UNAUTHORIZED) {
             console.log('Токен не валиден, но всё равно выходим');
         } else {
             console.error('Ошибка при выходе:', result.error);
         }
 
         Storage.logout();
+        
+        // Здесь должен быть вызов роутера для навигации
+        // Пока оставляем window.location, но в идеале использовать роутер
         window.location.href = '/';
     },
 
     async getCurrentUser() {
-        const result = await apiClient.get(this.ENDPOINTS.ME);
+        const result = await apiClient.get(API_ENDPOINTS.AUTH.ME);
 
-        if (result.success) {
+        if (!result.success) {
+            console.error('Ошибка получения пользователя:', result.error);
             return {
-                success: true,
-                user: result.data
+                success: false
             };
         }
 
-        console.error('Ошибка получения пользователя:', result.error);
         return {
-            success: false
+            success: true,
+            user: result.data
         };
     }
 };
+
+export default AuthService;

@@ -1,6 +1,37 @@
 const API_URL = 'http://clover-go.ru:8000/api/v1';
 
-const apiClient = {
+export const API_ENDPOINTS = {
+    AUTH: {
+        REGISTER: '/auth/register',
+        LOGIN: '/auth/login',
+        LOGOUT: '/auth/logout',
+        CHECK: '/auth/check',      
+        ME: '/auth/check'          
+    },
+    ADS: {
+        GET_ALL: '/ads',
+        GET_BY_ID: (id) => `/ads/${id}`,
+        CREATE: '/ads',
+        UPDATE: (id) => `/ads/${id}`,
+        DELETE: (id) => `/ads/${id}`,
+        SEARCH: '/ads/search'
+    },
+    USERS: {
+        PROFILE: '/users/profile',
+        GET_BY_ID: (id) => `/users/${id}`
+    },
+    CATEGORIES: {
+        GET_ALL: '/categories'
+    },
+    FAVORITES: {
+        GET_ALL: '/favorites',
+        ADD: (id) => `/favorites/${id}`,
+        REMOVE: (id) => `/favorites/${id}`,
+        CHECK: (id) => `/favorites/${id}/check`
+    }
+};
+
+export const apiClient = {
     async request(endpoint, method = 'GET', body = null, customHeaders = {}) {
         const headers = {
             'Content-Type': 'application/json',
@@ -19,14 +50,19 @@ const apiClient = {
 
         try {
             const response = await fetch(`${API_URL}${endpoint}`, config);
-            const responseText = await response.text();
-
+            
             let data;
-            try {
-                data = responseText ? JSON.parse(responseText) : {};
-            } catch (e) {
-                console.warn('Ответ не в формате JSON', responseText);
-                data = { message: responseText };
+            const contentType = response.headers.get('content-type');
+            if (contentType && contentType.includes('application/json')) {
+                try {
+                    data = await response.json();
+                } catch (e) {
+                    console.warn('Ошибка парсинга JSON:', e);
+                    data = { message: 'Ошибка парсинга ответа сервера' };
+                }
+            } else {
+                const text = await response.text();
+                data = { message: text };
             }
 
             if (response.ok) {
@@ -66,3 +102,9 @@ const apiClient = {
         return this.request(endpoint, 'DELETE', null, headers);
     }
 };
+
+
+if (typeof window !== 'undefined') {
+    window.apiClient = apiClient;
+    window.API_ENDPOINTS = API_ENDPOINTS;
+}
