@@ -521,10 +521,16 @@ body .main-container {
     gap: 2px;
 }
 
-.rec-card-actions .num_views {
-    font-size: 12px;
+.rec-card-views .num_views {
+    font-size: 14px;
     color: #666;
     margin: 0;
+}
+
+.views {
+    width: 30px;
+    height: 30px;
+    object-fit: cover;
 }
 
 .rec-card-actions .views {
