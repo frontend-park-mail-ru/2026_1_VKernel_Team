@@ -8,10 +8,8 @@ import { fileURLToPath } from 'node:url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
-dotenv.config({ path: path.join(__dirname, '..', '.env') });
-
-const PORT = process.env.PORT || 8080;
+dotenv.config({ path: path.join(__dirname, '.env') });
+const PORT = process.env.PORT || 80;
 const PUBLIC_DIR = path.join(__dirname, '..', process.env.PUBLIC_DIR || 'public');
 
 const MIME_TYPES = {
@@ -102,7 +100,7 @@ const server = http.createServer(async (req, res) => {
         const data = await fs.promises.readFile(filePath);
         const ext = path.extname(filePath);
         const contentType = MIME_TYPES[ext] || 'application/octet-stream';
-        
+
         res.writeHead(200, { 'Content-Type': contentType });
         res.end(data);
         console.log(`${req.method} ${req.url}`);

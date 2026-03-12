@@ -4,12 +4,15 @@ const App = {
 
     async init() {
         await this.loadTemplates();
+        if (!Storage.isAuthenticated()) {
+            const result = await AuthService.getCurrentUser();
+            if (result.success && result.user) {
+                Storage.setUser(result.user);
+            }
+        }
+
         this.checkAuth();
-
-        // Запускаем роутер
         this.router();
-
-        // Слушаем изменения URL (кнопки назад/вперёд)
         window.addEventListener('popstate', () => this.router());
     },
 
@@ -19,7 +22,8 @@ const App = {
             'login-form',
             'register-form',
             'user-profile',
-            'main-page'
+            'main-page',
+            'not-found'
         ];
 
         for (const name of templateNames) {
@@ -27,6 +31,7 @@ const App = {
             const source = await response.text();
             this.templates[name] = Handlebars.compile(source);
         }
+
 
         // Регистрируем helper для форматирования цены
         Handlebars.registerHelper('formatPrice', function(price) {
@@ -43,11 +48,9 @@ const App = {
     },
 
     router() {
-        // Получаем текущий путь из адресной строки
         const path = window.location.pathname;
 
-        // Определяем, что показать
-        switch(path) {
+        switch (path) {
             case '/':
             case '/index.html':
                 this.renderMain();
@@ -66,52 +69,49 @@ const App = {
                 }
                 break;
             default:
-                this.renderNotFound(); // можно добавить шаблон 404
+                this.renderNotFound();
         }
     },
 
     navigateTo(path) {
         window.history.pushState({}, '', path);
-        this.router(); // вызываем роутер для обновления страницы
+        this.router();
     },
 
-    // Рендерим главную
-    renderMain() {
+    async renderMain() {
         document.body.classList.remove('auth-page');
         const app = document.getElementById('app');
+        const adsResult = await AdsService.getAllAds();
+        const ads = adsResult.success ? adsResult.ads : [];
+        const formattedAds = ads.map(ad => AdsService.formatAdCard(ad));
+
         app.innerHTML = this.templates['main-page']({
-            isAuthenticated: this.isAuthenticated
+            isAuthenticated: this.isAuthenticated,
+            recommendations: formattedAds
         });
         this.attachMainEventListeners();
     },
 
     renderNotFound() {
         const app = document.getElementById('app');
-        app.innerHTML = '<h1>404 - Страница не найдена</h1><a href="/">На главную</a>';
+        app.innerHTML = this.templates['not-found']();
     },
 
     attachMainEventListeners() {
-        // Обработчик для иконки профиля
         const profileIcon = document.querySelector('.profile-icon');
         if (profileIcon) {
             profileIcon.addEventListener('click', (e) => {
                 e.preventDefault();
-                if (this.isAuthenticated) {
-                    this.navigateTo('/profile');
-                } else {
-                    this.navigateTo('/login');
-                }
+                this.navigateTo(this.isAuthenticated ? '/profile' : '/login');
             });
         }
 
-        // Обработчик для кнопки "Разместить объявление"
         const placeAdBtn = document.querySelector('.place-ad-btn');
         if (placeAdBtn) {
             placeAdBtn.addEventListener('click', (e) => {
                 e.preventDefault();
                 if (this.isAuthenticated) {
                     console.log('Форма размещения');
-                    // TODO: navigateTo('/create-ad')
                 } else {
                     this.navigateTo('/login');
                 }
@@ -126,8 +126,6 @@ const App = {
             email: this.user?.email || 'Неизвестно',
             username: this.user?.email?.split('@')[0] || 'Пользователь'
         });
-
-        // Добавляем кнопку "На главную" и обработчик выхода
         const logoutBtn = document.querySelector('.logout-btn');
         if (logoutBtn) {
             logoutBtn.addEventListener('click', () => this.logout());
@@ -151,8 +149,6 @@ const App = {
             email: formData?.email || ''
         });
         this.attachLoginHandler();
-
-        // Кнопка "На главную" через роутер
         const backLink = document.querySelector('.back-to-main a');
         if (backLink) {
             backLink.addEventListener('click', (e) => {
@@ -169,6 +165,7 @@ const App = {
         app.innerHTML = this.templates['register-form']({
             error: error,
             success: success,
+            name: formData?.name || '',
             email: formData?.email || ''
         });
         this.attachRegisterHandler();
@@ -181,87 +178,99 @@ const App = {
             });
         }
     },
+    async handleLoginSubmit(e) {
+        e.preventDefault();
 
-    // showLogin(error, formData) {
-    //     this.currentView = 'login';
-    //     document.body.classList.add('auth-page');
-    //     const app = document.getElementById('app');
-    //     app.innerHTML = this.templates['login-form']({
-    //         error: error,
-    //         email: formData?.email || ''
-    //     });
-    //     this.attachLoginHandler();
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
 
-    //     const backLink = document.querySelector('.back-to-main a');
-    //     if (backLink) {
-    //         backLink.addEventListener('click', (e) => {
-    //             e.preventDefault();
-    //             e.stopPropagation(); // Останавливаем всплытие события
-    //             this.navigateTo('/');
-    //         });
-    //     }
-    // },
+        const validation = AuthValidator.validateLogin(email, password);
+        this.clearLoginError();
 
-    // showRegister(error, success, formData) {
-    //     this.currentView = 'register';
-    //     document.body.classList.add('auth-page');
-    //     const app = document.getElementById('app');
-    //     app.innerHTML = this.templates['register-form']({
-    //         error: error,
-    //         success: success,
-    //         email: formData?.email || ''
-    //     });
-    //     this.attachRegisterHandler();
+        if (!validation.isValid) {
+            this.showLoginError(validation.errors[0]);
+            return;
+        }
 
+        const result = await AuthService.login({ email, password });
 
-    //     const backLink = document.querySelector('.back-to-main a');
-    //     if (backLink) {
-    //         backLink.addEventListener('click', (e) => {
-    //             e.preventDefault();
-    //             e.stopPropagation(); // Останавливаем всплытие события
-    //             this.navigateTo('/');
-    //         });
-    //     }
-    // },
+        if (result.success) {
+            this.checkAuth();
+            this.navigateTo('/');
+            return;
+        }
+
+        if (result.fieldErrors) {
+            this.showFieldErrors({
+                email: result.fieldErrors.email,
+                password: result.fieldErrors.password
+            });
+            return;
+        }
+
+        this.showLoginError(result.error || 'Ошибка при входе');
+    },
+
+    async handleRegisterSubmit(e) {
+        e.preventDefault();
+
+        const name = document.getElementById('name').value;
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirm-password').value;
+
+        const validation = AuthValidator.validateRegister(
+            name, email, password, confirmPassword
+        );
+
+        this.clearFieldErrors();
+        this.clearMessages();
+
+        if (!validation.isValid) {
+            this.showFieldErrors(validation.fieldErrors);
+            return;
+        }
+
+        const result = await AuthService.register({ name, email, password });
+
+        if (!result.success) {
+            if (result.fieldErrors) {
+                this.showFieldErrors({
+                    name: result.fieldErrors.name,
+                    email: result.fieldErrors.email,
+                    password: result.fieldErrors.password
+                });
+                return;
+            }
+            
+            this.showGeneralError(result.error || 'Ошибка при регистрации');
+            return;
+        }
+
+        // Регистрация успешна
+        const loginResult = await AuthService.login({ email, password });
+
+        if (loginResult.success) {
+            this.checkAuth();
+            this.navigateTo('/');
+            return;
+        }
+
+        this.showSuccessMessage('Регистрация успешна! Теперь войдите в аккаунт.');
+        setTimeout(() => this.navigateTo('/login'), 2000);
+    },
 
     attachLoginHandler() {
         const form = document.getElementById('login-form');
         if (!form) return;
 
-        form.removeEventListener('submit', this._loginHandler);
+        // Удаляем старый обработчик если есть
+        if (this._loginHandler) {
+            form.removeEventListener('submit', this._loginHandler);
+        }
 
-        this._loginHandler = async (e) => {
-            e.preventDefault();
-
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-
-            const validation = AuthValidator.validateLogin(email, password);
-
-            this.clearLoginError();
-
-            if (!validation.isValid) {
-                this.showLoginError(validation.errors[0]);
-                return;
-            }
-
-            const result = await AuthService.login({ email, password });
-
-            if (result.success) {
-                this.checkAuth();
-                this.navigateTo('/');
-            } else {
-                if (result.fieldErrors) {
-                    this.showFieldErrors({
-                        email: result.fieldErrors.email,
-                        password: result.fieldErrors.password
-                    });
-                } else {
-                    this.showLoginError(result.error || 'Ошибка при входе');
-                }
-            }
-        };
-
+        // Привязываем вынесенный метод
+        this._loginHandler = this.handleLoginSubmit.bind(this);
         form.addEventListener('submit', this._loginHandler);
     },
 
@@ -269,68 +278,35 @@ const App = {
         const form = document.getElementById('register-form');
         if (!form) return;
 
-        form.removeEventListener('submit', this._registerHandler);
+        // Удаляем старый обработчик если есть
+        if (this._registerHandler) {
+            form.removeEventListener('submit', this._registerHandler);
+        }
 
-        this._registerHandler = async (e) => {
-            e.preventDefault();
-
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const confirmPassword = document.getElementById('confirm-password').value;
-
-            const validation = AuthValidator.validateRegister(
-                email, password, confirmPassword
-            );
-
-            this.clearFieldErrors();
-            this.clearMessages();
-
-            if (!validation.isValid) {
-                this.showFieldErrors(validation.fieldErrors);
-                return;
-            }
-
-            const result = await AuthService.register({ email, password });
-
-            if (result.success) {
-                const loginResult = await AuthService.login({ email, password });
-
-                if (loginResult.success) {
-                    this.checkAuth();
-                    this.navigateTo('/');
-                } else {
-                    this.showSuccessMessage('Регистрация успешна! Теперь войдите в аккаунт.');
-                    setTimeout(() => this.navigateTo('/login'), 2000);
-                }
-            } else {
-                if (result.fieldErrors) {
-                    this.showFieldErrors({
-                        email: result.fieldErrors.email,
-                        password: result.fieldErrors.password
-                    });
-                } else {
-                    this.showGeneralError(result.error || 'Ошибка при регистрации');
-                }
-            }
-        };
-
+        // Привязываем вынесенный метод
+        this._registerHandler = this.handleRegisterSubmit.bind(this);
         form.addEventListener('submit', this._registerHandler);
     },
 
-    // clearLoginError() { /* ... */ },
-    // showLoginError(message) { /* ... */ },
-    // clearFieldErrors() { /* ... */ },
-    // clearMessages() { /* ... */ },
-    // showFieldErrors(fieldErrors) { /* ... */ },
-    // showSuccessMessage(message) { /* ... */ },
-    // showGeneralError(message) { /* ... */ },
     clearLoginError() {
-        const errorDiv = document.querySelector('.login-error');
-        if (errorDiv) errorDiv.remove();
+        document.querySelectorAll('.login-error, .alert-error').forEach(el => el.remove());
+        
+        const emailField = document.getElementById('email');
+        const passwordField = document.getElementById('password');
+        
+        if (emailField) emailField.classList.remove('error');
+        if (passwordField) passwordField.classList.remove('error');
     },
 
     showLoginError(message) {
         this.clearLoginError();
+
+        const emailField = document.getElementById('email');
+        const passwordField = document.getElementById('password');
+        
+        if (emailField) emailField.classList.add('error');
+        if (passwordField) passwordField.classList.add('error');
+        
         const form = document.getElementById('login-form');
         const errorDiv = document.createElement('div');
         errorDiv.className = 'login-error';
@@ -348,59 +324,46 @@ const App = {
     },
 
     showFieldErrors(fieldErrors) {
-    this.clearFieldErrors();
+        this.clearFieldErrors();
 
-    for (const [field, error] of Object.entries(fieldErrors)) {
-        if (!error) continue;
+        for (const [field, error] of Object.entries(fieldErrors)) {
+            if (!error) continue;
 
-        const inputId = field === 'confirmPassword' ? 'confirm-password' : field;
-        const input = document.getElementById(inputId);
+            const inputId = field === 'confirmPassword' ? 'confirm-password' : field;
+            const input = document.getElementById(inputId);
 
-        if (input) {
-            input.classList.add('error');
+            if (input) {
+                input.classList.add('error');
 
-            const errorDiv = document.createElement('div');
-            errorDiv.className = 'field-error';
-            errorDiv.textContent = error;
-            input.parentNode.appendChild(errorDiv);
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'field-error';
+                errorDiv.textContent = error;
+                input.parentNode.appendChild(errorDiv);
+            }
         }
-    }
     },
 
     showSuccessMessage(message) {
-        const container = document.querySelector('.auth-container');
-        const alertDiv = document.createElement('div');
-        alertDiv.className = 'alert alert-success';
-        alertDiv.textContent = message;
-        container.appendChild(alertDiv);
+        const form = document.getElementById('register-form');
+        const successDiv = document.createElement('div');
+        successDiv.className = 'alert alert-success';
+        successDiv.textContent = message;
+        form.appendChild(successDiv);
     },
 
     showGeneralError(message) {
-        const container = document.querySelector('.auth-container');
-        const alertDiv = document.createElement('div');
-        alertDiv.className = 'alert alert-error';
-        alertDiv.textContent = message;
-        container.appendChild(alertDiv);
+        const form = document.getElementById('register-form');
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'alert alert-error';
+        errorDiv.textContent = message;
+        form.appendChild(errorDiv);
     },
 
     logout() {
         AuthService.logout();
         this.checkAuth();
         this.navigateTo('/');
-    },
-    async renderMain() {
-    document.body.classList.remove('auth-page');
-    const app = document.getElementById('app');
-    const adsResult = await AdsService.getAllAds();
-    const ads = adsResult.success ? adsResult.ads : [];
-    const formattedAds = ads.map(ad => AdsService.formatAdCard(ad));
-
-    app.innerHTML = this.templates['main-page']({
-        isAuthenticated: this.isAuthenticated,
-        recommendations: formattedAds
-    });
-    this.attachMainEventListeners();
-}
+    }
 };
 
 document.addEventListener('DOMContentLoaded', () => App.init());
