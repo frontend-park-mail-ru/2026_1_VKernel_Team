@@ -1,12 +1,12 @@
 const Storage = {
     setToken(token) {
-        localStorage.setItem('auth_token', token);
+        localStorage.setItem('token', token);
     },
     getToken() {
-        return localStorage.getItem('auth_token');
+        return localStorage.getItem('token');
     },
     removeToken() {
-        localStorage.removeItem('auth_token');
+        localStorage.removeItem('token');
     },
     setUser(user) {
         localStorage.setItem('user', JSON.stringify(user));
@@ -19,7 +19,8 @@ const Storage = {
         localStorage.removeItem('user');
     },
     isAuthenticated() {
-        return !!this.getToken();
+        const hasTokenCookie = document.cookie.includes('session_id') || document.cookie.includes('token');
+        return hasTokenCookie;
     },
     logout() {
         this.removeToken();

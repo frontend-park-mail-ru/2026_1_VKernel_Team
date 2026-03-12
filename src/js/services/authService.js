@@ -1,213 +1,159 @@
+const AuthErrorMap = {
+    'invalid input': 'Некорректный ввод',
+    'wrong email or password': 'Неверный email или пароль',
+    'password too short': 'Пароль должен быть не менее 8 символов',
+    'user not found': 'Пользователь не найден',
+    'user already exists': 'Этот email уже занят',
+    'internal error': 'Внутренняя ошибка сервера',
+    'too short': 'Пароль должен быть не менее 8 символов',
+    'no digit': 'Пароль должен содержать хотя бы одну цифру',
+    'no letter': 'Пароль должен содержать хотя бы одну букву',
+    'special characters not allowed': 'Пароль может содержать только латинские буквы и цифры',
+    'invalid email format': 'Некорректный формат email',
+    'invalid credentials': 'Неверный email или пароль',
+    'password must be at least 8 characters long': 'Пароль должен быть не менее 8 символов',
+    'password must contain at least one digit': 'Пароль должен содержать хотя бы одну цифру',
+    'password must contain at least one latin letter': 'Пароль должен содержать хотя бы одну букву',
+    'password contains forbidden characters': 'Пароль может содержать только латинские буквы и цифры',
+    'name cannot be empty': 'Имя не может быть пустым',
+    'name contains invalid characters': 'Имя содержит недопустимые символы'
+};
+
 const AuthService = {
-    API_URL: 'http://clover-go.ru:8000/api/v1',
-    PASSWORD_MIN_LENGTH: 8,
+    ENDPOINTS: {
+        REGISTER: '/auth/register',
+        LOGIN: '/auth/login',
+        LOGOUT: '/auth/logout',
+        ME: '/auth/check'
+    },
     async register(userData) {
-    console.log('Попытка регистрации:', userData);
-    
-    try {
+        console.log('Попытка регистрации:', userData);
+
         const requestBody = {
-            name: userData.name,
+            name: userData.name || userData.username,
             email: userData.email,
             password: userData.password
         };
-        
-        console.log('Отправляю тело:', JSON.stringify(requestBody));
-        
-        const response = await fetch(`${this.API_URL}/auth/register`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(requestBody),
-            credentials: 'include'
-        });
-        
-        console.log('Статус ответа:', response.status);
-        
-        const responseText = await response.text();
-        console.log('Текст ответа:', responseText);
-        
-        let data;
-        try {
-            data = JSON.parse(responseText);
-        } catch (e) {
-            console.log('Ответ не в JSON, это текст:', responseText);
-            data = { error: responseText };
-        }
-        
-        if (response.ok) {
-            console.log('Регистрация успешна, user_id:', data.user_id);
+
+        const result = await apiClient.post(this.ENDPOINTS.REGISTER, requestBody);
+
+        if (result.success) {
+            console.log('Регистрация успешна, user_id:', result.data.user_id);
+
+            if (result.data.token) {
+                Storage.setToken(result.data.token);
+            }
+            if (result.data.user) {
+                Storage.setUser(result.data.user);
+            }
+
             return {
                 success: true,
                 data: {
                     message: 'Регистрация успешна',
-                    user_id: data.user_id
+                    user_id: result.data.user_id
                 },
                 error: null
             };
-        } else {
-            console.log('Ошибка регистрации. Статус:', response.status);
-            console.log('Тело ответа:', data);
-            
-            const fieldErrors = {};
-            
-            if (data.error) {
-                if (data.error.includes('already exists') || data.error.includes('exists')) {
-                    fieldErrors.email = 'Этот email уже занят';
-                } else {
-                    fieldErrors.general = data.error;
-                }
-            }
-            
-            if (data.email) {
-                if (data.email.includes('already exists') || data.email.includes('exists')) {
-                    fieldErrors.email = 'Этот email уже занят';
-                } else if (data.email.includes('format')) {
-                    fieldErrors.email = 'Некорректный формат email';
-                } else {
-                    fieldErrors.email = data.email;
-                }
-            }
-            
-            if (data.password) {
-                const pwd = data.password.toLowerCase();
-                
-                if (pwd.includes('forbidden') || pwd.includes('characters') || pwd.includes('символ')) {
-                    fieldErrors.password = 'Пароль может содержать только латинские буквы и цифры';
-                } else if (pwd.includes('special') || pwd.includes('спец')) {
-                    fieldErrors.password = 'Пароль не должен содержать специальные символы';
-                } else if (pwd.includes('digit') || pwd.includes('цифр')) {
-                    fieldErrors.password = 'Пароль должен содержать хотя бы одну цифру';
-                } else if (pwd.includes('letter') || pwd.includes('букв')) {
-                    fieldErrors.password = 'Пароль должен содержать хотя бы одну букву';
-                } else if (pwd.includes('short') || pwd.includes('корот')) {
-                    fieldErrors.password = `Пароль должен быть не менее ${this.PASSWORD_MIN_LENGTH} символов`;
-                } else if (pwd.includes('одну букву и одну цифру')) {
-                    fieldErrors.password = 'Пароль должен содержать хотя бы одну букву и одну цифру';
-                } else {
-                    fieldErrors.password = data.password;
-                }
-            }
-            
-            return {
-                success: false,
-                error: data.error || 'Ошибка при регистрации',
-                fieldErrors: fieldErrors,
-                status: response.status
-            };
+
         }
-        
-    } catch (error) {
-        console.error('Ошибка сети:', error);
+
+        console.log('Ошибка регистрации. Статус:', result.status, 'Ошибка:', result.error);
+
+        // Обработка ошибок по Swagger
+        const fieldErrors = {};
+        const errorMsg = result.error.toLowerCase();
+        const translatedError = AuthErrorMap[result.error] || result.error;
+
+        if (errorMsg.includes('email') || errorMsg.includes('exists') || errorMsg.includes('format')) {
+            fieldErrors.email = translatedError;
+        } else if (errorMsg.includes('password') || errorMsg.includes('short') || errorMsg.includes('digit') || errorMsg.includes('letter') || errorMsg.includes('special')) {
+            fieldErrors.password = translatedError;
+        } else if (errorMsg.includes('name')) {
+            fieldErrors.name = translatedError;
+        }
+
+        // Поддержка старого формата ответа (если возвращается объект ошибок по полям)
+        if (result.data) {
+            if (result.data.email) fieldErrors.email = AuthErrorMap[result.data.email] || result.data.email;
+            if (result.data.password) fieldErrors.password = AuthErrorMap[result.data.password] || result.data.password;
+        }
+
         return {
             success: false,
-            error: 'Не удалось соединиться с сервером'
+            error: Object.keys(fieldErrors).length ? 'Ошибка в полях' : translatedError,
+            fieldErrors: fieldErrors,
+            status: result.status
         };
-    }
     },
-    
-   async login(credentials) {
-    console.log('Попытка входа:', credentials.email);
-    
-    try {
-        const response = await fetch(`${this.API_URL}/auth/login`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                email: credentials.email,
-                password: credentials.password
-            }),
-            credentials: 'include'
+
+    async login(credentials) {
+        console.log('Попытка входа:', credentials.email);
+
+        const result = await apiClient.post(this.ENDPOINTS.LOGIN, {
+            email: credentials.email,
+            password: credentials.password
         });
-        
-        console.log('Статус ответа:', response.status);
-        
-        const data = await response.json();
-        
-        if (response.ok) {
-            console.log('Вход успешен, данные:', data);
-            
-            if (data.token) {
-                Storage.setToken(data.token);
+
+        if (result.success) {
+            console.log('Вход успешен, данные:', result.data);
+
+            if (result.data.token) {
+                Storage.setToken(result.data.token);
             }
-            
-            if (data.user) {
-                Storage.setUser(data.user);
+
+            if (result.data.user) {
+                Storage.setUser(result.data.user);
             } else {
                 Storage.setUser({ email: credentials.email });
             }
-            
+
             return {
                 success: true,
-                data: data,
+                data: result.data,
                 error: null
             };
-        } else {
-            console.log('Ошибка входа:', data);
-            return {
-                success: false,
-                error: 'Неверный email или пароль',
-                fieldErrors: null,
-                status: response.status
-            };
         }
-        
-    } catch (error) {
-        console.error('Ошибка сети:', error);
+
+        console.log('Ошибка входа:', result.error);
+        const translatedError = AuthErrorMap[result.error] || result.error;
+
         return {
             success: false,
-            error: 'Не удалось соединиться с сервером'
+            error: translatedError,
+            fieldErrors: null,
+            status: result.status
         };
-    }
     },
-    
+
     async logout() {
-    try {
-        const response = await fetch(`${this.API_URL}/auth/logout`, {
-            method: 'POST',
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        });
-        
-        if (response.ok) {
+        const result = await apiClient.post(this.ENDPOINTS.LOGOUT);
+
+        if (result.success) {
             console.log('Выход успешен');
-        } else if (response.status === 401) {
+        } else if (result.status === 401) {
             console.log('Токен не валиден, но всё равно выходим');
+        } else {
+            console.error('Ошибка при выходе:', result.error);
         }
-    } catch (error) {
-        console.error('Ошибка при выходе:', error);
-    } finally {
+
         Storage.logout();
         window.location.href = '/';
-    }
     },
-    
+
     async getCurrentUser() {
-        try {
-            const response = await fetch(`${this.API_URL}/auth/me`, {
-                credentials: 'include'
-            });
-            
-            if (response.ok) {
-                const data = await response.json();
-                return {
-                    success: true,
-                    user: data
-                };
-            }
+        const result = await apiClient.get(this.ENDPOINTS.ME);
+
+        if (result.success) {
             return {
-                success: false
-            };
-        } catch (error) {
-            console.error('Ошибка получения пользователя:', error);
-            return {
-                success: false
+                success: true,
+                user: result.data
             };
         }
+
+        console.error('Ошибка получения пользователя:', result.error);
+        return {
+            success: false
+        };
     }
 };
-
