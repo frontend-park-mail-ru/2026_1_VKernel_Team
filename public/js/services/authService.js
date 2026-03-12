@@ -9,11 +9,17 @@ const AuthErrorMap = {
     'no digit': 'Пароль должен содержать хотя бы одну цифру',
     'no letter': 'Пароль должен содержать хотя бы одну букву',
     'special characters not allowed': 'Пароль может содержать только латинские буквы и цифры',
-    'invalid email format': 'Некорректный формат email'
+    'invalid email format': 'Некорректный формат email',
+    'invalid credentials': 'Неверный email или пароль',
+    'password must be at least 8 characters long': 'Пароль должен быть не менее 8 символов',
+    'password must contain at least one digit': 'Пароль должен содержать хотя бы одну цифру',
+    'password must contain at least one latin letter': 'Пароль должен содержать хотя бы одну букву',
+    'password contains forbidden characters': 'Пароль может содержать только латинские буквы и цифры',
+    'name cannot be empty': 'Имя не может быть пустым',
+    'name contains invalid characters': 'Имя содержит недопустимые символы'
 };
 
 const AuthService = {
-    // Используем константы для путей (как просил ревьюер)
     ENDPOINTS: {
         REGISTER: '/auth/register',
         LOGIN: '/auth/login',
@@ -41,7 +47,7 @@ const AuthService = {
             if (result.data.user) {
                 Storage.setUser(result.data.user);
             }
-            
+
             return {
                 success: true,
                 data: {
@@ -54,7 +60,7 @@ const AuthService = {
 
         console.log('Ошибка регистрации. Статус:', result.status, 'Ошибка:', result.error);
 
-        // Обработка ошибок по сообщению из Swagger
+        // Обработка ошибок по Swagger
         const fieldErrors = {};
         const errorMsg = result.error.toLowerCase();
         const translatedError = AuthErrorMap[result.error] || result.error;
