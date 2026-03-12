@@ -125,4 +125,3 @@ const AuthValidator = {
         };
     }
 };
-

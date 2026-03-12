@@ -31,6 +31,15 @@ const App = {
             const source = await response.text();
             this.templates[name] = Handlebars.compile(source);
         }
+
+
+        // Регистрируем helper для форматирования цены
+        Handlebars.registerHelper('formatPrice', function(price) {
+            if (price === 0 || price === '0') {
+                return 'Бесплатно';
+            }
+            return price;
+        });
     },
 
     checkAuth() {

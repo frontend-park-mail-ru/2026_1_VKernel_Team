@@ -1,6 +1,9 @@
 
 
 <div class="auth-container">
+    <div class="back-to-main">
+        <a href="/" class="back-link">←</a>
+    </div>
     <h2>Вход в Клевер</h2>
     <form id="login-form" class="auth-form" novalidate>
         <div class="form-group">
@@ -33,6 +36,6 @@
     
     <div class="auth-footer">
         Нет аккаунта? 
-        <a href="#" onclick="App.showRegister()">Зарегистрироваться</a>
+        <a href="#" onclick="App.showRegister(); return false;">Зарегистрироваться</a>
     </div>
 </div>
