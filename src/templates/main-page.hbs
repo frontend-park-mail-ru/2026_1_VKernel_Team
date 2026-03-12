@@ -35,16 +35,20 @@
                 <button class="btn place-ad-btn">Разместить объявление</button>
                 
                 {{#if isAuthenticated}}
+                    <!-- Для авторизованного пользователя -->
                     <div class="profile-icon">
                         <span class="icon">👤</span>
                     </div>
+                    <!-- Кнопка выхода для авторизованных -->
                     <button class="btn btn-danger logout-btn" onclick="App.logout()">
                         Выйти
                     </button>
                 {{else}}
+                    <!-- Для неавторизованного пользователя -->
                     <div class="profile-icon" onclick="App.showLogin()">
                         <span class="icon">👤</span>
                     </div>
+                    <!-- Кнопка выхода для неавторизованных (неактивная или ведёт на вход) -->
                     <button class="btn btn-secondary logout-btn" onclick="App.showLogin()">
                         Войти
                     </button>
@@ -57,6 +61,7 @@
     <main class="main-content">
         <!-- Поисковый блок -->
         <div class="search-section">
+            <!-- Лого и название в одной строке с поиском -->
             <div class="search-row">
                 <div class="brand">
                     <span class="logo">🍀</span>
@@ -79,8 +84,11 @@
             </div>
         </div>
 
+        <!-- Здесь будет остальной контент -->
         <div class="content-grid">
+            <!-- Левая колонка с контентом (9/12) -->
             <div class="main-column">
+                <!-- Первая строка - 6 карточек -->
                 <div class="cards-row">
                     <div class="category-card">
                         <span class="card-title">Авто</span>
@@ -88,82 +96,148 @@
                     </div>
                     <div class="category-card">
                         <span class="card-title">Недвижимость</span>
-                        <img src="images/product_category/real_estate.jpeg" alt="Недвижимость" class="product-image">
+                        <img src="images/product_category/real_estate.jpeg" alt="Авто" class="product-image">
                     </div>
                     <div class="category-card">
                         <span class="card-title">Работа</span>
-                        <img src="images/product_category/work.jpeg" alt="Работа" class="product-image">
+                        <img src="images/product_category/work.jpeg" alt="Авто" class="product-image">
                     </div>
                     <div class="category-card">
                         <span class="card-title">Одежда, обувь, аксессуары</span>
-                        <img src="images/product_category/clothes.jpeg" alt="Одежда" class="product-image">
+                        <img src="images/product_category/clothes.jpeg" alt="Авто" class="product-image">
                     </div>
                     <div class="category-card">
                         <span class="card-title">Хобби и отдых</span>
-                        <img src="images/product_category/rest.jpeg" alt="Отдых" class="product-image">
+                        <img src="images/product_category/rest.jpeg" alt="Авто" class="product-image">
                     </div>
                     <div class="category-card">
                         <span class="card-title">Животные</span>
-                        <img src="images/product_category/animals.jpeg" alt="Животные" class="product-image">
+                        <img src="images/product_category/animals.jpeg" alt="Авто" class="product-image">
                     </div>
                 </div>
 
+                <!-- Вторая строка - 6 карточек -->
                 <div class="cards-row">
                     <div class="category-card">
                         <span class="card-title">Электроника</span>
-                        <img src="images/product_category/electronics.jpeg" alt="Электроника" class="product-image">
+                        <img src="images/product_category/electronics.jpeg" alt="Авто" class="product-image">
                     </div>
                     <div class="category-card">
                         <span class="card-title">Для дома и дачи</span>
-                        <img src="images/product_category/home_garden.jpeg" alt="Для дома" class="product-image">
+                        <img src="images/product_category/home_garden.jpeg" alt="Авто" class="product-image">
                     </div>
                     <div class="category-card">
                         <span class="card-title">Запчасти</span>
-                        <img src="images/product_category/spare_parts.jpeg" alt="Запчасти" class="product-image">
+                        <img src="images/product_category/spare_parts.jpeg" alt="Авто" class="product-image">
                     </div>
                     <div class="category-card">
                         <span class="card-title">Товары для детей</span>
-                        <img src="images/product_category/for_children.jpeg" alt="Для детей" class="product-image">
+                        <img src="images/product_category/for_children.jpeg" alt="Авто" class="product-image">
                     </div>
                     <div class="category-card">
                         <span class="card-title">Красота и здоровье</span>
-                        <img src="images/product_category/beauty.jpeg" alt="Красота" class="product-image">
+                        <img src="images/product_category/beauty.jpeg" alt="Авто" class="product-image">
                     </div>
                     <div class="category-card all-categories">
                         <span class="card-title">Все категории</span>
                     </div>
                 </div>
 
+                <!-- Секция рекомендаций -->
                 <div class="recommendations-section">
                     <h2 class="recommendations-title">Рекомендации для вас</h2>
                     <div class="recommendations-row">
-                        {{#each recommendations}}
-                        <div class="rec-card" data-id="{{id}}">
-                            <img src="{{image}}" alt="{{title}}" class="rec-card-image">
+                        {{!--
+                        // Цикл для получения данных из БД
+                        // {{#each recommendations}}
+                        <div class="rec-card">
+                            <img src="{{this.imageUrl}}" alt="{{this.title}}" class="rec-card-image">
                             <div class="rec-card-content">
-                                <div class="rec-card-info">
-                                    <span class="rec-card-title">{{title}}</span>
-                                    <span class="rec-card-price">{{price}}</span>
-                                    <span class="rec-card-location">
-                                        <span class="location-icon">📍</span>
-                                        {{location}}
-                                    </span>
-                                </div>
+                                <span class="rec-card-title">{{this.title}}</span>
                                 <div class="rec-card-actions">
-                                    <button class="rec-card-fav">❤️ {{favorites}}</button>
+                                    <button class="rec-card-fav">❤️</button>
                                     <button class="rec-card-cart">🛒</button>
                                 </div>
                             </div>
                         </div>
-                        {{else}}
-                        <div class="rec-card-placeholder">
-                            <p>Нет рекомендаций</p>
+                        // {{/each}}
+                        --}}
+
+                        <!-- Временные карточки для теста (4 штуки) -->
+                        <div class="rec-card">
+                            <img src="images/user_product/car.jpeg" alt="Машина" class="rec-card-image">
+                            <div class="rec-card-content">
+                                <div class="rec-card-info">
+                                    <span class="rec-card-title">Новая машина Клевер 3000. Улучшенная рулевая база</span>
+                                    <span class="rec-card-price">{{formatPrice price}}</span>
+                                    <span class="rec-card-location">
+                                        <span class="location-icon">📍</span>
+                                        Москва
+                                    </span>
+                                </div>
+                                <div class="rec-card-actions">
+                                    <button class="rec-card-fav">❤️</button>
+                                    <button class="rec-card-cart">🛒</button>
+                                </div>
+                            </div>
                         </div>
-                        {{/each}}
+                        <div class="rec-card">
+                            <img src="images/user_product/phone.jpeg" alt="Телефон" class="rec-card-image">
+                            <div class="rec-card-content">
+                                <div class="rec-card-info">
+                                    <span class="rec-card-title">Клевер А50. 509 Гб памяти и x7 зум</span>
+                                    <span class="rec-card-price">89 900 ₽</span>
+                                    <span class="rec-card-location">
+                                        <span class="location-icon">📍</span>
+                                        Тольятти
+                                    </span>
+                                </div>
+                                <div class="rec-card-actions">
+                                    <button class="rec-card-fav">❤️</button>
+                                    <button class="rec-card-cart">🛒</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="rec-card">
+                            <img src="images/user_product/house.jpeg" alt="Дом" class="rec-card-image">
+                            <div class="rec-card-content">
+                                <div class="rec-card-info">
+                                    <span class="rec-card-title">Квартиры в ЖК КлЕвЕр</span>
+                                    <span class="rec-card-price">18 999 900 ₽</span>
+                                    <span class="rec-card-location">
+                                        <span class="location-icon">📍</span>
+                                        Кастрома
+                                    </span>
+                                </div>
+                                <div class="rec-card-actions">
+                                    <button class="rec-card-fav">❤️</button>
+                                    <button class="rec-card-cart">🛒</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="rec-card">
+                            <img src="images/user_product/dog.jpeg" alt="Собака" class="rec-card-image">
+                            <div class="rec-card-content">
+                                <div class="rec-card-info">
+                                    <span class="rec-card-title">Милый песик</span>
+                                    <span class="rec-card-price">Бесценно ₽</span>
+                                    <span class="rec-card-location">
+                                        <span class="location-icon">📍</span>
+                                        Уфа
+                                    </span>
+                                </div>
+                                <div class="rec-card-actions">
+                                    <button class="rec-card-fav">❤️</button>
+                                    <button class="rec-card-cart">🛒</button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
+
             </div>
             
+            <!-- Правая колонка с рекламой (3/12) -->
             <div class="ad-column">
                 Рекламное место
             </div>
