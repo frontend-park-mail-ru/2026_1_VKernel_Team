@@ -34,6 +34,14 @@ const AuthService = {
 
         if (result.success) {
             console.log('Регистрация успешна, user_id:', result.data.user_id);
+
+            if (result.data.token) {
+                Storage.setToken(result.data.token);
+            }
+            if (result.data.user) {
+                Storage.setUser(result.data.user);
+            }
+            
             return {
                 success: true,
                 data: {
