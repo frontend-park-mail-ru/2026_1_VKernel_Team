@@ -1,6 +1,6 @@
 const AuthService = {
     API_URL: 'http://clover-go.ru:8000/api/v1',
-    
+    PASSWORD_MIN_LENGTH: 8,
     async register(userData) {
     console.log('Попытка регистрации:', userData);
     
@@ -81,7 +81,7 @@ const AuthService = {
                 } else if (pwd.includes('letter') || pwd.includes('букв')) {
                     fieldErrors.password = 'Пароль должен содержать хотя бы одну букву';
                 } else if (pwd.includes('short') || pwd.includes('корот')) {
-                    fieldErrors.password = 'Пароль должен быть не менее 8 символов';
+                    fieldErrors.password = `Пароль должен быть не менее ${this.PASSWORD_MIN_LENGTH} символов`;
                 } else if (pwd.includes('одну букву и одну цифру')) {
                     fieldErrors.password = 'Пароль должен содержать хотя бы одну букву и одну цифру';
                 } else {
