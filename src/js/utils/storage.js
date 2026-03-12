@@ -1,13 +1,4 @@
 const Storage = {
-    setToken(token) {
-        localStorage.setItem('auth_token', token);
-    },
-    getToken() {
-        return localStorage.getItem('auth_token');
-    },
-    removeToken() {
-        localStorage.removeItem('auth_token');
-    },
     setUser(user) {
         localStorage.setItem('user', JSON.stringify(user));
     },
@@ -19,11 +10,20 @@ const Storage = {
         localStorage.removeItem('user');
     },
     isAuthenticated() {
-        return !!this.getToken();
+        const cookies = document.cookie.split(';').reduce((acc, cookie) => {
+            const [key, value] = cookie.trim().split('=');
+            acc[key] = value;
+            return acc;
+        }, {});
+        
+        // Проверяем возможные названия сессионных кук
+        const sessionCookies = ['session_id', 'sessionid', 'connect.sid', 'token', 'auth_token'];
+        return sessionCookies.some(cookieName => cookies[cookieName] !== undefined);
     },
     logout() {
-        this.removeToken();
         this.removeUser();
     }
 };
-
+if (typeof window !== 'undefined') {
+    window.Storage = Storage;
+}
