@@ -268,13 +268,15 @@ input.error {
 
 /* ========== ПОЛЕ ПАРОЛЯ С ГЛАЗИКОМ ========== */
 .password-input {
-    background-image: url('/images/icons/Eye.jpeg');
+    background-image: url('images/icons/Eye.jpeg');
     background-position: right 15px center;
     background-repeat: no-repeat;
-    background-size: 20px;
-    padding-right: 45px !important;
+    background-size: 20px 20px;
+    padding-right: 45px;
+    background-color: #fafafa;
 }
 
 .password-input[type="text"] {
-    background-image: url('/images/icons/Eye off.jpeg');
+    background-image: url('images/icons/Eye off.jpeg');
+    background-size: 20px 20px;
 }
