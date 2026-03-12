@@ -147,10 +147,13 @@
                     <div class="recommendations-row">
                         {{#each recommendations}}
                         <div class="rec-card" data-id="{{id}}">
-                            <img src="{{image}}" alt="{{title}}" class="rec-card-image">
+                            <div class="rec-card-image-container">
+                                <img src="{{image}}" alt="{{title}}" class="rec-card-image">
+                                <button class="rec-card-fav">❤️</button>
+                            </div>
                             <div class="rec-card-content">
+                                <span class="rec-card-title">{{title}}</span>
                                 <div class="rec-card-info">
-                                    <span class="rec-card-title">{{title}}</span>
                                     <span class="rec-card-price">{{price}}</span>
                                     <span class="rec-card-location">
                                         <span class="location-icon">📍</span>
@@ -158,7 +161,6 @@
                                     </span>
                                 </div>
                                 <div class="rec-card-actions">
-                                    <button class="rec-card-fav">❤️</button>
                                     <button class="rec-card-cart">🛒</button>
                                     <div>
                                         <p class="num_views">{{favorites}}</p>

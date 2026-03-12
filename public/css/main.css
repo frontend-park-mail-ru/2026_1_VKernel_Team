@@ -136,7 +136,7 @@ body .main-container {
     border-radius: 12px;
     padding: 20px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    margin-bottom: 10px;
+    margin-bottom: 5px;
 
     /* Фиксация */
     position: fixed;
@@ -146,10 +146,10 @@ body .main-container {
     z-index: 999;
     
     /* Чтобы поиск был на одной линии с контентом */
-    max-width: 1400px;       /* как у main-content */
-    width: calc(100% - 80px); /* отступы по бокам */
+    /* max-width: 1400px;       как у main-content */
+    /* width: 1360;
     margin-left: auto;
-    margin-right: auto;
+    margin-right: auto; */
 }
 
 .search-row {
@@ -399,9 +399,16 @@ body .main-container {
     box-shadow: 0 8px 20px rgba(0,0,0,0.12);
 }
 
+.rec-card-image-container {
+    position: relative;
+    width: 100%;
+    height: 60%;  /* как у .rec-card-image */
+    overflow: hidden;
+}
+
 .rec-card-image {
     width: 100%;
-    height: 60%;
+    height: 100%;
     object-fit: cover;
     background: #f0f0f0;
 }
@@ -462,7 +469,28 @@ body .main-container {
     align-items: flex-end;
 }
 
-.rec-card-fav,
+/* Кнопка лайка в правом верхнем углу */
+.rec-card-fav {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    transition: all 0.2s;
+    z-index: 10;
+    padding: 0;
+    line-height: 1;
+}
+
 .rec-card-cart {
     background: none;
     border: none;
