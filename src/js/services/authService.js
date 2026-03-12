@@ -26,16 +26,15 @@ const AuthService = {
         LOGOUT: '/auth/logout',
         ME: '/auth/check'
     },
+    
     async register(userData) {
         console.log('Попытка регистрации:', userData);
 
-        const requestBody = {
+        const result = await apiClient.post(this.ENDPOINTS.REGISTER, {
             name: userData.name || userData.username,
             email: userData.email,
             password: userData.password
-        };
-
-        const result = await apiClient.post(this.ENDPOINTS.REGISTER, requestBody);
+        });
 
         if (result.success) {
             console.log('Регистрация успешна, user_id:', result.data.user_id);
@@ -55,7 +54,6 @@ const AuthService = {
                 },
                 error: null
             };
-
         }
 
         console.log('Ошибка регистрации. Статус:', result.status, 'Ошибка:', result.error);
@@ -72,8 +70,6 @@ const AuthService = {
         } else if (errorMsg.includes('name')) {
             fieldErrors.name = translatedError;
         }
-
-        // Поддержка старого формата ответа (если возвращается объект ошибок по полям)
         if (result.data) {
             if (result.data.email) fieldErrors.email = AuthErrorMap[result.data.email] || result.data.email;
             if (result.data.password) fieldErrors.password = AuthErrorMap[result.data.password] || result.data.password;
