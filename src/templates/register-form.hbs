@@ -1,8 +1,8 @@
 <div class="auth-container">
-        <div class="back-to-main">
-            <a href="/" class="back-link">←</a>
-        </div>
-        <h2>Регистрация</h2>
+     <div class="auth-header">
+        <a href="/" class="back-link">←</a>
+        <h2>Вход в Клевер</h2>
+    </div>
     
     <form id="register-form" class="auth-form" novalidate>
          <!-- Временно отключено, ждём бекенд
@@ -33,24 +33,34 @@
         
         <div class="form-group">
             <label for="password">Пароль</label>
-            <input 
-                type="password" 
-                id="password" 
-                name="password" 
-                placeholder="Минимум 8 символов"
-                required
-            >
+            <div class="password-wrapper">
+                <input 
+                    type="password" 
+                    id="password" 
+                    name="password" 
+                    placeholder="Минимум 8 символов"
+                    required
+                >
+                <button type="button" id="togglePassword" class="eye-btn">
+                    <img src="images/icons/Eye-off.jpeg" id="eyeIcon" alt="Показать пароль">
+                </button>
+            </div>
         </div>
         
         <div class="form-group">
             <label for="confirm-password">Подтверждение пароля</label>
-            <input 
-                type="password" 
-                id="confirm-password" 
-                name="confirmPassword" 
-                placeholder="Повторите пароль"
-                required
-            >
+            <div class="password-wrapper">
+                <input 
+                    type="password" 
+                    id="confirm-password" 
+                    name="confirmPassword" 
+                    placeholder="Повторите пароль"
+                    required
+                >
+                <button type="button" id="toggleConfirmPassword" class="eye-btn">
+                    <img src="images/icons/Eye-off.jpeg" id="eyeIconConfirm" alt="Показать пароль">
+                </button>
+            </div>
         </div>
         
         <button type="submit" class="btn btn-primary btn-block">

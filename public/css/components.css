@@ -204,33 +204,95 @@ input.error {
 }
 
 
-.back-to-main {
-    margin-bottom: 20px;
-    text-align: left;
+/* Заголовок формы с кнопкой назад */
+.auth-header {
+    position: relative;
+    margin-bottom: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-.back-link {
-    display: inline-flex;
+.auth-header h2 {
+    margin: 0;
+    text-align: center;
+    font-size: 1.8em;
+    color: #333;
+}
+
+.auth-header .back-link {
+    position: absolute;
+    left: 0;
+    display: flex;
     align-items: center;
+    justify-content: center;
     color: #667eea;
     text-decoration: none;
-    font-size: 14px;
+    font-size: 24px;
     font-weight: 500;
-    padding: 8px 0;
-    transition: all 0.2s ease;
+    transition: all 0.3s;
 }
 
-.back-link:hover {
+.auth-header .back-link:hover {
     color: #5a67d8;
     transform: translateX(-3px);
 }
 
-.back-link::before {
-    margin-right: 5px;
-    font-size: 16px;
-    transition: transform 0.2s;
+/* ========== ПОЛЕ ПАРОЛЯ С ГЛАЗИКОМ ========== */
+/* Контейнер для выравнивания */
+.password-wrapper {
+    position: relative;
+    width: 100%;
 }
 
-.back-link:hover::before {
-    transform: translateX(-2px);
+/* Ваши стили с одним изменением: padding-right */
+.password-wrapper input {
+    width: 100%;
+    padding: 15px 50px 15px 20px; /* 50px справа, чтобы текст не заходил под глаз */
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    font-size: 16px;
+    transition: all 0.3s;
+    background: #fafafa;
+    box-sizing: border-box; /* Важно: чтобы padding не раздувал ширину */
+}
+
+/* Ваши стили для фокуса */
+.password-wrapper input:focus {
+    outline: none;
+    border-color: #667eea;
+    background: white;
+    box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+}
+
+/* Стили для кнопки с картинкой */
+.eye-btn {
+    position: absolute;
+    right: 15px; /* Отступ от правого края */
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    opacity: 0.5;
+    transition: opacity 0.3s;
+}
+
+.eye-btn:hover {
+    opacity: 1;
+}
+
+.eye-btn img {
+    width: 22px; /* Размер иконки под ваш шрифт 16px */
+    height: auto;
+    display: block;
+}
+
+/* Если у инпута рядом есть класс .error, делаем иконку краснее */
+input.error + .eye-btn img {
+    filter: sepia(1) saturate(5) hue-rotate(-50deg); 
+    opacity: 0.8;
 }

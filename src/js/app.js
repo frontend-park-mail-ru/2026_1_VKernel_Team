@@ -119,6 +119,35 @@ const App = {
         }
     },
 
+    initPasswordToggles() {
+        const confirmInput = document.querySelector('#confirm-password');
+        const passwordInput = document.querySelector('#password');
+        const togglePassword = document.querySelector('#togglePassword');
+        const toggleConfirmPassword = document.querySelector('#toggleConfirmPassword');
+        const eyeImg = document.querySelector('#eyeIcon');
+        const eyeImgConfirm = document.querySelector('#eyeIconConfirm');
+
+        // Проверяем, есть ли на странице основное поле пароля
+        if (passwordInput && togglePassword) {
+            togglePassword.addEventListener('click', () => {
+                const isPassword = passwordInput.type === 'password';
+                passwordInput.type = isPassword ? 'text' : 'password';
+                eyeImg.src = isPassword ? 'images/icons/Eye.jpeg' : 'images/icons/Eye-off.jpeg';
+            });
+        }
+
+        // Проверяем, есть ли на странице поле повтора пароля
+        if (confirmInput && toggleConfirmPassword) { 
+            toggleConfirmPassword.addEventListener('click', () => {
+                const isPassword = confirmInput.type === 'password';
+                confirmInput.type = isPassword ? 'text' : 'password';
+                // Здесь нужна своя картинка для второй кнопки, иначе будет меняться первая
+                eyeImgConfirm.src = isPassword ? 'images/icons/Eye.jpeg' : 'images/icons/Eye-off.jpeg';
+            });
+        }
+
+    },
+
     showProfile() {
         document.body.classList.add('auth-page');
         const app = document.getElementById('app');
@@ -149,6 +178,9 @@ const App = {
             email: formData?.email || ''
         });
         this.attachLoginHandler();
+        this.initPasswordToggles();
+        
+        // Кнопка "На главную" через роутер
         const backLink = document.querySelector('.back-to-main a');
         if (backLink) {
             backLink.addEventListener('click', (e) => {
@@ -169,7 +201,8 @@ const App = {
             email: formData?.email || ''
         });
         this.attachRegisterHandler();
-
+        this.initPasswordToggles()
+        
         const backLink = document.querySelector('.back-to-main a');
         if (backLink) {
             backLink.addEventListener('click', (e) => {
@@ -178,37 +211,43 @@ const App = {
             });
         }
     },
+    
     async handleLoginSubmit(e) {
         e.preventDefault();
-
+        
         const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
-
+        
         const validation = AuthValidator.validateLogin(email, password);
-        this.clearLoginError();
-
+        
+        this.clearFieldErrors(); // Очищаем ошибки полей
+        this.clearLoginError(); // Очищаем общую ошибку
+        
         if (!validation.isValid) {
-            this.showLoginError(validation.errors[0]);
+            // Подсвечиваем оба поля красным при любой ошибке валидации
+            const fieldErrors = {
+                email: ' ',
+                password: ' '
+            };
+            this.showFieldErrors(fieldErrors);
+            this.showLoginError('Неверный email или пароль')
             return;
         }
-
+        
         const result = await AuthService.login({ email, password });
-
+        
         if (result.success) {
             this.checkAuth();
-            this.navigateTo('/');
-            return;
+            this.navigateTo('/'); 
+        } else {
+            // При любой ошибке от сервера подсвечиваем оба поля красным
+            const fieldErrors = {
+                email: ' ',
+                password: ' '
+            };
+            this.showFieldErrors(fieldErrors);
+            this.showLoginError('Неверный email или пароль');
         }
-
-        if (result.fieldErrors) {
-            this.showFieldErrors({
-                email: result.fieldErrors.email,
-                password: result.fieldErrors.password
-            });
-            return;
-        }
-
-        this.showLoginError(result.error || 'Ошибка при входе');
     },
 
     async handleRegisterSubmit(e) {
@@ -325,23 +364,30 @@ const App = {
 
     showFieldErrors(fieldErrors) {
         this.clearFieldErrors();
-
+        
         for (const [field, error] of Object.entries(fieldErrors)) {
             if (!error) continue;
-
+            
             const inputId = field === 'confirmPassword' ? 'confirm-password' : field;
             const input = document.getElementById(inputId);
-
+            
             if (input) {
                 input.classList.add('error');
-
+                
                 const errorDiv = document.createElement('div');
                 errorDiv.className = 'field-error';
                 errorDiv.textContent = error;
-                input.parentNode.appendChild(errorDiv);
+                // ПРОВЕРЯЕМ: если инпут внутри wrapper, выносим ошибку ЗА него
+                const wrapper = input.closest('.password-wrapper');
+                if (wrapper) {
+                    wrapper.after(errorDiv); // Вставит ошибку СРАЗУ ПОСЛЕ блока с глазиком
+                } else {
+                    input.parentNode.appendChild(errorDiv); // Для обычных полей
+                }
             }
         }
     },
+    
 
     showSuccessMessage(message) {
         const form = document.getElementById('register-form');
