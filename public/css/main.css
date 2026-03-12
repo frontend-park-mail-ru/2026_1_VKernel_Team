@@ -418,7 +418,8 @@ body .main-container {
     padding: 12px;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 0px;
+    flex: 1;
 }
 
 .rec-card-footer {
@@ -472,7 +473,7 @@ body .main-container {
 .rec-card-actions {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 4px;
     flex-shrink: 0;
     justify-content: flex-end;
     align-items: flex-end;
