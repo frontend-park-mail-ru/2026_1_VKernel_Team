@@ -128,7 +128,7 @@ body .main-container {
     max-width: 1400px;
     margin: 0 auto;
     padding: 100px 20px;
-    margin-top: 160px;
+    margin-top: 80px;
 }
 
 .search-section {
@@ -147,7 +147,7 @@ body .main-container {
     
     /* Чтобы поиск был на одной линии с контентом */
     max-width: 1400px;       /* как у main-content */
-    width: calc(100% - 40px); /* отступы по бокам */
+    width: calc(100% - 80px); /* отступы по бокам */
     margin-left: auto;
     margin-right: auto;
 }
@@ -340,6 +340,7 @@ body .main-container {
     font-size: 16px;
     font-weight: 500;
     position: static;
+    line-height: 1.2;
 }
 
 .category-card.all-categories .card-title::after {
