@@ -26,3 +26,4 @@ const Storage = {
         this.removeUser();
     }
 };
+
