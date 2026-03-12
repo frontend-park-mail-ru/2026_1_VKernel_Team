@@ -354,7 +354,13 @@ const App = {
             const errorDiv = document.createElement('div');
             errorDiv.className = 'field-error';
             errorDiv.textContent = error;
-            input.parentNode.appendChild(errorDiv);
+            // ПРОВЕРЯЕМ: если инпут внутри wrapper, выносим ошибку ЗА него
+            const wrapper = input.closest('.password-wrapper');
+            if (wrapper) {
+                wrapper.after(errorDiv); // Вставит ошибку СРАЗУ ПОСЛЕ блока с глазиком
+            } else {
+                input.parentNode.appendChild(errorDiv); // Для обычных полей
+            }
         }
     }
     },
