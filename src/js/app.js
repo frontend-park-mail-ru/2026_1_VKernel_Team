@@ -113,43 +113,24 @@ const App = {
     },
 
     initPasswordToggles() {
-        // Находим все кнопки с глазиками на странице
-        const toggleButtons = document.querySelectorAll('.toggle-password');
+        const passwordInput = document.getElementById('password');
         
-        // Для каждой кнопки делаем...
-        toggleButtons.forEach(button => {
-            // Удаляем старый обработчик, чтобы не было дублей
-            button.removeEventListener('click', this._passwordToggleHandler);
-            
-            // Создаём новый обработчик
-            this._passwordToggleHandler = (e) => {
-                e.preventDefault(); // Не даём кнопке отправить форму
+        if (passwordInput) {
+            passwordInput.addEventListener('click', function(e) {
+                // Проверяем, кликнули ли по области иконки (правые 45px)
+                const rect = this.getBoundingClientRect();
+                const clickX = e.clientX - rect.left;
                 
-                // Берём ID поля (password или confirm-password)
-                const targetId = button.dataset.target;
-                // Находим само поле ввода
-                const passwordInput = document.getElementById(targetId);
-                
-                // Находим открытый и закрытый глазик внутри кнопки
-                const eyeOpen = button.querySelector('.eye-icon:not(.eye-slash)');
-                const eyeClosed = button.querySelector('.eye-slash');
-                
-                // Если поле сейчас скрыто (тип password)
-                if (passwordInput.type === 'password') {
-                    passwordInput.type = 'text';      // Показываем текст
-                    eyeOpen.style.display = 'none';    // Прячем открытый глазик
-                    eyeClosed.style.display = 'inline-block'; // Показываем закрытый
-                } else {
-                    // Иначе - скрываем текст
-                    passwordInput.type = 'password';
-                    eyeOpen.style.display = 'inline-block';
-                    eyeClosed.style.display = 'none';
+                if (clickX > rect.width - 45) {
+                    // Переключаем тип поля
+                    if (this.type === 'password') {
+                        this.type = 'text';
+                    } else {
+                        this.type = 'password';
+                    }
                 }
-            };
-            
-            // Вешаем новый обработчик на кнопку
-            button.addEventListener('click', this._passwordToggleHandler);
-        });
+            });
+        }
     },
 
     showProfile() {
