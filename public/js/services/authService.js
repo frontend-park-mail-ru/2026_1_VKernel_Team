@@ -1,174 +1,145 @@
-// const AuthService = {
-//     API_URL: '',
-//     async register(userData) {
-//         try {
-//             const response = await fetch(`${this.API_URL}/api/register`, {
-//                 method: 'POST',
-//                 headers: {
-//                     'Content-Type': 'application/json',
-//                 },
-//                 body: JSON.stringify(userData)
-//             });
-//             const data = await response.json();
-//             return {
-//                 success: response.ok,
-//                 data: data,
-//                 error: data.error
-//             };
-//         } catch (error) {
-//             return {
-//                 success: false,
-//                 error: 'Ошибка соединения с сервером'
-//             };
-//         }
-//     },
-//     async login(credentials) {
-//         try {
-//             const response = await fetch(`${this.API_URL}/api/login`, {
-//                 method: 'POST',
-//                 headers: {
-//                     'Content-Type': 'application/json',
-//                 },
-//                 body: JSON.stringify(credentials)
-//             });
-//             const data = await response.json();
-//             if (response.ok && data.token) {
-//                 Storage.setToken(data.token);
-//                 if (data.user) {
-//                     Storage.setUser(data.user);
-//                 }
-//             }
-//             return {
-//                 success: response.ok,
-//                 data: data,
-//                 error: data.error
-//             };
-//         } catch (error) {
-//             return {
-//                 success: false,
-//                 error: 'Ошибка соединения с сервером'
-//             };
-//         }
-//     }
-// };
+const AuthErrorMap = {
+    'invalid input': 'Некорректный ввод',
+    'wrong email or password': 'Неверный email или пароль',
+    'password too short': 'Пароль должен быть не менее 8 символов',
+    'user not found': 'Пользователь не найден',
+    'user already exists': 'Этот email уже занят',
+    'internal error': 'Внутренняя ошибка сервера',
+    'too short': 'Пароль должен быть не менее 8 символов',
+    'no digit': 'Пароль должен содержать хотя бы одну цифру',
+    'no letter': 'Пароль должен содержать хотя бы одну букву',
+    'special characters not allowed': 'Пароль может содержать только латинские буквы и цифры',
+    'invalid email format': 'Некорректный формат email'
+};
 
 const AuthService = {
-    API_URL: '',
-    
-    // Мок-база данных пользователей
-    mockUsers: [
-        {
-            email: 'test@test.com',
-            password: '12345678',
-            user: {
-                id: 1,
-                username: 'Тестовый',
-                email: 'test@test.com',
-                createdAt: '2024-01-01'
-            }
-        }
-    ],
-    
+    // Используем константы для путей (как просил ревьюер)
+    ENDPOINTS: {
+        REGISTER: '/auth/register',
+        LOGIN: '/auth/login',
+        LOGOUT: '/auth/logout',
+        ME: '/auth/check'
+    },
+
     async register(userData) {
         console.log('Попытка регистрации:', userData);
-        
-        // Имитация задержки сервера
-        await new Promise(resolve => setTimeout(resolve, 500));
-        
-        try {
-            // Проверяем, не занят ли email
-            const existingUser = this.mockUsers.find(u => u.email === userData.email);
-            
-            if (existingUser) {
-                console.log('Email уже занят');
-                return {
-                    success: false,
-                    error: 'Пользователь с таким email уже существует'
-                };
-            }
-            
-            // Создаём нового пользователя
-            const newUser = {
-                id: this.mockUsers.length + 1,
-                username: userData.username,
-                email: userData.email,
-                createdAt: new Date().toISOString()
-            };
-            
-            // Сохраняем в мок-базу
-            this.mockUsers.push({
-                email: userData.email,
-                password: userData.password,
-                user: newUser
-            });
-            
-            console.log('Регистрация успешна:', newUser);
-            console.log('Все пользователи:', this.mockUsers);
-            
+
+        const requestBody = {
+            name: userData.name || userData.username,
+            email: userData.email,
+            password: userData.password
+        };
+
+        const result = await apiClient.post(this.ENDPOINTS.REGISTER, requestBody);
+
+        if (result.success) {
+            console.log('Регистрация успешна, user_id:', result.data.user_id);
             return {
                 success: true,
                 data: {
                     message: 'Регистрация успешна',
-                    user: newUser
+                    user_id: result.data.user_id
                 },
                 error: null
             };
-            
-        } catch (error) {
-            console.error('Ошибка в register:', error);
-            return {
-                success: false,
-                error: 'Ошибка при регистрации'
-            };
         }
+
+        console.log('Ошибка регистрации. Статус:', result.status, 'Ошибка:', result.error);
+
+        // Обработка ошибок по сообщению из Swagger
+        const fieldErrors = {};
+        const errorMsg = result.error.toLowerCase();
+        const translatedError = AuthErrorMap[result.error] || result.error;
+
+        if (errorMsg.includes('email') || errorMsg.includes('exists') || errorMsg.includes('format')) {
+            fieldErrors.email = translatedError;
+        } else if (errorMsg.includes('password') || errorMsg.includes('short') || errorMsg.includes('digit') || errorMsg.includes('letter') || errorMsg.includes('special')) {
+            fieldErrors.password = translatedError;
+        } else if (errorMsg.includes('name')) {
+            fieldErrors.name = translatedError;
+        }
+
+        // Поддержка старого формата ответа (если возвращается объект ошибок по полям)
+        if (result.data) {
+            if (result.data.email) fieldErrors.email = AuthErrorMap[result.data.email] || result.data.email;
+            if (result.data.password) fieldErrors.password = AuthErrorMap[result.data.password] || result.data.password;
+        }
+
+        return {
+            success: false,
+            error: Object.keys(fieldErrors).length ? 'Ошибка в полях' : translatedError,
+            fieldErrors: fieldErrors,
+            status: result.status
+        };
     },
-    
+
     async login(credentials) {
         console.log('Попытка входа:', credentials.email);
-        
-        // Имитация задержки сервера
-        await new Promise(resolve => setTimeout(resolve, 500));
-        
-        try {
-            // Ищем пользователя в мок-данных
-            console.log('Поиск в mockUsers:', this.mockUsers);
-            
-            const mockUser = this.mockUsers.find(
-                u => u.email === credentials.email && u.password === credentials.password
-            );
-            
-            if (mockUser) {
-                // Создаём фейковый токен
-                const token = 'mock-jwt-token-' + Date.now() + '-' + Math.random().toString(36);
-                
-                // Сохраняем в localStorage
-                Storage.setToken(token);
-                Storage.setUser(mockUser.user);
-                
-                console.log('Вход успешен:', mockUser.user);
-                
-                return {
-                    success: true,
-                    data: {
-                        token: token,
-                        user: mockUser.user
-                    },
-                    error: null
-                };
+
+        const result = await apiClient.post(this.ENDPOINTS.LOGIN, {
+            email: credentials.email,
+            password: credentials.password
+        });
+
+        if (result.success) {
+            console.log('Вход успешен, данные:', result.data);
+
+            if (result.data.token) {
+                Storage.setToken(result.data.token);
             }
-            
-            console.log('Неверные учетные данные');
+
+            if (result.data.user) {
+                Storage.setUser(result.data.user);
+            } else {
+                Storage.setUser({ email: credentials.email });
+            }
+
             return {
-                success: false,
-                error: 'Неверный email или пароль'
-            };
-            
-        } catch (error) {
-            console.error('Ошибка в login:', error);
-            return {
-                success: false,
-                error: 'Ошибка при входе'
+                success: true,
+                data: result.data,
+                error: null
             };
         }
+
+        console.log('Ошибка входа:', result.error);
+        const translatedError = AuthErrorMap[result.error] || result.error;
+
+        return {
+            success: false,
+            error: translatedError,
+            fieldErrors: null,
+            status: result.status
+        };
+    },
+
+    async logout() {
+        const result = await apiClient.post(this.ENDPOINTS.LOGOUT);
+
+        if (result.success) {
+            console.log('Выход успешен');
+        } else if (result.status === 401) {
+            console.log('Токен не валиден, но всё равно выходим');
+        } else {
+            console.error('Ошибка при выходе:', result.error);
+        }
+
+        Storage.logout();
+        window.location.href = '/';
+    },
+
+    async getCurrentUser() {
+        const result = await apiClient.get(this.ENDPOINTS.ME);
+
+        if (result.success) {
+            return {
+                success: true,
+                user: result.data
+            };
+        }
+
+        console.error('Ошибка получения пользователя:', result.error);
+        return {
+            success: false
+        };
     }
 };

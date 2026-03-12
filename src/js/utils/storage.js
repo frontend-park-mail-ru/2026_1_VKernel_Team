@@ -19,7 +19,8 @@ const Storage = {
         localStorage.removeItem('user');
     },
     isAuthenticated() {
-        return !!this.getUser();
+        const hasTokenCookie = document.cookie.includes('session_id') || document.cookie.includes('token');
+        return hasTokenCookie;
     },
     logout() {
         this.removeToken();

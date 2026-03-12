@@ -1,45 +1,54 @@
 const App = {
     templates: {},
     currentView: 'main-page',
-    
+
     async init() {
         await this.loadTemplates();
+
+        // Пытаемся получить пользователя по куки если его нет в Storage
+        if (!Storage.isAuthenticated()) {
+            const result = await AuthService.getCurrentUser();
+            if (result.success && result.user) {
+                Storage.setUser(result.user);
+            }
+        }
+
         this.checkAuth();
-        
+
         // Запускаем роутер
         this.router();
-        
+
         // Слушаем изменения URL (кнопки назад/вперёд)
         window.addEventListener('popstate', () => this.router());
     },
-    
+
     async loadTemplates() {
         const templateNames = [
             'auth-links',
-            'login-form', 
+            'login-form',
             'register-form',
             'user-profile',
             'main-page'
         ];
-        
+
         for (const name of templateNames) {
             const response = await fetch(`src/templates/${name}.hbs`);
             const source = await response.text();
             this.templates[name] = Handlebars.compile(source);
         }
     },
-    
+
     checkAuth() {
         this.isAuthenticated = Storage.isAuthenticated();
         this.user = Storage.getUser();
     },
-    
+
     router() {
         // Получаем текущий путь из адресной строки
         const path = window.location.pathname;
-        
+
         // Определяем, что показать
-        switch(path) {
+        switch (path) {
             case '/':
             case '/index.html':
                 this.renderMain();
@@ -61,27 +70,27 @@ const App = {
                 this.renderNotFound(); // можно добавить шаблон 404
         }
     },
-    
+
     navigateTo(path) {
         window.history.pushState({}, '', path);
         this.router(); // вызываем роутер для обновления страницы
     },
-    
+
     // Рендерим главную
     renderMain() {
         document.body.classList.remove('auth-page');
         const app = document.getElementById('app');
-        app.innerHTML = this.templates['main-page']({ 
-            isAuthenticated: this.isAuthenticated 
+        app.innerHTML = this.templates['main-page']({
+            isAuthenticated: this.isAuthenticated
         });
         this.attachMainEventListeners();
     },
-    
+
     renderNotFound() {
         const app = document.getElementById('app');
         app.innerHTML = '<h1>404 - Страница не найдена</h1><a href="/">На главную</a>';
     },
-    
+
     attachMainEventListeners() {
         // Обработчик для иконки профиля
         const profileIcon = document.querySelector('.profile-icon');
@@ -95,7 +104,7 @@ const App = {
                 }
             });
         }
-        
+
         // Обработчик для кнопки "Разместить объявление"
         const placeAdBtn = document.querySelector('.place-ad-btn');
         if (placeAdBtn) {
@@ -114,17 +123,17 @@ const App = {
     showProfile() {
         document.body.classList.add('auth-page');
         const app = document.getElementById('app');
-        app.innerHTML = this.templates['user-profile']({ 
+        app.innerHTML = this.templates['user-profile']({
             email: this.user?.email || 'Неизвестно',
-            username: this.user?.email?.split('@')[0] || 'Пользователь' 
+            username: this.user?.email?.split('@')[0] || 'Пользователь'
         });
-        
+
         // Добавляем кнопку "На главную" и обработчик выхода
         const logoutBtn = document.querySelector('.logout-btn');
         if (logoutBtn) {
             logoutBtn.addEventListener('click', () => this.logout());
         }
-        
+
         const backBtn = document.querySelector('.back-link');
         if (backBtn) {
             backBtn.addEventListener('click', (e) => {
@@ -138,12 +147,12 @@ const App = {
         this.currentView = 'login';
         document.body.classList.add('auth-page');
         const app = document.getElementById('app');
-        app.innerHTML = this.templates['login-form']({ 
+        app.innerHTML = this.templates['login-form']({
             error: error,
             email: formData?.email || ''
         });
         this.attachLoginHandler();
-        
+
         // Кнопка "На главную" через роутер
         const backLink = document.querySelector('.back-to-main a');
         if (backLink) {
@@ -153,18 +162,18 @@ const App = {
             });
         }
     },
-    
+
     showRegister(error, success, formData) {
         this.currentView = 'register';
         document.body.classList.add('auth-page');
         const app = document.getElementById('app');
-        app.innerHTML = this.templates['register-form']({ 
+        app.innerHTML = this.templates['register-form']({
             error: error,
             success: success,
             email: formData?.email || ''
         });
         this.attachRegisterHandler();
-        
+
         const backLink = document.querySelector('.back-to-main a');
         if (backLink) {
             backLink.addEventListener('click', (e) => {
@@ -178,12 +187,12 @@ const App = {
     //     this.currentView = 'login';
     //     document.body.classList.add('auth-page');
     //     const app = document.getElementById('app');
-    //     app.innerHTML = this.templates['login-form']({ 
+    //     app.innerHTML = this.templates['login-form']({
     //         error: error,
     //         email: formData?.email || ''
     //     });
     //     this.attachLoginHandler();
-        
+
     //     const backLink = document.querySelector('.back-to-main a');
     //     if (backLink) {
     //         backLink.addEventListener('click', (e) => {
@@ -198,13 +207,13 @@ const App = {
     //     this.currentView = 'register';
     //     document.body.classList.add('auth-page');
     //     const app = document.getElementById('app');
-    //     app.innerHTML = this.templates['register-form']({ 
+    //     app.innerHTML = this.templates['register-form']({
     //         error: error,
     //         success: success,
     //         email: formData?.email || ''
     //     });
     //     this.attachRegisterHandler();
-        
+
 
     //     const backLink = document.querySelector('.back-to-main a');
     //     if (backLink) {
@@ -215,33 +224,33 @@ const App = {
     //         });
     //     }
     // },
-    
+
     attachLoginHandler() {
         const form = document.getElementById('login-form');
         if (!form) return;
-        
+
         form.removeEventListener('submit', this._loginHandler);
-        
+
         this._loginHandler = async (e) => {
             e.preventDefault();
-            
+
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
-            
+
             const validation = AuthValidator.validateLogin(email, password);
-            
+
             this.clearLoginError();
-            
+
             if (!validation.isValid) {
                 this.showLoginError(validation.errors[0]);
                 return;
             }
-            
+
             const result = await AuthService.login({ email, password });
-            
+
             if (result.success) {
                 this.checkAuth();
-                this.navigateTo('/'); 
+                this.navigateTo('/');
             } else {
                 if (result.fieldErrors) {
                     this.showFieldErrors({
@@ -253,71 +262,71 @@ const App = {
                 }
             }
         };
-        
+
         form.addEventListener('submit', this._loginHandler);
     },
-    
-    attachRegisterHandler() {
-    const form = document.getElementById('register-form');
-    if (!form) return;
-    
-    form.removeEventListener('submit', this._registerHandler);
-    
-    this._registerHandler = async (e) => {
-        e.preventDefault();
-        
-        // Получаем значение имени
-        const name = document.getElementById('name').value;
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
-        const confirmPassword = document.getElementById('confirm-password').value;
 
-        // Передаём все 4 параметра
-        const validation = AuthValidator.validateRegister(
-            name, email, password, confirmPassword
-        );
-        
-        this.clearFieldErrors();
-        this.clearMessages();
-        
-        if (!validation.isValid) {
-            this.showFieldErrors(validation.fieldErrors);
-            return;
-        }
-        
-        // Отправляем имя на сервер
-        const result = await AuthService.register({ 
-            name,  // добавили
-            email, 
-            password 
-        });
-        
-        if (result.success) {
-            const loginResult = await AuthService.login({ email, password });
-            
-            if (loginResult.success) {
-                this.checkAuth();
-                this.navigateTo('/'); 
-            } else {
-                this.showSuccessMessage('Регистрация успешна! Теперь войдите в аккаунт.');
-                setTimeout(() => this.navigateTo('/login'), 2000);
+    attachRegisterHandler() {
+        const form = document.getElementById('register-form');
+        if (!form) return;
+
+        form.removeEventListener('submit', this._registerHandler);
+
+        this._registerHandler = async (e) => {
+            e.preventDefault();
+
+            // Получаем значение имени
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+
+            // Передаём все 4 параметра
+            const validation = AuthValidator.validateRegister(
+                name, email, password, confirmPassword
+            );
+
+            this.clearFieldErrors();
+            this.clearMessages();
+
+            if (!validation.isValid) {
+                this.showFieldErrors(validation.fieldErrors);
+                return;
             }
-        } else {
-            if (result.fieldErrors) {
-                this.showFieldErrors({
-                    name: result.fieldErrors.name,
-                    email: result.fieldErrors.email,
-                    password: result.fieldErrors.password
-                });
+
+            // Отправляем имя на сервер
+            const result = await AuthService.register({
+                name,  // добавили
+                email,
+                password
+            });
+
+            if (result.success) {
+                const loginResult = await AuthService.login({ email, password });
+
+                if (loginResult.success) {
+                    this.checkAuth();
+                    this.navigateTo('/');
+                } else {
+                    this.showSuccessMessage('Регистрация успешна! Теперь войдите в аккаунт.');
+                    setTimeout(() => this.navigateTo('/login'), 2000);
+                }
             } else {
-                this.showGeneralError(result.error || 'Ошибка при регистрации');
+                if (result.fieldErrors && Object.keys(result.fieldErrors).length > 0) {
+                    this.showFieldErrors({
+                        username: result.fieldErrors.name,
+                        email: result.fieldErrors.email,
+                        password: result.fieldErrors.password
+                    });
+                } else {
+                    this.showGeneralError(result.error || 'Ошибка при регистрации');
+                }
             }
-        }
-    };
-    
-    form.addEventListener('submit', this._registerHandler);
-},
-    
+        };
+
+        form.addEventListener('submit', this._registerHandler);
+    },
+
     // clearLoginError() { /* ... */ },
     // showLoginError(message) { /* ... */ },
     // clearFieldErrors() { /* ... */ },
@@ -349,23 +358,23 @@ const App = {
     },
 
     showFieldErrors(fieldErrors) {
-    this.clearFieldErrors();
-    
-    for (const [field, error] of Object.entries(fieldErrors)) {
-        if (!error) continue;
-        
-        const inputId = field === 'confirmPassword' ? 'confirm-password' : field;
-        const input = document.getElementById(inputId);
-        
-        if (input) {
-            input.classList.add('error');
-            
-            const errorDiv = document.createElement('div');
-            errorDiv.className = 'field-error';
-            errorDiv.textContent = error;
-            input.parentNode.appendChild(errorDiv);
+        this.clearFieldErrors();
+
+        for (const [field, error] of Object.entries(fieldErrors)) {
+            if (!error) continue;
+
+            const inputId = field === 'confirmPassword' ? 'confirm-password' : field;
+            const input = document.getElementById(inputId);
+
+            if (input) {
+                input.classList.add('error');
+
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'field-error';
+                errorDiv.textContent = error;
+                input.parentNode.appendChild(errorDiv);
+            }
         }
-    }
     },
 
     showSuccessMessage(message) {
@@ -383,26 +392,25 @@ const App = {
         alertDiv.textContent = message;
         container.appendChild(alertDiv);
     },
-    
+
     logout() {
         AuthService.logout();
         this.checkAuth();
-        this.navigateTo('/'); 
+        this.navigateTo('/');
     },
     async renderMain() {
-    document.body.classList.remove('auth-page');
-    const app = document.getElementById('app');
-    const adsResult = await AdsService.getAllAds();
-    const ads = adsResult.success ? adsResult.ads : [];
-    const formattedAds = ads.map(ad => AdsService.formatAdCard(ad));
-    
-    app.innerHTML = this.templates['main-page']({ 
-        isAuthenticated: this.isAuthenticated,
-        recommendations: formattedAds  
-    });
-    this.attachMainEventListeners();
-}
+        document.body.classList.remove('auth-page');
+        const app = document.getElementById('app');
+        const adsResult = await AdsService.getAllAds();
+        const ads = adsResult.success ? adsResult.ads : [];
+        const formattedAds = ads.map(ad => AdsService.formatAdCard(ad));
+
+        app.innerHTML = this.templates['main-page']({
+            isAuthenticated: this.isAuthenticated,
+            recommendations: formattedAds
+        });
+        this.attachMainEventListeners();
+    }
 };
 
 document.addEventListener('DOMContentLoaded', () => App.init());
-
