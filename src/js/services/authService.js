@@ -1,5 +1,6 @@
 const HTTP_STATUS = {
-    UNAUTHORIZED: 401
+    UNAUTHORIZED: 401,
+    BAD_REQUEST: 400
 };
 
 const AuthErrorMap = {
@@ -25,8 +26,6 @@ const AuthErrorMap = {
 
 const AuthService = {
     async register(userData) {
-        console.log('Попытка регистрации:', userData);
-
         const result = await apiClient.post(API_ENDPOINTS.AUTH.REGISTER, {
             name: userData.name || userData.username,
             email: userData.email,
@@ -34,39 +33,33 @@ const AuthService = {
         });
 
         if (!result.success) {
-            console.log('Ошибка регистрации. Статус:', result.status, 'Ошибка:', result.error);
+            if (result.status === HTTP_STATUS.BAD_REQUEST && result.data) {
+                const fieldErrors = {};
+                if (result.data.email) {
+                    fieldErrors.email = AuthErrorMap[result.data.email] || result.data.email;
+                }
+                if (result.data.password) {
+                    fieldErrors.password = AuthErrorMap[result.data.password] || result.data.password;
+                }
+                if (result.data.name) {
+                    fieldErrors.name = AuthErrorMap[result.data.name] || result.data.name;
+                }
 
-            // Обработка ошибок по Swagger
-            const fieldErrors = {};
-            const errorMsg = result.error.toLowerCase();
+                return {
+                    success: false,
+                    error: 'Ошибка в полях',
+                    fieldErrors: fieldErrors,
+                    status: result.status
+                };
+            }
             const translatedError = AuthErrorMap[result.error] || result.error;
-
-            if (errorMsg.includes('email') || errorMsg.includes('exists') || errorMsg.includes('format')) {
-                fieldErrors.email = translatedError;
-            } else if (errorMsg.includes('password') || errorMsg.includes('short') || errorMsg.includes('digit') || errorMsg.includes('letter') || errorMsg.includes('special')) {
-                fieldErrors.password = translatedError;
-            } else if (errorMsg.includes('name')) {
-                fieldErrors.name = translatedError;
-            }
-            if (result.data) {
-                if (result.data.email) fieldErrors.email = AuthErrorMap[result.data.email] || result.data.email;
-                if (result.data.password) fieldErrors.password = AuthErrorMap[result.data.password] || result.data.password;
-            }
-
             return {
                 success: false,
-                error: Object.keys(fieldErrors).length ? 'Ошибка в полях' : translatedError,
-                fieldErrors: fieldErrors,
+                error: translatedError,
+                fieldErrors: null,
                 status: result.status
             };
         }
-
-        console.log('Регистрация успешна, user_id:', result.data.user_id);
-        
-        if (result.data.user) {
-            Storage.setUser(result.data.user);
-        }
-
         return {
             success: true,
             data: {
@@ -78,17 +71,26 @@ const AuthService = {
     },
 
     async login(credentials) {
-        console.log('Попытка входа:', credentials.email);
-
         const result = await apiClient.post(API_ENDPOINTS.AUTH.LOGIN, {
             email: credentials.email,
             password: credentials.password
         });
 
         if (!result.success) {
-            console.log('Ошибка входа:', result.error);
+            if (result.status === HTTP_STATUS.UNAUTHORIZED) {
+                const fieldErrors = {
+                    email: ' ',
+                    password: ' '
+                };
+                
+                return {
+                    success: false,
+                    error: 'Неверный email или пароль',
+                    fieldErrors: fieldErrors,
+                    status: result.status
+                };
+            }
             const translatedError = AuthErrorMap[result.error] || result.error;
-
             return {
                 success: false,
                 error: translatedError,
@@ -98,20 +100,12 @@ const AuthService = {
         }
 
         console.log('Вход успешен, данные:', result.data);
-        
-        if (result.data.user) {
-            Storage.setUser(result.data.user);
-        } else {
-            Storage.setUser({ email: credentials.email });
-        }
-
         return {
             success: true,
             data: result.data,
             error: null
         };
     },
-
     async logout() {
         const result = await apiClient.post(API_ENDPOINTS.AUTH.LOGOUT);
 
@@ -122,27 +116,43 @@ const AuthService = {
         } else {
             console.error('Ошибка при выходе:', result.error);
         }
-
-        Storage.logout();
-        
-        // Здесь должен быть вызов роутера для навигации
-        // Пока оставляем window.location, но в идеале использовать роутер
         window.location.href = '/';
     },
 
-    async getCurrentUser() {
-        const result = await apiClient.get(API_ENDPOINTS.AUTH.ME);
+    async check() {
+        const result = await apiClient.get(API_ENDPOINTS.AUTH.CHECK);
 
         if (!result.success) {
-            console.error('Ошибка получения пользователя:', result.error);
+            if (result.status === HTTP_STATUS.UNAUTHORIZED) {
+                console.log('Пользователь не авторизован');
+                return {
+                    success: false,
+                    isAuthenticated: false,
+                    user: null
+                };
+            }
+            console.error('Ошибка проверки авторизации:', result.error);
             return {
-                success: false
+                success: false,
+                isAuthenticated: false,
+                user: null
             };
         }
-
         return {
             success: true,
-            user: result.data
+            isAuthenticated: true,
+            user: result.data 
+        };
+    },
+    async getCurrentUser() {
+        const result = await this.check();
+        return {
+            success: result.isAuthenticated,
+            user: result.user
         };
     }
 };
+
+if (typeof window !== 'undefined') {
+    window.AuthService = AuthService;
+}
