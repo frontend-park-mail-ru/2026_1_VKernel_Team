@@ -130,6 +130,7 @@ const App = {
         if (logoutBtn) {
             logoutBtn.addEventListener('click', () => this.logout());
         }
+
         const backBtn = document.querySelector('.back-link');
         if (backBtn) {
             backBtn.addEventListener('click', (e) => {
@@ -156,6 +157,7 @@ const App = {
             });
         }
     },
+
     showRegister(error, success, formData) {
         this.currentView = 'register';
         document.body.classList.add('auth-page');

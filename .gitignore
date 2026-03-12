@@ -4,5 +4,8 @@ node_modules/
 .env.*.local
 *.log
 npm-debug.log*
+<<<<<<< HEAD
 2026-1-VKernel-Team-UH1JUVy6.pem
 
+=======
+>>>>>>> origin/main

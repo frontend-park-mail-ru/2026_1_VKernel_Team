@@ -1,5 +1,6 @@
 const AdsService = {
     API_URL: 'http://clover-go.ru:8000/api/v1',
+
     async getAllAds() {
         try {
             const response = await fetch(`${this.API_URL}/ads`, {
@@ -26,6 +27,7 @@ const AdsService = {
             };
         }
     },
+
     async getAdById(id) {
         try {
             const response = await fetch(`${this.API_URL}/ads/${id}`, {
