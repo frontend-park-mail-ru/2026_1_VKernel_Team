@@ -10,7 +10,13 @@ const AuthErrorMap = {
     'no letter': 'Пароль должен содержать хотя бы одну букву',
     'special characters not allowed': 'Пароль может содержать только латинские буквы и цифры',
     'invalid email format': 'Некорректный формат email',
-    'invalid credentials': 'Неверный email или пароль'
+    'invalid credentials': 'Неверный email или пароль',
+    'password must be at least 8 characters long': 'Пароль должен быть не менее 8 символов',
+    'password must contain at least one digit': 'Пароль должен содержать хотя бы одну цифру',
+    'password must contain at least one latin letter': 'Пароль должен содержать хотя бы одну букву',
+    'password contains forbidden characters': 'Пароль может содержать только латинские буквы и цифры',
+    'name cannot be empty': 'Имя не может быть пустым',
+    'name contains invalid characters': 'Имя содержит недопустимые символы'
 };
 
 const AuthService = {
