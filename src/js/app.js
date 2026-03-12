@@ -113,23 +113,32 @@ const App = {
     },
 
     initPasswordToggles() {
-        const toggleBtn = document.querySelector('#togglePassword');
+        const confirmInput = document.querySelector('#confirm-password');
         const passwordInput = document.querySelector('#password');
+        const togglePassword = document.querySelector('#togglePassword');
+        const toggleConfirmPassword = document.querySelector('#toggleConfirmPassword');
         const eyeImg = document.querySelector('#eyeIcon');
+        const eyeImgConfirm = document.querySelector('#eyeIconConfirm');
 
-        toggleBtn.addEventListener('click', () => {
-            // 1. Определяем, скрыт ли пароль сейчас
-            const isPassword = passwordInput.type === 'password';
+        // Проверяем, есть ли на странице основное поле пароля
+        if (passwordInput && togglePassword) {
+            togglePassword.addEventListener('click', () => {
+                const isPassword = passwordInput.type === 'password';
+                passwordInput.type = isPassword ? 'text' : 'password';
+                eyeImg.src = isPassword ? 'images/icons/Eye.jpeg' : 'images/icons/Eye-off.jpeg';
+            });
+        }
 
-            // 2. Переключаем тип поля (password <-> text)
-            passwordInput.type = isPassword ? 'text' : 'password';
+        // Проверяем, есть ли на странице поле повтора пароля
+        if (confirmInput && toggleConfirmPassword) { 
+            toggleConfirmPassword.addEventListener('click', () => {
+                const isPassword = confirmInput.type === 'password';
+                confirmInput.type = isPassword ? 'text' : 'password';
+                // Здесь нужна своя картинка для второй кнопки, иначе будет меняться первая
+                eyeImgConfirm.src = isPassword ? 'images/icons/Eye.jpeg' : 'images/icons/Eye-off.jpeg';
+            });
+        }
 
-            // 3. Подменяем картинку (пути к вашим файлам)
-            eyeImg.src = isPassword ? '/images/icons/Eye off.jpeg' : '/images/icons/Eye.jpeg';
-            
-            // 4. Опционально: меняем текст для незрячих пользователей
-            // eyeImg.alt = isPassword ? 'Скрыть пароль' : 'Показать пароль';
-        });
     },
 
     showProfile() {
