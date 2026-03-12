@@ -174,47 +174,6 @@ const App = {
         }
     },
 
-    // showLogin(error, formData) {
-    //     this.currentView = 'login';
-    //     document.body.classList.add('auth-page');
-    //     const app = document.getElementById('app');
-    //     app.innerHTML = this.templates['login-form']({ 
-    //         error: error,
-    //         email: formData?.email || ''
-    //     });
-    //     this.attachLoginHandler();
-        
-    //     const backLink = document.querySelector('.back-to-main a');
-    //     if (backLink) {
-    //         backLink.addEventListener('click', (e) => {
-    //             e.preventDefault();
-    //             e.stopPropagation(); // Останавливаем всплытие события
-    //             this.navigateTo('/');
-    //         });
-    //     }
-    // },
-
-    // showRegister(error, success, formData) {
-    //     this.currentView = 'register';
-    //     document.body.classList.add('auth-page');
-    //     const app = document.getElementById('app');
-    //     app.innerHTML = this.templates['register-form']({ 
-    //         error: error,
-    //         success: success,
-    //         email: formData?.email || ''
-    //     });
-    //     this.attachRegisterHandler();
-        
-
-    //     const backLink = document.querySelector('.back-to-main a');
-    //     if (backLink) {
-    //         backLink.addEventListener('click', (e) => {
-    //             e.preventDefault();
-    //             e.stopPropagation(); // Останавливаем всплытие события
-    //             this.navigateTo('/');
-    //         });
-    //     }
-    // },
     
     attachLoginHandler() {
         const form = document.getElementById('login-form');
@@ -230,10 +189,17 @@ const App = {
             
             const validation = AuthValidator.validateLogin(email, password);
             
-            this.clearLoginError();
+            this.clearFieldErrors(); // Очищаем ошибки полей
+            this.clearLoginError(); // Очищаем общую ошибку
             
             if (!validation.isValid) {
-                this.showLoginError(validation.errors[0]);
+                // Подсвечиваем оба поля красным при любой ошибке валидации
+                const fieldErrors = {
+                    email: ' ',
+                    password: ' '
+                };
+                this.showFieldErrors(fieldErrors);
+                this.showLoginError('Неверный email или пароль')
                 return;
             }
             
@@ -243,14 +209,13 @@ const App = {
                 this.checkAuth();
                 this.navigateTo('/'); 
             } else {
-                if (result.fieldErrors) {
-                    this.showFieldErrors({
-                        email: result.fieldErrors.email,
-                        password: result.fieldErrors.password
-                    });
-                } else {
-                    this.showLoginError(result.error || 'Ошибка при входе');
-                }
+                // При любой ошибке от сервера подсвечиваем оба поля красным
+                const fieldErrors = {
+                    email: ' ',
+                    password: ' '
+                };
+                this.showFieldErrors(fieldErrors);
+                this.showLoginError('Неверный email или пароль');
             }
         };
         
@@ -318,13 +283,7 @@ const App = {
     form.addEventListener('submit', this._registerHandler);
 },
     
-    // clearLoginError() { /* ... */ },
-    // showLoginError(message) { /* ... */ },
-    // clearFieldErrors() { /* ... */ },
-    // clearMessages() { /* ... */ },
-    // showFieldErrors(fieldErrors) { /* ... */ },
-    // showSuccessMessage(message) { /* ... */ },
-    // showGeneralError(message) { /* ... */ },
+
     clearLoginError() {
         const errorDiv = document.querySelector('.login-error');
         if (errorDiv) errorDiv.remove();
