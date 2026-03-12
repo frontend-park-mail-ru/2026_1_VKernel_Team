@@ -1,5 +1,3 @@
-import { apiClient, API_ENDPOINTS } from '../api/aliClient.js';
-
 const HTTP_STATUS = {
     UNAUTHORIZED: 401
 };
@@ -148,5 +146,3 @@ const AuthService = {
         };
     }
 };
-
-export default AuthService;

@@ -19,7 +19,7 @@ const App = {
     async loadTemplates() {
         const templateNames = [
             'auth-links',
-            'login-form',
+            'login-forms',
             'register-form',
             'user-profile',
             'main-page',
@@ -173,7 +173,7 @@ const App = {
         this.currentView = 'login';
         document.body.classList.add('auth-page');
         const app = document.getElementById('app');
-        app.innerHTML = this.templates['login-form']({
+        app.innerHTML = this.templates['login-forms']({
             error: error,
             email: formData?.email || ''
         });
@@ -300,7 +300,7 @@ const App = {
     },
 
     attachLoginHandler() {
-        const form = document.getElementById('login-form');
+        const form = document.getElementById('login-forms');
         if (!form) return;
 
         // Удаляем старый обработчик если есть
@@ -346,7 +346,7 @@ const App = {
         if (emailField) emailField.classList.add('error');
         if (passwordField) passwordField.classList.add('error');
         
-        const form = document.getElementById('login-form');
+        const form = document.getElementById('login-forms');
         const errorDiv = document.createElement('div');
         errorDiv.className = 'login-error';
         errorDiv.textContent = message;

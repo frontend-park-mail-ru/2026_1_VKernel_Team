@@ -1,6 +1,6 @@
 const API_URL = 'http://clover-go.ru:8000/api/v1';
 
-export const API_ENDPOINTS = {
+const API_ENDPOINTS = {
     AUTH: {
         REGISTER: '/auth/register',
         LOGIN: '/auth/login',
@@ -31,7 +31,7 @@ export const API_ENDPOINTS = {
     }
 };
 
-export const apiClient = {
+const apiClient = {
     async request(endpoint, method = 'GET', body = null, customHeaders = {}) {
         const headers = {
             'Content-Type': 'application/json',
