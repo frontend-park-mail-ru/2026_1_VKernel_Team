@@ -267,40 +267,60 @@ input.error {
 
 
 /* ========== ПОЛЕ ПАРОЛЯ С ГЛАЗИКОМ ========== */
+/* Контейнер для выравнивания */
 .password-wrapper {
-  position: relative;
-  display: flex;
-  align-items: center;
-  width: 100%;
-  max-width: 300px;
+    position: relative;
+    width: 100%;
 }
 
+/* Ваши стили с одним изменением: padding-right */
 .password-wrapper input {
-  width: 100%;
-  padding: 10px 45px 10px 10px; /* 45px справа — место для картинки */
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  box-sizing: border-box;
+    width: 100%;
+    padding: 15px 50px 15px 20px; /* 50px справа, чтобы текст не заходил под глаз */
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    font-size: 16px;
+    transition: all 0.3s;
+    background: #fafafa;
+    box-sizing: border-box; /* Важно: чтобы padding не раздувал ширину */
 }
 
+/* Ваши стили для фокуса */
+.password-wrapper input:focus {
+    outline: none;
+    border-color: #667eea;
+    background: white;
+    box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+}
+
+/* Стили для кнопки с картинкой */
 .eye-btn {
-  position: absolute;
-  right: 10px; /* Отступ картинки от правого края */
-  background: none;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+    position: absolute;
+    right: 15px; /* Отступ от правого края */
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    opacity: 0.5;
+    transition: opacity 0.3s;
+}
+
+.eye-btn:hover {
+    opacity: 1;
 }
 
 .eye-btn img {
-  width: 24px; /* Размер вашей иконки */
-  height: auto;
-  opacity: 0.6; /* Можно приглушить цвет */
+    width: 22px; /* Размер иконки под ваш шрифт 16px */
+    height: auto;
+    display: block;
 }
 
-.eye-btn:hover img {
-  opacity: 1;
+/* Если у инпута рядом есть класс .error, делаем иконку краснее */
+input.error + .eye-btn img {
+    filter: sepia(1) saturate(5) hue-rotate(-50deg); 
+    opacity: 0.8;
 }
