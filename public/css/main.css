@@ -415,7 +415,7 @@ body .main-container {
 
 .rec-card-content {
     height: 40%;
-    padding: 12px;
+    padding: 10px 8px;
     display: flex;
     flex-direction: column;
     gap: 0px;
@@ -424,7 +424,7 @@ body .main-container {
 
 .rec-card-footer {
     display: grid;
-    grid-template-columns: 1fr auto;  /* левая колонка тянется, правая под контент */
+    grid-template-columns: 150px 70px;  /* левая колонка тянется, правая под контент */
     gap: 10px;
     align-items: center;
     margin-top: auto;  /* прижимаем к низу */
@@ -470,10 +470,9 @@ body .main-container {
     font-size: 12px;
 }
 
-.rec-card-actions {
+.rec-card-footer-actions {
     display: flex;
     flex-direction: column;
-    gap: 4px;
     flex-shrink: 0;
     justify-content: flex-end;
     align-items: flex-end;
