@@ -267,16 +267,40 @@ input.error {
 
 
 /* ========== ПОЛЕ ПАРОЛЯ С ГЛАЗИКОМ ========== */
-.password-input {
-    background-image: url('images/icons/Eye.jpeg');
-    background-position: right 15px center;
-    background-repeat: no-repeat;
-    background-size: 20px 20px;
-    padding-right: 45px;
-    background-color: #fafafa;
+.password-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: 300px;
 }
 
-.password-input[type="text"] {
-    background-image: url('images/icons/Eye off.jpeg');
-    background-size: 20px 20px;
+.password-wrapper input {
+  width: 100%;
+  padding: 10px 45px 10px 10px; /* 45px справа — место для картинки */
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.eye-btn {
+  position: absolute;
+  right: 10px; /* Отступ картинки от правого края */
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.eye-btn img {
+  width: 24px; /* Размер вашей иконки */
+  height: auto;
+  opacity: 0.6; /* Можно приглушить цвет */
+}
+
+.eye-btn:hover img {
+  opacity: 1;
 }

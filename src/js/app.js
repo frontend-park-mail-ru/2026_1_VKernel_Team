@@ -113,24 +113,23 @@ const App = {
     },
 
     initPasswordToggles() {
-        const passwordInput = document.getElementById('password');
-        
-        if (passwordInput) {
-            passwordInput.addEventListener('click', function(e) {
-                // Проверяем, кликнули ли по области иконки (правые 45px)
-                const rect = this.getBoundingClientRect();
-                const clickX = e.clientX - rect.left;
-                
-                if (clickX > rect.width - 45) {
-                    // Переключаем тип поля
-                    if (this.type === 'password') {
-                        this.type = 'text';
-                    } else {
-                        this.type = 'password';
-                    }
-                }
-            });
-        }
+        const toggleBtn = document.querySelector('#togglePassword');
+        const passwordInput = document.querySelector('#password');
+        const eyeImg = document.querySelector('#eyeIcon');
+
+        toggleBtn.addEventListener('click', () => {
+            // 1. Определяем, скрыт ли пароль сейчас
+            const isPassword = passwordInput.type === 'password';
+
+            // 2. Переключаем тип поля (password <-> text)
+            passwordInput.type = isPassword ? 'text' : 'password';
+
+            // 3. Подменяем картинку (пути к вашим файлам)
+            eyeImg.src = isPassword ? '/images/icons/Eye off.jpeg' : '/images/icons/Eye.jpeg';
+            
+            // 4. Опционально: меняем текст для незрячих пользователей
+            // eyeImg.alt = isPassword ? 'Скрыть пароль' : 'Показать пароль';
+        });
     },
 
     showProfile() {
