@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:8000/api/v1';
+const API_URL = 'http://clover-go.ru:8000/api/v1';
 
 const apiClient = {
     async request(endpoint, method = 'GET', body = null, customHeaders = {}) {
