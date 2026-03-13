@@ -1,3 +1,9 @@
+/**
+ * Точка входа в приложение
+ * 
+ * @module main
+ */
+
 import './utils/storage.js';
 import './validators/authValidator.js';
 import './services/authService.js';

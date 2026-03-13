@@ -1,3 +1,9 @@
+/**
+ * Сервис для работы с авторизацией
+ * 
+ * @module authService
+ */
+
 import { API_ENDPOINTS, apiClient } from "../api/apiClient.js";
 import { Storage } from "../utils/storage.js";
 
@@ -5,6 +11,7 @@ const HTTP_STATUS = {
     UNAUTHORIZED: 401
 };
 
+// Словарь ошибок
 const AuthErrorMap = {
     'invalid input': 'Некорректный ввод',
     'wrong email or password': 'Неверный email или пароль',
@@ -26,24 +33,41 @@ const AuthErrorMap = {
     'name contains invalid characters': 'Имя содержит недопустимые символы'
 };
 
+/**
+ * Объект реализующий авторизацию
+ */
 const AuthService = {
+
+    /**
+     * Регистрация нового пользователя
+     * @async
+     * @param {Object} userData - данные пользователя
+     * @param {string} userData.name - имя пользователя
+     * @param {string} userData.email - email
+     * @param {string} userData.password - пароль
+     * @returns {Promise<Object>} - результат регистрации
+     * 
+     */
     async register(userData) {
         console.log('Попытка регистрации:', userData);
 
+        // Отправляем запрос на сервер
         const result = await apiClient.post(API_ENDPOINTS.AUTH.REGISTER, {
-            name: userData.name || userData.username,
+            name: userData.name || userData.username, // поддерживаем оба варианта
             email: userData.email,
             password: userData.password
         });
 
+        // Если сервер вернул ошибку
         if (!result.success) {
             console.log('Ошибка регистрации. Статус:', result.status, 'Ошибка:', result.error);
 
-            // Обработка ошибок по Swagger
+            // Собираем ошибки по полям (email, password, name)
             const fieldErrors = {};
             const errorMsg = result.error.toLowerCase();
             const translatedError = AuthErrorMap[result.error] || result.error;
 
+            // Определяем, к какому полю относится ошибка
             if (errorMsg.includes('email') || errorMsg.includes('exists') || errorMsg.includes('format')) {
                 fieldErrors.email = translatedError;
             } else if (errorMsg.includes('password') || errorMsg.includes('short') || errorMsg.includes('digit') || errorMsg.includes('letter') || errorMsg.includes('special')) {
@@ -51,6 +75,8 @@ const AuthService = {
             } else if (errorMsg.includes('name')) {
                 fieldErrors.name = translatedError;
             }
+            
+            // Если сервер прислал подробные ошибки по полям
             if (result.data) {
                 if (result.data.email) fieldErrors.email = AuthErrorMap[result.data.email] || result.data.email;
                 if (result.data.password) fieldErrors.password = AuthErrorMap[result.data.password] || result.data.password;
@@ -64,8 +90,10 @@ const AuthService = {
             };
         }
 
+        // Всё хорошо - регистрация успешна
         console.log('Регистрация успешна, user_id:', result.data.user_id);
         
+        // Сохраняем пользователя в localStorage
         if (result.data.user) {
             Storage.setUser(result.data.user);
         }
@@ -80,6 +108,15 @@ const AuthService = {
         };
     },
 
+
+    /**
+     * Вход в систему
+     * @async
+     * @param {Object} credentials - учётные данные
+     * @param {string} credentials.email - email
+     * @param {string} credentials.password - пароль
+     * @returns {Promise<Object>} - результат входа
+     */
     async login(credentials) {
         console.log('Попытка входа:', credentials.email);
 
@@ -115,6 +152,11 @@ const AuthService = {
         };
     },
 
+    /**
+     * Выход из системы
+     * Удаляет сессию на сервере и чистит localStorage
+     * @async
+     */
     async logout() {
         const result = await apiClient.post(API_ENDPOINTS.AUTH.LOGOUT);
 
@@ -128,11 +170,24 @@ const AuthService = {
 
         Storage.logout();
         
-        // Здесь должен быть вызов роутера для навигации
-        // Пока оставляем window.location, но в идеале использовать роутер
-        window.location.href = '/';
+        // // Здесь должен быть вызов роутера для навигации
+        // // Пока оставляем window.location, но в идеале использовать роутер
+        // window.location.href = '/';
+        
+        // Используем роутер из App
+        if (app && app.navigateTo) {
+            app.navigateTo('/');
+        } else {
+            // fallback на случай ошибки
+            window.location.href = '/';
+        }
     },
 
+    /**
+     * Получаем данные текущего авторизованного пользователя
+     * @async
+     * @returns {Promise<Object>} - объект с полем success и user (если есть)
+     */
     async getCurrentUser() {
         const result = await apiClient.get(API_ENDPOINTS.AUTH.ME);
 

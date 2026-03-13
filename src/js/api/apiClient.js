@@ -2,6 +2,11 @@ import { CONFIG } from "../core/config.js";
 
 const API_URL = CONFIG.API.API_URL;
 
+
+/**
+* Объект со всеми адресами (эндпоинтами) нашего API
+* Сгруппировано по разделам: авторизация, объявления, пользователи и т.д.
+*/
 const API_ENDPOINTS = {
     AUTH: {
         REGISTER: '/auth/register',
@@ -33,6 +38,24 @@ const API_ENDPOINTS = {
     }
 };
 
+
+/**
+* Основной объект для отправки запросов на сервер
+* Содержит методы для GET, POST, PUT, DELETE запросов
+* 
+* @param {string} endpoint - адрес, куда отправляем запрос (например, '/auth/login')
+* @param {string} method - метод HTTP запроса (GET, POST, PUT, DELETE)
+* @param {Object} body - данные, которые отправляем на сервер (для POST/PUT)
+* @param {Object} customHeaders - дополнительные заголовки, если нужны
+* @returns {Promise<Object>} - ответ от сервера в виде объекта {success, data, error}
+* 
+* @example
+* // Пример вызова:
+* const result = await apiClient.request('/auth/login', 'POST', {
+*   email: 'user@mail.ru',
+*   password: '12345678'
+* });
+*/
 const apiClient = {
     async request(endpoint, method = 'GET', body = null, customHeaders = {}) {
         const headers = {

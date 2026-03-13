@@ -1,3 +1,13 @@
+/**
+ * Валидатор для форм авторизации
+ * Проверяет, правильно ли пользователь заполнил поля:
+ * - email должен быть настоящим
+ * - пароль достаточно сложный
+ * - имя содержит только допустимые символы
+ * 
+ * @module authValidator
+ */
+
 const AuthValidator = {
     USERNAME_REGEX: /^[a-zA-Z0-9_]+$/,
     EMAIL_REGEX: /^[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$/,
@@ -6,6 +16,7 @@ const AuthValidator = {
     FORBIDDEN_REGEX: /[^a-zA-Z0-9_]/,
     USERNAME_MIN_LENGTH: 3,
     PASSWORD_MIN_LENGTH: 8,
+    
     validateUsername(username) {
         if (!username) return false;
         return username.length >= this.USERNAME_MIN_LENGTH && this.USERNAME_REGEX.test(username);
