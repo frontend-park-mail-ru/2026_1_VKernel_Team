@@ -113,8 +113,8 @@ const AuthService = {
     },
 
     async check() {
-        const result = await apiClient.post(API_ENDPOINTS.AUTH.LOGIN, {});
-        
+        const result = await apiClient.get(API_ENDPOINTS.USERS.PROFILE);
+
         return {
             isAuthenticated: result.success,
             user: result.success ? result.data : null

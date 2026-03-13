@@ -252,7 +252,10 @@ const App = {
         this.showLoading(false);
 
         if (result.success) {
-            await this.checkAuth();
+            this.isAuthenticated = true;
+            this.user = result.data;
+
+            this.showSuccessMessage('Вход выполнен!');
             this.navigateTo('/');
             return;
         }
@@ -297,7 +300,9 @@ const App = {
             return;
         }
 
-        await this.checkAuth();
+        this.isAuthenticated = true;
+        this.user = result.data;
+
         this.showSuccessMessage('Регистрация успешна!');
         this.navigateTo('/');
     },
