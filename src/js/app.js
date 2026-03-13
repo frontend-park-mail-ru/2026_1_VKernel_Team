@@ -8,6 +8,7 @@
 
 import { AuthService } from "./services/authService.js";
 import { AuthValidator } from "./validators/authValidator.js";
+import { apiClient } from "./api/apiClient.js";
 
 
 /**
