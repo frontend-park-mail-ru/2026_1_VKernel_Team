@@ -40,7 +40,7 @@ process.on('uncaughtException', (err) => {
     console.log('Сервер продолжает работу...');
 });
 
-process.on('unhandledRejection', (reason, promise) => {
+process.on('unhandledRejection', (reason, _promise) => {
     console.error('Необработанный reject:', reason);
 });
 
@@ -48,16 +48,16 @@ const server = http.createServer(async (req, res) => {
     req.on('error', (err) => {
         console.error('Ошибка запроса:', err.message);
     });
-    
+
     res.on('error', (err) => {
         console.error('Ошибка ответа:', err.message);
     });
-    
+
     try {
         let pathname;
         try {
             pathname = decodeURIComponent(url.parse(req.url).pathname || '');
-        } catch (e) {
+        } catch {
             console.warn('Некорректный URI:', req.url);
             if (!res.headersSent) {
                 res.writeHead(400, { 'Content-Type': 'text/plain' });
@@ -65,11 +65,11 @@ const server = http.createServer(async (req, res) => {
             }
             return;
         }
-        
+
         if (pathname.startsWith('/src/')) {
             const srcFilePath = path.join(__dirname, '..', pathname);
             const SRC_DIR = path.join(__dirname, '..', 'src');
-            
+
             if (!srcFilePath.startsWith(SRC_DIR)) {
                 console.warn(`Заблокирована попытка доступа к: ${srcFilePath}`);
                 if (!res.headersSent) {
@@ -78,12 +78,12 @@ const server = http.createServer(async (req, res) => {
                 }
                 return;
             }
-            
+
             try {
                 const data = await fs.promises.readFile(srcFilePath);
                 const ext = path.extname(srcFilePath);
                 const contentType = MIME_TYPES[ext] || 'application/octet-stream';
-                
+
                 if (!res.headersSent) {
                     res.writeHead(200, { 'Content-Type': contentType });
                     res.end(data);
@@ -103,10 +103,10 @@ const server = http.createServer(async (req, res) => {
                 }
             }
         }
-        
+
         let filePath;
         let fileExists = false;
-        
+
         if (pathname === '/' || pathname === '/index.html') {
             filePath = path.join(PUBLIC_DIR, 'index.html');
             fileExists = true;
@@ -120,11 +120,11 @@ const server = http.createServer(async (req, res) => {
                 fileExists = false;
             }
         }
-        
+
         if (!fileExists) {
             filePath = path.join(PUBLIC_DIR, 'index.html');
         }
-        
+
         if (!filePath.startsWith(PUBLIC_DIR)) {
             console.warn(`Заблокирована попытка доступа к: ${filePath}`);
             if (!res.headersSent) {
@@ -133,7 +133,7 @@ const server = http.createServer(async (req, res) => {
             }
             return;
         }
-        
+
         const data = await fs.promises.readFile(filePath);
         const ext = path.extname(filePath);
         const contentType = MIME_TYPES[ext] || 'application/octet-stream';
@@ -143,7 +143,7 @@ const server = http.createServer(async (req, res) => {
         console.log(`${req.method} ${req.url}`);
     } catch (error) {
         console.error('Ошибка сервера:', error);
-        
+
         if (!res.headersSent) {
             if (error.code === 'ENOENT') {
                 res.writeHead(404, { 'Content-Type': 'text/html; charset=UTF-8' });

@@ -7,13 +7,20 @@
   "scripts": {
     "start": "node server/server.js",
     "dev": "node --watch server/server.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/frontend-park-mail-ru/2026_1_VKernel_Team.git"
   },
-  "keywords": ["klever", "classifieds", "express", "static-server"],
+  "keywords": [
+    "klever",
+    "classifieds",
+    "express",
+    "static-server"
+  ],
   "author": "VKernel_Team",
   "license": "ISC",
   "bugs": {
@@ -23,5 +30,10 @@
   "dependencies": {
     "dotenv": "^17.3.1",
     "handlebars": "^4.7.8"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.0.3",
+    "globals": "^17.4.0"
   }
 }
