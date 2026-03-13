@@ -1,7 +1,7 @@
-import { AdsService } from "./services/adsServices";
-import { AuthService } from "./services/authService";
-import { Storage } from "./utils/storage";
-import { AuthValidator } from "./validators/authValidator";
+import { AdsService } from "./services/adsServices.js";
+import { AuthService } from "./services/authService.js";
+import { Storage } from "./utils/storage.js";
+import { AuthValidator } from "./validators/authValidator.js";
 
 const App = {
     templates: {},
@@ -418,3 +418,5 @@ const App = {
 };
 
 document.addEventListener('DOMContentLoaded', () => App.init());
+
+export { App };

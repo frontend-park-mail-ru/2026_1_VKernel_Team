@@ -1,5 +1,5 @@
-import { API_ENDPOINTS, apiClient } from "../api/apiClient";
-import { Storage } from "../utils/storage";
+import { API_ENDPOINTS, apiClient } from "../api/apiClient.js";
+import { Storage } from "../utils/storage.js";
 
 const HTTP_STATUS = {
     UNAUTHORIZED: 401

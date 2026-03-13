@@ -1,4 +1,4 @@
-import { CONFIG } from "../core/config";
+import { CONFIG } from "../core/config.js";
 
 const AdsService = {
     API_URL: CONFIG.API.API_URL,
