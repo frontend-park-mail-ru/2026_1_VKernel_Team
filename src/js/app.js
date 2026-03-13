@@ -52,14 +52,10 @@ const App = {
         this.user = result.user;
     },
 
-    isProtectedRoute(path) {
-        return ['/profile'].includes(path);
-    },
-
     async router() {
         const path = window.location.pathname;
 
-        if (!this.isAuthenticated && this.isProtectedRoute(path)) {
+        if (!this.isAuthenticated && ['/profile'].includes(path)) {
             this.navigateTo('/login');
             return;
         }
@@ -91,7 +87,7 @@ const App = {
     async renderMain() {
         document.body.classList.remove('auth-page');
         const app = document.getElementById('app');
-        
+    
         const adsResult = await apiClient.get(API_ENDPOINTS.ADS.GET_ALL);
         const ads = adsResult.success ? adsResult.data : [];
         const formattedAds = ads.map(ad => this.formatAdCard(ad));
@@ -100,9 +96,9 @@ const App = {
             isAuthenticated: this.isAuthenticated,
             user: this.user,
             recommendations: formattedAds
-        });
-        
-        this.attachMainEventListeners();
+    });
+    
+    this.attachMainEventListeners();
     },
 
     formatAdCard(ad) {
