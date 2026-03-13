@@ -34,6 +34,4 @@ const Storage = {
     logout: undefined  
 };
 
-if (typeof window !== 'undefined') {
-    window.Storage = Storage;
-}
+

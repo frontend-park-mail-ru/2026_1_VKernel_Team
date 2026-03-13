@@ -32,41 +32,43 @@ const AuthService = {
             password: userData.password
         });
 
-        if (!result.success) {
-            if (result.status === HTTP_STATUS.BAD_REQUEST && result.data) {
-                const fieldErrors = {};
-                if (result.data.email) {
-                    fieldErrors.email = AuthErrorMap[result.data.email] || result.data.email;
-                }
-                if (result.data.password) {
-                    fieldErrors.password = AuthErrorMap[result.data.password] || result.data.password;
-                }
-                if (result.data.name) {
-                    fieldErrors.name = AuthErrorMap[result.data.name] || result.data.name;
-                }
+        if (result.success) {
+            return {
+                success: true,
+                data: {
+                    message: 'Регистрация успешна',
+                    user_id: result.data.user_id
+                },
+                error: null
+            };
+        }
 
-                return {
-                    success: false,
-                    error: 'Ошибка в полях',
-                    fieldErrors: fieldErrors,
-                    status: result.status
-                };
+        if (result.status === HTTP_STATUS.BAD_REQUEST && result.data) {
+            const fieldErrors = {};
+            if (result.data.email) {
+                fieldErrors.email = AuthErrorMap[result.data.email] || result.data.email;
             }
-            const translatedError = AuthErrorMap[result.error] || result.error;
+            if (result.data.password) {
+                fieldErrors.password = AuthErrorMap[result.data.password] || result.data.password;
+            }
+            if (result.data.name) {
+                fieldErrors.name = AuthErrorMap[result.data.name] || result.data.name;
+            }
+
             return {
                 success: false,
-                error: translatedError,
-                fieldErrors: null,
+                error: 'Ошибка в полях',
+                fieldErrors: fieldErrors,
                 status: result.status
             };
         }
+
+        const translatedError = AuthErrorMap[result.error] || result.error;
         return {
-            success: true,
-            data: {
-                message: 'Регистрация успешна',
-                user_id: result.data.user_id
-            },
-            error: null
+            success: false,
+            error: translatedError,
+            fieldErrors: null,
+            status: result.status
         };
     },
 
@@ -76,83 +78,53 @@ const AuthService = {
             password: credentials.password
         });
 
-        if (!result.success) {
-            if (result.status === HTTP_STATUS.UNAUTHORIZED) {
-                const fieldErrors = {
-                    email: ' ',
-                    password: ' '
-                };
-                
-                return {
-                    success: false,
-                    error: 'Неверный email или пароль',
-                    fieldErrors: fieldErrors,
-                    status: result.status
-                };
-            }
-            const translatedError = AuthErrorMap[result.error] || result.error;
+        if (result.success) {
+            return {
+                success: true,
+                data: result.data,
+                error: null
+            };
+        }
+
+        if (result.status === HTTP_STATUS.UNAUTHORIZED) {
             return {
                 success: false,
-                error: translatedError,
-                fieldErrors: null,
+                error: 'Неверный email или пароль',
+                fieldErrors: {
+                    email: ' ',
+                    password: ' '
+                },
                 status: result.status
             };
         }
 
-        console.log('Вход успешен, данные:', result.data);
+        const translatedError = AuthErrorMap[result.error] || result.error;
         return {
-            success: true,
-            data: result.data,
-            error: null
+            success: false,
+            error: translatedError,
+            fieldErrors: null,
+            status: result.status
         };
     },
-    async logout() {
-        const result = await apiClient.post(API_ENDPOINTS.AUTH.LOGOUT);
 
-        if (result.success) {
-            console.log('Выход успешен');
-        } else if (result.status === HTTP_STATUS.UNAUTHORIZED) {
-            console.log('Токен не валиден, но всё равно выходим');
-        } else {
-            console.error('Ошибка при выходе:', result.error);
-        }
+    async logout() {
+        await apiClient.post(API_ENDPOINTS.AUTH.LOGOUT);
         window.location.href = '/';
     },
 
     async check() {
-        const result = await apiClient.get(API_ENDPOINTS.AUTH.CHECK);
+        const result = await apiClient.post(API_ENDPOINTS.AUTH.LOGIN, {});
 
-        if (!result.success) {
-            if (result.status === HTTP_STATUS.UNAUTHORIZED) {
-                console.log('Пользователь не авторизован');
-                return {
-                    success: false,
-                    isAuthenticated: false,
-                    user: null
-                };
-            }
-            console.error('Ошибка проверки авторизации:', result.error);
+        if (result.success) {
             return {
-                success: false,
-                isAuthenticated: false,
-                user: null
+                isAuthenticated: true,
+                user: result.data
             };
         }
+
         return {
-            success: true,
-            isAuthenticated: true,
-            user: result.data 
-        };
-    },
-    async getCurrentUser() {
-        const result = await this.check();
-        return {
-            success: result.isAuthenticated,
-            user: result.user
+            isAuthenticated: false,
+            user: null
         };
     }
 };
-
-if (typeof window !== 'undefined') {
-    window.AuthService = AuthService;
-}

@@ -4,6 +4,14 @@ const App = {
     isAuthenticated: false,
     user: null,
 
+    UI_CONSTANTS: {
+        DEFAULT_AVATAR: '/images/default-avatar.jpg',
+        DEFAULT_AD_IMAGE: '/images/default-ad.jpg',
+        EYE_OPEN: '/images/icons/Eye.jpeg',
+        EYE_CLOSED: '/images/icons/Eye-off.jpeg',
+        LOADER_HTML: '<div class="loader"></div>'
+    },
+
     async init() {
         await this.loadTemplates();
         await this.checkAuth();
@@ -27,43 +35,34 @@ const App = {
             this.templates[name] = Handlebars.compile(source);
         }
 
-        Handlebars.registerHelper('formatPrice', function(price) {
-            if (price === 0 || price === '0') {
-                return 'Бесплатно';
-            }
-            return price + ' ₽';
+        Handlebars.registerHelper('formatPrice', (price) => {
+            return price === 0 || price === '0' ? 'Бесплатно' : price + ' ₽';
         });
 
         Handlebars.registerHelper('ifAuthenticated', function(options) {
             return App.isAuthenticated ? options.fn(this) : options.inverse(this);
         });
 
-        Handlebars.registerHelper('user', function() {
-            return App.user;
-        });
+        Handlebars.registerHelper('user', () => this.user);
     },
 
     async checkAuth() {
         const result = await AuthService.check();
         this.isAuthenticated = result.isAuthenticated;
         this.user = result.user;
-        
-        if (!this.isAuthenticated && this.isProtectedRoute(window.location.pathname)) {
-            this.navigateTo('/login');
-        }
-        
-        return this.isAuthenticated;
     },
 
     isProtectedRoute(path) {
-        const protectedRoutes = ['/profile'];
-        return protectedRoutes.includes(path);
+        return ['/profile'].includes(path);
     },
 
     async router() {
-        await this.checkAuth();
-        
         const path = window.location.pathname;
+
+        if (!this.isAuthenticated && this.isProtectedRoute(path)) {
+            this.navigateTo('/login');
+            return;
+        }
 
         switch (path) {
             case '/':
@@ -77,11 +76,7 @@ const App = {
                 this.showRegister();
                 break;
             case '/profile':
-                if (this.isAuthenticated) {
-                    this.showProfile();
-                } else {
-                    this.navigateTo('/login');
-                }
+                this.showProfile();
                 break;
             default:
                 this.renderNotFound();
@@ -97,23 +92,15 @@ const App = {
         document.body.classList.remove('auth-page');
         const app = document.getElementById('app');
         
-        try {
-            const adsResult = await apiClient.get(API_ENDPOINTS.ADS.GET_ALL);
-            const ads = adsResult.success ? adsResult.data : [];
-            const formattedAds = ads.map(ad => this.formatAdCard(ad));
+        const adsResult = await apiClient.get(API_ENDPOINTS.ADS.GET_ALL);
+        const ads = adsResult.success ? adsResult.data : [];
+        const formattedAds = ads.map(ad => this.formatAdCard(ad));
 
-            app.innerHTML = this.templates['main-page']({
-                isAuthenticated: this.isAuthenticated,
-                user: this.user,
-                recommendations: formattedAds
-            });
-        } catch (error) {
-            app.innerHTML = this.templates['main-page']({
-                isAuthenticated: this.isAuthenticated,
-                user: this.user,
-                recommendations: []
-            });
-        }
+        app.innerHTML = this.templates['main-page']({
+            isAuthenticated: this.isAuthenticated,
+            user: this.user,
+            recommendations: formattedAds
+        });
         
         this.attachMainEventListeners();
     },
@@ -122,113 +109,87 @@ const App = {
         return {
             ...ad,
             formattedPrice: ad.price === 0 ? 'Бесплатно' : ad.price + ' ₽',
-            mainPhoto: ad.photos && ad.photos.length > 0 
-                ? ad.photos[0] 
-                : '/images/default-ad.jpg',
+            mainPhoto: ad.photos?.length > 0 ? ad.photos[0] : this.UI_CONSTANTS.DEFAULT_AD_IMAGE,
             createdDate: ad.created_at ? new Date(ad.created_at).toLocaleDateString('ru-RU') : ''
         };
     },
 
     renderNotFound() {
-        const app = document.getElementById('app');
-        app.innerHTML = this.templates['not-found']();
+        document.getElementById('app').innerHTML = this.templates['not-found']();
     },
 
     attachMainEventListeners() {
         const profileIcon = document.querySelector('.profile-icon');
-        if (profileIcon) {
-            profileIcon.addEventListener('click', (e) => {
-                e.preventDefault();
-                this.navigateTo(this.isAuthenticated ? '/profile' : '/login');
-            });
-        }
+        profileIcon?.addEventListener('click', (e) => {
+            e.preventDefault();
+            this.navigateTo(this.isAuthenticated ? '/profile' : '/login');
+        });
 
         const placeAdBtn = document.querySelector('.place-ad-btn');
         if (placeAdBtn) {
-            placeAdBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                if (this.isAuthenticated) {
-                    alert('Функция размещения объявления будет доступна позже');
-                } else {
-                    this.navigateTo('/login');
-                }
-            });
+            placeAdBtn.disabled = true;
+            placeAdBtn.title = 'Функция временно недоступна';
         }
 
         document.querySelectorAll('.ad-card').forEach(card => {
-            card.addEventListener('click', (e) => {
+            card.addEventListener('click', () => {
                 const adId = card.dataset.id;
-                if (adId) {
-                    console.log('Переход к объявлению:', adId);
-                }
+                if (adId) console.log('Переход к объявлению:', adId);
             });
         });
     },
 
     initPasswordToggles() {
-        const confirmInput = document.querySelector('#confirm-password');
-        const passwordInput = document.querySelector('#password');
-        const togglePassword = document.querySelector('#togglePassword');
-        const toggleConfirmPassword = document.querySelector('#toggleConfirmPassword');
-        const eyeImg = document.querySelector('#eyeIcon');
-        const eyeImgConfirm = document.querySelector('#eyeIconConfirm');
+        const elements = {
+            password: {
+                input: document.querySelector('#password'),
+                toggle: document.querySelector('#togglePassword'),
+                eye: document.querySelector('#eyeIcon')
+            },
+            confirm: {
+                input: document.querySelector('#confirm-password'),
+                toggle: document.querySelector('#toggleConfirmPassword'),
+                eye: document.querySelector('#eyeIconConfirm')
+            }
+        };
 
-        if (passwordInput && togglePassword) {
-            togglePassword.addEventListener('click', () => {
-                const isPassword = passwordInput.type === 'password';
-                passwordInput.type = isPassword ? 'text' : 'password';
-                if (eyeImg) {
-                    eyeImg.src = isPassword ? '/images/icons/Eye.jpeg' : '/images/icons/Eye-off.jpeg';
-                }
-            });
-        }
-
-        if (confirmInput && toggleConfirmPassword) { 
-            toggleConfirmPassword.addEventListener('click', () => {
-                const isPassword = confirmInput.type === 'password';
-                confirmInput.type = isPassword ? 'text' : 'password';
-                if (eyeImgConfirm) {
-                    eyeImgConfirm.src = isPassword ? '/images/icons/Eye.jpeg' : '/images/icons/Eye-off.jpeg';
-                }
-            });
-        }
+        Object.values(elements).forEach(({ input, toggle, eye }) => {
+            if (input && toggle && eye) {
+                toggle.addEventListener('click', () => {
+                    const isPassword = input.type === 'password';
+                    input.type = isPassword ? 'text' : 'password';
+                    eye.src = isPassword ? this.UI_CONSTANTS.EYE_OPEN : this.UI_CONSTANTS.EYE_CLOSED;
+                });
+            }
+        });
     },
 
     showProfile() {
         document.body.classList.add('auth-page');
-        const app = document.getElementById('app');
-        
-        app.innerHTML = this.templates['user-profile']({
+        document.getElementById('app').innerHTML = this.templates['user-profile']({
             email: this.user?.email || 'Неизвестно',
             name: this.user?.name || this.user?.email?.split('@')[0] || 'Пользователь',
             registeredAt: this.user?.created_at 
                 ? new Date(this.user.created_at).toLocaleDateString('ru-RU') 
-                : 'неизвестно'
+                : 'неизвестно',
+            avatar: this.UI_CONSTANTS.DEFAULT_AVATAR
         });
         
-        const logoutBtn = document.querySelector('.logout-btn');
-        if (logoutBtn) {
-            logoutBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                this.logout();
-            });
-        }
+        document.querySelector('.logout-btn')?.addEventListener('click', (e) => {
+            e.preventDefault();
+            this.logout();
+        });
 
-        const backBtn = document.querySelector('.back-link');
-        if (backBtn) {
-            backBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                this.navigateTo('/');
-            });
-        }
+        document.querySelector('.back-link')?.addEventListener('click', (e) => {
+            e.preventDefault();
+            this.navigateTo('/');
+        });
     },
 
     showLogin(error, formData) {
         this.currentView = 'login';
         document.body.classList.add('auth-page');
-        const app = document.getElementById('app');
-        
-        app.innerHTML = this.templates['login-forms']({
+        document.getElementById('app').innerHTML = this.templates['login-forms']({
             error: error,
             email: formData?.email || ''
         });
@@ -236,21 +197,16 @@ const App = {
         this.attachLoginHandler();
         this.initPasswordToggles();
         
-        const backLink = document.querySelector('.back-to-main a');
-        if (backLink) {
-            backLink.addEventListener('click', (e) => {
-                e.preventDefault();
-                this.navigateTo('/');
-            });
-        }
+        document.querySelector('.back-to-main a')?.addEventListener('click', (e) => {
+            e.preventDefault();
+            this.navigateTo('/');
+        });
     },
 
     showRegister(error, success, formData) {
         this.currentView = 'register';
         document.body.classList.add('auth-page');
-        const app = document.getElementById('app');
-        
-        app.innerHTML = this.templates['register-form']({
+        document.getElementById('app').innerHTML = this.templates['register-form']({
             error: error,
             success: success,
             name: formData?.name || '',
@@ -260,13 +216,10 @@ const App = {
         this.attachRegisterHandler();
         this.initPasswordToggles();
         
-        const backLink = document.querySelector('.back-to-main a');
-        if (backLink) {
-            backLink.addEventListener('click', (e) => {
-                e.preventDefault();
-                this.navigateTo('/');
-            });
-        }
+        document.querySelector('.back-to-main a')?.addEventListener('click', (e) => {
+            e.preventDefault();
+            this.navigateTo('/');
+        });
     },
     
     async handleLoginSubmit(e) {
@@ -275,21 +228,15 @@ const App = {
         const email = document.getElementById('email').value.trim();
         const password = document.getElementById('password').value;
         
-        if (typeof AuthValidator !== 'undefined') {
-            const validation = AuthValidator.validateLogin(email, password);
-            
-            this.clearFieldErrors();
-            this.clearLoginError();
-            
-            if (!validation.isValid) {
-                const fieldErrors = {
-                    email: ' ',
-                    password: ' '
-                };
-                this.showFieldErrors(fieldErrors);
-                this.showLoginError('Неверный email или пароль');
-                return;
-            }
+        const validation = AuthValidator.validateLogin(email, password);
+        
+        this.clearFieldErrors();
+        this.clearLoginError();
+        
+        if (!validation.isValid) {
+            this.showFieldErrors({ email: ' ', password: ' ' });
+            this.showLoginError('Неверный email или пароль');
+            return;
         }
         
         this.showLoading(true);
@@ -298,19 +245,16 @@ const App = {
         
         if (result.success) {
             await this.checkAuth();
-            this.navigateTo('/'); 
-        } else {
-            if (result.fieldErrors) {
-                this.showFieldErrors(result.fieldErrors);
-            } else {
-                const fieldErrors = {
-                    email: ' ',
-                    password: ' '
-                };
-                this.showFieldErrors(fieldErrors);
-            }
-            this.showLoginError(result.error || 'Неверный email или пароль');
+            this.navigateTo('/');
+            return;
         }
+        
+        if (result.fieldErrors) {
+            this.showFieldErrors(result.fieldErrors);
+        } else {
+            this.showFieldErrors({ email: ' ', password: ' ' });
+        }
+        this.showLoginError(result.error || 'Неверный email или пароль');
     },
 
     async handleRegisterSubmit(e) {
@@ -321,36 +265,33 @@ const App = {
         const password = document.getElementById('password').value;
         const confirmPassword = document.getElementById('confirm-password').value;
 
-        if (typeof AuthValidator !== 'undefined') {
-            const validation = AuthValidator.validateRegister(
-                name, email, password, confirmPassword
-            );
+        const validation = AuthValidator.validateRegister(name, email, password, confirmPassword);
 
-            this.clearFieldErrors();
-            this.clearMessages();
+        this.clearFieldErrors();
+        this.clearMessages();
 
-            if (!validation.isValid) {
-                this.showFieldErrors(validation.fieldErrors);
-                return;
-            }
+        if (!validation.isValid) {
+            this.showFieldErrors(validation.fieldErrors);
+            return;
         }
 
         this.showLoading(true);
         const result = await AuthService.register({ name, email, password });
         this.showLoading(false);
 
+        if (!result.success && result.fieldErrors) {
+            this.showFieldErrors(result.fieldErrors);
+            return;
+        }
+        
         if (!result.success) {
-            if (result.fieldErrors) {
-                this.showFieldErrors(result.fieldErrors);
-                return;
-            }
             this.showGeneralError(result.error || 'Ошибка при регистрации');
             return;
         }
 
         await this.checkAuth();
         this.showSuccessMessage('Регистрация успешна!');
-        setTimeout(() => this.navigateTo('/'), 1500);
+        this.navigateTo('/');
     },
 
     attachLoginHandler() {
@@ -380,21 +321,17 @@ const App = {
     clearLoginError() {
         document.querySelectorAll('.login-error, .alert-error').forEach(el => el.remove());
         
-        const emailField = document.getElementById('email');
-        const passwordField = document.getElementById('password');
-        
-        if (emailField) emailField.classList.remove('error');
-        if (passwordField) passwordField.classList.remove('error');
+        ['email', 'password'].forEach(id => {
+            document.getElementById(id)?.classList.remove('error');
+        });
     },
 
     showLoginError(message) {
         this.clearLoginError();
 
-        const emailField = document.getElementById('email');
-        const passwordField = document.getElementById('password');
-        
-        if (emailField) emailField.classList.add('error');
-        if (passwordField) passwordField.classList.add('error');
+        ['email', 'password'].forEach(id => {
+            document.getElementById(id)?.classList.add('error');
+        });
         
         const form = document.getElementById('login-forms');
         const errorDiv = document.createElement('div');
@@ -415,8 +352,8 @@ const App = {
     showFieldErrors(fieldErrors) {
         this.clearFieldErrors();
         
-        for (const [field, error] of Object.entries(fieldErrors)) {
-            if (!error) continue;
+        Object.entries(fieldErrors).forEach(([field, error]) => {
+            if (!error) return;
             
             const inputId = field === 'confirmPassword' ? 'confirm-password' : field;
             const input = document.getElementById(inputId);
@@ -435,7 +372,7 @@ const App = {
                     input.parentNode.appendChild(errorDiv);
                 }
             }
-        }
+        });
     },
 
     showSuccessMessage(message) {
@@ -447,9 +384,7 @@ const App = {
         successDiv.textContent = message;
         form.appendChild(successDiv);
         
-        setTimeout(() => {
-            successDiv.remove();
-        }, 3000);
+        setTimeout(() => successDiv.remove(), 3000);
     },
 
     showGeneralError(message) {
@@ -463,21 +398,18 @@ const App = {
     },
 
     showLoading(show) {
-        let loader = document.getElementById('global-loader');
+        const loader = document.getElementById('global-loader');
         
-        if (show) {
-            if (!loader) {
-                loader = document.createElement('div');
-                loader.id = 'global-loader';
-                loader.className = 'loader-overlay';
-                loader.innerHTML = '<div class="loader"></div>';
-                document.body.appendChild(loader);
-            }
-        } else {
-            if (loader) {
-                loader.remove();
-            }
+        if (show && !loader) {
+            const newLoader = document.createElement('div');
+            newLoader.id = 'global-loader';
+            newLoader.className = 'loader-overlay';
+            newLoader.innerHTML = this.UI_CONSTANTS.LOADER_HTML;
+            document.body.appendChild(newLoader);
+            return;
         }
+        
+        loader?.remove();
     },
 
     async logout() {
@@ -492,20 +424,12 @@ const App = {
     },
 
     formatDate(dateString) {
-        if (!dateString) return '';
-        try {
-            return new Date(dateString).toLocaleDateString('ru-RU', {
-                day: 'numeric',
-                month: 'long',
-                year: 'numeric'
-            });
-        } catch (e) {
-            return dateString;
-        }
+        return dateString ? new Date(dateString).toLocaleDateString('ru-RU', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric'
+        }) : '';
     }
 };
 
 document.addEventListener('DOMContentLoaded', () => App.init());
-
-window.addEventListener('online', () => {});
-window.addEventListener('offline', () => {});
