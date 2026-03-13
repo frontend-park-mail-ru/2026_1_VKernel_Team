@@ -87,7 +87,7 @@ const App = {
     async renderMain() {
         document.body.classList.remove('auth-page');
         const app = document.getElementById('app');
-    
+
         const adsResult = await apiClient.get(API_ENDPOINTS.ADS.GET_ALL);
         const ads = adsResult.success ? adsResult.data : [];
         const formattedAds = ads.map(ad => this.formatAdCard(ad));
@@ -97,15 +97,27 @@ const App = {
             user: this.user,
             recommendations: formattedAds
     });
-    
+
     this.attachMainEventListeners();
     },
 
     formatAdCard(ad) {
+        let imageUrl = this.UI_CONSTANTS.DEFAULT_AD_IMAGE;
+
+        if (ad.photos && ad.photos.length > 0) {
+            const photoPath = ad.photos[0];
+            // Проверяем: если путь уже начинается с http/https, используем его,
+            // иначе подклеиваем базовый URL нашего бэкенда/хранилища.
+            imageUrl = photoPath.startsWith('http')
+                ? photoPath
+                : `${window.MEDIA_URL}${photoPath}`;
+        }
+
         return {
             ...ad,
             formattedPrice: ad.price === 0 ? 'Бесплатно' : ad.price + ' ₽',
-            mainPhoto: ad.photos?.length > 0 ? ad.photos[0] : this.UI_CONSTANTS.DEFAULT_AD_IMAGE,
+            mainPhoto: imageUrl,
+            image: imageUrl,
             createdDate: ad.created_at ? new Date(ad.created_at).toLocaleDateString('ru-RU') : ''
         };
     },
@@ -165,12 +177,12 @@ const App = {
         document.getElementById('app').innerHTML = this.templates['user-profile']({
             email: this.user?.email || 'Неизвестно',
             name: this.user?.name || this.user?.email?.split('@')[0] || 'Пользователь',
-            registeredAt: this.user?.created_at 
-                ? new Date(this.user.created_at).toLocaleDateString('ru-RU') 
+            registeredAt: this.user?.created_at
+                ? new Date(this.user.created_at).toLocaleDateString('ru-RU')
                 : 'неизвестно',
             avatar: this.UI_CONSTANTS.DEFAULT_AVATAR
         });
-        
+
         document.querySelector('.logout-btn')?.addEventListener('click', (e) => {
             e.preventDefault();
             this.logout();
@@ -189,10 +201,10 @@ const App = {
             error: error,
             email: formData?.email || ''
         });
-        
+
         this.attachLoginHandler();
         this.initPasswordToggles();
-        
+
         document.querySelector('.back-to-main a')?.addEventListener('click', (e) => {
             e.preventDefault();
             this.navigateTo('/');
@@ -208,43 +220,43 @@ const App = {
             name: formData?.name || '',
             email: formData?.email || ''
         });
-        
+
         this.attachRegisterHandler();
         this.initPasswordToggles();
-        
+
         document.querySelector('.back-to-main a')?.addEventListener('click', (e) => {
             e.preventDefault();
             this.navigateTo('/');
         });
     },
-    
+
     async handleLoginSubmit(e) {
         e.preventDefault();
-        
+
         const email = document.getElementById('email').value.trim();
         const password = document.getElementById('password').value;
-        
+
         const validation = AuthValidator.validateLogin(email, password);
-        
+
         this.clearFieldErrors();
         this.clearLoginError();
-        
+
         if (!validation.isValid) {
             this.showFieldErrors({ email: ' ', password: ' ' });
             this.showLoginError('Неверный email или пароль');
             return;
         }
-        
+
         this.showLoading(true);
         const result = await AuthService.login({ email, password });
         this.showLoading(false);
-        
+
         if (result.success) {
             await this.checkAuth();
             this.navigateTo('/');
             return;
         }
-        
+
         if (result.fieldErrors) {
             this.showFieldErrors(result.fieldErrors);
         } else {
@@ -279,7 +291,7 @@ const App = {
             this.showFieldErrors(result.fieldErrors);
             return;
         }
-        
+
         if (!result.success) {
             this.showGeneralError(result.error || 'Ошибка при регистрации');
             return;
@@ -316,7 +328,7 @@ const App = {
 
     clearLoginError() {
         document.querySelectorAll('.login-error, .alert-error').forEach(el => el.remove());
-        
+
         ['email', 'password'].forEach(id => {
             document.getElementById(id)?.classList.remove('error');
         });
@@ -328,7 +340,7 @@ const App = {
         ['email', 'password'].forEach(id => {
             document.getElementById(id)?.classList.add('error');
         });
-        
+
         const form = document.getElementById('login-forms');
         const errorDiv = document.createElement('div');
         errorDiv.className = 'login-error alert alert-error';
@@ -347,20 +359,20 @@ const App = {
 
     showFieldErrors(fieldErrors) {
         this.clearFieldErrors();
-        
+
         Object.entries(fieldErrors).forEach(([field, error]) => {
             if (!error) return;
-            
+
             const inputId = field === 'confirmPassword' ? 'confirm-password' : field;
             const input = document.getElementById(inputId);
-            
+
             if (input) {
                 input.classList.add('error');
-                
+
                 const errorDiv = document.createElement('div');
                 errorDiv.className = 'field-error';
                 errorDiv.textContent = error;
-                
+
                 const wrapper = input.closest('.password-wrapper');
                 if (wrapper) {
                     wrapper.after(errorDiv);
@@ -374,19 +386,19 @@ const App = {
     showSuccessMessage(message) {
         const form = document.getElementById('register-form') || document.getElementById('login-forms');
         if (!form) return;
-        
+
         const successDiv = document.createElement('div');
         successDiv.className = 'alert alert-success';
         successDiv.textContent = message;
         form.appendChild(successDiv);
-        
+
         setTimeout(() => successDiv.remove(), 3000);
     },
 
     showGeneralError(message) {
         const form = document.getElementById('register-form') || document.getElementById('login-forms');
         if (!form) return;
-        
+
         const errorDiv = document.createElement('div');
         errorDiv.className = 'alert alert-error';
         errorDiv.textContent = message;
@@ -395,12 +407,12 @@ const App = {
 
     showLoading(show) {
         const loader = document.getElementById('global-loader');
-    
+
         if (!show) {
             loader?.remove();
             return;
         }
-    
+
         if (!loader) {
             const newLoader = document.createElement('div');
             newLoader.id = 'global-loader';
@@ -415,7 +427,7 @@ const App = {
         await AuthService.logout();
         this.showLoading(false);
         await this.checkAuth();
-        
+
         if (window.location.pathname !== '/') {
             this.navigateTo('/');
         }

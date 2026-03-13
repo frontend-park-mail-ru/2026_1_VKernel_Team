@@ -3,6 +3,7 @@
  * @type {string}
  */
 const API_URL = 'http://clover-go.ru:8000/api/v1';
+const MEDIA_URL = 'http://clover-go.ru:8000';
 
 /**
  * Эндпоинты API для различных ресурсов
@@ -177,4 +178,5 @@ const apiClient = {
 if (typeof window !== 'undefined') {
     window.apiClient = apiClient;
     window.API_ENDPOINTS = API_ENDPOINTS;
+    window.MEDIA_URL = MEDIA_URL;
 }
