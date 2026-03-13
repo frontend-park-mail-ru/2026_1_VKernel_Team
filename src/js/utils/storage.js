@@ -49,3 +49,5 @@ const Storage = {
     isAuthenticated: undefined,
     logout: undefined
 };
+
+export { Storage };
