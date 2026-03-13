@@ -41,7 +41,7 @@ process.on('uncaughtException', (err) => {
     console.log('Сервер продолжает работу...');
 });
 
-process.on('unhandledRejection', (reason, promise) => {
+process.on('unhandledRejection', (reason) => {
     console.error('Необработанный reject:', reason);
 });
 
@@ -58,7 +58,7 @@ const server = http.createServer(async (req, res) => {
         let pathname;
         try {
             pathname = decodeURIComponent(url.parse(req.url).pathname || '');
-        } catch (e) {
+        } catch {
             console.warn('Некорректный URI:', req.url);
             if (!res.headersSent) {
                 res.writeHead(400, { 'Content-Type': 'text/plain' });

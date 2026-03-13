@@ -20,7 +20,6 @@ const AdsService = {
                 ads: data
             };
         } catch (error) {
-            console.error('Ошибка получения объявлений:', error);
             return {
                 success: false,
                 error: 'Не удалось загрузить объявления'
@@ -47,7 +46,6 @@ const AdsService = {
                 ad: data
             };
         } catch (error) {
-            console.error('Ошибка получения объявления:', error);
             return {
                 success: false,
                 error: 'Не удалось загрузить объявление'

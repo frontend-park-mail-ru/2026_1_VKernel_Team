@@ -100,7 +100,6 @@ const apiClient = {
                 try {
                     data = await response.json();
                 } catch (e) {
-                    console.warn('Ошибка парсинга JSON:', e);
                     data = { message: 'Ошибка парсинга ответа сервера' };
                 }
             } else {
@@ -120,7 +119,6 @@ const apiClient = {
             };
 
         } catch (error) {
-            console.error('Ошибка сети:', error);
             return {
                 success: false,
                 error: 'Не удалось соединиться с сервером',

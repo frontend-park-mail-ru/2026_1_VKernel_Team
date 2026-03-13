@@ -142,7 +142,6 @@ const App = {
         document.querySelectorAll('.ad-card').forEach(card => {
             card.addEventListener('click', () => {
                 const adId = card.dataset.id;
-                if (adId) console.log('Переход к объявлению:', adId);
             });
         });
     },

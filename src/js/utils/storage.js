@@ -12,7 +12,6 @@ const Storage = {
             const item = localStorage.getItem(key);
             return item ? JSON.parse(item) : null;
         } catch (e) {
-            console.error('Ошибка чтения из localStorage:', e);
             return null;
         }
     },
@@ -32,7 +31,7 @@ const Storage = {
     getUserPreferences() {
         return this.getItem('user_preferences') || {};
     },
-    
+
     setUser: undefined,
     getUser: undefined,
     removeUser: undefined,
