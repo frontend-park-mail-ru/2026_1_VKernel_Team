@@ -157,6 +157,15 @@ const server = http.createServer(async (req, res) => {
     }
 });
 
+server.on('error', (err) => {
+    if (err.code === 'EADDRINUSE') {
+        console.error(`Ошибка: порт ${PORT} уже занят. Закройте процесс, использующий этот порт или задайте другой PORT в файле .env.`);
+        process.exit(1);
+    }
+    console.error('Ошибка сервера:', err);
+    process.exit(1);
+});
+
 server.listen(PORT, () => {
     console.log(`Сервер запущен на http://localhost:${PORT}`);
     console.log(`Отдаю файлы из папки: ${PUBLIC_DIR}`);
