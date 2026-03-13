@@ -1,3 +1,14 @@
+/**
+ * Модуль для работы с локальным хранилищем браузера (localStorage)
+ * Здесь сохраняем данные пользователя и проверяем авторизацию
+ * 
+ * @module storage
+ */
+
+/**
+ * Объект с методами для сохранения и получения данных
+ * Использует localStorage для долговременного хранения
+ */
 const Storage = {
     setItem(key, value) {
         try {
@@ -38,3 +49,5 @@ const Storage = {
     isAuthenticated: undefined,
     logout: undefined
 };
+
+export { Storage };

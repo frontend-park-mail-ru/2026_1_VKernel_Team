@@ -1,9 +1,12 @@
+
+import { CONFIG } from "../core/config.js";
 /**
  * Базовый URL API сервера
  * @type {string}
  */
-const API_URL = 'http://clover-go.ru:8000/api/v1';
-const MEDIA_URL = 'http://clover-go.ru:8000';
+
+const API_URL = CONFIG.API.API_URL;
+const MEDIA_URL = CONFIG.API.BASE_URL;
 
 /**
  * Эндпоинты API для различных ресурсов
@@ -62,10 +65,24 @@ const API_ENDPOINTS = {
     }
 };
 
+
 /**
- * Клиент для взаимодействия с API
- * @type {Object}
- */
+* Основной объект для отправки запросов на сервер
+* Содержит методы для GET, POST, PUT, DELETE запросов
+* 
+* @param {string} endpoint - адрес, куда отправляем запрос (например, '/auth/login')
+* @param {string} method - метод HTTP запроса (GET, POST, PUT, DELETE)
+* @param {Object} body - данные, которые отправляем на сервер (для POST/PUT)
+* @param {Object} customHeaders - дополнительные заголовки, если нужны
+* @returns {Promise<Object>} - ответ от сервера в виде объекта {success, data, error}
+* 
+* @example
+* // Пример вызова:
+* const result = await apiClient.request('/auth/login', 'POST', {
+*   email: 'user@mail.ru',
+*   password: '12345678'
+* });
+*/
 const apiClient = {
     /**
      * Универсальный метод для выполнения HTTP-запросов
@@ -170,11 +187,4 @@ const apiClient = {
     }
 };
 
-/**
- * Экспорт apiClient и API_ENDPOINTS в глобальную область видимости браузера
- */
-if (typeof window !== 'undefined') {
-    window.apiClient = apiClient;
-    window.API_ENDPOINTS = API_ENDPOINTS;
-    window.MEDIA_URL = MEDIA_URL;
-}
+export { API_ENDPOINTS, apiClient };

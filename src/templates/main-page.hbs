@@ -18,7 +18,7 @@
                 </div>
                 <div class="nav-icon">
                     <a href="#" class="nav-link">
-                        <span class="icon">❤️</span>                        
+                        <span class="icon">❤️</span>
                         <span class="nav-text">Избранное</span>
                     </a>
                 </div>
@@ -38,22 +38,14 @@
                 {{#if isAuthenticated}}
                 <!--Нужна проверка в будущем на загрузку своей аватарки пользователем-->
                     <img src="images/logo/avatar.jpeg" alt="Аватар" class="avatar">
-                    {{!-- <div class="profile-icon">
-                        <span class="icon">👤</span>
-                    </div> --}}
-                    <button class="btn btn-danger logout-btn" onclick="App.logout()">
+                    <button class="btn btn-danger logout-btn" data-action="logout">
                         Выйти
                     </button>
                 {{else}}
-                    {{!-- <div class="profile-icon" onclick="App.showLogin()">
-                        <span class="icon">👤</span>
-                    </div> --}}
                     <p>
-                        <a href="#" onclick="App.showLogin(); return false;">
-                            Вход
-                        </a>
+                        <a href="#" class="nav-login" data-nav="/login">Вход</a>
                     </p>
-                    <button class="btn btn-secondary logout-btn" onclick="App.showLogin()">
+                    <button class="btn btn-secondary logout-btn" data-nav="/login">
                         Войти
                     </button>
                 {{/if}}
@@ -68,7 +60,6 @@
             <!-- Лого и название в одной строке с поиском -->
             <div class="search-row">
                 <div class="brand">
-                    {{!-- <span class="logo">🍀</span> --}}
                     <img src="images/logo/logo.jpeg" alt="Логотип" class="logo">
                     <span class="brand-name">Клевер</span>
                 </div>
@@ -156,7 +147,7 @@
                         <div class="rec-card" data-id="{{id}}">
                             <div class="rec-card-image-container">
                                 <img src="{{image}}" alt="{{title}}" class="rec-card-image">
-                                <button class="rec-card-fav">❤️</button>
+                                <button class="rec-card-fav">♡</button>
                             </div>
                             <div class="rec-card-content">
                                 <span class="rec-card-title">{{title}}</span>
@@ -179,76 +170,6 @@
                             </div>
                         </div>
                         {{/each}}
-
-                        <!-- Временные карточки для теста (4 штуки) -->
-                        <div class="rec-card">
-                            <img src="images/user_product/car.jpeg" alt="Машина" class="rec-card-image">
-                            <div class="rec-card-content">
-                                <div class="rec-card-info">
-                                    <span class="rec-card-title">Новая машина Клевер 3000. Улучшенная рулевая база</span>
-                                    <span class="rec-card-price">{{formatPrice price}}</span>
-                                    <span class="rec-card-location">
-                                        <span class="location-icon">📍</span>
-                                        Москва
-                                    </span>
-                                </div>
-                                <div class="rec-card-actions">
-                                    <button class="rec-card-fav">❤️</button>
-                                    <button class="rec-card-cart">🛒</button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="rec-card">
-                            <img src="images/user_product/phone.jpeg" alt="Телефон" class="rec-card-image">
-                            <div class="rec-card-content">
-                                <div class="rec-card-info">
-                                    <span class="rec-card-title">Клевер А50. 509 Гб памяти и x7 зум</span>
-                                    <span class="rec-card-price">89 900 ₽</span>
-                                    <span class="rec-card-location">
-                                        <span class="location-icon">📍</span>
-                                        Тольятти
-                                    </span>
-                                </div>
-                                <div class="rec-card-actions">
-                                    <button class="rec-card-fav">❤️</button>
-                                    <button class="rec-card-cart">🛒</button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="rec-card">
-                            <img src="images/user_product/house.jpeg" alt="Дом" class="rec-card-image">
-                            <div class="rec-card-content">
-                                <div class="rec-card-info">
-                                    <span class="rec-card-title">Квартиры в ЖК КлЕвЕр</span>
-                                    <span class="rec-card-price">18 999 900 ₽</span>
-                                    <span class="rec-card-location">
-                                        <span class="location-icon">📍</span>
-                                        Кастрома
-                                    </span>
-                                </div>
-                                <div class="rec-card-actions">
-                                    <button class="rec-card-fav">❤️</button>
-                                    <button class="rec-card-cart">🛒</button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="rec-card">
-                            <img src="images/user_product/dog.jpeg" alt="Собака" class="rec-card-image">
-                            <div class="rec-card-content">
-                                <div class="rec-card-info">
-                                    <span class="rec-card-title">Милый песик</span>
-                                    <span class="rec-card-price">Бесценно ₽</span>
-                                    <span class="rec-card-location">
-                                        <span class="location-icon">📍</span>
-                                        Уфа
-                                    </span>
-                                </div>
-                                <div class="rec-card-actions">
-                                    <button class="rec-card-fav">❤️</button>
-                                    <button class="rec-card-cart">🛒</button>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
 

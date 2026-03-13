@@ -123,6 +123,18 @@ body .main-container {
     transform: translateY(-1px);
 }
 
+.nav-login {
+    text-decoration: none;
+}
+
+.nav-login:hover {
+    text-decoration: underline;
+    text-decoration-color: white;
+    text-decoration-skip-ink: none;
+    text-underline-offset: 2px;
+    color: white;
+}
+
 /* ========== ОСНОВНОЙ КОНТЕНТ ========== */
 .main-content {
     max-width: 1400px;
@@ -491,7 +503,7 @@ body .main-container {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 18px;
+    font-size: 32px;
     cursor: pointer;
     box-shadow: 0 2px 8px rgba(0,0,0,0.15);
     transition: all 0.2s;

@@ -1,8 +1,18 @@
+/**
+ * Сервис для работы с авторизацией
+ * 
+ * @module authService
+ */
+
+import { API_ENDPOINTS, apiClient } from "../api/apiClient.js";
+import { Storage } from "../utils/storage.js";
+
 const HTTP_STATUS = {
     UNAUTHORIZED: 401,
     BAD_REQUEST: 400
 };
 
+// Словарь ошибок
 const AuthErrorMap = {
     'invalid input': 'Некорректный ввод',
     'wrong email or password': 'Неверный email или пароль',
@@ -24,10 +34,24 @@ const AuthErrorMap = {
     'name contains invalid characters': 'Имя содержит недопустимые символы'
 };
 
+/**
+ * Объект реализующий авторизацию
+ */
 const AuthService = {
+
+    /**
+     * Регистрация нового пользователя
+     * @async
+     * @param {Object} userData - данные пользователя
+     * @param {string} userData.name - имя пользователя
+     * @param {string} userData.email - email
+     * @param {string} userData.password - пароль
+     * @returns {Promise<Object>} - результат регистрации
+     * 
+     */
     async register(userData) {
         const result = await apiClient.post(API_ENDPOINTS.AUTH.REGISTER, {
-            name: userData.name || userData.username,
+            name: userData.name || userData.username, // поддерживаем оба варианта
             email: userData.email,
             password: userData.password
         });
@@ -72,6 +96,15 @@ const AuthService = {
         };
     },
 
+
+    /**
+     * Вход в систему
+     * @async
+     * @param {Object} credentials - учётные данные
+     * @param {string} credentials.email - email
+     * @param {string} credentials.password - пароль
+     * @returns {Promise<Object>} - результат входа
+     */
     async login(credentials) {
         const result = await apiClient.post(API_ENDPOINTS.AUTH.LOGIN, {
             email: credentials.email,
@@ -107,6 +140,11 @@ const AuthService = {
         };
     },
 
+    /**
+     * Выход из системы
+     * Удаляет сессию на сервере и чистит localStorage
+     * @async
+     */
     async logout() {
         await apiClient.post(API_ENDPOINTS.AUTH.LOGOUT);
         window.location.href = '/';
@@ -121,3 +159,5 @@ const AuthService = {
         };
     }
 };
+
+export { AuthService };
