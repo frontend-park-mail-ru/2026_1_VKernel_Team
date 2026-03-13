@@ -395,17 +395,19 @@ const App = {
 
     showLoading(show) {
         const loader = document.getElementById('global-loader');
-        
-        if (show && !loader) {
+    
+        if (!show) {
+            loader?.remove();
+            return;
+        }
+    
+        if (!loader) {
             const newLoader = document.createElement('div');
             newLoader.id = 'global-loader';
             newLoader.className = 'loader-overlay';
             newLoader.innerHTML = this.UI_CONSTANTS.LOADER_HTML;
             document.body.appendChild(newLoader);
-            return;
         }
-        
-        loader?.remove();
     },
 
     async logout() {
