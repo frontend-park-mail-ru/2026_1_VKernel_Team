@@ -24,6 +24,5 @@ const Storage = {
         this.removeUser();
     }
 };
-if (typeof window !== 'undefined') {
-    window.Storage = Storage;
-}
+
+export { Storage };

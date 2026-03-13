@@ -1,3 +1,8 @@
+import { AdsService } from "./services/adsServices";
+import { AuthService } from "./services/authService";
+import { Storage } from "./utils/storage";
+import { AuthValidator } from "./validators/authValidator";
+
 const App = {
     templates: {},
     currentView: 'main-page',

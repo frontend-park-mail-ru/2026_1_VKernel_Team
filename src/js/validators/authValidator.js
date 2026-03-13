@@ -125,3 +125,5 @@ const AuthValidator = {
         };
     }
 };
+
+export { AuthValidator };

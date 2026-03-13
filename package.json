@@ -13,7 +13,12 @@
     "type": "git",
     "url": "git+https://github.com/frontend-park-mail-ru/2026_1_VKernel_Team.git"
   },
-  "keywords": ["klever", "classifieds", "express", "static-server"],
+  "keywords": [
+    "klever",
+    "classifieds",
+    "express",
+    "static-server"
+  ],
   "author": "VKernel_Team",
   "license": "ISC",
   "bugs": {

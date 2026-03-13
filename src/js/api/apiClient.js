@@ -1,4 +1,6 @@
-const API_URL = 'http://clover-go.ru:8000/api/v1';
+import { CONFIG } from "../core/config";
+
+const API_URL = CONFIG.API.API_URL;
 
 const API_ENDPOINTS = {
     AUTH: {
@@ -103,8 +105,4 @@ const apiClient = {
     }
 };
 
-
-if (typeof window !== 'undefined') {
-    window.apiClient = apiClient;
-    window.API_ENDPOINTS = API_ENDPOINTS;
-}
+export { API_ENDPOINTS, apiClient };
