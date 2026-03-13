@@ -129,7 +129,8 @@ const App = {
     // и навешивается один раз на весь документ
     setupGlobalHandlers() {
         document.addEventListener('click', (e) => {
-            // Обработка data-nav
+            // Обрабатываем ТОЛЬКО data-nav и data-action
+            // Все остальные клики (включая кнопки форм) игнорируем
             const navElement = e.target.closest('[data-nav]');
             if (navElement) {
                 e.preventDefault();
@@ -138,16 +139,14 @@ const App = {
                 return;
             }
 
-            // Обработка data-action
             const actionElement = e.target.closest('[data-action]');
             if (actionElement) {
                 e.preventDefault();
                 const action = actionElement.dataset.action;
                 switch(action) {
                     case 'logout':
-                        this.logout(); // logout не меняет URL напрямую
+                        this.logout();
                         break;
-                    // Другие действия, которые не являются навигацией
                 }
                 return;
             }
