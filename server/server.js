@@ -41,7 +41,7 @@ process.on('uncaughtException', (err) => {
     console.log('Сервер продолжает работу...');
 });
 
-process.on('unhandledRejection', (reason, _promise) => {
+process.on('unhandledRejection', (reason) => {
     console.error('Необработанный reject:', reason);
 });
 
