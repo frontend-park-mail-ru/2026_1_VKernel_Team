@@ -1,29 +1,41 @@
 const Storage = {
-    setUser(user) {
-        localStorage.setItem('user', JSON.stringify(user));
+    setItem(key, value) {
+        try {
+            localStorage.setItem(key, JSON.stringify(value));
+        } catch (e) {
+            console.error('Ошибка сохранения в localStorage:', e);
+        }
     },
-    getUser() {
-        const user = localStorage.getItem('user');
-        return user ? JSON.parse(user) : null;
+
+    getItem(key) {
+        try {
+            const item = localStorage.getItem(key);
+            return item ? JSON.parse(item) : null;
+        } catch (e) {
+            console.error('Ошибка чтения из localStorage:', e);
+            return null;
+        }
     },
-    removeUser() {
-        localStorage.removeItem('user');
+
+    removeItem(key) {
+        localStorage.removeItem(key);
     },
-    isAuthenticated() {
-        const cookies = document.cookie.split(';').reduce((acc, cookie) => {
-            const [key, value] = cookie.trim().split('=');
-            acc[key] = value;
-            return acc;
-        }, {});
-        
-        // Проверяем возможные названия сессионных кук
-        const sessionCookies = ['session_id', 'sessionid', 'connect.sid', 'token', 'auth_token'];
-        return sessionCookies.some(cookieName => cookies[cookieName] !== undefined);
+
+    clear() {
+        localStorage.clear();
     },
-    logout() {
-        this.removeUser();
-    }
+
+    setUserPreferences(prefs) {
+        this.setItem('user_preferences', prefs);
+    },
+
+    getUserPreferences() {
+        return this.getItem('user_preferences') || {};
+    },
+    
+    setUser: undefined,
+    getUser: undefined,
+    removeUser: undefined,
+    isAuthenticated: undefined,
+    logout: undefined
 };
-if (typeof window !== 'undefined') {
-    window.Storage = Storage;
-}

@@ -8,7 +8,7 @@ import { fileURLToPath } from 'node:url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-dotenv.config({ path: path.join(__dirname, '.env') });
+dotenv.config({ path: path.join(__dirname, '..', '.env') });
 const PORT = process.env.PORT || 80;
 const PUBLIC_DIR = path.join(__dirname, '..', process.env.PUBLIC_DIR || 'public');
 
@@ -20,6 +20,7 @@ const MIME_TYPES = {
     '.png': 'image/png',
     '.jpg': 'image/jpeg',
     '.jpeg': 'image/jpeg',
+    '.webp': 'image/webp',
     '.gif': 'image/gif',
     '.svg': 'image/svg+xml',
     '.ico': 'image/x-icon',
@@ -48,11 +49,11 @@ const server = http.createServer(async (req, res) => {
     req.on('error', (err) => {
         console.error('Ошибка запроса:', err.message);
     });
-    
+
     res.on('error', (err) => {
         console.error('Ошибка ответа:', err.message);
     });
-    
+
     try {
         let pathname;
         try {
@@ -65,11 +66,11 @@ const server = http.createServer(async (req, res) => {
             }
             return;
         }
-        
+
         if (pathname.startsWith('/src/')) {
             const srcFilePath = path.join(__dirname, '..', pathname);
             const SRC_DIR = path.join(__dirname, '..', 'src');
-            
+
             if (!srcFilePath.startsWith(SRC_DIR)) {
                 console.warn(`Заблокирована попытка доступа к: ${srcFilePath}`);
                 if (!res.headersSent) {
@@ -78,12 +79,12 @@ const server = http.createServer(async (req, res) => {
                 }
                 return;
             }
-            
+
             try {
                 const data = await fs.promises.readFile(srcFilePath);
                 const ext = path.extname(srcFilePath);
                 const contentType = MIME_TYPES[ext] || 'application/octet-stream';
-                
+
                 if (!res.headersSent) {
                     res.writeHead(200, { 'Content-Type': contentType });
                     res.end(data);
@@ -103,10 +104,10 @@ const server = http.createServer(async (req, res) => {
                 }
             }
         }
-        
+
         let filePath;
         let fileExists = false;
-        
+
         if (pathname === '/' || pathname === '/index.html') {
             filePath = path.join(PUBLIC_DIR, 'index.html');
             fileExists = true;
@@ -120,11 +121,11 @@ const server = http.createServer(async (req, res) => {
                 fileExists = false;
             }
         }
-        
+
         if (!fileExists) {
             filePath = path.join(PUBLIC_DIR, 'index.html');
         }
-        
+
         if (!filePath.startsWith(PUBLIC_DIR)) {
             console.warn(`Заблокирована попытка доступа к: ${filePath}`);
             if (!res.headersSent) {
@@ -133,7 +134,7 @@ const server = http.createServer(async (req, res) => {
             }
             return;
         }
-        
+
         const data = await fs.promises.readFile(filePath);
         const ext = path.extname(filePath);
         const contentType = MIME_TYPES[ext] || 'application/octet-stream';
@@ -143,7 +144,7 @@ const server = http.createServer(async (req, res) => {
         console.log(`${req.method} ${req.url}`);
     } catch (error) {
         console.error('Ошибка сервера:', error);
-        
+
         if (!res.headersSent) {
             if (error.code === 'ENOENT') {
                 res.writeHead(404, { 'Content-Type': 'text/html; charset=UTF-8' });
@@ -154,6 +155,15 @@ const server = http.createServer(async (req, res) => {
             }
         }
     }
+});
+
+server.on('error', (err) => {
+    if (err.code === 'EADDRINUSE') {
+        console.error(`Ошибка: порт ${PORT} уже занят. Закройте процесс, использующий этот порт или задайте другой PORT в файле .env.`);
+        process.exit(1);
+    }
+    console.error('Ошибка сервера:', err);
+    process.exit(1);
 });
 
 server.listen(PORT, () => {
