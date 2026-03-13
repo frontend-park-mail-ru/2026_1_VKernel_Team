@@ -5,7 +5,6 @@
     </div>
     
     <form id="register-form" class="auth-form" novalidate>
-         <!-- Временно отключено, ждём бекенд
         <div class="form-group">
             <label for="username">Имя пользователя</label>
             <input 
@@ -17,7 +16,6 @@
                 required
             >
         </div>
-        -->
         
         <div class="form-group">
             <label for="email">Email</label>
@@ -70,6 +68,7 @@
     
     <div class="auth-footer">
         Уже есть аккаунт? 
-        <a href="#" onclick="App.showLogin(); return false;">Войти</a>
+        {{!-- <a href="#" onclick="App.showLogin(); return false;">Войти</a> --}}
+        <a href="#" data-nav="/login">Войти</a>
     </div>
 </div>

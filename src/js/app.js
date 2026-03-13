@@ -17,6 +17,7 @@ const App = {
         }
 
         this.checkAuth();
+        this.setupGlobalHandlers();
         this.router();
         window.addEventListener('popstate', () => this.router());
     },
@@ -122,6 +123,35 @@ const App = {
                 }
             });
         }
+    },
+
+    // Обработчик вызывается один раз при старте приложения
+    // и навешивается один раз на весь документ
+    setupGlobalHandlers() {
+        document.addEventListener('click', (e) => {
+            // Обработка data-nav
+            const navElement = e.target.closest('[data-nav]');
+            if (navElement) {
+                e.preventDefault();
+                const path = navElement.dataset.nav;
+                this.navigateTo(path);
+                return;
+            }
+
+            // Обработка data-action
+            const actionElement = e.target.closest('[data-action]');
+            if (actionElement) {
+                e.preventDefault();
+                const action = actionElement.dataset.action;
+                switch(action) {
+                    case 'logout':
+                        this.logout(); // logout не меняет URL напрямую
+                        break;
+                    // Другие действия, которые не являются навигацией
+                }
+                return;
+            }
+        });
     },
 
     initPasswordToggles() {

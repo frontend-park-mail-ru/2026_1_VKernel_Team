@@ -38,22 +38,23 @@
                 {{#if isAuthenticated}}
                 <!--Нужна проверка в будущем на загрузку своей аватарки пользователем-->
                     <img src="images/logo/avatar.jpeg" alt="Аватар" class="avatar">
-                    {{!-- <div class="profile-icon">
-                        <span class="icon">👤</span>
-                    </div> --}}
-                    <button class="btn btn-danger logout-btn" onclick="App.logout()">
+                    {{!-- <button class="btn btn-danger logout-btn" onclick="App.logout()">
+                        Выйти
+                    </button> --}}
+                    <button class="btn btn-danger logout-btn" data-action="/logout">
                         Выйти
                     </button>
                 {{else}}
-                    {{!-- <div class="profile-icon" onclick="App.showLogin()">
-                        <span class="icon">👤</span>
-                    </div> --}}
                     <p>
-                        <a href="#" onclick="App.showLogin(); return false;">
+                        {{!-- <a href="#" onclick="App.showLogin(); return false;">
                             Вход
-                        </a>
+                        </a> --}}
+                        <a href="/login" data-nav="/login">Вход</a>
                     </p>
-                    <button class="btn btn-secondary logout-btn" onclick="App.showLogin()">
+                    {{!-- <button class="btn btn-secondary logout-btn" onclick="App.showLogin()">
+                        Войти
+                    </button> --}}
+                    <button class="btn btn-secondary logout-btn" data-nav="/login">
                         Войти
                     </button>
                 {{/if}}
