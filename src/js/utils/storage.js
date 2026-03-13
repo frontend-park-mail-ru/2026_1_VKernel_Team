@@ -10,50 +10,42 @@
  * Использует localStorage для долговременного хранения
  */
 const Storage = {
-    // Сохраняем данные пользователя в localStorage
-    // @param {Object} user - объект с данными пользователя
-    setUser(user) {
-        localStorage.setItem('user', JSON.stringify(user));
+    setItem(key, value) {
+        try {
+            localStorage.setItem(key, JSON.stringify(value));
+        } catch (e) {
+            console.error('Ошибка сохранения в localStorage:', e);
+        }
     },
 
-    // Получаем данные пользователя из localStorage
-    // @returns {Object|null} - объект пользователя или null, если данных нет
-    getUser() {
-        const user = localStorage.getItem('user');
-        return user ? JSON.parse(user) : null;
-    },
-    removeUser() {
-        localStorage.removeItem('user');
-    },
-
-    /**
-     * Проверяем, авторизован ли пользователь
-     * Смотрим не в localStorage, а в куках (там хранится сессия)
-     * @returns {boolean} - true если есть сессионная кука
-     */ 
-    isAuthenticated() {
-        // Парсим все куки из document.cookie
-        // document.cookie выглядит как "session_id=abc123; theme=dark"
-        const cookies = document.cookie.split(';').reduce((acc, cookie) => {
-            const [key, value] = cookie.trim().split('=');
-            acc[key] = value;
-            return acc;
-        }, {});
-        
-        // Разные серверы могут называть сессионную куку по-разному
-        // Проверяем все возможные названия
-        const sessionCookies = ['session_id', 'sessionid', 'connect.sid', 'token', 'auth_token'];
-        
-        // Если хотя бы одна из этих кук есть - пользователь авторизован
-        return sessionCookies.some(cookieName => cookies[cookieName] !== undefined);
+    getItem(key) {
+        try {
+            const item = localStorage.getItem(key);
+            return item ? JSON.parse(item) : null;
+        } catch (e) {
+            return null;
+        }
     },
 
-    /**
-     * Удаляет пользователя из localStorage
-     */
-    logout() {
-        this.removeUser();
-    }
+    removeItem(key) {
+        localStorage.removeItem(key);
+    },
+
+    clear() {
+        localStorage.clear();
+    },
+
+    setUserPreferences(prefs) {
+        this.setItem('user_preferences', prefs);
+    },
+
+    getUserPreferences() {
+        return this.getItem('user_preferences') || {};
+    },
+
+    setUser: undefined,
+    getUser: undefined,
+    removeUser: undefined,
+    isAuthenticated: undefined,
+    logout: undefined
 };
-
-export { Storage };

@@ -10,7 +10,7 @@
 
 const AuthValidator = {
     USERNAME_REGEX: /^[a-zA-Z0-9_]+$/,
-    EMAIL_REGEX: /^[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$/,
+    EMAIL_REGEX: /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/,
     LETTER_REGEX: /[a-zA-Z]/,
     DIGIT_REGEX: /[0-9]/,
     FORBIDDEN_REGEX: /[^a-zA-Z0-9_]/,
@@ -34,46 +34,46 @@ const AuthValidator = {
                 error: 'Пароль обязателен'
             };
         }
-        
+
         if (password.length < this.PASSWORD_MIN_LENGTH) {
             return {
                 isValid: false,
                 error: `Пароль должен быть не менее ${this.PASSWORD_MIN_LENGTH} символов`
             };
         }
-        
+
         const hasLetter = this.LETTER_REGEX.test(password);
         const hasDigit = this.DIGIT_REGEX.test(password);
         const hasForbidden = this.FORBIDDEN_REGEX.test(password);
-        
+
         if (hasForbidden) {
             return {
                 isValid: false,
                 error: 'Пароль может содержать только латинские буквы, цифры и нижнее подчёркивание'
             };
         }
-        
+
         if (!hasLetter && !hasDigit) {
             return {
                 isValid: false,
                 error: 'Пароль должен содержать хотя бы одну букву и одну цифру'
             };
         }
-        
+
         if (!hasLetter) {
             return {
                 isValid: false,
                 error: 'Пароль должен содержать хотя бы одну букву'
             };
         }
-        
+
         if (!hasDigit) {
             return {
                 isValid: false,
                 error: 'Пароль должен содержать хотя бы одну цифру'
             };
         }
-        
+
         return {
             isValid: true,
             error: null
@@ -106,28 +106,28 @@ const AuthValidator = {
             password: null,
             confirmPassword: null
         };
-        
+
         if (!name) {
             fieldErrors.name = 'Имя обязательно';
         } else if (!this.validateUsername(name)) {
             fieldErrors.name = `Имя может содержать только латиницу, цифры и _, минимум ${this.USERNAME_MIN_LENGTH} символа`;
         }
-        
+
         if (!email) {
             fieldErrors.email = 'Email обязателен';
         } else if (!this.validateEmail(email)) {
             fieldErrors.email = 'Некорректный email';
         }
-        
+
         const passwordValidation = this.validatePassword(password);
         if (!passwordValidation.isValid) {
             fieldErrors.password = passwordValidation.error;
         }
-        
+
         if (password !== confirmPassword) {
             fieldErrors.confirmPassword = 'Пароли не совпадают';
         }
-        
+
         const hasErrors = Object.values(fieldErrors).some(error => error !== null);
         return {
             isValid: !hasErrors,

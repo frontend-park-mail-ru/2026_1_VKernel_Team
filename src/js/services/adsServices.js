@@ -52,8 +52,6 @@ const AdsService = {
                 ads: data  // data - это массив объявлений
             };
         } catch (error) {
-            // Ловим ошибки: нет интернета, сервер упал и другое
-            console.error('Ошибка получения объявлений:', error);
             return {
                 success: false,
                 error: 'Не удалось загрузить объявления'
@@ -93,7 +91,6 @@ const AdsService = {
                 ad: data
             };
         } catch (error) {
-            console.error('Ошибка получения объявления:', error);
             return {
                 success: false,
                 error: 'Не удалось загрузить объявление'
@@ -110,29 +107,25 @@ const AdsService = {
      * 
      */
     formatAdCard(ad) {
-        // Базовый URL для статических файлов (картинок)
-        const STATIC_URL = CONFIG.API.BASE_URL;
-        
-        // Берём первую фотографию или пустую строку
         const firstPhoto = ad.photos?.[0] || '';
-        
-        // Формируем полный путь к картинке
-        // Если фото нет - ставим заглушку
-        const imageUrl = firstPhoto
-            ? `${STATIC_URL}${firstPhoto}`
-            : '/images/placeholder.jpg';
 
-        // Возвращаем объект с нужными полями
+        let imageUrl = '/images/placeholder.jpg';
+        if (firstPhoto) {
+            imageUrl = firstPhoto.startsWith('http')
+                ? firstPhoto
+                : `${CONFIG.API.BASE_URL}${firstPhoto}`;
+        }
+
         return {
-            id: ad.id,                                // ID объявления
-            title: ad.title,                          // Заголовок
-            description: ad.description?.substring(0, 100) + '...', // Описание (первые 100 символов)
-            price: ad.price.toLocaleString('ru-RU') + ' ₽', // Цена с пробелами и символом рубля
-            location: ad.location || 'Не указано',     // Город
-            image: imageUrl,                           // Ссылка на картинку
-            views: ad.views_count || 0,                // Количество просмотров
-            favorites: ad.favorites_count || 0,        // Количество просмотров
-            date: new Date(ad.created_at).toLocaleDateString('ru-RU') // Дата создания
+            id: ad.id,
+            title: ad.title,
+            description: ad.description?.substring(0, 100) + '...',
+            price: ad.price.toLocaleString('ru-RU') + ' ₽',
+            location: ad.location || 'Не указано',
+            image: imageUrl,
+            views: ad.views_count || 0,
+            favorites: ad.favorites_count || 0,
+            date: new Date(ad.created_at).toLocaleDateString('ru-RU')
         };
     }
 };
