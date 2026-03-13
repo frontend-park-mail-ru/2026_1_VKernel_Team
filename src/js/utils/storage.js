@@ -6,6 +6,7 @@ const Storage = {
             console.error('Ошибка сохранения в localStorage:', e);
         }
     },
+
     getItem(key) {
         try {
             const item = localStorage.getItem(key);
@@ -15,23 +16,26 @@ const Storage = {
             return null;
         }
     },
+
     removeItem(key) {
         localStorage.removeItem(key);
     },
+
     clear() {
         localStorage.clear();
     },
+
     setUserPreferences(prefs) {
         this.setItem('user_preferences', prefs);
     },
+
     getUserPreferences() {
         return this.getItem('user_preferences') || {};
     },
+    
     setUser: undefined,
     getUser: undefined,
     removeUser: undefined,
-    isAuthenticated: undefined,  
-    logout: undefined  
+    isAuthenticated: undefined,
+    logout: undefined
 };
-
-
