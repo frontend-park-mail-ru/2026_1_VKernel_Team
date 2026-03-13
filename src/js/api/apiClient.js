@@ -5,8 +5,6 @@ const API_ENDPOINTS = {
         REGISTER: '/auth/register',
         LOGIN: '/auth/login',
         LOGOUT: '/auth/logout',
-        CHECK: '/auth/check',      
-        ME: '/auth/check'          
     },
     ADS: {
         GET_ALL: '/ads',
@@ -50,7 +48,7 @@ const apiClient = {
 
         try {
             const response = await fetch(`${API_URL}${endpoint}`, config);
-            
+
             let data;
             const contentType = response.headers.get('content-type');
             if (contentType && contentType.includes('application/json')) {
