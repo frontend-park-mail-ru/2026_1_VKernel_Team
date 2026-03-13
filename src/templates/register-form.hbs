@@ -1,75 +1,60 @@
 <div class="auth-container">
-     <div class="auth-header">
-        <a href="/" class="back-link">←</a>
-        <h2>Вход в Клевер</h2>
-    </div>
-    
+    <h2>Регистрация</h2>
+
     <form id="register-form" class="auth-form" novalidate>
-         <!-- Временно отключено, ждём бекенд
         <div class="form-group">
             <label for="username">Имя пользователя</label>
-            <input 
-                type="text" 
-                id="username" 
-                name="username" 
+            <input
+                type="text"
+                id="name"
+                name="name"
                 placeholder="Введите имя"
-                value="{{username}}"
+                value="{{name}}"
                 required
             >
         </div>
-        -->
-        
+
         <div class="form-group">
             <label for="email">Email</label>
-            <input 
-                type="email" 
-                id="email" 
-                name="email" 
+            <input
+                type="email"
+                id="email"
+                name="email"
                 placeholder="Введите почту"
                 value="{{email}}"
                 required
-            >           
+            >
         </div>
-        
+
         <div class="form-group">
             <label for="password">Пароль</label>
-            <div class="password-wrapper">
-                <input 
-                    type="password" 
-                    id="password" 
-                    name="password" 
-                    placeholder="Минимум 8 символов"
-                    required
-                >
-                <button type="button" id="togglePassword" class="eye-btn">
-                    <img src="images/icons/Eye-off.jpeg" id="eyeIcon" alt="Показать пароль">
-                </button>
-            </div>
+            <input
+                type="password"
+                id="password"
+                name="password"
+                placeholder="Минимум 8 символов"
+                required
+            >
         </div>
-        
+
         <div class="form-group">
             <label for="confirm-password">Подтверждение пароля</label>
-            <div class="password-wrapper">
-                <input 
-                    type="password" 
-                    id="confirm-password" 
-                    name="confirmPassword" 
-                    placeholder="Повторите пароль"
-                    required
-                >
-                <button type="button" id="toggleConfirmPassword" class="eye-btn">
-                    <img src="images/icons/Eye-off.jpeg" id="eyeIconConfirm" alt="Показать пароль">
-                </button>
-            </div>
+            <input
+                type="password"
+                id="confirm-password"
+                name="confirmPassword"
+                placeholder="Повторите пароль"
+                required
+            >
         </div>
-        
+
         <button type="submit" class="btn btn-primary btn-block">
             Зарегистрироваться
         </button>
     </form>
-    
+
     <div class="auth-footer">
-        Уже есть аккаунт? 
-        <a href="#" onclick="App.showLogin(); return false;">Войти</a>
+        Уже есть аккаунт?
+        <a href="#" onclick="App.showLogin()">Войти</a>
     </div>
 </div>

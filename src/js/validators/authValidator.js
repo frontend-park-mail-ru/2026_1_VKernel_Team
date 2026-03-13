@@ -1,6 +1,6 @@
 const AuthValidator = {
     USERNAME_REGEX: /^[a-zA-Z0-9_]+$/,
-    EMAIL_REGEX: /^[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$/,
+    EMAIL_REGEX: /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/,
     LETTER_REGEX: /[a-zA-Z]/,
     DIGIT_REGEX: /[0-9]/,
     FORBIDDEN_REGEX: /[^a-zA-Z0-9_]/,

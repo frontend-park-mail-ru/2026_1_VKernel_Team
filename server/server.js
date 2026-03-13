@@ -8,7 +8,7 @@ import { fileURLToPath } from 'node:url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-dotenv.config({ path: path.join(__dirname, '.env') });
+dotenv.config({ path: path.join(__dirname, '..', '.env') });
 const PORT = process.env.PORT || 80;
 const PUBLIC_DIR = path.join(__dirname, '..', process.env.PUBLIC_DIR || 'public');
 
@@ -20,6 +20,7 @@ const MIME_TYPES = {
     '.png': 'image/png',
     '.jpg': 'image/jpeg',
     '.jpeg': 'image/jpeg',
+    '.webp': 'image/webp',
     '.gif': 'image/gif',
     '.svg': 'image/svg+xml',
     '.ico': 'image/x-icon',
@@ -154,6 +155,15 @@ const server = http.createServer(async (req, res) => {
             }
         }
     }
+});
+
+server.on('error', (err) => {
+    if (err.code === 'EADDRINUSE') {
+        console.error(`Ошибка: порт ${PORT} уже занят. Закройте процесс, использующий этот порт или задайте другой PORT в файле .env.`);
+        process.exit(1);
+    }
+    console.error('Ошибка сервера:', err);
+    process.exit(1);
 });
 
 server.listen(PORT, () => {
