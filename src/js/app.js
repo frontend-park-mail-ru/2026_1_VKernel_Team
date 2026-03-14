@@ -2,19 +2,20 @@
 * Главный файл приложения
 * Здесь вся логика: роутинг (переходы между страницами),
 * отрисовка страниц, обработка кликов и т.д.
-* 
+*
 * @module app
 */
 
 import { AuthService } from "./services/authService.js";
 import { AuthValidator } from "./validators/authValidator.js";
 import { apiClient, API_ENDPOINTS } from "./api/apiClient.js";
+import { CONFIG } from "./core/config.js";
 
 
 /**
 * Главный объект приложения
 * Содержит все методы для работы с интерфейсом
-* 
+*
 * @property {Object} templates - тут хранятся скомпилированные шаблоны Handlebars
 * @property {string} currentView - название текущей страницы (main-page, login и т.д.)
 * @property {boolean} isAuthenticated - залогинен ли пользователь
@@ -40,8 +41,12 @@ const App = {
     * @async
     */
     async init() {
+        // Выставляем MEDIA_URL из конфига, чтобы formatAdCard мог строить URL картинок
+        window.MEDIA_URL = CONFIG.API.BASE_URL;
+
         await this.loadTemplates();
         await this.checkAuth();
+        this.setupGlobalHandlers(); // вешаем один раз: data-nav и data-action
         this.router();
         // Слушаем изменения истории браузера (кнопки "назад"/"вперед")
         window.addEventListener('popstate', () => this.router());
@@ -71,7 +76,7 @@ const App = {
             return price === 0 || price === '0' ? 'Бесплатно' : price + ' ₽';
         });
 
-        Handlebars.registerHelper('ifAuthenticated', function(options) {
+        Handlebars.registerHelper('ifAuthenticated', function (options) {
             return App.isAuthenticated ? options.fn(this) : options.inverse(this);
         });
 
@@ -128,7 +133,7 @@ const App = {
     async renderMain() {
         // Убираем специальный класс для страниц авторизации
         document.body.classList.remove('auth-page');
-        
+
         // Получаем контейнер, куда будем рендерить
         const app = document.getElementById('app');
 
@@ -144,9 +149,9 @@ const App = {
             isAuthenticated: this.isAuthenticated,
             user: this.user,
             recommendations: formattedAds
-    });
-    // Навешиваем обработчики на элементы главной страницы
-    this.attachMainEventListeners();
+        });
+        // Навешиваем обработчики на элементы главной страницы
+        this.attachMainEventListeners();
     },
 
     formatAdCard(ad) {
@@ -216,7 +221,7 @@ const App = {
             if (actionElement) {
                 e.preventDefault();
                 const action = actionElement.dataset.action;
-                switch(action) {
+                switch (action) {
                     case 'logout':
                         this.logout();
                         break;
@@ -562,10 +567,16 @@ const App = {
         this.showLoading(true);
         await AuthService.logout();
         this.showLoading(false);
+        // Обновляем состояние авторизации
         await this.checkAuth();
 
+        // Наводимся на главную и всегда перерендериваем её.
+        // (previouslu: ناویگیшن only if path !== '/', so if already on '/' nothing re-rendered)
         if (window.location.pathname !== '/') {
             this.navigateTo('/');
+        } else {
+            // Уже на главной — просто перерендериваем
+            this.renderMain();
         }
     },
 
@@ -578,7 +589,11 @@ const App = {
     }
 };
 
-// Запускаем приложение, когда DOM загрузится
-document.addEventListener('DOMContentLoaded', () => App.init());
+// App.init() вызывается из main.js (точка входа).
+// Не добавляй сюда лишний DOMContentLoaded — это приведёт к двойной инициализации.
+
+// Делаем App доступным глобально через window,
+// чтобы онклики в шаблонах (onclick="App.logout()") работаликорректно.
+window.App = App;
 
 export { App };

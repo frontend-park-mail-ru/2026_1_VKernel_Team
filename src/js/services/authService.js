@@ -1,6 +1,6 @@
 /**
  * Сервис для работы с авторизацией
- * 
+ *
  * @module authService
  */
 
@@ -47,7 +47,7 @@ const AuthService = {
      * @param {string} userData.email - email
      * @param {string} userData.password - пароль
      * @returns {Promise<Object>} - результат регистрации
-     * 
+     *
      */
     async register(userData) {
         const result = await apiClient.post(API_ENDPOINTS.AUTH.REGISTER, {
@@ -57,12 +57,10 @@ const AuthService = {
         });
 
         if (result.success) {
+            // Бэкенд при регистрации сразу логинит и возвращает данные пользователя
             return {
                 success: true,
-                data: {
-                    message: 'Регистрация успешна',
-                    user_id: result.data.user_id
-                },
+                data: result.data, // { user_id, email, name }
                 error: null
             };
         }
@@ -146,12 +144,19 @@ const AuthService = {
      * @async
      */
     async logout() {
+        // Инвалидируем токен на сервере (кука удалится сервером)
         await apiClient.post(API_ENDPOINTS.AUTH.LOGOUT);
-        window.location.href = '/';
+        // Навигация управляется через App.logout() → App.navigateTo('/')
     },
 
+    /**
+     * Проверяет авторизацию через единую ручку POST /auth/login.
+     * Если в куках есть валидный токен — бэкенд вернёт данные пользователя.
+     * Если нет — вернёт 401.
+     */
     async check() {
-        const result = await apiClient.get(API_ENDPOINTS.USERS.PROFILE);
+        // Отправляем POST без тела: бэкенд прочитает куку и вернёт данные
+        const result = await apiClient.post(API_ENDPOINTS.AUTH.LOGIN);
 
         return {
             isAuthenticated: result.success,
