@@ -146,7 +146,6 @@ const AuthService = {
     async logout() {
         // Инвалидируем токен на сервере (кука удалится сервером)
         await apiClient.post(API_ENDPOINTS.AUTH.LOGOUT);
-        // Навигация управляется через App.logout() → App.navigateTo('/')
     },
 
     /**

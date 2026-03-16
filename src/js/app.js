@@ -41,9 +41,6 @@ const App = {
     * @async
     */
     async init() {
-        // Выставляем MEDIA_URL из конфига, чтобы formatAdCard мог строить URL картинок
-        window.MEDIA_URL = CONFIG.API.BASE_URL;
-
         await this.loadTemplates();
         await this.checkAuth();
         this.setupGlobalHandlers(); // вешаем один раз: data-nav и data-action
@@ -163,7 +160,7 @@ const App = {
             // иначе подклеиваем базовый URL нашего бэкенда/хранилища.
             imageUrl = photoPath.startsWith('http')
                 ? photoPath
-                : `${window.MEDIA_URL}${photoPath}`;
+                : `${CONFIG.API.BASE_URL}${photoPath}`;
         }
 
         return {
@@ -273,16 +270,6 @@ const App = {
                 : 'неизвестно',
             avatar: this.UI_CONSTANTS.DEFAULT_AVATAR
         });
-
-        document.querySelector('.logout-btn')?.addEventListener('click', (e) => {
-            e.preventDefault();
-            this.logout();
-        });
-
-        document.querySelector('.back-link')?.addEventListener('click', (e) => {
-            e.preventDefault();
-            this.navigateTo('/');
-        });
     },
 
     /**
@@ -300,11 +287,6 @@ const App = {
 
         this.attachLoginHandler();
         this.initPasswordToggles();
-
-        document.querySelector('.back-to-main a')?.addEventListener('click', (e) => {
-            e.preventDefault();
-            this.navigateTo('/');
-        });
     },
 
     /**
@@ -325,11 +307,6 @@ const App = {
 
         this.attachRegisterHandler();
         this.initPasswordToggles();
-
-        document.querySelector('.back-to-main a')?.addEventListener('click', (e) => {
-            e.preventDefault();
-            this.navigateTo('/');
-        });
     },
 
     /**
@@ -571,13 +548,13 @@ const App = {
         await this.checkAuth();
 
         // Наводимся на главную и всегда перерендериваем её.
-        // (previouslu: ناویگیшن only if path !== '/', so if already on '/' nothing re-rendered)
         if (window.location.pathname !== '/') {
             this.navigateTo('/');
-        } else {
-            // Уже на главной — просто перерендериваем
-            this.renderMain();
+            return;
         }
+
+        // Уже на главной — просто перерендериваем
+        this.renderMain();
     },
 
     formatDate(dateString) {
@@ -591,9 +568,5 @@ const App = {
 
 // App.init() вызывается из main.js (точка входа).
 // Не добавляй сюда лишний DOMContentLoaded — это приведёт к двойной инициализации.
-
-// Делаем App доступным глобально через window,
-// чтобы онклики в шаблонах (onclick="App.logout()") работаликорректно.
-window.App = App;
 
 export { App };
