@@ -16,7 +16,7 @@
 * @property {string} APP.VERSION - версия приложения
 */
 
-// Определяем, где запущен фронтенд: у вас на компьютере или на боевом сервере
+// Определяем, где запущен фронтенд
 const _isLocal = typeof window !== 'undefined' && (
     window.location.hostname === 'localhost' ||
     window.location.hostname === '127.0.0.1'
