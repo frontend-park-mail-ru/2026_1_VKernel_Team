@@ -6,7 +6,6 @@ import { CONFIG } from "../core/config.js";
  */
 
 const API_URL = CONFIG.API.API_URL;
-const MEDIA_URL = CONFIG.API.BASE_URL;
 
 /**
  * Эндпоинты API для различных ресурсов
@@ -69,13 +68,13 @@ const API_ENDPOINTS = {
 /**
 * Основной объект для отправки запросов на сервер
 * Содержит методы для GET, POST, PUT, DELETE запросов
-* 
+*
 * @param {string} endpoint - адрес, куда отправляем запрос (например, '/auth/login')
 * @param {string} method - метод HTTP запроса (GET, POST, PUT, DELETE)
 * @param {Object} body - данные, которые отправляем на сервер (для POST/PUT)
 * @param {Object} customHeaders - дополнительные заголовки, если нужны
 * @returns {Promise<Object>} - ответ от сервера в виде объекта {success, data, error}
-* 
+*
 * @example
 * // Пример вызова:
 * const result = await apiClient.request('/auth/login', 'POST', {

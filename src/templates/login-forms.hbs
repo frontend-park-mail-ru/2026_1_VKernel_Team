@@ -1,28 +1,28 @@
 <div class="auth-container">
-     <div class="auth-header">
-        <a href="/" class="back-link">←</a>
+    <div class="auth-header">
+        <a href="#" class="back-link" data-nav="/">←</a>
         <h2>Вход в Клевер</h2>
     </div>
     <form id="login-forms" class="auth-form" novalidate>
         <div class="form-group">
             <label for="email">Email</label>
-            <input 
-                type="email" 
-                id="email" 
-                name="email" 
+            <input
+                type="email"
+                id="email"
+                name="email"
                 placeholder="Введите почту"
                 value="{{email}}"
                 required
             >
         </div>
-        
+
         <div class="form-group">
             <label for="password">Пароль</label>
             <div class="password-wrapper">
-                <input 
-                    type="password" 
-                    id="password" 
-                    name="password" 
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
                     placeholder="Минимум 8 символов"
                     required
                 >
@@ -34,11 +34,11 @@
         <button type="submit" class="btn btn-primary btn-block">
             Войти
         </button>
-        
+
     </form>
-    
+
     <div class="auth-footer">
-        Нет аккаунта? 
+        Нет аккаунта?
         <a href="#" data-nav="/register">Зарегистрироваться</a>
     </div>
 </div>

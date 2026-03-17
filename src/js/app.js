@@ -2,19 +2,20 @@
 * Главный файл приложения
 * Здесь вся логика: роутинг (переходы между страницами),
 * отрисовка страниц, обработка кликов и т.д.
-* 
+*
 * @module app
 */
 
 import { AuthService } from "./services/authService.js";
 import { AuthValidator } from "./validators/authValidator.js";
 import { apiClient, API_ENDPOINTS } from "./api/apiClient.js";
+import { CONFIG } from "./core/config.js";
 
 
 /**
 * Главный объект приложения
 * Содержит все методы для работы с интерфейсом
-* 
+*
 * @property {Object} templates - тут хранятся скомпилированные шаблоны Handlebars
 * @property {string} currentView - название текущей страницы (main-page, login и т.д.)
 * @property {boolean} isAuthenticated - залогинен ли пользователь
@@ -42,6 +43,7 @@ const App = {
     async init() {
         await this.loadTemplates();
         await this.checkAuth();
+        this.setupGlobalHandlers(); // вешаем один раз: data-nav и data-action
         this.router();
         // Слушаем изменения истории браузера (кнопки "назад"/"вперед")
         window.addEventListener('popstate', () => this.router());
@@ -71,7 +73,7 @@ const App = {
             return price === 0 || price === '0' ? 'Бесплатно' : price + ' ₽';
         });
 
-        Handlebars.registerHelper('ifAuthenticated', function(options) {
+        Handlebars.registerHelper('ifAuthenticated', function (options) {
             return App.isAuthenticated ? options.fn(this) : options.inverse(this);
         });
 
@@ -128,7 +130,7 @@ const App = {
     async renderMain() {
         // Убираем специальный класс для страниц авторизации
         document.body.classList.remove('auth-page');
-        
+
         // Получаем контейнер, куда будем рендерить
         const app = document.getElementById('app');
 
@@ -144,9 +146,9 @@ const App = {
             isAuthenticated: this.isAuthenticated,
             user: this.user,
             recommendations: formattedAds
-    });
-    // Навешиваем обработчики на элементы главной страницы
-    this.attachMainEventListeners();
+        });
+        // Навешиваем обработчики на элементы главной страницы
+        this.attachMainEventListeners();
     },
 
     formatAdCard(ad) {
@@ -158,7 +160,7 @@ const App = {
             // иначе подклеиваем базовый URL нашего бэкенда/хранилища.
             imageUrl = photoPath.startsWith('http')
                 ? photoPath
-                : `${window.MEDIA_URL}${photoPath}`;
+                : `${CONFIG.API.BASE_URL}${photoPath}`;
         }
 
         return {
@@ -216,7 +218,7 @@ const App = {
             if (actionElement) {
                 e.preventDefault();
                 const action = actionElement.dataset.action;
-                switch(action) {
+                switch (action) {
                     case 'logout':
                         this.logout();
                         break;
@@ -268,16 +270,6 @@ const App = {
                 : 'неизвестно',
             avatar: this.UI_CONSTANTS.DEFAULT_AVATAR
         });
-
-        document.querySelector('.logout-btn')?.addEventListener('click', (e) => {
-            e.preventDefault();
-            this.logout();
-        });
-
-        document.querySelector('.back-link')?.addEventListener('click', (e) => {
-            e.preventDefault();
-            this.navigateTo('/');
-        });
     },
 
     /**
@@ -295,11 +287,6 @@ const App = {
 
         this.attachLoginHandler();
         this.initPasswordToggles();
-
-        document.querySelector('.back-to-main a')?.addEventListener('click', (e) => {
-            e.preventDefault();
-            this.navigateTo('/');
-        });
     },
 
     /**
@@ -320,11 +307,6 @@ const App = {
 
         this.attachRegisterHandler();
         this.initPasswordToggles();
-
-        document.querySelector('.back-to-main a')?.addEventListener('click', (e) => {
-            e.preventDefault();
-            this.navigateTo('/');
-        });
     },
 
     /**
@@ -562,11 +544,17 @@ const App = {
         this.showLoading(true);
         await AuthService.logout();
         this.showLoading(false);
+        // Обновляем состояние авторизации
         await this.checkAuth();
 
+        // Наводимся на главную и всегда перерендериваем её.
         if (window.location.pathname !== '/') {
             this.navigateTo('/');
+            return;
         }
+
+        // Уже на главной — просто перерендериваем
+        this.renderMain();
     },
 
     formatDate(dateString) {
@@ -578,7 +566,7 @@ const App = {
     }
 };
 
-// Запускаем приложение, когда DOM загрузится
-document.addEventListener('DOMContentLoaded', () => App.init());
+// App.init() вызывается из main.js (точка входа).
+// Не добавляй сюда лишний DOMContentLoaded — это приведёт к двойной инициализации.
 
 export { App };
