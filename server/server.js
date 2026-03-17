@@ -67,6 +67,47 @@ const server = http.createServer(async (req, res) => {
             return;
         }
 
+        // Перехватываем все запросы, которые фронтенд отправляет на /api/v1
+        if (pathname.startsWith('/api/v1')) {
+            // Указываем адрес боевого бэкенда на сервере
+            const targetUrl = new URL(req.url, 'http://clover-go.ru:8000');
+
+            // Формируем настройки для внутреннего запроса от Node.js к бэкенду
+            const options = {
+                hostname: targetUrl.hostname,
+                port: targetUrl.port,
+                path: targetUrl.pathname + targetUrl.search, // Сохраняем пути и параметры (например, ?limit=10)
+                method: req.method,                          // Сохраняем оригинальный метод (GET, POST и т.д.)
+                headers: {
+                    ...req.headers,               // Пробрасываем все заголовки от браузера (включая куки!)
+                    host: targetUrl.host,         // Подменяем host, чтобы бэкенд не отклонил запрос
+                }
+            };
+
+            // Создаем HTTP-запрос к бэкенду
+            const proxyReq = http.request(options, (proxyRes) => {
+                // Как только бэкенд ответил, пробрасываем его статус и заголовки обратно в браузер.
+                res.writeHead(proxyRes.statusCode, proxyRes.headers);
+
+                // Потоково передаем тело ответа от бэкенда клиенту (браузеру)
+                proxyRes.pipe(res, { end: true });
+            });
+
+            // Обрабатываем ситуации, когда бэкенд недоступен
+            proxyReq.on('error', (err) => {
+                console.error('Ошибка проксирования на бэкенд:', err.message);
+                if (!res.headersSent) {
+                    res.writeHead(502, { 'Content-Type': 'text/plain; charset=UTF-8' });
+                    res.end('502 Bad Gateway - Бэкенд недоступен');
+                }
+            });
+
+            // Потоково передаем тело оригинального запроса на бэкенд
+            req.pipe(proxyReq, { end: true });
+
+            return;
+        }
+
         if (pathname.startsWith('/src/')) {
             const srcFilePath = path.join(__dirname, '..', pathname);
             const SRC_DIR = path.join(__dirname, '..', 'src');
