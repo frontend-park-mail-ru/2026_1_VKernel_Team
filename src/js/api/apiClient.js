@@ -1,4 +1,3 @@
-
 import { CONFIG } from "../core/config.js";
 /**
  * Базовый URL API сервера
@@ -64,6 +63,16 @@ const API_ENDPOINTS = {
     }
 };
 
+/**
+ * Вспомогательная функция для получения куки по имени
+ */
+const getCookie = (name) => {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+    return null;
+};
+
 
 /**
 * Основной объект для отправки запросов на сервер
@@ -96,6 +105,13 @@ const apiClient = {
             'Content-Type': 'application/json',
             ...customHeaders
         };
+
+        if (method !== 'GET' && method !== 'HEAD' && method !== 'OPTIONS') {
+            const csrfToken = getCookie('csrf_token');
+            if (csrfToken) {
+                headers['X-CSRF-Token'] = csrfToken;
+            }
+        }
 
         const config = {
             method,
