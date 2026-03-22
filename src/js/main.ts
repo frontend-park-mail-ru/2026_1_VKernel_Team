@@ -4,12 +4,17 @@
  * @module main
  */
 
-import './utils/storage.js';
-import './validators/authValidator.js';
-import './services/authService.js';
-import './services/adsServices.js';
-import './api/apiClient.js';
-import { App } from './app.js';
+import '../../public/css/base.css';
+import '../../public/css/components.css';
+import '../../public/css/auth.css';
+import '../../public/css/main.css';
+
+import './utils/storage';
+import './validators/authValidator';
+import './services/authService';
+import './services/adsServices';
+import './api/apiClient';
+import { App } from './app';
 
 // Инициализация приложения после загрузки всех модулей
 // Откладываем запуск приложения до момента,
