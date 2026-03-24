@@ -9,7 +9,14 @@
     "dev": "node --watch server/server.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint .",
-    "lint:fix": "eslint . --fix"
+    "lint:fix": "eslint . --fix",
+
+    "dep-gen": "npx depcruise src --output-type dot",
+    "dep-all": "npm run dep-gen -s | dot -T svg > graphs/dependency-graph.svg",
+    "dep-collapse-3": "npm run dep-gen -s -- --collapse 3| dot -T svg > graphs/collapse-3.svg",
+    "dep-collapse-4": "npm run dep-gen -s -- --collapse 4| dot -T svg > graphs/collapse-4.svg",
+    "dep": "npm run dep-all & npm run dep-collapse-3 && npm run dep-collapse-4",
+    "focus": "npm run dep-gen -s -- --focus $npm_config_path | dot -T svg > graphs/$npm_config_path.svg"
   },
   "repository": {
     "type": "git",
@@ -33,6 +40,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "dependency-cruiser": "^17.3.9",
     "eslint": "^10.0.3",
     "globals": "^17.4.0"
   }
