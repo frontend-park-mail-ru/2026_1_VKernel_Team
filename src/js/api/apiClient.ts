@@ -1,4 +1,4 @@
-import { CONFIG } from "../core/config";
+import { CONFIG } from '@/core/config';
 
 const API_URL = CONFIG.API.API_URL;
 
@@ -21,21 +21,21 @@ const API_ENDPOINTS = {
         CREATE: '/ads',
         UPDATE: (id: number | string) => `/ads/${id}`,
         DELETE: (id: number | string) => `/ads/${id}`,
-        SEARCH: '/ads/search'
+        SEARCH: '/ads/search',
     },
     USERS: {
         PROFILE: '/users/profile',
-        GET_BY_ID: (id: number | string) => `/users/${id}`
+        GET_BY_ID: (id: number | string) => `/users/${id}`,
     },
     CATEGORIES: {
-        GET_ALL: '/categories'
+        GET_ALL: '/categories',
     },
     FAVORITES: {
         GET_ALL: '/favorites',
         ADD: (id: number | string) => `/favorites/${id}`,
         REMOVE: (id: number | string) => `/favorites/${id}`,
-        CHECK: (id: number | string) => `/favorites/${id}/check`
-    }
+        CHECK: (id: number | string) => `/favorites/${id}/check`,
+    },
 };
 
 /**
@@ -68,17 +68,17 @@ const apiClient = {
         endpoint: string,
         method: string = 'GET',
         body: any = null,
-        customHeaders: Record<string, string> = {}
+        customHeaders: Record<string, string> = {},
     ): Promise<ApiResponse> {
         const headers: Record<string, string> = {
             'Content-Type': 'application/json',
-            ...customHeaders
+            ...customHeaders,
         };
 
         const config: RequestInit = {
             method,
             headers,
-            credentials: 'include' as RequestCredentials
+            credentials: 'include' as RequestCredentials,
         };
 
         if (body) {
@@ -109,14 +109,14 @@ const apiClient = {
                 success: false,
                 error: data.message || data.error || 'Произошла неизвестная ошибка',
                 data: data,
-                status: response.status
+                status: response.status,
             };
 
         } catch (error) {
             return {
                 success: false,
                 error: 'Не удалось соединиться с сервером',
-                status: 0
+                status: 0,
             };
         }
     },
@@ -161,7 +161,7 @@ const apiClient = {
      */
     delete(endpoint: string, headers: Record<string, string> = {}): Promise<ApiResponse> {
         return this.request(endpoint, 'DELETE', null, headers);
-    }
+    },
 };
 
 export { API_ENDPOINTS, apiClient };

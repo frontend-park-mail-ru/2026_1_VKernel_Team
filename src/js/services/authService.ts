@@ -4,11 +4,11 @@
  * @module authService
  */
 
-import { API_ENDPOINTS, apiClient } from "../api/apiClient";
+import { API_ENDPOINTS, apiClient } from '@/api/apiClient';
 
 const HTTP_STATUS = {
     UNAUTHORIZED: 401,
-    BAD_REQUEST: 400
+    BAD_REQUEST: 400,
 };
 
 type AuthErrorMapType = {
@@ -34,7 +34,7 @@ const AuthErrorMap: AuthErrorMapType = {
     'password must contain at least one latin letter': 'Пароль должен содержать хотя бы одну букву',
     'password contains forbidden characters': 'Пароль может содержать только латинские буквы и цифры',
     'name cannot be empty': 'Имя не может быть пустым',
-    'name contains invalid characters': 'Имя содержит недопустимые символы'
+    'name contains invalid characters': 'Имя содержит недопустимые символы',
 };
 
 type UserData = {
@@ -70,21 +70,21 @@ const AuthService = {
         const result = await apiClient.post(API_ENDPOINTS.AUTH.REGISTER, {
             name: userData.name || userData.username,
             email: userData.email,
-            password: userData.password
+            password: userData.password,
         });
 
         if (result.success) {
             return {
                 success: true,
                 data: result.data,
-                error: null
+                error: null,
             };
         }
 
         if (result.status === HTTP_STATUS.BAD_REQUEST && result.data) {
             const fieldErrors: Record<string, string> = {};
             const data = result.data as Record<string, string>;
-            
+
             if (data.email) {
                 fieldErrors.email = AuthErrorMap[data.email] || data.email;
             }
@@ -99,7 +99,7 @@ const AuthService = {
                 success: false,
                 error: 'Ошибка в полях',
                 fieldErrors: fieldErrors,
-                status: result.status
+                status: result.status,
             };
         }
 
@@ -107,7 +107,7 @@ const AuthService = {
         return {
             success: false,
             error: translatedError,
-            status: result.status
+            status: result.status,
         };
     },
 
@@ -122,14 +122,14 @@ const AuthService = {
     async login(credentials: { email: string; password: string }): Promise<AuthResult> {
         const result = await apiClient.post(API_ENDPOINTS.AUTH.LOGIN, {
             email: credentials.email,
-            password: credentials.password
+            password: credentials.password,
         });
 
         if (result.success) {
             return {
                 success: true,
                 data: result.data,
-                error: null
+                error: null,
             };
         }
 
@@ -139,9 +139,9 @@ const AuthService = {
                 error: 'Неверный email или пароль',
                 fieldErrors: {
                     email: 'Неверный email',
-                    password: 'Неверный пароль'
+                    password: 'Неверный пароль',
                 },
-                status: result.status
+                status: result.status,
             };
         }
 
@@ -149,7 +149,7 @@ const AuthService = {
         return {
             success: false,
             error: translatedError,
-            status: result.status
+            status: result.status,
         };
     },
 
@@ -162,9 +162,9 @@ const AuthService = {
 
         return {
             isAuthenticated: result.success,
-            user: result.success ? result.data : null
+            user: result.success ? result.data : null,
         };
-    }
+    },
 };
 
 export { AuthService };

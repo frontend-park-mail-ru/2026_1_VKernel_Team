@@ -1,11 +1,11 @@
 /**
 * Сервис для работы с объявлениями
 * Здесь все функции, которые связаны с получением и отображением объявлений
-* 
+*
 * @module adsServices
 */
 
-import { CONFIG } from "../core/config";
+import { CONFIG } from '@/core/config';
 
 type Ad = {
     id: number;
@@ -37,7 +37,7 @@ const AdsService = {
      * Получает все объявления с сервера
      * @async
      * @returns {Promise<Object>} - объект с полем success и либо ads (массив объявлений), либо error
-     * 
+     *
      * @example
      * // Пример использования:
      * const result = await AdsService.getAllAds();
@@ -53,7 +53,7 @@ const AdsService = {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
-                }
+                },
             });
 
             if (!response.ok) {
@@ -61,15 +61,15 @@ const AdsService = {
             }
 
             const data = await response.json();
-            
+
             return {
                 success: true,
-                data: data
+                data: data,
             };
         } catch (error) {
             return {
                 success: false,
-                error: 'Не удалось загрузить объявления'
+                error: 'Не удалось загрузить объявления',
             };
         }
     },
@@ -79,7 +79,7 @@ const AdsService = {
      * @async
      * @param {number|string} id - идентификатор объявления
      * @returns {Promise<Object>} - объект с объявлением или ошибкой
-     * 
+     *
      * @example
      * const result = await AdsService.getAdById(123);
      * if (result.success) {
@@ -92,7 +92,7 @@ const AdsService = {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
-                }
+                },
             });
 
             if (!response.ok) {
@@ -102,12 +102,12 @@ const AdsService = {
             const data = await response.json();
             return {
                 success: true,
-                data: data
+                data: data,
             };
         } catch (error) {
             return {
                 success: false,
-                error: 'Не удалось загрузить объявление'
+                error: 'Не удалось загрузить объявление',
             };
         }
     },
@@ -115,10 +115,10 @@ const AdsService = {
     /**
      * Подготовливает объявление для отображения на карточке
      * Форматирует цену, дату, добавляет полный путь к картинке
-     * 
+     *
      * @param {Object} ad - сырое объявление с сервера
      * @returns {Object} - отформатированное объявление для шаблона
-     * 
+     *
      */
     formatAdCard(ad: Ad) {
         const firstPhoto = ad.photos?.[0] || '';
@@ -139,9 +139,9 @@ const AdsService = {
             image: imageUrl,
             views: ad.views_count || 0,
             favorites: ad.favorites_count || 0,
-            date: ad.created_at ? new Date(ad.created_at).toLocaleDateString('ru-RU') : ''
+            date: ad.created_at ? new Date(ad.created_at).toLocaleDateString('ru-RU') : '',
         };
-    }
+    },
 };
 
 export { AdsService };

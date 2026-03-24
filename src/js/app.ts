@@ -7,11 +7,11 @@
 */
 
 import Handlebars from 'handlebars';
-import { AuthService } from "./services/authService";
-import { AuthValidator } from "./validators/authValidator";
-import { apiClient, API_ENDPOINTS } from "./api/apiClient";
-import { CONFIG } from "./core/config";
-import type { User } from "./types";
+import { AuthService } from '@/services/authService';
+import { AuthValidator } from '@/validators/authValidator';
+import { apiClient, API_ENDPOINTS } from '@/api/apiClient';
+import { CONFIG } from '@/core/config';
+import type { User } from '@/types';
 
 type HandlebarsTemplateFunction = (context?: any) => string;
 
@@ -35,7 +35,7 @@ const App = {
         DEFAULT_AD_IMAGE: '/images/default-ad.jpg',
         EYE_OPEN: '/images/icons/Eye.jpeg',
         EYE_CLOSED: '/images/icons/Eye-off.jpeg',
-        LOADER_HTML: '<div class="loader"></div>'
+        LOADER_HTML: '<div class="loader"></div>',
     },
 
     /**
@@ -58,7 +58,7 @@ const App = {
             'register-form',
             'user-profile',
             'main-page',
-            'not-found'
+            'not-found',
         ];
 
         for (const name of templateNames) {
@@ -146,7 +146,7 @@ const App = {
         app.innerHTML = template({
             isAuthenticated: this.isAuthenticated,
             user: this.user,
-            recommendations: formattedAds
+            recommendations: formattedAds,
         });
         this.attachMainEventListeners();
     },
@@ -169,7 +169,7 @@ const App = {
             mainPhoto: imageUrl,
             image: imageUrl,
             views: ad.views_count || 0,
-            createdDate: ad.created_at ? new Date(ad.created_at).toLocaleDateString('ru-RU') : ''
+            createdDate: ad.created_at ? new Date(ad.created_at).toLocaleDateString('ru-RU') : '',
         };
     },
 
@@ -239,13 +239,13 @@ const App = {
             password: {
                 input: document.querySelector('#password') as HTMLInputElement | null,
                 toggle: document.querySelector('#togglePassword') as HTMLButtonElement | null,
-                eye: document.querySelector('#eyeIcon') as HTMLImageElement | null
+                eye: document.querySelector('#eyeIcon') as HTMLImageElement | null,
             },
             confirm: {
                 input: document.querySelector('#confirm-password') as HTMLInputElement | null,
                 toggle: document.querySelector('#toggleConfirmPassword') as HTMLButtonElement | null,
-                eye: document.querySelector('#eyeIconConfirm') as HTMLImageElement | null
-            }
+                eye: document.querySelector('#eyeIconConfirm') as HTMLImageElement | null,
+            },
         };
 
         Object.values(elements).forEach(({ input, toggle, eye }) => {
@@ -271,7 +271,7 @@ const App = {
             registeredAt: this.user?.created_at
                 ? new Date(this.user.created_at).toLocaleDateString('ru-RU')
                 : 'неизвестно',
-            avatar: this.UI_CONSTANTS.DEFAULT_AVATAR
+            avatar: this.UI_CONSTANTS.DEFAULT_AVATAR,
         });
     },
 
@@ -289,7 +289,7 @@ const App = {
         if (!template) return;
         app.innerHTML = template({
             error: error,
-            email: formData?.email || ''
+            email: formData?.email || '',
         });
 
         this.attachLoginHandler();
@@ -313,7 +313,7 @@ const App = {
             error: error,
             success: success,
             name: formData?.name || '',
-            email: formData?.email || ''
+            email: formData?.email || '',
         });
 
         this.attachRegisterHandler();
@@ -463,7 +463,7 @@ const App = {
 
         const form = document.getElementById('login-forms');
         if (!form) return;
-        
+
         const errorDiv = document.createElement('div');
         errorDiv.className = 'login-error alert alert-error';
         errorDiv.textContent = message;
@@ -563,9 +563,9 @@ const App = {
         return dateString ? new Date(dateString).toLocaleDateString('ru-RU', {
             day: 'numeric',
             month: 'long',
-            year: 'numeric'
+            year: 'numeric',
         }) : '';
-    }
+    },
 };
 
 export { App };

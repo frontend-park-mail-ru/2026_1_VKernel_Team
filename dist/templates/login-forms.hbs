@@ -1,0 +1,44 @@
+<div class="auth-container">
+    <div class="auth-header">
+        <a href="#" class="back-link" data-nav="/">←</a>
+        <h2>Вход в Клевер</h2>
+    </div>
+    <form id="login-forms" class="auth-form" novalidate>
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input
+                type="email"
+                id="email"
+                name="email"
+                placeholder="Введите почту"
+                value="{{email}}"
+                required
+            >
+        </div>
+
+        <div class="form-group">
+            <label for="password">Пароль</label>
+            <div class="password-wrapper">
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    placeholder="Минимум 8 символов"
+                    required
+                >
+                <button type="button" id="togglePassword" class="eye-btn">
+                    <img src="images/icons/Eye-off.jpeg" id="eyeIcon" alt="Показать пароль">
+                </button>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">
+            Войти
+        </button>
+
+    </form>
+
+    <div class="auth-footer">
+        Нет аккаунта?
+        <a href="#" data-nav="/register">Зарегистрироваться</a>
+    </div>
+</div>

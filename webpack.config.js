@@ -18,30 +18,6 @@ export default (env, argv) => {
             publicPath: '/'
         },
         devtool: isDevelopment ? 'source-map' : false,
-        devServer: {
-            static: [
-                {
-                    directory: path.join(__dirname, 'public'),
-                    publicPath: '/',
-                },
-                {
-                    directory: path.join(__dirname, 'src/templates'),
-                    publicPath: '/templates',
-                }
-            ],
-            port: 3000,
-            hot: true,
-            open: true,
-            historyApiFallback: true,
-            proxy: [
-                {
-                    context: ['/api'],
-                    target: 'http://clover-go.ru:8000',
-                    changeOrigin: true,
-                    secure: false
-                }
-            ]
-        },
         module: {
             rules: [
                 {
