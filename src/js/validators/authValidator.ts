@@ -9,6 +9,7 @@
  */
 
 const AuthValidator = {
+    //Надо решить проблему с неисправностями в регулярках
     USERNAME_REGEX: /^[a-zA-Z0-9_]+$/,
     EMAIL_REGEX: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
     LETTER_REGEX: /[a-zA-Z]/,
