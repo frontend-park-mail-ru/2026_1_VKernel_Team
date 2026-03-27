@@ -1,23 +1,69 @@
-<div class="profile-container">
-    <div class="back-to-main">
-        <a href="#" class="back-link" data-nav="/">←</a>
-    </div>
-    <nav class="main-nav">
-        <a href="http://127.0.0.1:5501/public/index.html" class="nav-link">Главная</a>
-        <a href="/profile" class="nav-link active">Профиль</a>
-    </nav>
-    <h2>Добро пожаловать, {{name}}!</h2>
+<div class="main-container">
+    <!-- НАВБАР -->
+    <header class="header">
+        <div class="header-content">
+            <!-- Левая часть с иконками -->
+            <div class="header-left">
+                <div class="nav-icon">
+                    <a href="#" class="nav-link">
+                        <span class="icon">💼</span>
+                        <span class="nav-text">Для бизнеса</span>
+                    </a>
+                </div>
+                <div class="nav-icon">
+                    <a href="#" class="nav-link">
+                        <span class="icon">✉️</span>
+                        <span class="nav-text">Сообщения</span>
+                    </a>
+                </div>
+                <div class="nav-icon">
+                    <a href="#" class="nav-link">
+                        <span class="icon">❤️</span>
+                        <span class="nav-text">Избранное</span>
+                    </a>
+                </div>
+                <div class="nav-icon">
+                    <a href="#" class="nav-link">
+                        <span class="icon">🛒</span>
+                        <span class="nav-text">Корзина</span>
+                    </a>
+                </div>
 
-    <div class="profile-card">
-        <div class="profile-info">
-            <p><strong>Email:</strong> {{email}}</p>
-            <p><strong>Дата регистрации:</strong> {{registeredAt}}</p>
+            </div>
+            
+            <!-- Правая часть -->
+            <div class="header-right">
+                <button class="btn place-ad-btn">Разместить объявление</button>
+                
+                <!--Нужна проверка в будущем на загрузку своей аватарки пользователем-->
+                <img src="images/logo/avatar.jpeg" alt="Аватар" class="avatar">
+                <button class="btn btn-danger logout-btn" data-action="logout">
+                    Выйти
+                </button>
+            </div>
         </div>
+    </header>
 
-        <div class="profile-actions">
-            <button class="btn btn-danger" data-action="logout">
-                Выйти из аккаунта
-            </button>
+    <!-- ОСНОВНОЙ КОНТЕНТ -->
+    <main class="main-content">
+        <!-- Поисковый блок -->
+        <div class="search-section">
+            <!-- Лого и название в одной строке с поиском -->
+            <div class="search-row">
+                <div class="brand">
+                    <a href="#" data-nav="/">
+                        <img src="images/logo/logo_clover2.jpeg" alt="Логотип" class="logo">
+                    </a>
+                </div>
+                <div class="search-wrapper">
+                    <input 
+                        type="text" 
+                        class="search-input" 
+                        placeholder="Поиск объявлений..."
+                    >
+                    <button class="btn place-ad-btn">Найти</button>
+                </div>
+            </div>
         </div>
-    </div>
+    </main>
 </div>

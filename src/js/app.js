@@ -168,6 +168,7 @@ const App = {
             formattedPrice: ad.price === 0 ? 'Бесплатно' : ad.price + ' ₽',
             mainPhoto: imageUrl,
             image: imageUrl,
+            views: ad.views_count || 0,
             createdDate: ad.created_at ? new Date(ad.created_at).toLocaleDateString('ru-RU') : ''
         };
     },
