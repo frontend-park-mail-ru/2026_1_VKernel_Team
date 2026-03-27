@@ -1,11 +1,29 @@
 /**
 * Сервис для работы с объявлениями
 * Здесь все функции, которые связаны с получением и отображением объявлений
-* 
+*
 * @module adsServices
 */
 
-import { CONFIG } from "../core/config.js";
+import { CONFIG } from '@/core/config';
+
+type Ad = {
+    id: number;
+    title: string;
+    description?: string;
+    price: number;
+    location?: string;
+    photos?: string[];
+    views_count?: number;
+    favorites_count?: number;
+    created_at?: string;
+};
+
+type ApiResponse<T = any> = {
+    success: boolean;
+    data?: T;
+    error?: string;
+};
 
 /**
  * Объект с методами для работы с объявлениями
@@ -19,7 +37,7 @@ const AdsService = {
      * Получает все объявления с сервера
      * @async
      * @returns {Promise<Object>} - объект с полем success и либо ads (массив объявлений), либо error
-     * 
+     *
      * @example
      * // Пример использования:
      * const result = await AdsService.getAllAds();
@@ -29,32 +47,29 @@ const AdsService = {
      *   console.error('Ошибка:', result.error);
      * }
      */
-    async getAllAds() {
+    async getAllAds(): Promise<ApiResponse<Ad[]>> {
         try {
-            // Отправляем GET запрос на /ads
             const response = await fetch(`${this.API_URL}/ads`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
-                }
+                },
             });
 
-            // Если сервер вернул ошибку
             if (!response.ok) {
                 throw new Error('Ошибка загрузки объявлений');
             }
 
-            // Превращаем ответ в JSON
             const data = await response.json();
-            
+
             return {
                 success: true,
-                ads: data  // data - это массив объявлений
+                data: data,
             };
         } catch (error) {
             return {
                 success: false,
-                error: 'Не удалось загрузить объявления'
+                error: 'Не удалось загрузить объявления',
             };
         }
     },
@@ -64,21 +79,20 @@ const AdsService = {
      * @async
      * @param {number|string} id - идентификатор объявления
      * @returns {Promise<Object>} - объект с объявлением или ошибкой
-     * 
+     *
      * @example
      * const result = await AdsService.getAdById(123);
      * if (result.success) {
      *   console.log('Объявление:', result.ad);
      * }
      */
-    async getAdById(id) {
+    async getAdById(id: number | string): Promise<ApiResponse<Ad>> {
         try {
-            // Отправляем запрос на /ads/10101
             const response = await fetch(`${this.API_URL}/ads/${id}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
-                }
+                },
             });
 
             if (!response.ok) {
@@ -88,12 +102,12 @@ const AdsService = {
             const data = await response.json();
             return {
                 success: true,
-                ad: data
+                data: data,
             };
         } catch (error) {
             return {
                 success: false,
-                error: 'Не удалось загрузить объявление'
+                error: 'Не удалось загрузить объявление',
             };
         }
     },
@@ -101,12 +115,12 @@ const AdsService = {
     /**
      * Подготовливает объявление для отображения на карточке
      * Форматирует цену, дату, добавляет полный путь к картинке
-     * 
+     *
      * @param {Object} ad - сырое объявление с сервера
      * @returns {Object} - отформатированное объявление для шаблона
-     * 
+     *
      */
-    formatAdCard(ad) {
+    formatAdCard(ad: Ad) {
         const firstPhoto = ad.photos?.[0] || '';
 
         let imageUrl = '/images/placeholder.jpg';
@@ -125,9 +139,9 @@ const AdsService = {
             image: imageUrl,
             views: ad.views_count || 0,
             favorites: ad.favorites_count || 0,
-            date: new Date(ad.created_at).toLocaleDateString('ru-RU')
+            date: ad.created_at ? new Date(ad.created_at).toLocaleDateString('ru-RU') : '',
         };
-    }
+    },
 };
 
 export { AdsService };

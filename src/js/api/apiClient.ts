@@ -1,69 +1,42 @@
-
-import { CONFIG } from "../core/config.js";
-/**
- * Базовый URL API сервера
- * @type {string}
- */
+import { CONFIG } from '@/core/config';
 
 const API_URL = CONFIG.API.API_URL;
 
-/**
- * Эндпоинты API для различных ресурсов
- * @type {Object}
- */
+type ApiResponse<T = any> = {
+    success: boolean;
+    data?: T;
+    error?: string;
+    status?: number;
+};
+
 const API_ENDPOINTS = {
-    /**
-     * Эндпоинты для аутентификации
-     * @type {Object}
-     */
     AUTH: {
         REGISTER: '/auth/register',
         LOGIN: '/auth/login',
         LOGOUT: '/auth/logout',
     },
-
-    /**
-     * Эндпоинты для объявлений
-     * @type {Object}
-     */
     ADS: {
         GET_ALL: '/ads',
-        GET_BY_ID: (id) => `/ads/${id}`,
+        GET_BY_ID: (id: number | string) => `/ads/${id}`,
         CREATE: '/ads',
-        UPDATE: (id) => `/ads/${id}`,
-        DELETE: (id) => `/ads/${id}`,
-        SEARCH: '/ads/search'
+        UPDATE: (id: number | string) => `/ads/${id}`,
+        DELETE: (id: number | string) => `/ads/${id}`,
+        SEARCH: '/ads/search',
     },
-
-    /**
-     * Эндпоинты для пользователей
-     * @type {Object}
-     */
     USERS: {
         PROFILE: '/users/profile',
-        GET_BY_ID: (id) => `/users/${id}`
+        GET_BY_ID: (id: number | string) => `/users/${id}`,
     },
-
-    /**
-     * Эндпоинты для категорий
-     * @type {Object}
-     */
     CATEGORIES: {
-        GET_ALL: '/categories'
+        GET_ALL: '/categories',
     },
-
-    /**
-     * Эндпоинты для избранного
-     * @type {Object}
-     */
     FAVORITES: {
         GET_ALL: '/favorites',
-        ADD: (id) => `/favorites/${id}`,
-        REMOVE: (id) => `/favorites/${id}`,
-        CHECK: (id) => `/favorites/${id}/check`
-    }
+        ADD: (id: number | string) => `/favorites/${id}`,
+        REMOVE: (id: number | string) => `/favorites/${id}`,
+        CHECK: (id: number | string) => `/favorites/${id}/check`,
+    },
 };
-
 
 /**
 * Основной объект для отправки запросов на сервер
@@ -91,16 +64,21 @@ const apiClient = {
      * @param {Object} [customHeaders={}] - Дополнительные заголовки
      * @returns {Promise<Object>} Результат запроса с полями success, data, error, status
      */
-    async request(endpoint, method = 'GET', body = null, customHeaders = {}) {
-        const headers = {
+    async request(
+        endpoint: string,
+        method: string = 'GET',
+        body: any = null,
+        customHeaders: Record<string, string> = {},
+    ): Promise<ApiResponse> {
+        const headers: Record<string, string> = {
             'Content-Type': 'application/json',
-            ...customHeaders
+            ...customHeaders,
         };
 
-        const config = {
+        const config: RequestInit = {
             method,
             headers,
-            credentials: 'include'
+            credentials: 'include' as RequestCredentials,
         };
 
         if (body) {
@@ -131,14 +109,14 @@ const apiClient = {
                 success: false,
                 error: data.message || data.error || 'Произошла неизвестная ошибка',
                 data: data,
-                status: response.status
+                status: response.status,
             };
 
         } catch (error) {
             return {
                 success: false,
                 error: 'Не удалось соединиться с сервером',
-                status: 0
+                status: 0,
             };
         }
     },
@@ -149,7 +127,7 @@ const apiClient = {
      * @param {Object} [headers={}] - Дополнительные заголовки
      * @returns {Promise<Object>} Результат запроса
      */
-    get(endpoint, headers) {
+    get(endpoint: string, headers: Record<string, string> = {}): Promise<ApiResponse> {
         return this.request(endpoint, 'GET', null, headers);
     },
 
@@ -160,7 +138,7 @@ const apiClient = {
      * @param {Object} [headers={}] - Дополнительные заголовки
      * @returns {Promise<Object>} Результат запроса
      */
-    post(endpoint, body, headers) {
+    post(endpoint: string, body: any, headers: Record<string, string> = {}): Promise<ApiResponse> {
         return this.request(endpoint, 'POST', body, headers);
     },
 
@@ -171,7 +149,7 @@ const apiClient = {
      * @param {Object} [headers={}] - Дополнительные заголовки
      * @returns {Promise<Object>} Результат запроса
      */
-    put(endpoint, body, headers) {
+    put(endpoint: string, body: any, headers: Record<string, string> = {}): Promise<ApiResponse> {
         return this.request(endpoint, 'PUT', body, headers);
     },
 
@@ -181,9 +159,9 @@ const apiClient = {
      * @param {Object} [headers={}] - Дополнительные заголовки
      * @returns {Promise<Object>} Результат запроса
      */
-    delete(endpoint, headers) {
+    delete(endpoint: string, headers: Record<string, string> = {}): Promise<ApiResponse> {
         return this.request(endpoint, 'DELETE', null, headers);
-    }
+    },
 };
 
 export { API_ENDPOINTS, apiClient };
