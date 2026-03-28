@@ -1,16 +1,18 @@
 /**
  * Модуль для работы с локальным хранилищем браузера (localStorage)
  * Здесь сохраняем данные пользователя и проверяем авторизацию
- * 
+ *
  * @module storage
  */
+
+type UserPreferences = Record<string,any>;
 
 /**
  * Объект с методами для сохранения и получения данных
  * Использует localStorage для долговременного хранения
  */
 const Storage = {
-    setItem(key, value) {
+    setItem(key: string, value: any) {
         try {
             localStorage.setItem(key, JSON.stringify(value));
         } catch (e) {
@@ -18,7 +20,7 @@ const Storage = {
         }
     },
 
-    getItem(key) {
+    getItem<T = any>(key: string): T | null {
         try {
             const item = localStorage.getItem(key);
             return item ? JSON.parse(item) : null;
@@ -27,7 +29,7 @@ const Storage = {
         }
     },
 
-    removeItem(key) {
+    removeItem(key: string) {
         localStorage.removeItem(key);
     },
 
@@ -35,11 +37,11 @@ const Storage = {
         localStorage.clear();
     },
 
-    setUserPreferences(prefs) {
+    setUserPreferences(prefs: UserPreferences) {
         this.setItem('user_preferences', prefs);
     },
 
-    getUserPreferences() {
+    getUserPreferences(): UserPreferences {
         return this.getItem('user_preferences') || {};
     },
 
@@ -47,7 +49,7 @@ const Storage = {
     getUser: undefined,
     removeUser: undefined,
     isAuthenticated: undefined,
-    logout: undefined
+    logout: undefined,
 };
 
 export { Storage };

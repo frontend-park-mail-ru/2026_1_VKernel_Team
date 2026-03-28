@@ -6,11 +6,14 @@
 * @module app
 */
 
-import { AuthService } from "./services/authService.js";
-import { AuthValidator } from "./validators/authValidator.js";
-import { apiClient, API_ENDPOINTS } from "./api/apiClient.js";
-import { CONFIG } from "./core/config.js";
+import Handlebars from 'handlebars';
+import { AuthService } from '@/services/authService';
+import { AuthValidator } from '@/validators/authValidator';
+import { apiClient, API_ENDPOINTS } from '@/api/apiClient';
+import { CONFIG } from '@/core/config';
+import type { User } from '@/types';
 
+type HandlebarsTemplateFunction = (context?: any) => string;
 
 /**
 * Главный объект приложения
@@ -22,17 +25,17 @@ import { CONFIG } from "./core/config.js";
 * @property {Object} user - данные текущего пользователя
 */
 const App = {
-    templates: {},
-    currentView: 'main-page',
+    templates: {} as Record<string, HandlebarsTemplateFunction>,
+    currentView: 'main-page' as string,
     isAuthenticated: false,
-    user: null,
+    user: null as User | null,
 
     UI_CONSTANTS: {
         DEFAULT_AVATAR: '/images/default-avatar.jpg',
         DEFAULT_AD_IMAGE: '/images/default-ad.jpg',
         EYE_OPEN: '/images/icons/Eye.jpeg',
         EYE_CLOSED: '/images/icons/Eye-off.jpeg',
-        LOADER_HTML: '<div class="loader"></div>'
+        LOADER_HTML: '<div class="loader"></div>',
     },
 
     /**
@@ -43,9 +46,8 @@ const App = {
     async init() {
         await this.loadTemplates();
         await this.checkAuth();
-        this.setupGlobalHandlers(); // вешаем один раз: data-nav и data-action
+        this.setupGlobalHandlers();
         this.router();
-        // Слушаем изменения истории браузера (кнопки "назад"/"вперед")
         window.addEventListener('popstate', () => this.router());
     },
 
@@ -56,24 +58,20 @@ const App = {
             'register-form',
             'user-profile',
             'main-page',
-            'not-found'
+            'not-found',
         ];
 
-        // Загружаем каждый шаблон
         for (const name of templateNames) {
-            // Запрашиваем файл с сервера
-            const response = await fetch(`src/templates/${name}.hbs`);
-            // Получаем текст шаблона
+            const response = await fetch(`/templates/${name}.hbs`);
             const source = await response.text();
-            // Компилируем (превращаем в функцию) и сохраняем
             this.templates[name] = Handlebars.compile(source);
         }
 
-        Handlebars.registerHelper('formatPrice', (price) => {
-            return price === 0 || price === '0' ? 'Бесплатно' : price + ' ₽';
+        Handlebars.registerHelper('formatPrice', (price: number) => {
+            return price === 0 ? 'Бесплатно' : price + ' ₽';
         });
 
-        Handlebars.registerHelper('ifAuthenticated', function (options) {
+        Handlebars.registerHelper('ifAuthenticated', function(this: any, options: Handlebars.HelperOptions) {
             return App.isAuthenticated ? options.fn(this) : options.inverse(this);
         });
 
@@ -121,8 +119,7 @@ const App = {
         }
     },
 
-    // Переход на другую страницу без перезагрузки (SPA)
-    navigateTo(path) {
+    navigateTo(path: string) {
         window.history.pushState({}, '', path);
         this.router();
     },
@@ -133,31 +130,34 @@ const App = {
 
         // Получаем контейнер, куда будем рендерить
         const app = document.getElementById('app');
+        if (!app) return;
 
         // Загружаем все объявления с сервера
-        const adsResult = await apiClient.get(API_ENDPOINTS.ADS.GET_ALL);
+        const adsResult = await apiClient.get(API_ENDPOINTS.ADS.GET_ALL, {});
         const ads = adsResult.success ? adsResult.data : [];
 
         // Форматируем каждое объявление для отображения
-        const formattedAds = ads.map(ad => this.formatAdCard(ad));
+        const formattedAds = ads.map((ad: any) => this.formatAdCard(ad));
+
+        const template = this.templates['main-page'];
+        if (!template) return;
 
         // Рендерим главную страницу с данными
-        app.innerHTML = this.templates['main-page']({
+        app.innerHTML = template({
             isAuthenticated: this.isAuthenticated,
             user: this.user,
-            recommendations: formattedAds
+            recommendations: formattedAds,
         });
-        // Навешиваем обработчики на элементы главной страницы
         this.attachMainEventListeners();
     },
 
-    formatAdCard(ad) {
+    formatAdCard(ad: any) {
         let imageUrl = this.UI_CONSTANTS.DEFAULT_AD_IMAGE;
 
+        // Проверяем: если путь уже начинается с http/https, используем его,
+        // иначе подклеиваем базовый URL нашего бэкенда/хранилища.
         if (ad.photos && ad.photos.length > 0) {
             const photoPath = ad.photos[0];
-            // Проверяем: если путь уже начинается с http/https, используем его,
-            // иначе подклеиваем базовый URL нашего бэкенда/хранилища.
             imageUrl = photoPath.startsWith('http')
                 ? photoPath
                 : `${CONFIG.API.BASE_URL}${photoPath}`;
@@ -169,32 +169,36 @@ const App = {
             mainPhoto: imageUrl,
             image: imageUrl,
             views: ad.views_count || 0,
-            createdDate: ad.created_at ? new Date(ad.created_at).toLocaleDateString('ru-RU') : ''
+            createdDate: ad.created_at ? new Date(ad.created_at).toLocaleDateString('ru-RU') : '',
         };
     },
 
-    //страница 404
     renderNotFound() {
-        document.getElementById('app').innerHTML = this.templates['not-found']();
+        const app = document.getElementById('app');
+        if (!app) return;
+        const template = this.templates['not-found'];
+        if (!template) return;
+        app.innerHTML = template();
     },
 
-    // Обработчиков кликов на главной странице
     attachMainEventListeners() {
         const profileIcon = document.querySelector('.profile-icon');
-        profileIcon?.addEventListener('click', (e) => {
+        profileIcon?.addEventListener('click', (e: Event) => {
             e.preventDefault();
             this.navigateTo(this.isAuthenticated ? '/profile' : '/login');
         });
 
-        const placeAdBtn = document.querySelector('.place-ad-btn');
+        const placeAdBtn = document.querySelector('.place-ad-btn') as HTMLButtonElement | null;
         if (placeAdBtn) {
             placeAdBtn.disabled = true;
             placeAdBtn.title = 'Функция временно недоступна';
         }
 
-        document.querySelectorAll('.ad-card').forEach(card => {
+        document.querySelectorAll('.ad-card').forEach((card: Element) => {
             card.addEventListener('click', () => {
-                const adId = card.dataset.id;
+                const adId = (card as HTMLElement).dataset.id;
+                // TODO: использовать adId позже
+                console.log('Ad clicked:', adId);
             });
         });
     },
@@ -204,25 +208,22 @@ const App = {
     * и навешивается один раз на весь документ
     */
     setupGlobalHandlers() {
-        document.addEventListener('click', (e) => {
-            // Обрабатываем ТОЛЬКО data-nav и data-action
-            // Все остальные клики (включая кнопки форм) игнорируем
-            const navElement = e.target.closest('[data-nav]');
+        document.addEventListener('click', (e: Event) => {
+            const target = e.target as HTMLElement;
+            const navElement = target.closest('[data-nav]');
             if (navElement) {
                 e.preventDefault();
-                const path = navElement.dataset.nav;
-                this.navigateTo(path);
+                const path = (navElement as HTMLElement).dataset.nav;
+                if (path) this.navigateTo(path);
                 return;
             }
 
-            const actionElement = e.target.closest('[data-action]');
+            const actionElement = target.closest('[data-action]');
             if (actionElement) {
                 e.preventDefault();
-                const action = actionElement.dataset.action;
-                switch (action) {
-                    case 'logout':
-                        this.logout();
-                        break;
+                const action = (actionElement as HTMLElement).dataset.action;
+                if (action === 'logout') {
+                    this.logout();
                 }
                 return;
             }
@@ -236,15 +237,15 @@ const App = {
     initPasswordToggles() {
         const elements = {
             password: {
-                input: document.querySelector('#password'),
-                toggle: document.querySelector('#togglePassword'),
-                eye: document.querySelector('#eyeIcon')
+                input: document.querySelector('#password') as HTMLInputElement | null,
+                toggle: document.querySelector('#togglePassword') as HTMLButtonElement | null,
+                eye: document.querySelector('#eyeIcon') as HTMLImageElement | null,
             },
             confirm: {
-                input: document.querySelector('#confirm-password'),
-                toggle: document.querySelector('#toggleConfirmPassword'),
-                eye: document.querySelector('#eyeIconConfirm')
-            }
+                input: document.querySelector('#confirm-password') as HTMLInputElement | null,
+                toggle: document.querySelector('#toggleConfirmPassword') as HTMLButtonElement | null,
+                eye: document.querySelector('#eyeIconConfirm') as HTMLImageElement | null,
+            },
         };
 
         Object.values(elements).forEach(({ input, toggle, eye }) => {
@@ -258,18 +259,19 @@ const App = {
         });
     },
 
-    /**
-    * Отображение страницы профиля пользователя
-    */
     showProfile() {
         document.body.classList.add('auth-page');
-        document.getElementById('app').innerHTML = this.templates['user-profile']({
+        const app = document.getElementById('app');
+        if (!app) return;
+        const template = this.templates['user-profile'];
+        if (!template) return;
+        app.innerHTML = template({
             email: this.user?.email || 'Неизвестно',
             name: this.user?.name || this.user?.email?.split('@')[0] || 'Пользователь',
             registeredAt: this.user?.created_at
                 ? new Date(this.user.created_at).toLocaleDateString('ru-RU')
                 : 'неизвестно',
-            avatar: this.UI_CONSTANTS.DEFAULT_AVATAR
+            avatar: this.UI_CONSTANTS.DEFAULT_AVATAR,
         });
     },
 
@@ -278,12 +280,16 @@ const App = {
     * @param {string} error - текст ошибки (если есть)
     * @param {Object} formData - сохранённые данные формы (email)
     */
-    showLogin(error, formData) {
+    showLogin(error?: string, formData?: { email?: string }) {
         this.currentView = 'login';
         document.body.classList.add('auth-page');
-        document.getElementById('app').innerHTML = this.templates['login-forms']({
+        const app = document.getElementById('app');
+        if (!app) return;
+        const template = this.templates['login-forms'];
+        if (!template) return;
+        app.innerHTML = template({
             error: error,
-            email: formData?.email || ''
+            email: formData?.email || '',
         });
 
         this.attachLoginHandler();
@@ -296,14 +302,18 @@ const App = {
     * @param {boolean} success - успешна ли регистрация
     * @param {Object} formData - сохранённые данные формы
     */
-    showRegister(error, success, formData) {
+    showRegister(error?: string, success?: boolean, formData?: { name?: string; email?: string }) {
         this.currentView = 'register';
         document.body.classList.add('auth-page');
-        document.getElementById('app').innerHTML = this.templates['register-form']({
+        const app = document.getElementById('app');
+        if (!app) return;
+        const template = this.templates['register-form'];
+        if (!template) return;
+        app.innerHTML = template({
             error: error,
             success: success,
             name: formData?.name || '',
-            email: formData?.email || ''
+            email: formData?.email || '',
         });
 
         this.attachRegisterHandler();
@@ -315,23 +325,23 @@ const App = {
     * @param {Event} e - событие отправки формы
     * @async
     */
-    async handleLoginSubmit(e) {
-        e.preventDefault(); // отменяем стандартную отправку формы
+    async handleLoginSubmit(e: Event) {
+        e.preventDefault();
 
-        // Получаем значения из полей
-        const email = document.getElementById('email').value.trim();
-        const password = document.getElementById('password').value;
+        const emailInput = document.getElementById('email') as HTMLInputElement | null;
+        const passwordInput = document.getElementById('password') as HTMLInputElement | null;
 
-        // Валидируем на клиенте
+        const email = emailInput?.value.trim() || '';
+        const password = passwordInput?.value || '';
+
         const validation = AuthValidator.validateLogin(email, password);
 
-        // Очищаем старые ошибки
         this.clearFieldErrors();
         this.clearLoginError();
 
-        // Если валидация не прошла
         if (!validation.isValid) {
-            this.showFieldErrors({ email: ' ', password: ' ' });
+            // Исправлено: передаем строки, а не пробелы
+            this.showFieldErrors({ email: 'Неверный email', password: 'Неверный пароль' });
             this.showLoginError('Неверный email или пароль');
             return;
         }
@@ -352,7 +362,7 @@ const App = {
         if (result.fieldErrors) {
             this.showFieldErrors(result.fieldErrors);
         } else {
-            this.showFieldErrors({ email: ' ', password: ' ' });
+            this.showFieldErrors({ email: 'Неверный email', password: 'Неверный пароль' });
         }
         this.showLoginError(result.error || 'Неверный email или пароль');
     },
@@ -362,23 +372,27 @@ const App = {
     * @param {Event} e - событие отправки формы
     * @async
     */
-    async handleRegisterSubmit(e) {
+    async handleRegisterSubmit(e: Event) {
         e.preventDefault();
 
-        const name = document.getElementById('name').value.trim();
-        const email = document.getElementById('email').value.trim();
-        const password = document.getElementById('password').value;
-        const confirmPassword = document.getElementById('confirm-password').value;
+        const nameInput = document.getElementById('name') as HTMLInputElement | null;
+        const emailInput = document.getElementById('email') as HTMLInputElement | null;
+        const passwordInput = document.getElementById('password') as HTMLInputElement | null;
+        const confirmInput = document.getElementById('confirm-password') as HTMLInputElement | null;
+
+        const name = nameInput?.value.trim() || '';
+        const email = emailInput?.value.trim() || '';
+        const password = passwordInput?.value || '';
+        const confirmPassword = confirmInput?.value || '';
 
         const validation = AuthValidator.validateRegister(name, email, password, confirmPassword);
 
-        // Очищаем старые ошибки
         this.clearFieldErrors();
         this.clearMessages();
 
-        // Если клиентская валидация не прошла
         if (!validation.isValid) {
-            this.showFieldErrors(validation.fieldErrors);
+            const errors = validation.fieldErrors as Record<string, string | null>;
+            this.showFieldErrors(errors);
             return;
         }
 
@@ -403,9 +417,8 @@ const App = {
         this.navigateTo('/');
     },
 
-
     attachLoginHandler() {
-        const form = document.getElementById('login-forms');
+        const form = document.getElementById('login-forms') as HTMLFormElement | null;
         if (!form) return;
 
         if (this._loginHandler) {
@@ -417,7 +430,7 @@ const App = {
     },
 
     attachRegisterHandler() {
-        const form = document.getElementById('register-form');
+        const form = document.getElementById('register-form') as HTMLFormElement | null;
         if (!form) return;
 
         if (this._registerHandler) {
@@ -428,51 +441,46 @@ const App = {
         form.addEventListener('submit', this._registerHandler);
     },
 
-    /**
-    * Очистка ошибок на странице логина
-    */
+    _loginHandler: null as ((e: Event) => void) | null,
+    _registerHandler: null as ((e: Event) => void) | null,
+
     clearLoginError() {
         document.querySelectorAll('.login-error, .alert-error').forEach(el => el.remove());
 
         ['email', 'password'].forEach(id => {
-            document.getElementById(id)?.classList.remove('error');
+            const el = document.getElementById(id);
+            if (el) el.classList.remove('error');
         });
     },
 
-    /**
-    * Показ ошибки на странице логина
-    * @param {string} message - текст ошибки
-    */
-    showLoginError(message) {
+    showLoginError(message: string) {
         this.clearLoginError();
 
         ['email', 'password'].forEach(id => {
-            document.getElementById(id)?.classList.add('error');
+            const el = document.getElementById(id);
+            if (el) el.classList.add('error');
         });
 
         const form = document.getElementById('login-forms');
+        if (!form) return;
+
         const errorDiv = document.createElement('div');
         errorDiv.className = 'login-error alert alert-error';
         errorDiv.textContent = message;
-        form.parentNode.insertBefore(errorDiv, form);
+        form.parentNode?.insertBefore(errorDiv, form);
     },
 
-    // Очистка всех ошибок полей на странице
     clearFieldErrors() {
         document.querySelectorAll('.field-error').forEach(el => el.remove());
         document.querySelectorAll('.error').forEach(el => el.classList.remove('error'));
     },
 
-    // Очистка всех сообщений (алертов)
     clearMessages() {
         document.querySelectorAll('.alert').forEach(el => el.remove());
     },
 
-    /**
-    * Показ ошибок под конкретными полями
-    * @param {Object} fieldErrors - объект с ошибками для каждого поля
-    */
-    showFieldErrors(fieldErrors) {
+    // Исправлен тип параметра
+    showFieldErrors(fieldErrors: Record<string, string | null>) {
         this.clearFieldErrors();
 
         Object.entries(fieldErrors).forEach(([field, error]) => {
@@ -492,13 +500,13 @@ const App = {
                 if (wrapper) {
                     wrapper.after(errorDiv);
                 } else {
-                    input.parentNode.appendChild(errorDiv);
+                    input.parentNode?.appendChild(errorDiv);
                 }
             }
         });
     },
 
-    showSuccessMessage(message) {
+    showSuccessMessage(message: string) {
         const form = document.getElementById('register-form') || document.getElementById('login-forms');
         if (!form) return;
 
@@ -510,11 +518,7 @@ const App = {
         setTimeout(() => successDiv.remove(), 3000);
     },
 
-    /**
-    * Показ общей ошибки
-    * @param {string} message - текст ошибки
-    */
-    showGeneralError(message) {
+    showGeneralError(message: string) {
         const form = document.getElementById('register-form') || document.getElementById('login-forms');
         if (!form) return;
 
@@ -524,7 +528,7 @@ const App = {
         form.appendChild(errorDiv);
     },
 
-    showLoading(show) {
+    showLoading(show: boolean) {
         const loader = document.getElementById('global-loader');
 
         if (!show) {
@@ -545,29 +549,23 @@ const App = {
         this.showLoading(true);
         await AuthService.logout();
         this.showLoading(false);
-        // Обновляем состояние авторизации
         await this.checkAuth();
 
-        // Наводимся на главную и всегда перерендериваем её.
         if (window.location.pathname !== '/') {
             this.navigateTo('/');
             return;
         }
 
-        // Уже на главной — просто перерендериваем
         this.renderMain();
     },
 
-    formatDate(dateString) {
+    formatDate(dateString?: string) {
         return dateString ? new Date(dateString).toLocaleDateString('ru-RU', {
             day: 'numeric',
             month: 'long',
-            year: 'numeric'
+            year: 'numeric',
         }) : '';
-    }
+    },
 };
-
-// App.init() вызывается из main.js (точка входа).
-// Не добавляй сюда лишний DOMContentLoaded — это приведёт к двойной инициализации.
 
 export { App };
