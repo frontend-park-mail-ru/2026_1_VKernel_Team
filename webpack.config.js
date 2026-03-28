@@ -7,7 +7,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export default (env, argv) => {
-    const isDevelopment = argv.mode === 'development';
+    const isDevelopment = argv?.mode === 'development';
 
     return {
         entry: './src/js/main.ts',
@@ -15,7 +15,7 @@ export default (env, argv) => {
             path: path.resolve(__dirname, 'dist'),
             filename: 'js/[name].[contenthash].js',
             clean: true,
-            publicPath: '/'
+            publicPath: '/',
         },
         devtool: isDevelopment ? 'source-map' : false,
         module: {
@@ -27,48 +27,48 @@ export default (env, argv) => {
                 },
                 {
                     test: /\.css$/i,
-                    use: ['style-loader', 'css-loader']
+                    use: ['style-loader', 'css-loader'],
                 },
                 {
                     test: /\.(png|jpe?g|gif|svg|webp)$/i,
                     type: 'asset/resource',
                     generator: {
-                        filename: 'images/[hash][ext][query]'
-                    }
+                        filename: 'images/[hash][ext][query]',
+                    },
                 },
                 {
                     test: /\.hbs$/i,
-                    loader: 'handlebars-loader'
-                }
-            ]
+                    loader: 'handlebars-loader',
+                },
+            ],
         },
         plugins: [
             new HtmlWebpackPlugin({
                 template: './public/index.html',
                 filename: 'index.html',
-                inject: 'body'
+                inject: 'body',
             }),
             new CopyWebpackPlugin({
                 patterns: [
                     {
                         from: 'public/images',
                         to: 'images',
-                        noErrorOnMissing: true
+                        noErrorOnMissing: true,
                     },
                     {
                         from: 'src/templates',
                         to: 'templates',
-                        noErrorOnMissing: true
-                    }
-                ]
-            })
+                        noErrorOnMissing: true,
+                    },
+                ],
+            }),
         ],
         resolve: {
             extensions: ['.ts', '.tsx', '.js', '.hbs'],
             alias: {
                 '@': path.resolve(__dirname, 'src/js'),
-                'handlebars': 'handlebars/dist/handlebars.js'
-            }
-        }
+                'handlebars': 'handlebars/dist/handlebars.js',
+            },
+        },
     };
 };

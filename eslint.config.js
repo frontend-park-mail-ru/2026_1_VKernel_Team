@@ -9,21 +9,21 @@ export default [
 
     // 2. Настройки для ФРОНТЕНДА (src: JS и TS)
     {
-        files: ['src/**/*.{js,ts}'],
+        files: ['**/*.{js,ts}'],
         languageOptions: {
-            ecmaVersion: 2020,
+            ecmaVersion: 2022,
             sourceType: 'module',
             parser: tseslint.parser, // Чтобы линтер понимал TS синтаксис
             globals: {
                 ...globals.browser,
-            }
+            },
         },
         rules: {
             // 1. Отключаем ругань на 'any'
             '@typescript-eslint/no-explicit-any': 'off',
 
             // 2. Отключаем ошибки за неиспользуемые переменные (делаем их просто предупреждениями)
-            'no-unused-vars': 'off', 
+            'no-unused-vars': 'off',
             '@typescript-eslint/no-unused-vars': 'off',
 
             // 3. Разрешаем console.log везде (если хотите)
@@ -36,7 +36,7 @@ export default [
             'comma-dangle': ['error', 'always-multiline'],
             'eol-last': ['error', 'always'],
             'no-trailing-spaces': 'error',
-        }
+        },
 
     },
 
@@ -47,8 +47,8 @@ export default [
             ecmaVersion: 2020,
             sourceType: 'module',
             globals: {
-                ...globals.node // Глобальные переменные Node.js (process, __dirname и т.д.)
-            }
+                ...globals.node, // Глобальные переменные Node.js (process, __dirname и т.д.)
+            },
         },
         rules: {
             'indent': ['error', 4],
@@ -57,7 +57,7 @@ export default [
             'no-console': 'off', // На сервере логи — это нормально и полезно
             'eol-last': ['error', 'always'],
             'no-trailing-spaces': 'error',
-        }
+        },
     },
 
     // 4. Игнорируемые папки
@@ -66,7 +66,7 @@ export default [
             'dist/**/*',
             'node_modules/**/*',
             'public/**/*',
-            'webpack.config.js'
-        ]
-    }
+            '.dependency-cruiser.cjs',
+        ],
+    },
 ];

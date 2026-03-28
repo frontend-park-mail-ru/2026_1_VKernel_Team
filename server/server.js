@@ -59,7 +59,7 @@ function handleApiProxy(req, res) {
         headers: {
             ...req.headers,               // Пробрасываем все заголовки от браузера (включая куки!)
             host: targetUrl.host,         // Подменяем host, чтобы бэкенд не отклонил запрос
-        }
+        },
     };
 
     // Создаем HTTP-запрос к бэкенду
