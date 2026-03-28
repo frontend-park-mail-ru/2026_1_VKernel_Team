@@ -1,4 +1,4 @@
-name: Run npm script and commit changes
+name: Run npm dep and commit changes
 
 on:
   workflow_dispatch:
