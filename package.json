@@ -5,13 +5,15 @@
   "main": "server/server.js",
   "type": "module",
   "scripts": {
-    "start": "node server/server.js",
+    "start": "concurrently \"npm run watch\" \"npm run dev\"",
+    "server": "node server/server.js",
     "dev": "node --watch server/server.js",
+    "watch": "webpack --mode development --watch",
+    "build": "webpack --mode production",
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-
-    "dep-gen": "npx depcruise src --output-type dot",
+    "dep-gen": "npx depcruise src --webpack-config webpack.config.js --output-type dot",
     "dep-all": "npm run dep-gen -s | dot -T svg > graphs/dependency-graph.svg",
     "dep-collapse-3": "npm run dep-gen -s -- --collapse 3| dot -T svg > graphs/collapse-3.svg",
     "dep-collapse-4": "npm run dep-gen -s -- --collapse 4| dot -T svg > graphs/collapse-4.svg",
@@ -40,8 +42,21 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@types/handlebars": "^4.0.40",
+    "@types/node": "^25.5.0",
+    "concurrently": "^9.2.1",
+    "copy-webpack-plugin": "^14.0.0",
+    "css-loader": "^7.1.4",
     "dependency-cruiser": "^17.3.9",
     "eslint": "^10.0.3",
-    "globals": "^17.4.0"
+    "globals": "^17.4.0",
+    "handlebars-loader": "^1.7.3",
+    "html-webpack-plugin": "^5.6.6",
+    "style-loader": "^4.0.0",
+    "ts-loader": "^9.5.4",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.57.2",
+    "webpack": "^5.105.4",
+    "webpack-cli": "^7.0.2"
   }
 }

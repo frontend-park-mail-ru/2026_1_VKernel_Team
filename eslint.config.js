@@ -1,75 +1,72 @@
-import js from "@eslint/js";
-import globals from "globals";
+import js from '@eslint/js';
+import globals from 'globals';
+import tseslint from 'typescript-eslint';
 
 export default [
-  // Общие настройки для всего проекта
-  {
-    files: ["**/*.{js,mjs,cjs}"],
-    languageOptions: {
-      ecmaVersion: 2022,      // Поддержка синтаксиса ES2022
-      sourceType: "module",   // Позволяет использовать import/export
-      globals: {
-        ...globals.browser,   // Глобальные переменные браузера (window, document)
-        ...globals.node       // Глобальные переменные Node.js (process, __dirname)
-      }
+    // 1. Базовые правила для всех файлов
+    js.configs.recommended,
+    ...tseslint.configs.recommended,
+
+    // 2. Настройки для ФРОНТЕНДА (src: JS и TS)
+    {
+        files: ['**/*.{js,ts}'],
+        languageOptions: {
+            ecmaVersion: 2022,
+            sourceType: 'module',
+            parser: tseslint.parser, // Чтобы линтер понимал TS синтаксис
+            globals: {
+                ...globals.browser,
+            },
+        },
+        rules: {
+            // 1. Отключаем ругань на 'any'
+            '@typescript-eslint/no-explicit-any': 'off',
+
+            // 2. Отключаем ошибки за неиспользуемые переменные (делаем их просто предупреждениями)
+            'no-unused-vars': 'off',
+            '@typescript-eslint/no-unused-vars': 'off',
+
+            // 3. Разрешаем console.log везде (если хотите)
+            'no-console': 'off',
+
+            // Остальные правила оформления оставляем (они полезны)
+            'indent': ['error', 4, { SwitchCase: 1 }],
+            'quotes': ['error', 'single', { avoidEscape: true }],
+            'semi': ['error', 'always'],
+            'comma-dangle': ['error', 'always-multiline'],
+            'eol-last': ['error', 'always'],
+            'no-trailing-spaces': 'error',
+        },
+
     },
-    rules: {
-      ...js.configs.recommended.rules,
 
-      // Предупреждать о неиспользованных переменных
-      "no-unused-vars": ["warn", { "argsIgnorePattern": "^_" }],
-
-      // Разрешаем использование console.log
-      "no-console": "off",
-
-      // Обязательно использовать const, если переменная не переназначается
-      "prefer-const": "error",
-
-      // Запрет на использование var
-      "no-var": "error"
-    }
-  },
-
-  // Настройки для серверной части (Node.js)
-  {
-    files: ["server/**/*.{js,mjs,cjs}"],
-    languageOptions: {
-      globals: {
-        ...globals.node // Только инструменты Node.js
-      }
+    // 3. Настройки для СЕРВЕРА (server: только JS)
+    {
+        files: ['server/**/*.js'],
+        languageOptions: {
+            ecmaVersion: 2020,
+            sourceType: 'module',
+            globals: {
+                ...globals.node, // Глобальные переменные Node.js (process, __dirname и т.д.)
+            },
+        },
+        rules: {
+            'indent': ['error', 4],
+            'quotes': ['error', 'single'],
+            'semi': ['error', 'always'],
+            'no-console': 'off', // На сервере логи — это нормально и полезно
+            'eol-last': ['error', 'always'],
+            'no-trailing-spaces': 'error',
+        },
     },
-    rules: {
-      "no-console": "off"
-    }
-  },
 
-  // Настройки для фронтенда
-  {
-    files: ["src/**/*.{js,mjs,cjs}"],
-    languageOptions: {
-      globals: {
-        ...globals.browser,
-
-        // Объявляем внешние библиотеки и глобальные классы как Readonly,
-        // чтобы ESLint не считал их ошибкой "переменная не определена"
-        Handlebars: "readonly",
-        apiClient: "readonly",
-        API_ENDPOINTS: "readonly",
-        AuthService: "readonly",
-        AuthValidator: "readonly",
-        AdsService: "readonly",
-        Storage: "readonly"
-      }
+    // 4. Игнорируемые папки
+    {
+        ignores: [
+            'dist/**/*',
+            'node_modules/**/*',
+            'public/**/*',
+            '.dependency-cruiser.cjs',
+        ],
     },
-    rules: {
-      "no-unused-vars": "off",
-
-      "no-console": ["warn", { allow: ["error", "warn"] }]
-    }
-  },
-
-  // Исключения
-  {
-    ignores: ["node_modules/", "public/"]
-  }
 ];

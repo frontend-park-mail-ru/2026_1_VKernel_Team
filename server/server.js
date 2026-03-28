@@ -10,7 +10,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 dotenv.config({ path: path.join(__dirname, '..', '.env') });
 const PORT = process.env.PORT || 80;
-const PUBLIC_DIR = path.join(__dirname, '..', process.env.PUBLIC_DIR || 'public');
+const PUBLIC_DIR = path.join(__dirname, '..', process.env.PUBLIC_DIR || 'dist');
 
 const MIME_TYPES = {
     '.html': 'text/html; charset=UTF-8',
@@ -45,7 +45,8 @@ process.on('unhandledRejection', (reason) => {
     console.error('Необработанный reject:', reason);
 });
 
-function handleApiProxy(req, res, pathname) {
+//function handleApiProxy(req, res, pathname)
+function handleApiProxy(req, res) {
     // Указываем адрес боевого бэкенда на сервере
     const targetUrl = new URL(req.url, 'http://clover-go.ru:8000');
 
@@ -58,7 +59,7 @@ function handleApiProxy(req, res, pathname) {
         headers: {
             ...req.headers,               // Пробрасываем все заголовки от браузера (включая куки!)
             host: targetUrl.host,         // Подменяем host, чтобы бэкенд не отклонил запрос
-        }
+        },
     };
 
     // Создаем HTTP-запрос к бэкенду
