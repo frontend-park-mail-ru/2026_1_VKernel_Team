@@ -1,14 +1,5 @@
 import { CONFIG } from '../core/config.js';
-
 const API_URL = CONFIG.API.API_URL;
-
-export type ApiResponse<T = any> = {
-    success: boolean;
-    data?: T;
-    error?: string;
-    status?: number;
-};
-
 export const API_ENDPOINTS = {
     AUTH: {
         REGISTER: '/auth/register',
@@ -17,91 +8,80 @@ export const API_ENDPOINTS = {
     },
     ADS: {
         GET_ALL: '/ads',
-        GET_BY_ID: (id: number | string) => `/ads/${id}`,
+        GET_BY_ID: (id) => `/ads/${id}`,
         CREATE: '/ads',
-        UPDATE: (id: number | string) => `/ads/${id}`,
-        DELETE: (id: number | string) => `/ads/${id}`,
+        UPDATE: (id) => `/ads/${id}`,
+        DELETE: (id) => `/ads/${id}`,
         SEARCH: '/ads/search',
     },
     USERS: {
         PROFILE: '/users/profile',
-        GET_BY_ID: (id: number | string) => `/users/${id}`,
+        GET_BY_ID: (id) => `/users/${id}`,
     },
     CATEGORIES: {
         GET_ALL: '/categories',
     },
     FAVORITES: {
         GET_ALL: '/favorites',
-        ADD: (id: number | string) => `/favorites/${id}`,
-        REMOVE: (id: number | string) => `/favorites/${id}`,
-        CHECK: (id: number | string) => `/favorites/${id}/check`,
+        ADD: (id) => `/favorites/${id}`,
+        REMOVE: (id) => `/favorites/${id}`,
+        CHECK: (id) => `/favorites/${id}/check`,
     },
 };
-
-const getCookie = (name: string): string | null => {
+const getCookie = (name) => {
     const value = `; ${document.cookie}`;
     const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop()?.split(';').shift() || null;
+    if (parts.length === 2)
+        return parts.pop()?.split(';').shift() || null;
     return null;
 };
-
 export const apiClient = {
-    async request<T = any>(
-        endpoint: string,
-        method: string = 'GET',
-        body: any = null,
-        customHeaders: Record<string, string> = {},
-    ): Promise<ApiResponse<T>> {
-        const headers: Record<string, string> = {
+    async request(endpoint, method = 'GET', body = null, customHeaders = {}) {
+        const headers = {
             'Content-Type': 'application/json',
             ...customHeaders,
         };
-
         if (method === 'POST' || method === 'PUT' || method === 'PATCH' || method === 'DELETE') {
             const csrfToken = getCookie('csrf_token');
             if (csrfToken) {
                 headers['X-CSRF-Token'] = csrfToken;
             }
         }
-
-        const config: RequestInit = {
+        const config = {
             method,
             headers,
             credentials: 'include',
         };
-
         if (body) {
             config.body = JSON.stringify(body);
         }
-
         try {
             const response = await fetch(`${API_URL}${endpoint}`, config);
-
-            let data: any;
+            let data;
             const contentType = response.headers.get('content-type');
             if (contentType && contentType.includes('application/json')) {
                 try {
                     data = await response.json();
-                } catch (e) {
+                }
+                catch (e) {
                     data = { message: 'Ошибка парсинга ответа сервера' };
                 }
-            } else {
+            }
+            else {
                 const text = await response.text();
                 data = { message: text };
             }
-
             if (response.ok) {
-                return { success: true, data: data as T };
+                return { success: true, data: data };
             }
-
             return {
                 success: false,
                 error: data.message || data.error || 'Произошла неизвестная ошибка',
-                data: data as T,
+                data: data,
                 status: response.status,
             };
-
-        } catch (error) {
+        }
+        catch (error) {
             return {
                 success: false,
                 error: 'Не удалось соединиться с сервером',
@@ -109,19 +89,16 @@ export const apiClient = {
             };
         }
     },
-    get(endpoint: string, headers: Record<string, string> = {}): Promise<ApiResponse> {
+    get(endpoint, headers = {}) {
         return this.request(endpoint, 'GET', null, headers);
     },
-
-    post(endpoint: string, body: any, headers: Record<string, string> = {}): Promise<ApiResponse> {
+    post(endpoint, body, headers = {}) {
         return this.request(endpoint, 'POST', body, headers);
     },
-
-    put(endpoint: string, body: any, headers: Record<string, string> = {}): Promise<ApiResponse> {
+    put(endpoint, body, headers = {}) {
         return this.request(endpoint, 'PUT', body, headers);
     },
-
-    delete(endpoint: string, headers: Record<string, string> = {}): Promise<ApiResponse> {
+    delete(endpoint, headers = {}) {
         return this.request(endpoint, 'DELETE', null, headers);
     },
 };
