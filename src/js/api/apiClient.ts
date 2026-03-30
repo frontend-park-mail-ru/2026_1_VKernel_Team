@@ -41,10 +41,10 @@ const API_ENDPOINTS = {
 /**
  * Вспомогательная функция для получения куки по имени
  */
-const getCookie = (name) => {
+const getCookie = (name: string) => {
     const value = `; ${document.cookie}`;
     const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop().split(';').shift();
+    if (parts.length === 2) return parts.pop()?.split(';').shift();
     return null;
 };
 
@@ -86,7 +86,7 @@ const apiClient = {
             ...customHeaders,
         };
 
-        if (method !== 'GET' && method !== 'HEAD' && method !== 'OPTIONS') {
+        if (method === 'POST' || method === 'PUT' || method === 'PATCH' || method === 'DELETE') {
             const csrfToken = getCookie('csrf_token');
             if (csrfToken) {
                 headers['X-CSRF-Token'] = csrfToken;

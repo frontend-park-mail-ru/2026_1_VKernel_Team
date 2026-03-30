@@ -96,9 +96,10 @@ const server = http.createServer(async (req, res) => {
     try {
         let pathname;
         try {
-            pathname = decodeURIComponent(url.parse(req.url).pathname || '');
-        } catch {
-            console.warn('Некорректный URI:', req.url);
+            const parsedUrl = new URL(req.url, 'http://localhost');
+            pathname = decodeURIComponent(parsedUrl.pathname);
+        } catch (err) {
+            console.warn('Некорректный URI:', req.url, err);
             if (!res.headersSent) {
                 res.writeHead(400, { 'Content-Type': 'text/plain' });
                 res.end('Bad Request');
