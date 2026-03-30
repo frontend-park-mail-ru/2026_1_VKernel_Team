@@ -37,7 +37,9 @@
                 
                 {{#if isAuthenticated}}
                 <!--Нужна проверка в будущем на загрузку своей аватарки пользователем-->
-                    <img src="images/logo/avatar.jpeg" alt="Аватар" class="avatar">
+                    <a href="">
+                        <img src="images/logo/avatar.jpeg" alt="Аватар" class="avatar">
+                    </a>
                     <button class="btn btn-danger logout-btn" data-action="logout">
                         Выйти
                     </button>
@@ -60,8 +62,7 @@
             <!-- Лого и название в одной строке с поиском -->
             <div class="search-row">
                 <div class="brand">
-                    <img src="images/logo/logo.jpeg" alt="Логотип" class="logo">
-                    <span class="brand-name">Клевер</span>
+                    <img src="images/logo/logo_clover2.jpeg" alt="Логотип" class="logo">
                 </div>
 
                 <div class="search-wrapper">
@@ -153,7 +154,7 @@
                                 <span class="rec-card-title">{{title}}</span>
                                 <div class="rec-card-footer">
                                     <div class="rec-card-footer-info">
-                                        <span class="rec-card-price">{{price}}</span>
+                                        <span class="rec-card-price">{{formattedPrice}}</span>
                                         <span class="rec-card-location">
                                             <span class="location-icon">📍</span>
                                             {{location}}
@@ -162,8 +163,8 @@
                                     <div class="rec-card-footer-actions">
                                         <button class="rec-card-cart">🛒</button>
                                         <div class="rec-card-views">
-                                            <p class="num_views">{{favorites}}</p>
-                                            <img src="images/icons/views.jpeg"" alt="Просмотры" class="views">
+                                            <p class="num_views">{{views}}</p>
+                                            <img src="images/icons/views.jpeg" alt="Просмотры" class="views">
                                         </div>
                                     </div>
                                 </div>

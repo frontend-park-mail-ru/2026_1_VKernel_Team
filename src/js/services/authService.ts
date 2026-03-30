@@ -4,16 +4,19 @@
  * @module authService
  */
 
-import { API_ENDPOINTS, apiClient } from "../api/apiClient.js";
-import { Storage } from "../utils/storage.js";
+import { API_ENDPOINTS, apiClient } from '@/api/apiClient';
 
 const HTTP_STATUS = {
     UNAUTHORIZED: 401,
-    BAD_REQUEST: 400
+    BAD_REQUEST: 400,
+};
+
+type AuthErrorMapType = {
+    [key: string]: string;
 };
 
 // Словарь ошибок
-const AuthErrorMap = {
+const AuthErrorMap: AuthErrorMapType = {
     'invalid input': 'Некорректный ввод',
     'wrong email or password': 'Неверный email или пароль',
     'password too short': 'Пароль должен быть не менее 8 символов',
@@ -31,14 +34,28 @@ const AuthErrorMap = {
     'password must contain at least one latin letter': 'Пароль должен содержать хотя бы одну букву',
     'password contains forbidden characters': 'Пароль может содержать только латинские буквы и цифры',
     'name cannot be empty': 'Имя не может быть пустым',
-    'name contains invalid characters': 'Имя содержит недопустимые символы'
+    'name contains invalid characters': 'Имя содержит недопустимые символы',
+};
+
+type UserData = {
+    name?: string;
+    username?: string;
+    email: string;
+    password: string;
+};
+
+type AuthResult = {
+    success: boolean;
+    data?: any;
+    error?: string | null;
+    fieldErrors?: Record<string, string>;
+    status?: number;
 };
 
 /**
  * Объект реализующий авторизацию
  */
 const AuthService = {
-
     /**
      * Регистрация нового пользователя
      * @async
@@ -49,51 +66,50 @@ const AuthService = {
      * @returns {Promise<Object>} - результат регистрации
      *
      */
-    async register(userData) {
+    async register(userData: UserData): Promise<AuthResult> {
         const result = await apiClient.post(API_ENDPOINTS.AUTH.REGISTER, {
-            name: userData.name || userData.username, // поддерживаем оба варианта
+            name: userData.name || userData.username,
             email: userData.email,
-            password: userData.password
+            password: userData.password,
         });
 
         if (result.success) {
-            // Бэкенд при регистрации сразу логинит и возвращает данные пользователя
             return {
                 success: true,
-                data: result.data, // { user_id, email, name }
-                error: null
+                data: result.data,
+                error: null,
             };
         }
 
         if (result.status === HTTP_STATUS.BAD_REQUEST && result.data) {
-            const fieldErrors = {};
-            if (result.data.email) {
-                fieldErrors.email = AuthErrorMap[result.data.email] || result.data.email;
+            const fieldErrors: Record<string, string> = {};
+            const data = result.data as Record<string, string>;
+
+            if (data.email) {
+                fieldErrors.email = AuthErrorMap[data.email] || data.email;
             }
-            if (result.data.password) {
-                fieldErrors.password = AuthErrorMap[result.data.password] || result.data.password;
+            if (data.password) {
+                fieldErrors.password = AuthErrorMap[data.password] || data.password;
             }
-            if (result.data.name) {
-                fieldErrors.name = AuthErrorMap[result.data.name] || result.data.name;
+            if (data.name) {
+                fieldErrors.name = AuthErrorMap[data.name] || data.name;
             }
 
             return {
                 success: false,
                 error: 'Ошибка в полях',
                 fieldErrors: fieldErrors,
-                status: result.status
+                status: result.status,
             };
         }
 
-        const translatedError = AuthErrorMap[result.error] || result.error;
+        const translatedError = result.error ? (AuthErrorMap[result.error] || result.error) : 'Ошибка';
         return {
             success: false,
             error: translatedError,
-            fieldErrors: null,
-            status: result.status
+            status: result.status,
         };
     },
-
 
     /**
      * Вход в систему
@@ -103,17 +119,17 @@ const AuthService = {
      * @param {string} credentials.password - пароль
      * @returns {Promise<Object>} - результат входа
      */
-    async login(credentials) {
+    async login(credentials: { email: string; password: string }): Promise<AuthResult> {
         const result = await apiClient.post(API_ENDPOINTS.AUTH.LOGIN, {
             email: credentials.email,
-            password: credentials.password
+            password: credentials.password,
         });
 
         if (result.success) {
             return {
                 success: true,
                 data: result.data,
-                error: null
+                error: null,
             };
         }
 
@@ -122,46 +138,33 @@ const AuthService = {
                 success: false,
                 error: 'Неверный email или пароль',
                 fieldErrors: {
-                    email: ' ',
-                    password: ' '
+                    email: 'Неверный email',
+                    password: 'Неверный пароль',
                 },
-                status: result.status
+                status: result.status,
             };
         }
 
-        const translatedError = AuthErrorMap[result.error] || result.error;
+        const translatedError = result.error ? (AuthErrorMap[result.error] || result.error) : 'Ошибка';
         return {
             success: false,
             error: translatedError,
-            fieldErrors: null,
-            status: result.status
+            status: result.status,
         };
     },
 
-    /**
-     * Выход из системы
-     * Удаляет сессию на сервере и чистит localStorage
-     * @async
-     */
-    async logout() {
-        // Инвалидируем токен на сервере (кука удалится сервером)
-        await apiClient.post(API_ENDPOINTS.AUTH.LOGOUT);
+    async logout(): Promise<void> {
+        await apiClient.post(API_ENDPOINTS.AUTH.LOGOUT, {});
     },
 
-    /**
-     * Проверяет авторизацию через единую ручку POST /auth/login.
-     * Если в куках есть валидный токен — бэкенд вернёт данные пользователя.
-     * Если нет — вернёт 401.
-     */
-    async check() {
-        // Отправляем POST без тела: бэкенд прочитает куку и вернёт данные
-        const result = await apiClient.post(API_ENDPOINTS.AUTH.LOGIN);
+    async check(): Promise<{ isAuthenticated: boolean; user: any }> {
+        const result = await apiClient.post(API_ENDPOINTS.AUTH.LOGIN, {});
 
         return {
             isAuthenticated: result.success,
-            user: result.success ? result.data : null
+            user: result.success ? result.data : null,
         };
-    }
+    },
 };
 
 export { AuthService };

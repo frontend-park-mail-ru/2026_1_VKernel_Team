@@ -16,25 +16,26 @@
 * @property {string} APP.VERSION - версия приложения
 */
 
-// Автоматически выбираем хост: локально → localhost:8000, прод → clover-go.ru:8000
+// Определяем, где запущен фронтенд
 const _isLocal = typeof window !== 'undefined' && (
     window.location.hostname === 'localhost' ||
     window.location.hostname === '127.0.0.1'
 );
-const _backendHost = _isLocal
-    ? 'http://localhost:8000'
-    : 'http://clover-go.ru:8000';
 
 const CONFIG = {
     API: {
-        BASE_URL: _backendHost,
-        API_URL: `${_backendHost}/api/v1`,
+        // BASE_URL всегда указывает на реальный бэкенд.
+        BASE_URL: 'http://clover-go.ru:8000',
+
+        // Локально -> стучимся на относительный '/api/v1' (запросы перехватит Node.js)
+        // На проде -> стучимся напрямую к бэкенду на порт 8000
+        API_URL: _isLocal ? '/api/v1' : 'http://clover-go.ru:8000/api/v1',
     },
     // Другие константы конфигурации можно добавить сюда же
     APP: {
         NAME: 'Клевер',
-        VERSION: '1.0.0'
-    }
+        VERSION: '1.0.0',
+    },
 };
 
 export { CONFIG };

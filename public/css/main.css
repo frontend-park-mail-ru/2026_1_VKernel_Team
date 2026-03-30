@@ -175,13 +175,20 @@ body .main-container {
 .brand {
     display: flex;
     align-items: center;
-    gap: 10px;
-    min-width: 120px;
+    min-width: 150px;
+    height: 40px; /* Фиксируем высоту контейнера (как у инпута примерно) */
+    position: relative; /* Чтобы логотип ориентировался на этот блок */
 }
 
 .logo {
-    width: 35px;
-    height: 35px;
+    position: absolute; /* Логотип выходит из общего потока и не давит на соседа */
+    top: 50%;
+    left: -5px; /* Прижимаем к самому краю search-section, игнорируя padding */
+    transform: translateY(-50%); /* Центрируем по вертикали */
+    
+    width: 160px;  /* Любой нужный размер */
+    height: auto;
+    z-index: 10;
 }
 
 .brand-name {

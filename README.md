@@ -1,7 +1,6 @@
-# 2026_1_VKernel_Team
+# Репозиторий команды VKernel_Team
 
 Деплой – http://clover-go.ru/ \
-Репозиторий команды VKernel_Team\
 Проект – Юла\
 Рабочий процесс – [github-flow](https://docs.github.com/en/get-started/using-github/github-flow)
 
@@ -16,3 +15,19 @@
 
 - [Backend](https://github.com/go-park-mail-ru/2026_1_VKernelTeam)
 - [Требования](https://docs.google.com/spreadsheets/d/1h1QaRvRbF2eBUzdV1tLU62hS68bdNH-bLht6N29uDK8/edit?gid=1085759601#gid=1085759601&range=A11) 
+
+## Граф зависимостей
+
+![Alt text](graphs/dependency-graph.svg)
+
+Обновить граф:
+
+```
+npm run dep
+```
+
+Показать всех соседей конкретного модуля:
+
+```
+npm run focus --path=services
+```
