@@ -14,6 +14,7 @@ const API_ENDPOINTS = {
         REGISTER: '/auth/register',
         LOGIN: '/auth/login',
         LOGOUT: '/auth/logout',
+        REFRESH: '/auth/refresh',
     },
     ADS: {
         GET_ALL: '/ads',
@@ -24,7 +25,7 @@ const API_ENDPOINTS = {
         SEARCH: '/ads/search',
     },
     USERS: {
-        PROFILE: '/users/profile',
+        PROFILE: '/profile',
         GET_BY_ID: (id: number | string) => `/users/${id}`,
     },
     CATEGORIES: {
@@ -56,6 +57,9 @@ const API_ENDPOINTS = {
 * });
 */
 const apiClient = {
+    _isRefreshing: false,
+    _refreshPromise: null as Promise<ApiResponse> | null,
+
     /**
      * Универсальный метод для выполнения HTTP-запросов
      * @param {string} endpoint - Эндпоинт API
@@ -86,7 +90,36 @@ const apiClient = {
         }
 
         try {
-            const response = await fetch(`${API_URL}${endpoint}`, config);
+            let response = await fetch(`${API_URL}${endpoint}`, config);
+
+            // Если 401 и это не запрос на рефреш или регистрацию, пробуем обновить токен
+            if (response.status === 401 &&
+                endpoint !== API_ENDPOINTS.AUTH.REFRESH &&
+                endpoint !== API_ENDPOINTS.AUTH.REGISTER
+            ) {
+                if (!this._isRefreshing) {
+                    this._isRefreshing = true;
+                    this._refreshPromise = this.post(API_ENDPOINTS.AUTH.REFRESH, {})
+                        .then(res => {
+                            this._isRefreshing = false;
+                            this._refreshPromise = null;
+                            return res;
+                        })
+                        .catch(err => {
+                            console.error('Ошибка обновления токена:', err);
+                            this._isRefreshing = false;
+                            this._refreshPromise = null;
+                            return { success: false };
+                        });
+                }
+
+                const refreshResult = await this._refreshPromise;
+
+                if (refreshResult?.success) {
+                    // Токен обновлен, повторяем исходный запрос
+                    response = await fetch(`${API_URL}${endpoint}`, config);
+                }
+            }
 
             let data;
             const contentType = response.headers.get('content-type');

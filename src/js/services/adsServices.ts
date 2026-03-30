@@ -5,25 +5,9 @@
 * @module adsServices
 */
 
+import { apiClient, API_ENDPOINTS } from '@/api/apiClient';
 import { CONFIG } from '@/core/config';
-
-type Ad = {
-    id: number;
-    title: string;
-    description?: string;
-    price: number;
-    location?: string;
-    photos?: string[];
-    views_count?: number;
-    favorites_count?: number;
-    created_at?: string;
-};
-
-type ApiResponse<T = any> = {
-    success: boolean;
-    data?: T;
-    error?: string;
-};
+import type { Ad } from '@/types';
 
 /**
  * Объект с методами для работы с объявлениями
@@ -31,85 +15,19 @@ type ApiResponse<T = any> = {
  * и форматировать их для отображения на странице
  */
 const AdsService = {
-    API_URL: CONFIG.API.API_URL,
-
     /**
      * Получает все объявления с сервера
-     * @async
-     * @returns {Promise<Object>} - объект с полем success и либо ads (массив объявлений), либо error
-     *
-     * @example
-     * // Пример использования:
-     * const result = await AdsService.getAllAds();
-     * if (result.success) {
-     *   console.log('Объявления:', result.ads);
-     * } else {
-     *   console.error('Ошибка:', result.error);
-     * }
      */
-    async getAllAds(): Promise<ApiResponse<Ad[]>> {
-        try {
-            const response = await fetch(`${this.API_URL}/ads`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
-
-            if (!response.ok) {
-                throw new Error('Ошибка загрузки объявлений');
-            }
-
-            const data = await response.json();
-
-            return {
-                success: true,
-                data: data,
-            };
-        } catch (error) {
-            return {
-                success: false,
-                error: 'Не удалось загрузить объявления',
-            };
-        }
+    async getAllAds() {
+        return apiClient.get(API_ENDPOINTS.ADS.GET_ALL);
     },
 
     /**
      * Получает одно конкретное объявление по его ID
-     * @async
      * @param {number|string} id - идентификатор объявления
-     * @returns {Promise<Object>} - объект с объявлением или ошибкой
-     *
-     * @example
-     * const result = await AdsService.getAdById(123);
-     * if (result.success) {
-     *   console.log('Объявление:', result.ad);
-     * }
      */
-    async getAdById(id: number | string): Promise<ApiResponse<Ad>> {
-        try {
-            const response = await fetch(`${this.API_URL}/ads/${id}`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
-
-            if (!response.ok) {
-                throw new Error('Объявление не найдено');
-            }
-
-            const data = await response.json();
-            return {
-                success: true,
-                data: data,
-            };
-        } catch (error) {
-            return {
-                success: false,
-                error: 'Не удалось загрузить объявление',
-            };
-        }
+    async getAdById(id: number | string) {
+        return apiClient.get(API_ENDPOINTS.ADS.GET_BY_ID(id));
     },
 
     /**
