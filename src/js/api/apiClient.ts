@@ -39,6 +39,17 @@ const API_ENDPOINTS = {
 };
 
 /**
+ * Вспомогательная функция для получения куки по имени
+ */
+const getCookie = (name: string) => {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop()?.split(';').shift();
+    return null;
+};
+
+
+/**
 * Основной объект для отправки запросов на сервер
 * Содержит методы для GET, POST, PUT, DELETE запросов
 *
@@ -74,6 +85,13 @@ const apiClient = {
             'Content-Type': 'application/json',
             ...customHeaders,
         };
+
+        if (method === 'POST' || method === 'PUT' || method === 'PATCH' || method === 'DELETE') {
+            const csrfToken = getCookie('csrf_token');
+            if (csrfToken) {
+                headers['X-CSRF-Token'] = csrfToken;
+            }
+        }
 
         const config: RequestInit = {
             method,
