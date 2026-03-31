@@ -14,6 +14,7 @@ const API_ENDPOINTS = {
         REGISTER: '/auth/register',
         LOGIN: '/auth/login',
         LOGOUT: '/auth/logout',
+        REFRESH: '/auth/refresh',
     },
     ADS: {
         GET_ALL: '/ads',
@@ -24,7 +25,7 @@ const API_ENDPOINTS = {
         SEARCH: '/ads/search',
     },
     USERS: {
-        PROFILE: '/users/profile',
+        PROFILE: '/profile',
         GET_BY_ID: (id: number | string) => `/users/${id}`,
     },
     CATEGORIES: {
@@ -67,6 +68,63 @@ const getCookie = (name: string) => {
 * });
 */
 const apiClient = {
+    _isRefreshing: false,
+    _refreshPromise: null as Promise<ApiResponse> | null,
+
+    /**
+     * Обновляет токен доступа через запрос на рефреш
+     * Гарантирует что только один рефреш выполняется одновременно
+     * @returns {Promise<ApiResponse>} Результат обновления токена
+     */
+    async _refreshAccessToken(): Promise<ApiResponse> {
+        if (!this._isRefreshing) {
+            this._isRefreshing = true;
+            this._refreshPromise = this.post(API_ENDPOINTS.AUTH.REFRESH, {})
+                .then(res => {
+                    this._isRefreshing = false;
+                    this._refreshPromise = null;
+                    return res;
+                })
+                .catch(err => {
+                    console.error('Ошибка обновления токена:', err);
+                    this._isRefreshing = false;
+                    this._refreshPromise = null;
+                    return { success: false };
+                });
+        }
+
+        return this._refreshPromise!;
+    },
+
+    /**
+     * Проверяет нужно ли обновлять токен и повторяет запрос если нужно
+     * @param {Response} response - Ответ от сервера
+     * @param {string} endpoint - Эндпоинт запроса
+     * @param {RequestInit} config - Конфиг для повтора запроса
+     * @returns {Promise<Response>} Новый ответ или исходный если рефреш не требуется
+     */
+    async _handleUnauthorizedResponse(
+        response: Response,
+        endpoint: string,
+        config: RequestInit,
+    ): Promise<Response> {
+        const isAuthEndpoint = endpoint === API_ENDPOINTS.AUTH.REFRESH ||
+            endpoint === API_ENDPOINTS.AUTH.REGISTER;
+
+        if (response.status !== 401 || isAuthEndpoint) {
+            return response;
+        }
+
+        const refreshResult = await this._refreshAccessToken();
+
+        if (!refreshResult?.success) {
+            return response;
+        }
+
+        // Токен обновлен, повторяем исходный запрос
+        return fetch(`${API_URL}${endpoint}`, config);
+    },
+
     /**
      * Универсальный метод для выполнения HTTP-запросов
      * @param {string} endpoint - Эндпоинт API
@@ -104,7 +162,8 @@ const apiClient = {
         }
 
         try {
-            const response = await fetch(`${API_URL}${endpoint}`, config);
+            let response = await fetch(`${API_URL}${endpoint}`, config);
+            response = await this._handleUnauthorizedResponse(response, endpoint, config);
 
             let data;
             const contentType = response.headers.get('content-type');

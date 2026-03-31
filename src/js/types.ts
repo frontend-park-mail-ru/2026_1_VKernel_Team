@@ -8,11 +8,13 @@ export interface User {
 export interface Ad {
     id: number;
     title: string;
+    description?: string;
     price: number;
+    location?: string;
     photos?: string[];
     views_count?: number;
+    favorites_count?: number;
     created_at?: string;
-    location?: string;
 }
 
 export interface ApiResult {
