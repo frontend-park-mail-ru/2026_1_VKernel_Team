@@ -14,6 +14,7 @@ export const API_ENDPOINTS = {
         REGISTER: '/auth/register',
         LOGIN: '/auth/login',
         LOGOUT: '/auth/logout',
+        REFRESH: '/auth/refresh',
     },
     ADS: {
         GET_ALL: '/ads',
@@ -24,7 +25,7 @@ export const API_ENDPOINTS = {
         SEARCH: '/ads/search',
     },
     USERS: {
-        PROFILE: '/users/profile',
+        PROFILE: '/profile',
         GET_BY_ID: (id: number | string) => `/users/${id}`,
     },
     CATEGORIES: {
@@ -45,7 +46,52 @@ const getCookie = (name: string): string | null => {
     return null;
 };
 
-export const apiClient = {
+
+export class ApiClient {
+    private _isRefreshing: boolean = false;
+    private _refreshPromise: Promise<ApiResponse> | null = null;
+
+    async _refreshAccessToken(): Promise<ApiResponse> {
+        if (!this._isRefreshing) {
+            this._isRefreshing = true;
+            this._refreshPromise = this.post(API_ENDPOINTS.AUTH.REFRESH, {})
+                .then(res => {
+                    this._isRefreshing = false;
+                    this._refreshPromise = null;
+                    return res;
+                })
+                .catch(err => {
+                    console.error('Ошибка обновления токена:', err);
+                    this._isRefreshing = false;
+                    this._refreshPromise = null;
+                    return { success: false };
+                });
+        }
+
+        return this._refreshPromise!;
+    }
+
+    async _handleUnauthorizedResponse(
+        response: Response,
+        endpoint: string,
+        config: RequestInit,
+    ): Promise<Response> {
+        const isAuthEndpoint = endpoint === API_ENDPOINTS.AUTH.REFRESH ||
+            endpoint === API_ENDPOINTS.AUTH.REGISTER;
+
+        if (response.status !== 401 || isAuthEndpoint) {
+            return response;
+        }
+
+        const refreshResult = await this._refreshAccessToken();
+
+        if (!refreshResult?.success) {
+            return response;
+        }
+
+        return fetch(`${API_URL}${endpoint}`, config);
+    }
+
     async request<T = any>(
         endpoint: string,
         method: string = 'GET',
@@ -75,7 +121,8 @@ export const apiClient = {
         }
 
         try {
-            const response = await fetch(`${API_URL}${endpoint}`, config);
+            let response = await fetch(`${API_URL}${endpoint}`, config);
+            response = await this._handleUnauthorizedResponse(response, endpoint, config);
 
             let data: any;
             const contentType = response.headers.get('content-type');
@@ -108,20 +155,23 @@ export const apiClient = {
                 status: 0,
             };
         }
-    },
-    get(endpoint: string, headers: Record<string, string> = {}): Promise<ApiResponse> {
-        return this.request(endpoint, 'GET', null, headers);
-    },
+    }
 
-    post(endpoint: string, body: any, headers: Record<string, string> = {}): Promise<ApiResponse> {
-        return this.request(endpoint, 'POST', body, headers);
-    },
+    get<T = any>(endpoint: string, headers: Record<string, string> = {}): Promise<ApiResponse<T>> {
+        return this.request<T>(endpoint, 'GET', null, headers);
+    }
 
-    put(endpoint: string, body: any, headers: Record<string, string> = {}): Promise<ApiResponse> {
-        return this.request(endpoint, 'PUT', body, headers);
-    },
+    post<T = any>(endpoint: string, body: any, headers: Record<string, string> = {}): Promise<ApiResponse<T>> {
+        return this.request<T>(endpoint, 'POST', body, headers);
+    }
 
-    delete(endpoint: string, headers: Record<string, string> = {}): Promise<ApiResponse> {
-        return this.request(endpoint, 'DELETE', null, headers);
-    },
-};
+    put<T = any>(endpoint: string, body: any, headers: Record<string, string> = {}): Promise<ApiResponse<T>> {
+        return this.request<T>(endpoint, 'PUT', body, headers);
+    }
+
+    delete<T = any>(endpoint: string, headers: Record<string, string> = {}): Promise<ApiResponse<T>> {
+        return this.request<T>(endpoint, 'DELETE', null, headers);
+    }
+}
+
+export const apiClient = new ApiClient();
