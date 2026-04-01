@@ -9,18 +9,43 @@
  */
 
 const AuthValidator = {
-    //Надо решить проблему с неисправностями в регулярках
-    USERNAME_REGEX: /^[a-zA-Z0-9_]+$/,
-    EMAIL_REGEX: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+
+    NAME_REGEX: /^[\p{L}\s'-]{3,50}$/u,
+    EMAIL_REGEX: /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z0-9]{2,}$/,
     LETTER_REGEX: /[a-zA-Z]/,
     DIGIT_REGEX: /[0-9]/,
-    FORBIDDEN_REGEX: /[^a-zA-Z0-9_]/,
     USERNAME_MIN_LENGTH: 3,
+    USERNAME_MAX_LENGTH: 50,
     PASSWORD_MIN_LENGTH: 8,
 
-    validateUsername(username: string): boolean {
-        if (!username) return false;
-        return username.length >= this.USERNAME_MIN_LENGTH && this.USERNAME_REGEX.test(username);
+    // validateUsername(username: string): boolean {
+    //     if (!username) return false;
+    //     return username.length >= this.USERNAME_MIN_LENGTH && this.USERNAME_REGEX.test(username);
+    // },
+
+    validateName(name: string): { isValid: boolean; error: string | null } {
+        // На всякий случай обрезаем пробелы в начале и конце еще раз
+        const trimmedName = name.trim();
+
+        if (!trimmedName) {
+            return { isValid: false, error: 'Имя не может быть пустым' };
+        }
+
+        // Проверка длины в символах (Unicode points)
+        const length = [...trimmedName].length; // Более надежный способ для Unicode
+        if (length < this.USERNAME_MIN_LENGTH) {
+            return { isValid: false, error: `Имя должно содержать минимум ${this.USERNAME_MIN_LENGTH} символа` };
+        }
+        if (length > this.USERNAME_MAX_LENGTH) {
+            return { isValid: false, error: `Имя должно содержать не более ${this.USERNAME_MAX_LENGTH} символов` };
+        }
+
+        // Проверка на разрешенные символы
+        if (!this.NAME_REGEX.test(trimmedName)) {
+            return { isValid: false, error: 'Имя может содержать только буквы (любых алфавитов), пробелы, дефисы (-) и апострофы (\')' };
+        }
+
+        return { isValid: true, error: null };
     },
 
     validateEmail(email: string): boolean {
@@ -36,7 +61,7 @@ const AuthValidator = {
             };
         }
 
-        if (password.length < this.PASSWORD_MIN_LENGTH) {
+        if ([...password].length < this.PASSWORD_MIN_LENGTH) {
             return {
                 isValid: false,
                 error: `Пароль должен быть не менее ${this.PASSWORD_MIN_LENGTH} символов`,
@@ -45,14 +70,6 @@ const AuthValidator = {
 
         const hasLetter = this.LETTER_REGEX.test(password);
         const hasDigit = this.DIGIT_REGEX.test(password);
-        const hasForbidden = this.FORBIDDEN_REGEX.test(password);
-
-        if (hasForbidden) {
-            return {
-                isValid: false,
-                error: 'Пароль может содержать только латинские буквы, цифры и нижнее подчёркивание',
-            };
-        }
 
         if (!hasLetter && !hasDigit) {
             return {
@@ -94,6 +111,9 @@ const AuthValidator = {
                 error: 'Неверный email или пароль',
             };
         }
+
+        // Для логина мы не проверяем сложность пароля на фронте, так как это делается на бэкенде
+        // и мы просто передаем его дальше. Ошибка придет с сервера, если пароль не подходит.
         return {
             isValid: true,
             error: null,
@@ -117,10 +137,9 @@ const AuthValidator = {
             confirmPassword: null,
         };
 
-        if (!name) {
-            fieldErrors.name = 'Имя обязательно';
-        } else if (!this.validateUsername(name)) {
-            fieldErrors.name = `Имя может содержать только латиницу, цифры и _, минимум ${this.USERNAME_MIN_LENGTH} символа`;
+        const nameValidation = this.validateName(name);
+        if (!nameValidation.isValid) {
+            fieldErrors.name = nameValidation.error;
         }
 
         if (!email) {
