@@ -1,102 +1,43 @@
 /**
- * Валидатор для форм авторизации
- * Проверяет, правильно ли пользователь заполнил поля:
- * - email должен быть настоящим
- * - пароль достаточно сложный
- * - имя содержит только допустимые символы
- *
- * @module authValidator
+ * Валидация форм авторизации и регистрации
  */
 
-const AuthValidator = {
-    //Надо решить проблему с неисправностями в регулярках
-    USERNAME_REGEX: /^[a-zA-Z0-9_]+$/,
-    EMAIL_REGEX: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-    LETTER_REGEX: /[a-zA-Z]/,
-    DIGIT_REGEX: /[0-9]/,
-    FORBIDDEN_REGEX: /[^a-zA-Z0-9_]/,
-    USERNAME_MIN_LENGTH: 3,
-    PASSWORD_MIN_LENGTH: 8,
+import type { ValidationResult, FieldErrors } from '@/types';
 
-    validateUsername(username: string): boolean {
-        if (!username) return false;
-        return username.length >= this.USERNAME_MIN_LENGTH && this.USERNAME_REGEX.test(username);
+export const AuthValidator = {
+    validateEmail(email: string): string | null {
+        if (!email) return 'Email обязателен';
+        if (!email.includes('@')) return 'Неверный формат email';
+        if (email.length < 5) return 'Email слишком короткий';
+        return null;
     },
 
-    validateEmail(email: string): boolean {
-        if (!email) return false;
-        return this.EMAIL_REGEX.test(email.toLowerCase());
+    validatePassword(password: string): string | null {
+        if (!password) return 'Пароль обязателен';
+        if (password.length < 8) return 'Пароль должен быть не менее 8 символов';
+        if (password.length > 50) return 'Пароль слишком длинный';
+        return null;
     },
 
-    validatePassword(password: string): { isValid: boolean; error: string | null } {
-        if (!password) {
-            return {
-                isValid: false,
-                error: 'Пароль обязателен',
-            };
-        }
+    validateName(name: string): string | null {
+        if (!name) return 'Имя обязательно';
+        if (name.length < 2) return 'Имя должно быть не менее 2 символов';
+        if (name.length > 50) return 'Имя слишком длинное';
+        return null;
+    },
 
-        if (password.length < this.PASSWORD_MIN_LENGTH) {
-            return {
-                isValid: false,
-                error: `Пароль должен быть не менее ${this.PASSWORD_MIN_LENGTH} символов`,
-            };
-        }
+    validateLogin(email: string, password: string): ValidationResult {
+        const fieldErrors: FieldErrors = {};
 
-        const hasLetter = this.LETTER_REGEX.test(password);
-        const hasDigit = this.DIGIT_REGEX.test(password);
-        const hasForbidden = this.FORBIDDEN_REGEX.test(password);
+        const emailError = this.validateEmail(email);
+        if (emailError) fieldErrors.email = emailError;
 
-        if (hasForbidden) {
-            return {
-                isValid: false,
-                error: 'Пароль может содержать только латинские буквы, цифры и нижнее подчёркивание',
-            };
-        }
-
-        if (!hasLetter && !hasDigit) {
-            return {
-                isValid: false,
-                error: 'Пароль должен содержать хотя бы одну букву и одну цифру',
-            };
-        }
-
-        if (!hasLetter) {
-            return {
-                isValid: false,
-                error: 'Пароль должен содержать хотя бы одну букву',
-            };
-        }
-
-        if (!hasDigit) {
-            return {
-                isValid: false,
-                error: 'Пароль должен содержать хотя бы одну цифру',
-            };
-        }
+        const passwordError = this.validatePassword(password);
+        if (passwordError) fieldErrors.password = passwordError;
 
         return {
-            isValid: true,
-            error: null,
-        };
-    },
-
-    validateLogin(email: string, password: string): { isValid: boolean; error: string | null } {
-        if (!email || !password) {
-            return {
-                isValid: false,
-                error: 'Заполните поля',
-            };
-        }
-        if (!this.validateEmail(email)) {
-            return {
-                isValid: false,
-                error: 'Неверный email или пароль',
-            };
-        }
-        return {
-            isValid: true,
-            error: null,
+            isValid: Object.keys(fieldErrors).length === 0,
+            fieldErrors: Object.keys(fieldErrors).length > 0 ? fieldErrors : undefined,
         };
     },
 
@@ -105,46 +46,25 @@ const AuthValidator = {
         email: string,
         password: string,
         confirmPassword: string,
-    ): {
-        isValid: boolean;
-        fieldErrors: Record<string, string | null>;
-        errors: string[];
-    } {
-        const fieldErrors: Record<string, string | null> = {
-            name: null,
-            email: null,
-            password: null,
-            confirmPassword: null,
-        };
+    ): ValidationResult {
+        const fieldErrors: FieldErrors = {};
 
-        if (!name) {
-            fieldErrors.name = 'Имя обязательно';
-        } else if (!this.validateUsername(name)) {
-            fieldErrors.name = `Имя может содержать только латиницу, цифры и _, минимум ${this.USERNAME_MIN_LENGTH} символа`;
-        }
+        const nameError = this.validateName(name);
+        if (nameError) fieldErrors.name = nameError;
 
-        if (!email) {
-            fieldErrors.email = 'Email обязателен';
-        } else if (!this.validateEmail(email)) {
-            fieldErrors.email = 'Некорректный email. Пример: ivanov@iv.ru';
-        }
+        const emailError = this.validateEmail(email);
+        if (emailError) fieldErrors.email = emailError;
 
-        const passwordValidation = this.validatePassword(password);
-        if (!passwordValidation.isValid) {
-            fieldErrors.password = passwordValidation.error;
-        }
+        const passwordError = this.validatePassword(password);
+        if (passwordError) fieldErrors.password = passwordError;
 
         if (password !== confirmPassword) {
             fieldErrors.confirmPassword = 'Пароли не совпадают';
         }
 
-        const hasErrors = Object.values(fieldErrors).some(error => error !== null);
         return {
-            isValid: !hasErrors,
-            fieldErrors: fieldErrors,
-            errors: Object.values(fieldErrors).filter(e => e !== null) as string[],
+            isValid: Object.keys(fieldErrors).length === 0,
+            fieldErrors: Object.keys(fieldErrors).length > 0 ? fieldErrors : undefined,
         };
     },
 };
-
-export { AuthValidator };

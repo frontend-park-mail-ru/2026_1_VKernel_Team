@@ -1,13 +1,13 @@
-import { CONFIG } from '../core/config.js';
+/**
+ * Универсальный HTTP клиент для отправки запросов
+ * Все сервисы используют этот модуль для работы с API
+ */
+
+import { CONFIG } from '@/core/config';
+import { storage } from '@/utils/storage';
+import type { ApiResponse } from '@/types';
 
 const API_URL = CONFIG.API.API_URL;
-
-export type ApiResponse<T = any> = {
-    success: boolean;
-    data?: T;
-    error?: string;
-    status?: number;
-};
 
 export const API_ENDPOINTS = {
     AUTH: {
@@ -46,52 +46,8 @@ const getCookie = (name: string): string | null => {
     return null;
 };
 
-
+// ✅ ИЗМЕНИЛ: объект → класс
 export class ApiClient {
-    private _isRefreshing: boolean = false;
-    private _refreshPromise: Promise<ApiResponse> | null = null;
-
-    async _refreshAccessToken(): Promise<ApiResponse> {
-        if (!this._isRefreshing) {
-            this._isRefreshing = true;
-            this._refreshPromise = this.post(API_ENDPOINTS.AUTH.REFRESH, {})
-                .then(res => {
-                    this._isRefreshing = false;
-                    this._refreshPromise = null;
-                    return res;
-                })
-                .catch(err => {
-                    console.error('Ошибка обновления токена:', err);
-                    this._isRefreshing = false;
-                    this._refreshPromise = null;
-                    return { success: false };
-                });
-        }
-
-        return this._refreshPromise!;
-    }
-
-    async _handleUnauthorizedResponse(
-        response: Response,
-        endpoint: string,
-        config: RequestInit,
-    ): Promise<Response> {
-        const isAuthEndpoint = endpoint === API_ENDPOINTS.AUTH.REFRESH ||
-            endpoint === API_ENDPOINTS.AUTH.REGISTER;
-
-        if (response.status !== 401 || isAuthEndpoint) {
-            return response;
-        }
-
-        const refreshResult = await this._refreshAccessToken();
-
-        if (!refreshResult?.success) {
-            return response;
-        }
-
-        return fetch(`${API_URL}${endpoint}`, config);
-    }
-
     async request<T = any>(
         endpoint: string,
         method: string = 'GET',
@@ -102,6 +58,11 @@ export class ApiClient {
             'Content-Type': 'application/json',
             ...customHeaders,
         };
+
+        const token = storage.getToken();
+        if (token) {
+            headers['Authorization'] = `Bearer ${token}`;
+        }
 
         if (method === 'POST' || method === 'PUT' || method === 'PATCH' || method === 'DELETE') {
             const csrfToken = getCookie('csrf_token');
@@ -121,8 +82,7 @@ export class ApiClient {
         }
 
         try {
-            let response = await fetch(`${API_URL}${endpoint}`, config);
-            response = await this._handleUnauthorizedResponse(response, endpoint, config);
+            const response = await fetch(`${API_URL}${endpoint}`, config);
 
             let data: any;
             const contentType = response.headers.get('content-type');
@@ -147,7 +107,6 @@ export class ApiClient {
                 data: data as T,
                 status: response.status,
             };
-
         } catch (error) {
             return {
                 success: false,

@@ -1,6 +1,10 @@
+/**
+ * Общие типы TypeScript для всего приложения
+ */
+
 export interface User {
-    user_id?: number;
     id?: number;
+    user_id?: number;
     email?: string;
     name?: string;
     created_at?: string;
@@ -49,6 +53,7 @@ export interface RegisterData {
     name: string;
     email: string;
     password: string;
+    password_confirm?: string;
 }
 
 export interface ValidationResult {

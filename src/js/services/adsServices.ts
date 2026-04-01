@@ -1,20 +1,16 @@
 /**
-* Сервис для работы с объявлениями
-* Здесь все функции, которые связаны с получением и отображением объявлений
-*
-* @module adsServices
-*/
-
+ * Сервис для работы с объявлениями
+ * Здесь все функции, которые связаны с получением и отображением объявлений
+ * @module adsServices
+ */
 import { apiClient, API_ENDPOINTS } from '@/api/apiClient';
 import { CONFIG } from '@/core/config';
 import type { Ad } from '@/types';
 
 /**
  * Объект с методами для работы с объявлениями
- * Умеет получать все объявления, одно объявление по ID,
- * и форматировать их для отображения на странице
  */
-const AdsService = {
+const adsService = {
     /**
      * Получает все объявления с сервера
      */
@@ -24,24 +20,18 @@ const AdsService = {
 
     /**
      * Получает одно конкретное объявление по его ID
-     * @param {number|string} id - идентификатор объявления
      */
     async getAdById(id: number | string) {
         return apiClient.get(API_ENDPOINTS.ADS.GET_BY_ID(id));
     },
 
     /**
-     * Подготовливает объявление для отображения на карточке
-     * Форматирует цену, дату, добавляет полный путь к картинке
-     *
-     * @param {Object} ad - сырое объявление с сервера
-     * @returns {Object} - отформатированное объявление для шаблона
-     *
+     * Форматирует объявление для отображения на карточке
      */
     formatAdCard(ad: Ad) {
         const firstPhoto = ad.photos?.[0] || '';
-
         let imageUrl = '/images/placeholder.jpg';
+
         if (firstPhoto) {
             imageUrl = firstPhoto.startsWith('http')
                 ? firstPhoto
@@ -62,4 +52,4 @@ const AdsService = {
     },
 };
 
-export { AdsService };
+export { adsService };
