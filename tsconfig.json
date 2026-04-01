@@ -30,11 +30,14 @@
     "allowSyntheticDefaultImports": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/js/*"]
+      "@/*": ["src/js/*"],
+      "@templates/*": ["src/templates/*"],
+      "@css/*": ["public/css/*"],
     }
   },
   "include": [
-    "src/**/*"
+    "src/**/*",
+    "src/types/**/*"
   ],
   "exclude": [
     "node_modules",

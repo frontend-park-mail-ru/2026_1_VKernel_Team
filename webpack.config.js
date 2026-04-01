@@ -55,11 +55,6 @@ export default (env, argv) => {
                         to: 'images',
                         noErrorOnMissing: true,
                     },
-                    {
-                        from: 'src/templates',
-                        to: 'templates',
-                        noErrorOnMissing: true,
-                    },
                 ],
             }),
         ],
@@ -67,6 +62,8 @@ export default (env, argv) => {
             extensions: ['.ts', '.tsx', '.js', '.hbs'],
             alias: {
                 '@': path.resolve(__dirname, 'src/js'),
+                '@templates': path.resolve(__dirname, 'src/templates'),
+                '@css': path.resolve(__dirname, 'public/css'),
                 'handlebars': 'handlebars/dist/handlebars.js',
             },
         },

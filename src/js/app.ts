@@ -43,29 +43,8 @@ const App = {
     * Загружает шаблоны, проверяет авторизацию, настраивает обработчики
     * @async
     */
-    async init() {
-        await this.loadTemplates();
-        await this.checkAuth();
-        this.setupGlobalHandlers();
-        this.router();
-        window.addEventListener('popstate', () => this.router());
-    },
-
-    async loadTemplates() {
-        const templateNames = [
-            'auth-links',
-            'login-forms',
-            'register-form',
-            'user-profile',
-            'main-page',
-            'not-found',
-        ];
-
-        for (const name of templateNames) {
-            const response = await fetch(`/templates/${name}.hbs`);
-            const source = await response.text();
-            this.templates[name] = Handlebars.compile(source);
-        }
+    async init(templates: Record<string, HandlebarsTemplateFunction>) {
+        this.templates = templates;
 
         Handlebars.registerHelper('formatPrice', (price: number) => {
             return price === 0 ? 'Бесплатно' : price + ' ₽';
@@ -76,6 +55,11 @@ const App = {
         });
 
         Handlebars.registerHelper('user', () => this.user);
+
+        await this.checkAuth();
+        this.setupGlobalHandlers();
+        this.router();
+        window.addEventListener('popstate', () => this.router());
     },
 
     /**
