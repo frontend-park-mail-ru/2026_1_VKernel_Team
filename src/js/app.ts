@@ -83,9 +83,12 @@ const App = {
     * Смотрит в localStorage и обновляет this.isAuthenticated и this.user
     */
     async checkAuth() {
+        console.log('🔍 checkAuth вызван');
         const result = await AuthService.check();
+        console.log('🔍 checkAuth результат:', result);
         this.isAuthenticated = result.isAuthenticated;
         this.user = result.user;
+        console.log('🔍 isAuthenticated после checkAuth:', this.isAuthenticated);
     },
 
     /**
@@ -103,7 +106,7 @@ const App = {
         switch (path) {
             case '/':
             case '/index.html':
-                this.renderMain();
+                await this.renderMain();
                 break;
             case '/login':
                 this.showLogin();
@@ -117,11 +120,15 @@ const App = {
             default:
                 this.renderNotFound();
         }
+        // Добавляет подвал, но его еще нужно правильно реализовать, я в процессе...
+        // await this.renderFooter();
     },
 
-    navigateTo(path: string) {
+
+    async navigateTo(path: string) {
+        console.log('🧭 navigateTo:', path);
         window.history.pushState({}, '', path);
-        this.router();
+        await this.router();
     },
 
     async renderMain() {
@@ -149,6 +156,29 @@ const App = {
             recommendations: formattedAds,
         });
         this.attachMainEventListeners();
+    },
+
+    async renderFooter() {
+        // Проверяем, есть ли уже подвал
+        if (document.querySelector('.footer')) {
+            return;
+        }
+        
+        try {
+            if (!this.templates['footer']) {
+                const response = await fetch('/templates/footer.hbs');
+                const source = await response.text();
+                this.templates['footer'] = Handlebars.compile(source);
+            }
+            
+            const footerHtml = this.templates['footer']({});
+            const app = document.getElementById('app');
+            if (app && !document.querySelector('.footer')) {
+                app.insertAdjacentHTML('afterend', footerHtml);
+            }
+        } catch (error) {
+            console.error('Ошибка загрузки подвала:', error);
+        }
     },
 
     formatAdCard(ad: any) {
@@ -281,6 +311,7 @@ const App = {
     * @param {Object} formData - сохранённые данные формы (email)
     */
     showLogin(error?: string, formData?: { email?: string }) {
+        console.log('🚨 showLogin вызван! Стек:', new Error().stack);
         this.currentView = 'login';
         document.body.classList.add('auth-page');
         const app = document.getElementById('app');
@@ -340,30 +371,27 @@ const App = {
         this.clearLoginError();
 
         if (!validation.isValid) {
-            // Исправлено: передаем строки, а не пробелы
-            this.showFieldErrors({ email: 'Неверный email', password: 'Неверный пароль' });
             this.showLoginError('Неверный email или пароль');
             return;
         }
 
         this.showLoading(true);
         const result = await AuthService.login({ email, password });
-        this.showLoading(false);
 
         if (result.success) {
             this.isAuthenticated = true;
             this.user = result.data;
+            // // Ждем завершения навигации перед тем, как убрать лоадер
+            // await this.navigateTo('/');
 
-            this.showSuccessMessage('Вход выполнен!');
-            this.navigateTo('/');
+            // Меняем URL
+            window.history.pushState({}, '', '/');
+            // Вызываем router, НО он должен отрендерить главную, а не страницу входа
+            await this.router();
+            this.showLoading(false);
             return;
         }
-
-        if (result.fieldErrors) {
-            this.showFieldErrors(result.fieldErrors);
-        } else {
-            this.showFieldErrors({ email: 'Неверный email', password: 'Неверный пароль' });
-        }
+        this.showLoading(false);
         this.showLoginError(result.error || 'Неверный email или пароль');
     },
 
@@ -398,23 +426,23 @@ const App = {
 
         this.showLoading(true);
         const result = await AuthService.register({ name, email, password });
-        this.showLoading(false);
 
         if (!result.success && result.fieldErrors) {
+            this.showLoading(false);
             this.showFieldErrors(result.fieldErrors);
             return;
         }
 
         if (!result.success) {
+            this.showLoading(false);
             this.showGeneralError(result.error || 'Ошибка при регистрации');
             return;
         }
 
         this.isAuthenticated = true;
         this.user = result.data;
-
-        this.showSuccessMessage('Регистрация успешна!');
-        this.navigateTo('/');
+        await this.navigateTo('/');
+        this.showLoading(false);
     },
 
     attachLoginHandler() {
@@ -463,6 +491,12 @@ const App = {
 
         const form = document.getElementById('login-forms');
         if (!form) return;
+
+        // Удаляем старый блок ошибки, если он уже есть
+        const existingError = form.parentNode?.querySelector('.login-error');
+        if (existingError) {
+            existingError.remove();
+        }
 
         const errorDiv = document.createElement('div');
         errorDiv.className = 'login-error alert alert-error';
@@ -548,15 +582,15 @@ const App = {
     async logout() {
         this.showLoading(true);
         await AuthService.logout();
-        this.showLoading(false);
         await this.checkAuth();
 
         if (window.location.pathname !== '/') {
-            this.navigateTo('/');
-            return;
+            await this.navigateTo('/');
+        } else {
+            await this.renderMain();
+            // await this.renderFooter();
         }
-
-        this.renderMain();
+        this.showLoading(false);
     },
 
     formatDate(dateString?: string) {

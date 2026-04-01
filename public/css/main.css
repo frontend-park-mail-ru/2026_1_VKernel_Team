@@ -71,6 +71,7 @@ body .main-container {
     display: flex;
     gap: 20px;
     align-items: center;
+    margin-right: 6px;
 }
 
 .place-ad-btn {

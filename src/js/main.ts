@@ -7,6 +7,7 @@
 import '../../public/css/base.css';
 import '../../public/css/components.css';
 import '../../public/css/auth.css';
+import '../../public/css/footer.css';
 import '../../public/css/main.css';
 
 import '@/utils/storage';
