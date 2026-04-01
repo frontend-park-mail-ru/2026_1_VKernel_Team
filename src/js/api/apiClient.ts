@@ -151,7 +151,7 @@ const apiClient = {
       method === "DELETE"
     ) {
       const csrfToken = getCookie("csrf_token");
-      if (ess) {
+      if (csrfToken) {
         headers["X-CSRF-Token"] = csrfToken;
       }
     }
