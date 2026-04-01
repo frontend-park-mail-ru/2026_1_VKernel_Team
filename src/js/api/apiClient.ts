@@ -1,4 +1,4 @@
-import { CONFIG } from "@/core/config";
+import { CONFIG } from '@/core/config';
 
 const API_URL = CONFIG.API.API_URL;
 
@@ -11,28 +11,28 @@ type ApiResponse<T = any> = {
 
 const API_ENDPOINTS = {
     AUTH: {
-        REGISTER: "/auth/register",
-        LOGIN: "/auth/login",
-        LOGOUT: "/auth/logout",
-        REFRESH: "/auth/refresh",
+        REGISTER: '/auth/register',
+        LOGIN: '/auth/login',
+        LOGOUT: '/auth/logout',
+        REFRESH: '/auth/refresh',
     },
     ADS: {
-        GET_ALL: "/ads",
+        GET_ALL: '/ads',
         GET_BY_ID: (id: number | string) => `/ads/${id}`,
-        CREATE: "/ads",
+        CREATE: '/ads',
         UPDATE: (id: number | string) => `/ads/${id}`,
         DELETE: (id: number | string) => `/ads/${id}`,
-        SEARCH: "/ads/search",
+        SEARCH: '/ads/search',
     },
     USERS: {
-        PROFILE: "/profile",
+        PROFILE: '/profile',
         GET_BY_ID: (id: number | string) => `/users/${id}`,
     },
     CATEGORIES: {
-        GET_ALL: "/categories",
+        GET_ALL: '/categories',
     },
     FAVORITES: {
-        GET_ALL: "/favorites",
+        GET_ALL: '/favorites',
         ADD: (id: number | string) => `/favorites/${id}`,
         REMOVE: (id: number | string) => `/favorites/${id}`,
         CHECK: (id: number | string) => `/favorites/${id}/check`,
@@ -45,7 +45,7 @@ const API_ENDPOINTS = {
 const getCookie = (name: string) => {
     const value = `; ${document.cookie}`;
     const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop()?.split(";").shift();
+    if (parts.length === 2) return parts.pop()?.split(';').shift();
     return null;
 };
 
@@ -85,7 +85,7 @@ const apiClient = {
                     return res;
                 })
                 .catch((err) => {
-                    console.error("Ошибка обновления токена:", err);
+                    console.error('Ошибка обновления токена:', err);
                     this._isRefreshing = false;
                     this._refreshPromise = null;
                     return { success: false };
@@ -135,31 +135,31 @@ const apiClient = {
      */
     async request(
         endpoint: string,
-        method: string = "GET",
+        method: string = 'GET',
         body: any = null,
         customHeaders: Record<string, string> = {},
     ): Promise<ApiResponse> {
         const headers: Record<string, string> = {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
             ...customHeaders,
         };
 
         if (
-            method === "POST" ||
-            method === "PUT" ||
-            method === "PATCH" ||
-            method === "DELETE"
+            method === 'POST' ||
+            method === 'PUT' ||
+            method === 'PATCH' ||
+            method === 'DELETE'
         ) {
-            const csrfToken = getCookie("csrf_token");
+            const csrfToken = getCookie('csrf_token');
             if (csrfToken) {
-                headers["X-CSRF-Token"] = csrfToken;
+                headers['X-CSRF-Token'] = csrfToken;
             }
         }
 
         const config: RequestInit = {
             method,
             headers,
-            credentials: "include" as RequestCredentials,
+            credentials: 'include' as RequestCredentials,
         };
 
         if (body) {
@@ -175,12 +175,12 @@ const apiClient = {
             );
 
             let data;
-            const contentType = response.headers.get("content-type");
-            if (contentType && contentType.includes("application/json")) {
+            const contentType = response.headers.get('content-type');
+            if (contentType && contentType.includes('application/json')) {
                 try {
                     data = await response.json();
                 } catch (e) {
-                    data = { message: "Ошибка парсинга ответа сервера" };
+                    data = { message: 'Ошибка парсинга ответа сервера' };
                 }
             } else {
                 const text = await response.text();
@@ -196,14 +196,14 @@ const apiClient = {
                 error:
                     data.message ||
                     data.error ||
-                    "Произошла неизвестная ошибка",
+                    'Произошла неизвестная ошибка',
                 data: data,
                 status: response.status,
             };
         } catch (error) {
             return {
                 success: false,
-                error: "Не удалось соединиться с сервером",
+                error: 'Не удалось соединиться с сервером',
                 status: 0,
             };
         }
@@ -219,7 +219,7 @@ const apiClient = {
         endpoint: string,
         headers: Record<string, string> = {},
     ): Promise<ApiResponse> {
-        return this.request(endpoint, "GET", null, headers);
+        return this.request(endpoint, 'GET', null, headers);
     },
 
     /**
@@ -234,7 +234,7 @@ const apiClient = {
         body: any,
         headers: Record<string, string> = {},
     ): Promise<ApiResponse> {
-        return this.request(endpoint, "POST", body, headers);
+        return this.request(endpoint, 'POST', body, headers);
     },
 
     /**
@@ -249,7 +249,7 @@ const apiClient = {
         body: any,
         headers: Record<string, string> = {},
     ): Promise<ApiResponse> {
-        return this.request(endpoint, "PUT", body, headers);
+        return this.request(endpoint, 'PUT', body, headers);
     },
 
     /**
@@ -262,7 +262,7 @@ const apiClient = {
         endpoint: string,
         headers: Record<string, string> = {},
     ): Promise<ApiResponse> {
-        return this.request(endpoint, "DELETE", null, headers);
+        return this.request(endpoint, 'DELETE', null, headers);
     },
 };
 
