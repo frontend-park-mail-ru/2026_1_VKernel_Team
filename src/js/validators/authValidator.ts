@@ -18,11 +18,6 @@ const AuthValidator = {
     USERNAME_MAX_LENGTH: 50,
     PASSWORD_MIN_LENGTH: 8,
 
-    // validateUsername(username: string): boolean {
-    //     if (!username) return false;
-    //     return username.length >= this.USERNAME_MIN_LENGTH && this.USERNAME_REGEX.test(username);
-    // },
-
     validateName(name: string): { isValid: boolean; error: string | null } {
         // На всякий случай обрезаем пробелы в начале и конце еще раз
         const trimmedName = name.trim();
