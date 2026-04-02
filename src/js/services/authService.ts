@@ -53,7 +53,6 @@ type AuthResult = {
 /**
  * Объект реализующий авторизацию
  */
-// ✅ ИЗМЕНИЛ: AuthService → authService
 const authService = {
     /**
      * Регистрация нового пользователя
@@ -146,12 +145,10 @@ const authService = {
 
     async check(): Promise<{ isAuthenticated: boolean; user: any }> {
         const result = await apiClient.get(API_ENDPOINTS.USERS.PROFILE);
-        if (result.isAuthenticated && result.user) {
-            store.setState({
-                isAuthenticated: true,
-                user: result.user,
-            });
-        }
+        return {
+            isAuthenticated: result.success,
+            user: result.success ? result.data : null,
+        };
     },
 };
 
