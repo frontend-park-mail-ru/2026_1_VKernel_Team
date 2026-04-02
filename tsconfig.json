@@ -3,6 +3,7 @@
     "target": "ES2020",
     "module": "ESNext",
     "moduleResolution": "bundler",
+    
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/js/*"],
@@ -14,14 +15,19 @@
       "@utils/*": ["src/js/utils/*"],
       "@types": ["src/js/types"]
     },
-    "outDir": "./src",
+    
+    "outDir": "./dist",
     "rootDir": "./src/js",
-    "strict": false,
+    
+    "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "sourceMap": true,
+    
     "noEmit": false,
-    "lib": ["ES2020", "DOM"]
+    "lib": ["ES2020", "DOM", "DOM.Iterable"]
   },
   "include": ["src/js/**/*"],
   "exclude": ["node_modules", "public", "dist"]

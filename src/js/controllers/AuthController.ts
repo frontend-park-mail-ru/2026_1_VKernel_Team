@@ -1,23 +1,30 @@
 /**
  * Контроллер авторизации
  * Обрабатывает формы входа и регистрации
+ * НЕ импортирует AppController — разрываем цикл!
  */
 
 import { authActions } from '@/actions/authActions';
 import { store } from '@/core/store';
 import { uiActions } from '@/actions/uiActions';
-import { AppController } from '@/controllers/AppController';
+import type { HandlebarsTemplateFunction } from '@/types';
+
+declare const Handlebars: any;
 
 export const AuthController = {
+    templates: {} as Record<string, HandlebarsTemplateFunction>,
+
     /**
      * Показать форму входа
      */
-    async showLogin(error?: string): Promise<void> {
+    async showLogin(error?: string | null): Promise<void> {
         document.body.classList.add('auth-page');
         const app = document.getElementById('app');
-        if (!app || !AppController.templates['login-forms']) return;
+        
+        const template = this.templates['login-forms'];
+        if (!app || !template) return;
 
-        app.innerHTML = AppController.templates['login-forms']({
+        app.innerHTML = template({
             isAuthenticated: store.isAuthenticated,
             user: store.user,
             error: error || null,
@@ -29,12 +36,17 @@ export const AuthController = {
     /**
      * Показать форму регистрации
      */
-    async showRegister(error?: string, fieldErrors?: Record<string, string>): Promise<void> {
+    async showRegister(
+        error?: string | null, 
+        fieldErrors?: Record<string, string | null>
+    ): Promise<void> {
         document.body.classList.add('auth-page');
         const app = document.getElementById('app');
-        if (!app || !AppController.templates['register-form']) return;
+        
+        const template = this.templates['register-form'];
+        if (!app || !template) return;
 
-        app.innerHTML = AppController.templates['register-form']({
+        app.innerHTML = template({
             isAuthenticated: store.isAuthenticated,
             user: store.user,
             error: error || null,
@@ -53,26 +65,24 @@ export const AuthController = {
         if (result.isValid) {
             uiActions.showSuccess('Вход выполнен!');
             uiActions.navigateTo('/');
-            AppController.router();
         } else {
             uiActions.showError(result.error || 'Ошибка входа');
-            this.showLogin(result.error);
+            this.showLogin(result.error ?? undefined);
         }
     },
 
     /**
      * Обработчик отправки формы регистрации
      */
-    async handleRegisterSubmit(data: any): Promise<void> {
+    async handleRegisterSubmit( data: any): Promise<void> {
         const result = await authActions.register(data);
 
         if (result.isValid) {
             uiActions.showSuccess('Регистрация успешна!');
             uiActions.navigateTo('/');
-            AppController.router();
         } else {
             uiActions.showError(result.error || 'Ошибка регистрации');
-            this.showRegister(result.error, result.fieldErrors);
+            this.showRegister(result.error ?? undefined, result.fieldErrors);
         }
     },
 
@@ -82,7 +92,6 @@ export const AuthController = {
     async handleLogout(): Promise<void> {
         await authActions.logout();
         uiActions.navigateTo('/');
-        AppController.router();
     },
 
     /**

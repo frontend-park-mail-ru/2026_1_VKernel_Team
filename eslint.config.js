@@ -1,6 +1,7 @@
 import js from '@eslint/js';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
+import eslintConfigPrettier from "eslint-config-prettier";
 
 export default [
     // 1. Базовые правила для всех файлов
@@ -69,4 +70,5 @@ export default [
             '.dependency-cruiser.cjs',
         ],
     },
+    eslintConfigPrettier,
 ];

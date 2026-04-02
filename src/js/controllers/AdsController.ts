@@ -1,27 +1,36 @@
 /**
  * Контроллер объявлений
- * Отображает список объявлений и управляет взаимодействием
+ * НЕ импортирует AppController — разрываем цикл!
  */
 
 import { adsActions } from '@/actions/adsActions';
 import { store } from '@/core/store';
-import { AppController } from '@/controllers/AppController';
-import type { Ad, FormattedAd } from '@/types';
+import type { Ad, FormattedAd, HandlebarsTemplateFunction } from '@/types';
+
+declare const Handlebars: any;
 
 export const AdsController = {
+    templates: {} as Record<string, HandlebarsTemplateFunction>,
+
+    UI_CONSTANTS: {
+        DEFAULT_AD_IMAGE: '/images/default-ad.jpg',
+    },
+
     /**
      * Рендер главной страницы с объявлениями
      */
     async renderMain(): Promise<void> {
         document.body.classList.remove('auth-page');
         await adsActions.loadAds();
+        
         const app = document.getElementById('app');
-        if (!app || !AppController.templates['main-page']) return;
+        const template = this.templates['main-page'];
+        if (!app || !template) return;
 
         const ads = store.ads;
         const formattedAds = ads.map((ad: Ad) => this.formatAdCard(ad));
 
-        app.innerHTML = AppController.templates['main-page']({
+        app.innerHTML = template({
             isAuthenticated: store.isAuthenticated,
             user: store.user,
             recommendations: formattedAds,
@@ -34,7 +43,7 @@ export const AdsController = {
      * Форматирование карточки объявления
      */
     formatAdCard(ad: Ad): FormattedAd {
-        let imageUrl = AppController.UI_CONSTANTS.DEFAULT_AD_IMAGE;
+        let imageUrl = this.UI_CONSTANTS.DEFAULT_AD_IMAGE;
 
         if (ad.photos && ad.photos.length > 0) {
             const photoPath = ad.photos[0];
@@ -51,7 +60,7 @@ export const AdsController = {
             mainPhoto: imageUrl,
             image: imageUrl,
             views: ad.views_count || 0,
-            favorites: ad.views_count || 0,
+            favorites: ad.favorites_count || 0,
             createdDate: ad.created_at ? new Date(ad.created_at).toLocaleDateString('ru-RU') : '',
         };
     },
@@ -64,6 +73,7 @@ export const AdsController = {
             card.addEventListener('click', () => {
                 const adId = (card as HTMLElement).dataset.id;
                 console.log('Ad clicked:', adId);
+                // TODO: Навигация на страницу объявления
             });
         });
     },

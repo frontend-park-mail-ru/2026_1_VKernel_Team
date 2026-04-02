@@ -46,8 +46,61 @@ const getCookie = (name: string): string | null => {
     return null;
 };
 
-// ✅ ИЗМЕНИЛ: объект → класс
 export class ApiClient {
+    private _isRefreshing: boolean = false;
+    private _refreshPromise: Promise<ApiResponse> | null = null;
+
+    /**
+     * Обновляет токен доступа через запрос на рефреш
+     */
+    private async _refreshAccessToken(): Promise<ApiResponse> {
+        if (!this._isRefreshing) {
+            this._isRefreshing = true;
+            this._refreshPromise = this.post(API_ENDPOINTS.AUTH.REFRESH, {})
+                .then((res) => {
+                    this._isRefreshing = false;
+                    this._refreshPromise = null;
+                    return res;
+                })
+                .catch((err) => {
+                    console.error('Ошибка обновления токена:', err);
+                    this._isRefreshing = false;
+                    this._refreshPromise = null;
+                    return { success: false };
+                });
+        }
+        return this._refreshPromise!;
+    }
+
+    /**
+     * Обрабатывает 401 ошибку и повторяет запрос после рефреша
+     */
+    private async _handleUnauthorizedResponse(
+        response: Response,
+        endpoint: string,
+        config: RequestInit,
+    ): Promise<Response> {
+        const isAuthEndpoint =
+            endpoint === API_ENDPOINTS.AUTH.REFRESH ||
+            endpoint === API_ENDPOINTS.AUTH.REGISTER ||
+            endpoint === API_ENDPOINTS.AUTH.LOGIN;
+
+        if (response.status !== 401 || isAuthEndpoint) {
+            return response;
+        }
+
+        const refreshResult = await this._refreshAccessToken();
+        if (!refreshResult?.success) {
+            return response;
+        }
+
+        // Токен обновлен, повторяем исходный запрос
+        return fetch(`${API_URL}${endpoint}`, config);
+    }
+
+    /**
+     * Универсальный метод для выполнения HTTP-запросов
+     */
     async request<T = any>(
         endpoint: string,
         method: string = 'GET',
@@ -59,12 +112,19 @@ export class ApiClient {
             ...customHeaders,
         };
 
+        // Токен авторизации
         const token = storage.getToken();
         if (token) {
             headers['Authorization'] = `Bearer ${token}`;
         }
 
-        if (method === 'POST' || method === 'PUT' || method === 'PATCH' || method === 'DELETE') {
+        // CSRF токен для mutating методов
+        if (
+            method === 'POST' ||
+            method === 'PUT' ||
+            method === 'PATCH' ||
+            method === 'DELETE'
+        ) {
             const csrfToken = getCookie('csrf_token');
             if (csrfToken) {
                 headers['X-CSRF-Token'] = csrfToken;
@@ -82,7 +142,13 @@ export class ApiClient {
         }
 
         try {
-            const response = await fetch(`${API_URL}${endpoint}`, config);
+            let response = await fetch(`${API_URL}${endpoint}`, config);
+            
+            response = await this._handleUnauthorizedResponse(
+                response,
+                endpoint,
+                config,
+            );
 
             let data: any;
             const contentType = response.headers.get('content-type');

@@ -1,6 +1,7 @@
 /**
  * Главный контроллер приложения
- * Управляет роутингом, инициализацией и глобальными обработчиками
+ * Координирует роутинг и инициализацию
+ * Импортирует другие контроллеры, но они НЕ импортируют его — цикл разорван!
  */
 
 import { AuthController } from '@/controllers/AuthController';
@@ -28,6 +29,17 @@ export const AppController = {
      */
     async init(): Promise<void> {
         await this.loadTemplates();
+        AuthController.templates = {
+            'login-forms': this.templates['login-forms'],
+            'register-form': this.templates['register-form'],
+        };
+        AdsController.templates = {
+            'main-page': this.templates['main-page'],
+        };
+        ProfileController.templates = {
+            'user-profile': this.templates['user-profile'],
+        };
+
         await this.checkAuth();
         this.setupGlobalHandlers();
         this.setupStoreSubscription();
@@ -78,7 +90,7 @@ export const AppController = {
      * Проверка авторизации при загрузке
      */
     async checkAuth(): Promise<void> {
-        // Через authActions будет вызвано
+        // authActions.checkAuth() обновит store, а подписчик (onStateChange) среагирует
     },
 
     /**
@@ -91,7 +103,7 @@ export const AppController = {
     },
 
     /**
-     * Обработка изменений состояния
+     * Обработка изменений состояния — здесь происходит "роутинг"
      */
     onStateChange(state: any): void {
         this.showLoading(state.isLoading);
@@ -99,15 +111,23 @@ export const AppController = {
         if (state.error) {
             uiActions.showError(state.error);
         }
+
+        // ✅ Реактивный роутинг: если изменился currentPage — перерендерим
+        if (state.currentPage !== this._lastPage) {
+            this._lastPage = state.currentPage;
+            this.router();
+        }
     },
+
+_lastPage: '',
 
     /**
      * Роутинг по страницам
      */
     router(): void {
         const path = window.location.pathname;
-        uiActions.navigateTo(path);
 
+        // Защита: не авторизован + профиль = редирект на логин
         if (!store.isAuthenticated && path === '/profile') {
             uiActions.navigateTo('/login');
             AuthController.showLogin();
@@ -138,7 +158,7 @@ export const AppController = {
      */
     navigateTo(path: string): void {
         window.history.pushState({}, '', path);
-        this.router();
+        uiActions.navigateTo(path); // Обновит store.currentPage → onStateChange → router()
     },
 
     /**
@@ -182,6 +202,7 @@ export const AppController = {
      */
     showLoading(show: boolean): void {
         let loader = document.getElementById('global-loader');
+        
         if (!show) {
             loader?.remove();
             return;

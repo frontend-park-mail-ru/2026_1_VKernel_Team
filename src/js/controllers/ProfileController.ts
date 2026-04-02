@@ -1,22 +1,33 @@
 /**
  * Контроллер профиля пользователя
+ * НЕ импортирует AppController — разрываем цикл!
  */
 
 import { store } from '@/core/store';
-import { AppController } from '@/controllers/AppController';
+import type { HandlebarsTemplateFunction } from '@/types';
+
+declare const Handlebars: any;
 
 export const ProfileController = {
+    templates: {} as Record<string, HandlebarsTemplateFunction>,
+
+    UI_CONSTANTS: {
+        DEFAULT_AVATAR: '/images/default-avatar.jpg',
+    },
+
     /**
      * Показать страницу профиля
      */
     showProfile(): void {
         document.body.classList.add('auth-page');
         const app = document.getElementById('app');
-        if (!app || !AppController.templates['user-profile']) return;
+        const template = this.templates['user-profile'];
+        
+        if (!app || !template) return;
 
         const user = store.user;
 
-        app.innerHTML = AppController.templates['user-profile']({
+        app.innerHTML = template({
             isAuthenticated: store.isAuthenticated,
             user: store.user,
             email: user?.email || 'Неизвестно',
@@ -24,7 +35,7 @@ export const ProfileController = {
             registeredAt: user?.created_at
                 ? new Date(user.created_at).toLocaleDateString('ru-RU')
                 : 'неизвестно',
-            avatar: AppController.UI_CONSTANTS.DEFAULT_AVATAR,
+            avatar: this.UI_CONSTANTS.DEFAULT_AVATAR,
         });
     },
 };
