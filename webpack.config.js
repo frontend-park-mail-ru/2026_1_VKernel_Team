@@ -60,6 +60,11 @@ export default (env, argv) => {
                         to: 'templates',
                         noErrorOnMissing: true,
                     },
+                    {
+                        from: 'public/site',
+                        to: 'site',
+                        noErrorOnMissing: true,
+                    },
                 ],
             }),
         ],
