@@ -68,7 +68,7 @@ const App = {
         }
 
         Handlebars.registerHelper('formatPrice', (price: number) => {
-            return price === 0 ? 'Бесплатно' : price + ' ₽';
+            return price === 0 ? 'Бесплатно' : price.toLocaleString('ru-RU') + ' ₽';
         });
 
         Handlebars.registerHelper('ifAuthenticated', function(this: any, options: Handlebars.HelperOptions) {
@@ -195,10 +195,10 @@ const App = {
 
         return {
             ...ad,
-            formattedPrice: ad.price === 0 ? 'Бесплатно' : ad.price + ' ₽',
+            formattedPrice: ad.price === 0 ? 'Бесплатно' : ad.price.toLocaleString('ru-RU') + ' ₽',
             mainPhoto: imageUrl,
             image: imageUrl,
-            views: ad.views_count || 0,
+            views: ad.views_count || 10,
             createdDate: ad.created_at ? new Date(ad.created_at).toLocaleDateString('ru-RU') : '',
         };
     },
@@ -217,12 +217,6 @@ const App = {
             e.preventDefault();
             this.navigateTo(this.isAuthenticated ? '/profile' : '/login');
         });
-
-        const placeAdBtn = document.querySelector('.place-ad-btn') as HTMLButtonElement | null;
-        if (placeAdBtn) {
-            placeAdBtn.disabled = true;
-            placeAdBtn.title = 'Функция временно недоступна';
-        }
 
         document.querySelectorAll('.ad-card').forEach((card: Element) => {
             card.addEventListener('click', () => {

@@ -18,7 +18,7 @@
                 </div>
                 <div class="nav-icon">
                     <a href="#" class="nav-link">
-                        <span class="icon">❤️</span>
+                        <span class="icon favorites">♡</span>
                         <span class="nav-text">Избранное</span>
                     </a>
                 </div>
@@ -32,10 +32,9 @@
             </div>
             
             <!-- Правая часть -->
-            <div class="header-right">
-                <button class="btn place-ad-btn">Разместить объявление</button>
-                
+            <div class="header-right">                
                 {{#if isAuthenticated}}
+                    <button class="btn place-ad-btn">Разместить объявление</button>
                 <!--Нужна проверка в будущем на загрузку своей аватарки пользователем-->
                     <a href="">
                         <img src="images/logo/avatar.jpeg" alt="Аватар" class="avatar">
@@ -44,6 +43,7 @@
                         Выйти
                     </button>
                 {{else}}
+                    <button class="btn place-ad-btn" data-nav="/login">Разместить объявление</button>
                     <p>
                         <a href="#" class="nav-login" data-nav="/login">Войти</a>
                     </p>
@@ -159,10 +159,10 @@
                                     </div>
                                     <div class="rec-card-footer-actions">
                                         <button class="rec-card-cart">🛒</button>
-                                        <div class="rec-card-views">
+                                        {{!-- <div class="rec-card-views">
                                             <p class="num_views">{{views}}</p>
                                             <img src="images/icons/views.jpeg" alt="Просмотры" class="views">
-                                        </div>
+                                        </div> --}}
                                     </div>
                                 </div>
                             </div>
@@ -175,6 +175,10 @@
             
             <!-- Правая колонка с рекламой (3/12) -->
             <div class="ad-column">
+                Цвета у кнопок "Разместить объявление" и "Найти" одинаковые!
+                Посмотрите через утилиты на них, пожалуйста)))
+                Также решил оставить одну корзину в карточках товара, оставил ее по центру относительно геопозиции и цены,
+                подумал, что так лучше, могу ошибаться. Отступы справа у корзины и лайка одинаковый, проверил) 
                 Рекламное место
             </div>
         </div>

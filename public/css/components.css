@@ -55,9 +55,10 @@
 
 /* ========== КНОПКА ВЫХОДА/ВХОДА ========== */
 .logout-btn {
-    padding: 8px 16px;
-    font-size: 14px;
-    margin-left: 10px;
+    padding: 0 16px;
+    height: 44px;
+    font-size: 16px;
+    margin-left: 0px;
     border-radius: 6px;
     font-weight: 500;
     cursor: pointer;
@@ -80,6 +81,7 @@
     background: #f27683;
     color: white;
     border: none;
+    box-shadow: none;
 }
 
 .btn-danger.logout-btn:hover {
@@ -147,9 +149,11 @@ input.error {
 .login-error {
     color: #ee5253;
     font-size: 14px;
-    margin-bottom: 15px;
+    padding: 0px !important;
+    margin: 0px !important;
     font-weight: 500;
     animation: fadeIn 0.3s ease;
+    text-align: left !important;
 }
 
 /* ========== АЛЕРТЫ ========== */
@@ -164,9 +168,7 @@ input.error {
 }
 
 .alert-error {
-    background: #fff5f5;
     color: #ee5253;
-    border: 2px solid #ff6b6b;
 }
 
 .alert-success {
