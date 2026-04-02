@@ -49,24 +49,23 @@ const getCookie = (name: string) => {
     return null;
 };
 
-
 /**
-* Основной объект для отправки запросов на сервер
-* Содержит методы для GET, POST, PUT, DELETE запросов
-*
-* @param {string} endpoint - адрес, куда отправляем запрос (например, '/auth/login')
-* @param {string} method - метод HTTP запроса (GET, POST, PUT, DELETE)
-* @param {Object} body - данные, которые отправляем на сервер (для POST/PUT)
-* @param {Object} customHeaders - дополнительные заголовки, если нужны
-* @returns {Promise<Object>} - ответ от сервера в виде объекта {success, data, error}
-*
-* @example
-* // Пример вызова:
-* const result = await apiClient.request('/auth/login', 'POST', {
-*   email: 'user@mail.ru',
-*   password: '12345678'
-* });
-*/
+ * Основной объект для отправки запросов на сервер
+ * Содержит методы для GET, POST, PUT, DELETE запросов
+ *
+ * @param {string} endpoint - адрес, куда отправляем запрос (например, '/auth/login')
+ * @param {string} method - метод HTTP запроса (GET, POST, PUT, DELETE)
+ * @param {Object} body - данные, которые отправляем на сервер (для POST/PUT)
+ * @param {Object} customHeaders - дополнительные заголовки, если нужны
+ * @returns {Promise<Object>} - ответ от сервера в виде объекта {success, data, error}
+ *
+ * @example
+ * // Пример вызова:
+ * const result = await apiClient.request('/auth/login', 'POST', {
+ *   email: 'user@mail.ru',
+ *   password: '12345678'
+ * });
+ */
 const apiClient = {
     _isRefreshing: false,
     _refreshPromise: null as Promise<ApiResponse> | null,
@@ -80,12 +79,12 @@ const apiClient = {
         if (!this._isRefreshing) {
             this._isRefreshing = true;
             this._refreshPromise = this.post(API_ENDPOINTS.AUTH.REFRESH, {})
-                .then(res => {
+                .then((res) => {
                     this._isRefreshing = false;
                     this._refreshPromise = null;
                     return res;
                 })
-                .catch(err => {
+                .catch((err) => {
                     console.error('Ошибка обновления токена:', err);
                     this._isRefreshing = false;
                     this._refreshPromise = null;
@@ -108,7 +107,8 @@ const apiClient = {
         endpoint: string,
         config: RequestInit,
     ): Promise<Response> {
-        const isAuthEndpoint = endpoint === API_ENDPOINTS.AUTH.REFRESH ||
+        const isAuthEndpoint =
+            endpoint === API_ENDPOINTS.AUTH.REFRESH ||
             endpoint === API_ENDPOINTS.AUTH.REGISTER;
 
         if (response.status !== 401 || isAuthEndpoint) {
@@ -144,7 +144,12 @@ const apiClient = {
             ...customHeaders,
         };
 
-        if (method === 'POST' || method === 'PUT' || method === 'PATCH' || method === 'DELETE') {
+        if (
+            method === 'POST' ||
+            method === 'PUT' ||
+            method === 'PATCH' ||
+            method === 'DELETE'
+        ) {
             const csrfToken = getCookie('csrf_token');
             if (csrfToken) {
                 headers['X-CSRF-Token'] = csrfToken;
@@ -163,7 +168,11 @@ const apiClient = {
 
         try {
             let response = await fetch(`${API_URL}${endpoint}`, config);
-            response = await this._handleUnauthorizedResponse(response, endpoint, config);
+            response = await this._handleUnauthorizedResponse(
+                response,
+                endpoint,
+                config,
+            );
 
             let data;
             const contentType = response.headers.get('content-type');
@@ -184,11 +193,13 @@ const apiClient = {
 
             return {
                 success: false,
-                error: data.message || data.error || 'Произошла неизвестная ошибка',
+                error:
+                    data.message ||
+                    data.error ||
+                    'Произошла неизвестная ошибка',
                 data: data,
                 status: response.status,
             };
-
         } catch (error) {
             return {
                 success: false,
@@ -204,7 +215,10 @@ const apiClient = {
      * @param {Object} [headers={}] - Дополнительные заголовки
      * @returns {Promise<Object>} Результат запроса
      */
-    get(endpoint: string, headers: Record<string, string> = {}): Promise<ApiResponse> {
+    get(
+        endpoint: string,
+        headers: Record<string, string> = {},
+    ): Promise<ApiResponse> {
         return this.request(endpoint, 'GET', null, headers);
     },
 
@@ -215,7 +229,11 @@ const apiClient = {
      * @param {Object} [headers={}] - Дополнительные заголовки
      * @returns {Promise<Object>} Результат запроса
      */
-    post(endpoint: string, body: any, headers: Record<string, string> = {}): Promise<ApiResponse> {
+    post(
+        endpoint: string,
+        body: any,
+        headers: Record<string, string> = {},
+    ): Promise<ApiResponse> {
         return this.request(endpoint, 'POST', body, headers);
     },
 
@@ -226,7 +244,11 @@ const apiClient = {
      * @param {Object} [headers={}] - Дополнительные заголовки
      * @returns {Promise<Object>} Результат запроса
      */
-    put(endpoint: string, body: any, headers: Record<string, string> = {}): Promise<ApiResponse> {
+    put(
+        endpoint: string,
+        body: any,
+        headers: Record<string, string> = {},
+    ): Promise<ApiResponse> {
         return this.request(endpoint, 'PUT', body, headers);
     },
 
@@ -236,7 +258,10 @@ const apiClient = {
      * @param {Object} [headers={}] - Дополнительные заголовки
      * @returns {Promise<Object>} Результат запроса
      */
-    delete(endpoint: string, headers: Record<string, string> = {}): Promise<ApiResponse> {
+    delete(
+        endpoint: string,
+        headers: Record<string, string> = {},
+    ): Promise<ApiResponse> {
         return this.request(endpoint, 'DELETE', null, headers);
     },
 };
