@@ -541,7 +541,7 @@ const App = {
         }
 
         const errorDiv = document.createElement('div');
-        errorDiv.className = 'login-error alert alert-error';
+        errorDiv.className = 'login-error';
         errorDiv.textContent = message;
         form.parentNode?.insertBefore(errorDiv, form);
     },

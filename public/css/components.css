@@ -149,11 +149,11 @@ input.error {
 .login-error {
     color: #ee5253;
     font-size: 14px;
-    padding: 0px !important;
-    margin: 0px !important;
+    padding: 0px;
+    margin: 0px;
     font-weight: 500;
     animation: fadeIn 0.3s ease;
-    text-align: left !important;
+    text-align: left;
 }
 
 /* ========== АЛЕРТЫ ========== */
