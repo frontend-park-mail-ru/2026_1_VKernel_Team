@@ -3,6 +3,7 @@
  * Инициализирует все модули и запускает приложение
  */
 
+
 import '@/utils/storage';
 import '@/validators/authValidator';
 import '@/services/authService';

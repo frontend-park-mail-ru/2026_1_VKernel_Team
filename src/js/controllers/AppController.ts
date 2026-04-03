@@ -1,7 +1,6 @@
 /**
  * Главный контроллер приложения
- * Координирует роутинг и инициализацию
- * Импортирует другие контроллеры, но они НЕ импортируют его — цикл разорван!
+ * Управляет роутингом, инициализацией и глобальными обработчиками
  */
 
 import { AuthController } from '@/controllers/AuthController';
@@ -14,19 +13,17 @@ import type { HandlebarsTemplateFunction, TemplateName, UIConstants } from '@/ty
 declare const Handlebars: any;
 
 export const AppController = {
+    _lastPage: '',
     templates: {} as Record<TemplateName, HandlebarsTemplateFunction>,
 
     UI_CONSTANTS: {
         DEFAULT_AVATAR: '/images/default-avatar.jpg',
         DEFAULT_AD_IMAGE: '/images/default-ad.jpg',
         EYE_OPEN: '/images/icons/Eye.jpeg',
-        EYE_CLOSED: '/images/icons/Eye-off.jpeg',
-        LOADER_HTML: '<div class="spinner"></div>',
+        EYE_CLOSED: '/images/icons/Eye-off.jpeg',  
+        LOADER_HTML: '<div class="spinner"></div>',  
     } as UIConstants,
 
-    /**
-     * Инициализация приложения
-     */
     async init(): Promise<void> {
         await this.loadTemplates();
         AuthController.templates = {
@@ -37,7 +34,7 @@ export const AppController = {
             'main-page': this.templates['main-page'],
         };
         ProfileController.templates = {
-            'user-profile': this.templates['user-profile'],
+            'user-profile': this.templates['user-profile'],  
         };
 
         await this.checkAuth();
@@ -47,9 +44,6 @@ export const AppController = {
         window.addEventListener('popstate', () => this.router());
     },
 
-    /**
-     * Загрузка Handlebars шаблонов
-     */
     async loadTemplates(): Promise<void> {
         const templateNames: TemplateName[] = [
             'auth-links',
@@ -57,7 +51,7 @@ export const AppController = {
             'register-form',
             'user-profile',
             'main-page',
-            'not-found',
+            'not-found',  
         ];
 
         for (const name of templateNames) {
@@ -69,13 +63,9 @@ export const AppController = {
                 console.error(`Failed to load template ${name}:`, error);
             }
         }
-
         this.registerHandlebarsHelpers();
     },
 
-    /**
-     * Регистрация хелперов Handlebars
-     */
     registerHandlebarsHelpers(): void {
         Handlebars.registerHelper('formatPrice', (price: number) => {
             return price === 0 ? 'Бесплатно' : `${price} ₽`;
@@ -86,49 +76,32 @@ export const AppController = {
         });
     },
 
-    /**
-     * Проверка авторизации при загрузке
-     */
     async checkAuth(): Promise<void> {
-        // authActions.checkAuth() обновит store, а подписчик (onStateChange) среагирует
+        // authActions.checkAuth() обновит store
     },
 
-    /**
-     * Подписка на изменения Store
-     */
     setupStoreSubscription(): void {
         store.subscribe((state) => {
             this.onStateChange(state);
         });
     },
 
-    /**
-     * Обработка изменений состояния — здесь происходит "роутинг"
-     */
     onStateChange(state: any): void {
         this.showLoading(state.isLoading);
-
         if (state.error) {
             uiActions.showError(state.error);
         }
-
-        // ✅ Реактивный роутинг: если изменился currentPage — перерендерим
         if (state.currentPage !== this._lastPage) {
             this._lastPage = state.currentPage;
             this.router();
         }
     },
 
-_lastPage: '',
-
-    /**
-     * Роутинг по страницам
-     */
     router(): void {
         const path = window.location.pathname;
+        uiActions.navigateTo(path);  
 
-        // Защита: не авторизован + профиль = редирект на логин
-        if (!store.isAuthenticated && path === '/profile') {
+        if (!store.isAuthenticated && path === '/profile') { 
             uiActions.navigateTo('/login');
             AuthController.showLogin();
             return;
@@ -136,7 +109,7 @@ _lastPage: '',
 
         switch (path) {
             case '/':
-            case '/index.html':
+            case '/index.html':  
                 AdsController.renderMain();
                 break;
             case '/login':
@@ -149,30 +122,21 @@ _lastPage: '',
                 ProfileController.showProfile();
                 break;
             default:
-                this.renderNotFound();
+                this.renderNotFound(); 
         }
     },
 
-    /**
-     * Навигация на страницу
-     */
     navigateTo(path: string): void {
         window.history.pushState({}, '', path);
-        uiActions.navigateTo(path); // Обновит store.currentPage → onStateChange → router()
+        uiActions.navigateTo(path);
     },
 
-    /**
-     * Рендер страницы 404
-     */
     renderNotFound(): void {
         const app = document.getElementById('app');
-        if (!app || !this.templates['not-found']) return;
+        if (!app || !this.templates['not-found']) return;  
         app.innerHTML = this.templates['not-found']();
     },
 
-    /**
-     * Глобальные обработчики событий
-     */
     setupGlobalHandlers(): void {
         document.addEventListener('click', (e: Event) => {
             const target = e.target as HTMLElement;
@@ -185,11 +149,11 @@ _lastPage: '',
                 return;
             }
 
-            const actionElement = target.closest('[data-action]');
+            const actionElement = target.closest('[data-action]');  
             if (actionElement) {
                 e.preventDefault();
                 const action = (actionElement as HTMLElement).dataset.action;
-                if (action === 'logout') {
+                if (action === 'logout') {  
                     AuthController.handleLogout();
                 }
                 return;
@@ -197,9 +161,6 @@ _lastPage: '',
         });
     },
 
-    /**
-     * Показать/скрыть лоадер
-     */
     showLoading(show: boolean): void {
         let loader = document.getElementById('global-loader');
         
@@ -209,11 +170,11 @@ _lastPage: '',
         }
 
         if (!loader) {
-            loader = document.createElement('div');
+            loader = document.createElement('div');  
             loader.id = 'global-loader';
             loader.className = 'loader-overlay';
             loader.innerHTML = this.UI_CONSTANTS.LOADER_HTML;
-            document.body.appendChild(loader);
+            document.body.appendChild(loader);  
         }
     },
 };

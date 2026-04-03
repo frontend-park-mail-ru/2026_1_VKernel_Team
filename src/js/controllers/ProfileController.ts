@@ -15,9 +15,6 @@ export const ProfileController = {
         DEFAULT_AVATAR: '/images/default-avatar.jpg',
     },
 
-    /**
-     * Показать страницу профиля
-     */
     showProfile(): void {
         document.body.classList.add('auth-page');
         const app = document.getElementById('app');
@@ -35,7 +32,7 @@ export const ProfileController = {
             registeredAt: user?.created_at
                 ? new Date(user.created_at).toLocaleDateString('ru-RU')
                 : 'неизвестно',
-            avatar: this.UI_CONSTANTS.DEFAULT_AVATAR,
+            avatar: this.UI_CONSTANTS.DEFAULT_AVATAR, 
         });
     },
 };
