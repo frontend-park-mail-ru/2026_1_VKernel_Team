@@ -83,12 +83,9 @@ const App = {
     * Смотрит в localStorage и обновляет this.isAuthenticated и this.user
     */
     async checkAuth() {
-        console.log('🔍 checkAuth вызван');
         const result = await AuthService.check();
-        console.log('🔍 checkAuth результат:', result);
         this.isAuthenticated = result.isAuthenticated;
         this.user = result.user;
-        console.log('🔍 isAuthenticated после checkAuth:', this.isAuthenticated);
     },
 
     /**
@@ -126,7 +123,6 @@ const App = {
 
 
     async navigateTo(path: string) {
-        console.log('🧭 navigateTo:', path);
         window.history.pushState({}, '', path);
         await this.router();
     },
@@ -177,7 +173,6 @@ const App = {
                 app.insertAdjacentHTML('afterend', footerHtml);
             }
         } catch (error) {
-            console.error('Ошибка загрузки подвала:', error);
         }
     },
 
@@ -222,7 +217,6 @@ const App = {
             card.addEventListener('click', () => {
                 const adId = (card as HTMLElement).dataset.id;
                 // TODO: использовать adId позже
-                console.log('Ad clicked:', adId);
             });
         });
     },
@@ -305,7 +299,6 @@ const App = {
     * @param {Object} formData - сохранённые данные формы (email)
     */
     showLogin(error?: string, formData?: { email?: string }) {
-        console.log('🚨 showLogin вызван! Стек:', new Error().stack);
         this.currentView = 'login';
         document.body.classList.add('auth-page');
         const app = document.getElementById('app');
