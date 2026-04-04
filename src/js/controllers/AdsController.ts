@@ -17,8 +17,11 @@ export const AdsController = {
         DEFAULT_AD_IMAGE: '/images/default-ad.jpg',
     },
 
+    /**
+     * Рендер главной страницы с объявлениями
+     */
     async renderMain(): Promise<void> {
-        document.body.classList.remove('auth-page');
+        
         await adsActions.loadAds();
         
         const app = document.getElementById('app');
@@ -27,6 +30,7 @@ export const AdsController = {
 
         const ads = store.ads;
         const formattedAds = ads.map((ad: Ad) => this.formatAdCard(ad));
+        document.body.classList.remove('auth-page');
 
         app.innerHTML = template({
             isAuthenticated: store.isAuthenticated,
@@ -38,14 +42,14 @@ export const AdsController = {
     },
 
     formatAdCard(ad: Ad): FormattedAd {
-        let imageUrl = this.UI_CONSTANTS.DEFAULT_AD_IMAGE;  
+        let imageUrl = this.UI_CONSTANTS.DEFAULT_AD_IMAGE;
 
-        if (ad.photos && ad.photos.length > 0) { 
+        if (ad.photos && ad.photos.length > 0) {
             const photoPath = ad.photos[0];
             if (photoPath) {
                 imageUrl = photoPath.startsWith('http')
                     ? photoPath
-                    : `${window.location.origin}${photoPath}`;  
+                    : `${window.location.origin}${photoPath}`;
             }
         }
 
@@ -56,7 +60,7 @@ export const AdsController = {
             image: imageUrl,
             views: ad.views_count || 0,
             favorites: ad.favorites_count || 0,
-            createdDate: ad.created_at ? new Date(ad.created_at).toLocaleDateString('ru-RU') : '',  
+            createdDate: ad.created_at ? new Date(ad.created_at).toLocaleDateString('ru-RU') : '',
         };
     },
 

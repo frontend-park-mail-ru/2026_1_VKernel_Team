@@ -17,11 +17,11 @@ export const AppController = {
     templates: {} as Record<TemplateName, HandlebarsTemplateFunction>,
 
     UI_CONSTANTS: {
-        DEFAULT_AVATAR: '/images/default-avatar.jpg',
-        DEFAULT_AD_IMAGE: '/images/default-ad.jpg',
-        EYE_OPEN: '/images/icons/Eye.jpeg',
-        EYE_CLOSED: '/images/icons/Eye-off.jpeg',  
-        LOADER_HTML: '<div class="spinner"></div>',  
+    DEFAULT_AVATAR: '/images/default-avatar.jpg',
+    DEFAULT_AD_IMAGE: '/images/default-ad.jpg',
+    EYE_OPEN: '/images/icons/Eye.jpeg',
+    EYE_CLOSED: '/images/icons/Eye-off.jpeg',  
+    LOADER_HTML: '<div class="spinner"></div>',  
     } as UIConstants,
 
     async init(): Promise<void> {

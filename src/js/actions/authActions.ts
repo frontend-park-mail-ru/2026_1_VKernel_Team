@@ -1,8 +1,3 @@
-/**
- * Действия авторизации
- * Связывают контроллеры и сервисы, обновляют Store
- */
-
 import { authService } from '@/services/authService';
 import { store } from '@/core/store';
 import { AuthValidator } from '@/validators/authValidator';
@@ -40,14 +35,8 @@ export const authActions = {
                 fieldErrors: result.fieldErrors,
             };
         } catch (error) {
-            store.setState({
-                isLoading: false,
-                error: 'Не удалось соединиться с сервером',
-            });
-            return {
-                isValid: false,
-                error: 'Не удалось соединиться с сервером',
-            };
+            store.setState({ isLoading: false, error: 'Не удалось соединиться с сервером' });
+            return { isValid: false, error: 'Не удалось соединиться с сервером' };
         }
     },
 
@@ -56,7 +45,7 @@ export const authActions = {
             data.name,
             data.email,
             data.password,
-            data.password,
+            data.confirmPassword, 
         );
         if (!validation.isValid) {
             return validation;
@@ -87,14 +76,8 @@ export const authActions = {
                 fieldErrors: result.fieldErrors,
             };
         } catch (error) {
-            store.setState({
-                isLoading: false,
-                error: 'Не удалось соединиться с сервером',
-            });
-            return {
-                isValid: false,
-                error: 'Не удалось соединиться с сервером',
-            };
+            store.setState({ isLoading: false, error: 'Не удалось соединиться с сервером' });
+            return { isValid: false, error: 'Не удалось соединиться с сервером' };
         }
     },
 

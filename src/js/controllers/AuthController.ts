@@ -1,9 +1,3 @@
-/**
- * Контроллер авторизации
- * Обрабатывает формы входа и регистрации
- * НЕ импортирует AppController — разрываем цикл!
- */
-
 import { authActions } from '@/actions/authActions';
 import { store } from '@/core/store';
 import { uiActions } from '@/actions/uiActions';
@@ -13,7 +7,6 @@ declare const Handlebars: any;
 
 export const AuthController = {
     templates: {} as Record<string, HandlebarsTemplateFunction>,
-
     UI_CONSTANTS: {
         EYE_OPEN: '/images/icons/Eye.jpeg',
         EYE_CLOSED: '/images/icons/Eye-off.jpeg',
@@ -70,7 +63,8 @@ export const AuthController = {
             uiActions.showError(result.error || 'Ошибка входа');
             this.clearLoginError();
             this.showLoginError(result.error ?? 'Ошибка входа');
-            this.showLogin(result.error ?? undefined);
+            // 🔧 УБРАНО: this.showLogin() не должен вызываться при ошибке валидации,
+            // так как он полностью перезаписывает innerHTML и стирает только что добавленные ошибки.
         }
     },
 
@@ -86,7 +80,8 @@ export const AuthController = {
             if (result.fieldErrors) {
                 this.showFieldErrors(result.fieldErrors);
             }
-            this.showRegister(result.error ?? undefined, result.fieldErrors);
+            // 🔧 УБРАНО: this.showRegister() по той же причине. Форма уже на экране, 
+            // мы просто накладываем ошибки поверх существующих полей.
         }
     },
 
@@ -96,25 +91,20 @@ export const AuthController = {
     },
 
     initPasswordToggles(): void {
-        const elements = {
-            password: {
-                input: document.querySelector('#login-password') as HTMLInputElement | null,
-                toggle: document.querySelector('#togglePassword') as HTMLButtonElement | null,
-                eye: document.querySelector('#eyeIcon') as HTMLImageElement | null,
-            },
-            confirm: {
-                input: document.querySelector('#register-confirm') as HTMLInputElement | null,
-                toggle: document.querySelector('#toggleConfirmPassword') as HTMLButtonElement | null,
-                eye: document.querySelector('#eyeIconConfirm') as HTMLImageElement | null,
-            },
-        };
-
-        Object.values(elements).forEach(({ input, toggle, eye }) => {
-            if (input && toggle && eye) {
-                toggle.addEventListener('click', () => {
+        const toggles = document.querySelectorAll('#togglePassword, #toggleConfirmPassword');
+        
+        toggles.forEach((toggleBtn) => {
+            const btn = toggleBtn as HTMLButtonElement;
+            const eyeIcon = btn.querySelector('img') as HTMLImageElement;
+            const wrapper = btn.closest('.password-wrapper');
+            const input = wrapper?.querySelector('input[type="password"]') as HTMLInputElement;
+            
+            if (input && eyeIcon) {
+                btn.addEventListener('click', () => {
                     const isPassword = input.type === 'password';
                     input.type = isPassword ? 'text' : 'password';
-                    eye.src = isPassword ? this.UI_CONSTANTS.EYE_OPEN : this.UI_CONSTANTS.EYE_CLOSED;
+                    eyeIcon.src = isPassword ? this.UI_CONSTANTS.EYE_OPEN : this.UI_CONSTANTS.EYE_CLOSED;
+                    eyeIcon.alt = isPassword ? 'Скрыть пароль' : 'Показать пароль';
                 });
             }
         });
@@ -122,13 +112,12 @@ export const AuthController = {
 
     showLoginError(message: string): void {
         this.clearLoginError();
-        
-        ['login-email', 'login-password'].forEach(id => {
+        ['email', 'password'].forEach(id => {
             const el = document.getElementById(id);
             if (el) el.classList.add('error');
         });
 
-        const form = document.getElementById('login-form');
+        const form = document.getElementById('login-forms');
         if (!form) return;
 
         const errorDiv = document.createElement('div');
@@ -139,7 +128,7 @@ export const AuthController = {
 
     clearLoginError(): void {
         document.querySelectorAll('.login-error, .alert-error').forEach(el => el.remove());
-        ['login-email', 'login-password'].forEach(id => {
+        ['email', 'password'].forEach(id => {
             const el = document.getElementById(id);
             if (el) el.classList.remove('error');
         });
@@ -150,7 +139,7 @@ export const AuthController = {
         
         Object.entries(fieldErrors).forEach(([field, error]) => {
             if (!error) return;
-            const inputId = field === 'confirmPassword' ? 'register-confirm' : `register-${field}`;
+            const inputId = field === 'confirmPassword' ? 'confirm-password' : field;
             const input = document.getElementById(inputId);
             
             if (input) {
@@ -169,7 +158,7 @@ export const AuthController = {
     },
 
     attachLoginListeners(): void {
-        const form = document.getElementById('login-form') as HTMLFormElement;
+        const form = document.getElementById('login-forms') as HTMLFormElement;
         if (!form) return;
         
         if (this._loginHandler) {
@@ -178,13 +167,13 @@ export const AuthController = {
 
         const handler: EventListener = (e: Event) => {
             e.preventDefault();
-            const email = (document.getElementById('login-email') as HTMLInputElement)?.value || '';
-            const password = (document.getElementById('login-password') as HTMLInputElement)?.value || '';
+            const email = (document.getElementById('email') as HTMLInputElement)?.value || '';
+            const password = (document.getElementById('password') as HTMLInputElement)?.value || '';
             this.handleLoginSubmit(email, password);
         };
         
         this._loginHandler = handler;
-        form.addEventListener('submit', handler);
+        form.addEventListener('submit', handler); 
     },
 
     attachRegisterListeners(): void {
@@ -198,10 +187,10 @@ export const AuthController = {
         const handler: EventListener = (e: Event) => {
             e.preventDefault();
             const data = {
-                name: (document.getElementById('register-name') as HTMLInputElement)?.value || '',
-                email: (document.getElementById('register-email') as HTMLInputElement)?.value || '',
-                password: (document.getElementById('register-password') as HTMLInputElement)?.value || '',
-                confirmPassword: (document.getElementById('register-confirm') as HTMLInputElement)?.value || '',
+                name: (document.getElementById('name') as HTMLInputElement)?.value || '',
+                email: (document.getElementById('email') as HTMLInputElement)?.value || '',
+                password: (document.getElementById('password') as HTMLInputElement)?.value || '',
+                confirmPassword: (document.getElementById('confirm-password') as HTMLInputElement)?.value || '',
             };
             this.handleRegisterSubmit(data);
         };

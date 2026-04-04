@@ -1,16 +1,13 @@
 /**
  * Валидация форм авторизации и регистрации
  */
-
 import type { ValidationResult, FieldErrors } from '@/types';
 
 export const AuthValidator = {
     NAME_REGEX: /^[\p{L}\s'-]{3,50}$/u,
-    EMAIL_REGEX: /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z0-9]{2,}$/,
+    EMAIL_REGEX: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z0-9]{2,}$/,
     LETTER_REGEX: /[a-zA-Z]/,
     DIGIT_REGEX: /[0-9]/,
-
-
     USERNAME_MIN_LENGTH: 3,
     USERNAME_MAX_LENGTH: 50,
     PASSWORD_MIN_LENGTH: 8,
@@ -64,13 +61,10 @@ export const AuthValidator = {
 
     validateLogin(email: string, password: string): ValidationResult {
         if (!email || !password) {
-            return {
-                isValid: false,
-                error: 'Заполните все поля',
-            };
+            return { isValid: false, error: 'Заполните все поля' };
         }
         
-        const emailError = this.validateEmail(email);
+        const emailError = this.validateEmail(email); 
         if (emailError) {
             return {
                 isValid: false,
@@ -79,7 +73,6 @@ export const AuthValidator = {
             };
         }
 
-        // Пароль проверяем только на наличие (сложность — на бэкенде)
         if (!password) {
             return {
                 isValid: false,
@@ -98,7 +91,6 @@ export const AuthValidator = {
         confirmPassword: string,
     ): ValidationResult {
         const fieldErrors: FieldErrors = {};
-
 
         const nameError = this.validateName(name);
         if (nameError) fieldErrors.name = nameError;
