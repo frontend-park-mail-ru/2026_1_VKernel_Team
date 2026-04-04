@@ -63,8 +63,6 @@ export const AuthController = {
             uiActions.showError(result.error || 'Ошибка входа');
             this.clearLoginError();
             this.showLoginError(result.error ?? 'Ошибка входа');
-            // 🔧 УБРАНО: this.showLogin() не должен вызываться при ошибке валидации,
-            // так как он полностью перезаписывает innerHTML и стирает только что добавленные ошибки.
         }
     },
 
