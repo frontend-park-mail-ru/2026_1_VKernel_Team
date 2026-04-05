@@ -1,9 +1,7 @@
 /**
  * Сервис для работы с авторизацией
- *
  * @module authService
  */
-
 import { API_ENDPOINTS, apiClient } from '@/api/apiClient';
 
 const HTTP_STATUS = {
@@ -53,16 +51,9 @@ type AuthResult = {
 /**
  * Объект реализующий авторизацию
  */
-const AuthService = {
+const authService = {
     /**
      * Регистрация нового пользователя
-     * @async
-     * @param {Object} userData - данные пользователя
-     * @param {string} userData.name - имя пользователя
-     * @param {string} userData.email - email
-     * @param {string} userData.password - пароль
-     * @returns {Promise<Object>} - результат регистрации
-     *
      */
     async register(userData: UserData): Promise<AuthResult> {
         const result = await apiClient.post(API_ENDPOINTS.AUTH.REGISTER, {
@@ -111,11 +102,6 @@ const AuthService = {
 
     /**
      * Вход в систему
-     * @async
-     * @param {Object} credentials - учётные данные
-     * @param {string} credentials.email - email
-     * @param {string} credentials.password - пароль
-     * @returns {Promise<Object>} - результат входа
      */
     async login(credentials: { email: string; password: string }): Promise<AuthResult> {
         const result = await apiClient.post(API_ENDPOINTS.AUTH.LOGIN, {
@@ -157,7 +143,6 @@ const AuthService = {
 
     async check(): Promise<{ isAuthenticated: boolean; user: any }> {
         const result = await apiClient.get(API_ENDPOINTS.USERS.PROFILE);
-
         return {
             isAuthenticated: result.success,
             user: result.success ? result.data : null,
@@ -165,4 +150,4 @@ const AuthService = {
     },
 };
 
-export { AuthService };
+export { authService };

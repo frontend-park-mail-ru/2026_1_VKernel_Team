@@ -65,6 +65,11 @@ export default (env, argv) => {
                         to: 'site',
                         noErrorOnMissing: true,
                     },
+                    {
+                        from: 'public/css',
+                        to: 'css',
+                        noErrorOnMissing: true,
+                    },
                 ],
             }),
         ],

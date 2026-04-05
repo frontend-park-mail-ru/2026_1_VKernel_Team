@@ -1,23 +1,16 @@
 /**
- * Точка входа в приложение
- *
- * @module main
+ * Точка входа приложения
+ * Инициализирует все модули и запускает приложение
  */
 
-import '../../public/css/base.css';
-import '../../public/css/components.css';
-import '../../public/css/auth.css';
-import '../../public/css/footer.css';
-import '../../public/css/main.css';
 
 import '@/utils/storage';
 import '@/validators/authValidator';
 import '@/services/authService';
 import '@/services/adsServices';
 import '@/api/apiClient';
-import { App } from './app';
+import { AppController } from '@/controllers/AppController';
 
-// Инициализация приложения после загрузки всех модулей
-// Откладываем запуск приложения до момента,
-// когда весь HTML будет построен и готов к работе
-document.addEventListener('DOMContentLoaded', () => App.init());
+document.addEventListener('DOMContentLoaded', () => {
+    AppController.init();
+});
