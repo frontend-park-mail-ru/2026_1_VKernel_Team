@@ -7,6 +7,7 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/js/*"],
+      "@css/*": ["public/css/*"],
       "@core/*": ["src/js/core/*"],
       "@api/*": ["src/js/api/*"],
       "@services/*": ["src/js/services/*"],

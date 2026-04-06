@@ -9,6 +9,7 @@ import { ProfileController } from '@/controllers/ProfileController';
 import { store } from '@/core/store';
 import { uiActions } from '@/actions/uiActions';
 import type { HandlebarsTemplateFunction, TemplateName, UIConstants } from '@/types';
+import { authActions } from '@/actions/authActions';
 
 declare const Handlebars: any;
 
@@ -77,7 +78,7 @@ export const AppController = {
     },
 
     async checkAuth(): Promise<void> {
-        // authActions.checkAuth() обновит store
+        authActions.checkAuth()  
     },
 
     setupStoreSubscription(): void {

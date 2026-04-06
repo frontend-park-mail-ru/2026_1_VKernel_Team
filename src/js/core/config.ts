@@ -22,16 +22,15 @@ const _isLocal =
     (window.location.hostname === 'localhost' ||
         window.location.hostname === '127.0.0.1');
 
+// Используйте HTTPS для продакшена
 const CONFIG = {
     API: {
-        // BASE_URL всегда указывает на реальный бэкенд.
-        BASE_URL: 'http://clover-go.ru:8000',
-
-        // Локально -> стучимся на относительный '/api/v1' (запросы перехватит Node.js)
-        // На проде -> стучимся напрямую к бэкенду на порт 8000
-        API_URL: _isLocal ? '/api/v1' : 'http://clover-go.ru:8000/api/v1',
+        // Всегда используем HTTPS + продакшен-домен
+        BASE_URL: 'https://clover-go.ru:8000',
+        
+        // API_URL: локально проксируем через Node.js, на проде — напрямую
+        API_URL: _isLocal ? '/api/v1' : 'https://clover-go.ru:8000/api/v1',
     },
-    // Другие константы конфигурации можно добавить сюда же
     APP: {
         NAME: 'Клевер',
         VERSION: '1.0.0',
