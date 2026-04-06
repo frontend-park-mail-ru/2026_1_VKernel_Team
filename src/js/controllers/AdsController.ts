@@ -41,15 +41,26 @@ export const AdsController = {
         this.attachMainEventListeners();
     },
 
-    formatAdCard(ad: Ad): FormattedAd {
+    formatAdCard(ad: any) {
         let imageUrl = this.UI_CONSTANTS.DEFAULT_AD_IMAGE;
 
         if (ad.photos && ad.photos.length > 0) {
-            const photoPath = ad.photos[0];
+            const photoPath = ad.photos[0]?.trim();
+
             if (photoPath) {
-                imageUrl = photoPath.startsWith('http')
-                    ? photoPath
-                    : `${window.location.origin}${photoPath}`;
+                const STATIC_BACKEND = 'http://clover-go.ru:8000';
+
+                if (photoPath.startsWith('http')) {
+                    // Уже полный URL — оставляем как есть
+                    imageUrl = photoPath;
+                } else {
+                    // Локальный путь — добавляем бэкенд
+                    // Убираем дублирующий слеш: "/static" + "/img/1.webp" → "/static/img/1.webp"
+                    const normalized = photoPath.startsWith('/')
+                        ? photoPath
+                        : `/${photoPath}`;
+                    imageUrl = `${STATIC_BACKEND}${normalized}`;
+                }
             }
         }
 
@@ -58,11 +69,10 @@ export const AdsController = {
             formattedPrice:
                 ad.price === 0
                     ? 'Бесплатно'
-                    : `${ad.price.toLocaleString('ru-RU')} ₽`,
+                    : ad.price.toLocaleString('ru-RU') + ' ₽',
             mainPhoto: imageUrl,
-            image: imageUrl,
+            image: imageUrl, // Для совместимости с шаблоном {{image}}
             views: ad.views_count || 0,
-            favorites: ad.favorites_count || 0,
             createdDate: ad.created_at
                 ? new Date(ad.created_at).toLocaleDateString('ru-RU')
                 : '',
