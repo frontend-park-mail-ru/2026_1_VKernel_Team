@@ -38,11 +38,12 @@ export const AppController = {
             'user-profile': this.templates['user-profile'],  
         };
 
-        await this.checkAuth();
-        this.setupGlobalHandlers();
-        this.setupStoreSubscription();
-        this.router();
-        window.addEventListener('popstate', () => this.router());
+        this.checkAuth().catch(() => {}); 
+    
+    this.setupGlobalHandlers();
+    this.setupStoreSubscription();
+    this.router();
+    window.addEventListener('popstate', () => this.router());
     },
 
     async loadTemplates(): Promise<void> {
@@ -130,8 +131,8 @@ export const AppController = {
     navigateTo(path: string): void {
         window.history.pushState({}, '', path);
         uiActions.navigateTo(path);
+        this.router();
     },
-
     renderNotFound(): void {
         const app = document.getElementById('app');
         if (!app || !this.templates['not-found']) return;  
