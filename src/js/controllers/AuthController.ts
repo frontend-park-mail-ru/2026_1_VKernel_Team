@@ -122,20 +122,20 @@ export const AuthController = {
     },
 
     showLoginError(message: string): void {
-        this.clearLoginError();
-        ['email', 'password'].forEach(id => {
-            const el = document.getElementById(id);
-            if (el) el.classList.add('error');
-        });
+    this.clearLoginError();
+    ['email', 'password'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.classList.add('error');
+    });
 
-        const form = document.getElementById('login-forms');
-        if (!form) return;
+    const form = document.getElementById('login-forms');
+    if (!form) return;
 
-        const errorDiv = document.createElement('div');
-        errorDiv.className = 'login-error alert alert-error';
-        errorDiv.textContent = message;
-        form.parentNode?.insertBefore(errorDiv, form);
-    },
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'login-error alert-error'; // ← убрали 'alert'
+    errorDiv.textContent = message;
+    form.parentNode?.insertBefore(errorDiv, form);
+},
 
     clearLoginError(): void {
         document.querySelectorAll('.login-error, .alert-error').forEach(el => el.remove());
@@ -158,7 +158,7 @@ export const AuthController = {
                 const errorDiv = document.createElement('div');
                 errorDiv.className = 'field-error';
                 errorDiv.textContent = error;
-                input.parentNode?.appendChild(errorDiv);
+                input.closest('.form-group')?.appendChild(errorDiv);
             }
         });
     },
