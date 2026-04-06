@@ -6,9 +6,14 @@
 import { AuthController } from '@/controllers/AuthController';
 import { AdsController } from '@/controllers/AdsController';
 import { ProfileController } from '@/controllers/ProfileController';
+import { CartController } from '@/controllers/CartController';
 import { store } from '@/core/store';
 import { uiActions } from '@/actions/uiActions';
-import type { HandlebarsTemplateFunction, TemplateName, UIConstants } from '@/types';
+import type {
+    HandlebarsTemplateFunction,
+    TemplateName,
+    UIConstants,
+} from '@/types';
 
 declare const Handlebars: any;
 
@@ -17,11 +22,11 @@ export const AppController = {
     templates: {} as Record<TemplateName, HandlebarsTemplateFunction>,
 
     UI_CONSTANTS: {
-    DEFAULT_AVATAR: '/images/default-avatar.jpg',
-    DEFAULT_AD_IMAGE: '/images/default-ad.jpg',
-    EYE_OPEN: '/images/icons/Eye.jpeg',
-    EYE_CLOSED: '/images/icons/Eye-off.jpeg',  
-    LOADER_HTML: '<div class="spinner"></div>',  
+        DEFAULT_AVATAR: '/images/default-avatar.jpg',
+        DEFAULT_AD_IMAGE: '/images/default-ad.jpg',
+        EYE_OPEN: '/images/icons/Eye.jpeg',
+        EYE_CLOSED: '/images/icons/Eye-off.jpeg',
+        LOADER_HTML: '<div class="spinner"></div>',
     } as UIConstants,
 
     async init(): Promise<void> {
@@ -34,7 +39,10 @@ export const AppController = {
             'main-page': this.templates['main-page'],
         };
         ProfileController.templates = {
-            'user-profile': this.templates['user-profile'],  
+            'user-profile': this.templates['user-profile'],
+        };
+        CartController.templates = {
+            cart: this.templates['cart'],
         };
 
         await this.checkAuth();
@@ -51,7 +59,8 @@ export const AppController = {
             'register-form',
             'user-profile',
             'main-page',
-            'not-found',  
+            'cart',
+            'not-found',
         ];
 
         for (const name of templateNames) {
@@ -71,9 +80,14 @@ export const AppController = {
             return price === 0 ? 'Бесплатно' : `${price} ₽`;
         });
 
-        Handlebars.registerHelper('ifAuthenticated', function (this: any, options: Handlebars.HelperOptions) {
-            return store.isAuthenticated ? options.fn(this) : options.inverse(this);
-        });
+        Handlebars.registerHelper(
+            'ifAuthenticated',
+            function (this: any, options: any) {
+                return store.isAuthenticated
+                    ? options.fn(this)
+                    : options.inverse(this);
+            },
+        );
     },
 
     async checkAuth(): Promise<void> {
@@ -99,9 +113,12 @@ export const AppController = {
 
     router(): void {
         const path = window.location.pathname;
-        uiActions.navigateTo(path);  
+        uiActions.navigateTo(path);
 
-        if (!store.isAuthenticated && path === '/profile') { 
+        if (
+            !store.isAuthenticated &&
+            (path === '/profile' || path === '/cart')
+        ) {
             uiActions.navigateTo('/login');
             AuthController.showLogin();
             return;
@@ -109,7 +126,7 @@ export const AppController = {
 
         switch (path) {
             case '/':
-            case '/index.html':  
+            case '/index.html':
                 AdsController.renderMain();
                 break;
             case '/login':
@@ -121,8 +138,11 @@ export const AppController = {
             case '/profile':
                 ProfileController.showProfile();
                 break;
+            case '/cart':
+                CartController.renderCart();
+                break;
             default:
-                this.renderNotFound(); 
+                this.renderNotFound();
         }
     },
 
@@ -133,7 +153,7 @@ export const AppController = {
 
     renderNotFound(): void {
         const app = document.getElementById('app');
-        if (!app || !this.templates['not-found']) return;  
+        if (!app || !this.templates['not-found']) return;
         app.innerHTML = this.templates['not-found']();
     },
 
@@ -149,11 +169,11 @@ export const AppController = {
                 return;
             }
 
-            const actionElement = target.closest('[data-action]');  
+            const actionElement = target.closest('[data-action]');
             if (actionElement) {
                 e.preventDefault();
                 const action = (actionElement as HTMLElement).dataset.action;
-                if (action === 'logout') {  
+                if (action === 'logout') {
                     AuthController.handleLogout();
                 }
                 return;
@@ -163,18 +183,18 @@ export const AppController = {
 
     showLoading(show: boolean): void {
         let loader = document.getElementById('global-loader');
-        
+
         if (!show) {
             loader?.remove();
             return;
         }
 
         if (!loader) {
-            loader = document.createElement('div');  
+            loader = document.createElement('div');
             loader.id = 'global-loader';
             loader.className = 'loader-overlay';
             loader.innerHTML = this.UI_CONSTANTS.LOADER_HTML;
-            document.body.appendChild(loader);  
+            document.body.appendChild(loader);
         }
     },
 };

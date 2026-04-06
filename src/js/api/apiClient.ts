@@ -37,6 +37,12 @@ export const API_ENDPOINTS = {
         REMOVE: (id: number | string) => `/favorites/${id}`,
         CHECK: (id: number | string) => `/favorites/${id}/check`,
     },
+    CART: {
+        GET: '/cart',
+        ADD: '/cart',
+        REMOVE: (id: number | string) => `/cart/${id}`,
+        CHECKOUT: '/cart/checkout',
+    },
 };
 
 const getCookie = (name: string): string | null => {
@@ -143,7 +149,7 @@ export class ApiClient {
 
         try {
             let response = await fetch(`${API_URL}${endpoint}`, config);
-            
+
             response = await this._handleUnauthorizedResponse(
                 response,
                 endpoint,
@@ -169,7 +175,10 @@ export class ApiClient {
 
             return {
                 success: false,
-                error: data.message || data.error || 'Произошла неизвестная ошибка',
+                error:
+                    data.message ||
+                    data.error ||
+                    'Произошла неизвестная ошибка',
                 data: data as T,
                 status: response.status,
             };
@@ -182,19 +191,33 @@ export class ApiClient {
         }
     }
 
-    get<T = any>(endpoint: string, headers: Record<string, string> = {}): Promise<ApiResponse<T>> {
+    get<T = any>(
+        endpoint: string,
+        headers: Record<string, string> = {},
+    ): Promise<ApiResponse<T>> {
         return this.request<T>(endpoint, 'GET', null, headers);
     }
 
-    post<T = any>(endpoint: string, body: any, headers: Record<string, string> = {}): Promise<ApiResponse<T>> {
+    post<T = any>(
+        endpoint: string,
+        body: any,
+        headers: Record<string, string> = {},
+    ): Promise<ApiResponse<T>> {
         return this.request<T>(endpoint, 'POST', body, headers);
     }
 
-    put<T = any>(endpoint: string, body: any, headers: Record<string, string> = {}): Promise<ApiResponse<T>> {
+    put<T = any>(
+        endpoint: string,
+        body: any,
+        headers: Record<string, string> = {},
+    ): Promise<ApiResponse<T>> {
         return this.request<T>(endpoint, 'PUT', body, headers);
     }
 
-    delete<T = any>(endpoint: string, headers: Record<string, string> = {}): Promise<ApiResponse<T>> {
+    delete<T = any>(
+        endpoint: string,
+        headers: Record<string, string> = {},
+    ): Promise<ApiResponse<T>> {
         return this.request<T>(endpoint, 'DELETE', null, headers);
     }
 }
