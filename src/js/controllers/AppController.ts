@@ -94,7 +94,7 @@ export const AppController = {
     },
 
     async checkAuth(): Promise<void> {
-        authActions.checkAuth();
+        await authActions.checkAuth();
     },
 
     setupStoreSubscription(): void {
