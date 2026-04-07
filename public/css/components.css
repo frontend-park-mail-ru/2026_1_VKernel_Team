@@ -169,6 +169,15 @@ input.error {
 
 .alert-error {
     color: #ee5253;
+    padding: 5px 0;        /* минимальные отступы */
+    margin: 5px 0;
+    border-radius: 0;      /* убираем скругление */
+    background: transparent; /* убираем фон */
+    text-align: left;      /* выравнивание по левому краю */
+    font-size: 16px;
+    font-weight: 500;
+    border: none;          /* убираем границу если есть */
+    box-shadow: none;      /* убираем тень если есть */
 }
 
 .alert-success {

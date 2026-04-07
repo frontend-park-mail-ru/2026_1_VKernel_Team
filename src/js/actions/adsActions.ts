@@ -8,7 +8,7 @@ import type { Ad } from '@/types';
 
 export const adsActions = {
     async loadAds(): Promise<void> {
-        store.setState({ isLoading: true, error: null });
+        store.setState({ error: null });
 
         try {
             const result = await adsService.getAllAds();
@@ -16,17 +16,14 @@ export const adsActions = {
             if (result.success && result.data) {
                 store.setState({
                     ads: result.data,
-                    isLoading: false,
                 });
             } else {
                 store.setState({
-                    isLoading: false,
                     error: result.error || 'Не удалось загрузить объявления',
                 });
             }
         } catch (error) {
             store.setState({
-                isLoading: false,
                 error: 'Не удалось соединиться с сервером',
             });
         }

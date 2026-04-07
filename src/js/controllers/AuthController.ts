@@ -2,6 +2,7 @@ import { authActions } from '@/actions/authActions';
 import { store } from '@/core/store';
 import { uiActions } from '@/actions/uiActions';
 import type { HandlebarsTemplateFunction } from '@/types';
+import { AppController } from './AppController';
 
 declare const Handlebars: any;
 
@@ -58,7 +59,10 @@ export const AuthController = {
 
         if (result.isValid) {
             uiActions.showSuccess('Вход выполнен!');
-            uiActions.navigateTo('/');
+            window.history.pushState({}, '', '/');
+            if (typeof AppController?.router === 'function') {
+                AppController.router();
+            }
         } else {
             uiActions.showError(result.error || 'Ошибка входа');
             this.clearLoginError();
@@ -70,8 +74,11 @@ export const AuthController = {
         const result = await authActions.register(data);
 
         if (result.isValid) {
-            uiActions.showSuccess('Регистрация успешна!');
-            uiActions.navigateTo('/');
+            uiActions.showSuccess('Вход выполнен!');
+            window.history.pushState({}, '', '/');
+            if (typeof AppController?.router === 'function') {
+                AppController.router();
+            }
         } else {
             uiActions.showError(result.error || 'Ошибка регистрации');
             this.clearFieldErrors();
@@ -85,7 +92,11 @@ export const AuthController = {
 
     async handleLogout(): Promise<void> {
         await authActions.logout();
-        uiActions.navigateTo('/');
+        localStorage.removeItem('authToken'); 
+        window.history.pushState({}, '', '/');
+        if (typeof AppController?.router === 'function') {
+            AppController.router();
+        }
     },
 
     initPasswordToggles(): void {
@@ -109,20 +120,20 @@ export const AuthController = {
     },
 
     showLoginError(message: string): void {
-        this.clearLoginError();
-        ['email', 'password'].forEach(id => {
-            const el = document.getElementById(id);
-            if (el) el.classList.add('error');
-        });
+    this.clearLoginError();
+    ['email', 'password'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.classList.add('error');
+    });
 
-        const form = document.getElementById('login-forms');
-        if (!form) return;
+    const form = document.getElementById('login-forms');
+    if (!form) return;
 
-        const errorDiv = document.createElement('div');
-        errorDiv.className = 'login-error alert alert-error';
-        errorDiv.textContent = message;
-        form.parentNode?.insertBefore(errorDiv, form);
-    },
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'login-error alert-error'; // ← убрали 'alert'
+    errorDiv.textContent = message;
+    form.parentNode?.insertBefore(errorDiv, form);
+},
 
     clearLoginError(): void {
         document.querySelectorAll('.login-error, .alert-error').forEach(el => el.remove());
@@ -145,7 +156,7 @@ export const AuthController = {
                 const errorDiv = document.createElement('div');
                 errorDiv.className = 'field-error';
                 errorDiv.textContent = error;
-                input.parentNode?.appendChild(errorDiv);
+                input.closest('.form-group')?.appendChild(errorDiv);
             }
         });
     },
