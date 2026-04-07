@@ -80,7 +80,7 @@ export const AppController = {
 
         Handlebars.registerHelper(
             'ifAuthenticated',
-            function (this: any, options: Handlebars.HelperOptions) {
+            function (this: any, options: any) {
                 return store.isAuthenticated
                     ? options.fn(this)
                     : options.inverse(this);
