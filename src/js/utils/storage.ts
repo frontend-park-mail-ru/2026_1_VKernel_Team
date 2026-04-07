@@ -76,5 +76,4 @@ export class Storage {
     }
 }
 
-// ✅ Создаём экземпляр
 export const storage = new Storage();
