@@ -5,6 +5,7 @@
  */
 
 import { adsActions } from '@/actions/adsActions';
+import { cartActions } from '@/actions/cartActions';
 import { cartService } from '@/services/cartService';
 import { store } from '@/core/store';
 import type { Ad, FormattedAd, HandlebarsTemplateFunction } from '@/types';
@@ -24,6 +25,10 @@ export const AdsController = {
     async renderMain(): Promise<void> {
         await adsActions.loadAds();
 
+        if (store.isAuthenticated) {
+            await cartActions.loadCart();
+        }
+
         const app = document.getElementById('app');
         const template = this.templates['main-page'];
         if (!app || !template) return;
@@ -38,6 +43,7 @@ export const AdsController = {
             recommendations: formattedAds,
         });
 
+        this.markCartButtons();
         this.attachMainEventListeners();
     },
 
@@ -79,6 +85,19 @@ export const AdsController = {
         };
     },
 
+    markCartButtons(): void {
+        const cartIds = new Set(store.cartItems.map((item) => item.product_id));
+        document
+            .querySelectorAll<HTMLElement>('[data-cart-add]')
+            .forEach((btn) => {
+                const id = Number(btn.dataset.cartAdd);
+                if (cartIds.has(id)) {
+                    btn.classList.add('in-cart');
+                    btn.title = 'В корзине';
+                }
+            });
+    },
+
     attachMainEventListeners(): void {
         document.querySelectorAll('.ad-card').forEach((card) => {
             card.addEventListener('click', () => {
@@ -102,29 +121,34 @@ export const AdsController = {
                 if (!productId) return;
 
                 const button = btn as HTMLElement;
-                const originalText = button.textContent || '🛒';
-                button.textContent = '⏳';
-                button.style.pointerEvents = 'none';
+                const isInCart = button.classList.contains('in-cart');
 
-                const result = await cartService.addToCart(productId);
+                button.classList.remove('in-cart');
+                button.classList.add('loading');
 
-                if (result.success) {
-                    button.textContent = '✅';
-                    setTimeout(() => {
-                        button.textContent = originalText;
-                        button.style.pointerEvents = '';
-                    }, 1500);
-                } else {
-                    const errorMsg = result.error || '';
-                    if (errorMsg.includes('already in cart')) {
-                        button.textContent = '✅';
+                if (isInCart) {
+                    const removed = await cartActions.removeFromCart(productId);
+                    button.classList.remove('loading');
+                    if (removed) {
+                        button.title = 'В корзину';
                     } else {
-                        button.textContent = '❌';
+                        button.classList.add('in-cart');
+                        button.title = 'В корзине';
                     }
-                    setTimeout(() => {
-                        button.textContent = originalText;
-                        button.style.pointerEvents = '';
-                    }, 1500);
+                } else {
+                    const result = await cartService.addToCart(productId);
+                    button.classList.remove('loading');
+                    if (result.success) {
+                        button.classList.add('in-cart');
+                        button.title = 'В корзине';
+                        await cartActions.loadCart();
+                    } else {
+                        const errorMsg = result.error || '';
+                        if (errorMsg.includes('already in cart')) {
+                            button.classList.add('in-cart');
+                            button.title = 'В корзине';
+                        }
+                    }
                 }
             });
         });

@@ -8,7 +8,7 @@ import type { CartItem } from '@/types';
 
 export const cartActions = {
     async loadCart(): Promise<void> {
-        store.setState({ isLoading: true, error: null });
+        store.setState({ error: null });
 
         try {
             const result = await cartService.getCart();
@@ -17,19 +17,16 @@ export const cartActions = {
                 store.setState({
                     cartItems: result.data.items || [],
                     cartTotal: result.data.total_price || 0,
-                    isLoading: false,
                 });
             } else {
                 store.setState({
                     cartItems: [],
                     cartTotal: 0,
-                    isLoading: false,
                     error: result.error || 'Не удалось загрузить корзину',
                 });
             }
         } catch (error) {
             store.setState({
-                isLoading: false,
                 error: 'Не удалось соединиться с сервером',
             });
         }
@@ -63,7 +60,7 @@ export const cartActions = {
     },
 
     async checkout(): Promise<boolean> {
-        store.setState({ isLoading: true, error: null });
+        store.setState({ error: null });
 
         try {
             const result = await cartService.checkout();
@@ -72,19 +69,16 @@ export const cartActions = {
                 store.setState({
                     cartItems: [],
                     cartTotal: 0,
-                    isLoading: false,
                 });
                 return true;
             }
 
             store.setState({
-                isLoading: false,
                 error: result.error || 'Не удалось оформить заказ',
             });
             return false;
         } catch (error) {
             store.setState({
-                isLoading: false,
                 error: 'Не удалось соединиться с сервером',
             });
             return false;

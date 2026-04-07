@@ -58,9 +58,12 @@ const cartService = {
      */
     getImageUrl(imagePath: string): string {
         if (!imagePath) return '/images/default-ad.jpg';
-        return imagePath.startsWith('http')
+        if (imagePath.startsWith('http')) return imagePath;
+
+        const normalized = imagePath.startsWith('/')
             ? imagePath
-            : `${CONFIG.API.BASE_URL}${imagePath}`;
+            : `/${imagePath}`;
+        return `${CONFIG.API.BASE_URL}${normalized}`;
     },
 
     /**

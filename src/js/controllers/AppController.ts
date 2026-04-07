@@ -104,7 +104,6 @@ export const AppController = {
     },
 
     onStateChange(state: any): void {
-        this.showLoading(state.isLoading);
         if (state.error) {
             uiActions.showError(state.error);
         }
