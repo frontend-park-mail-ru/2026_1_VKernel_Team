@@ -46,9 +46,11 @@ export const AppController = {
             cart: this.templates['cart'],
         };
 
-        await this.checkAuth();
         this.setupGlobalHandlers();
         this.setupStoreSubscription();
+
+        await this.checkAuth().catch(() => {});
+
         this.router();
         window.addEventListener('popstate', () => this.router());
     },
@@ -60,8 +62,8 @@ export const AppController = {
             'register-form',
             'user-profile',
             'main-page',
-            'cart',
             'not-found',
+            'cart',
         ];
 
         for (const name of templateNames) {
@@ -150,8 +152,8 @@ export const AppController = {
     navigateTo(path: string): void {
         window.history.pushState({}, '', path);
         uiActions.navigateTo(path);
+        this.router();
     },
-
     renderNotFound(): void {
         const app = document.getElementById('app');
         if (!app || !this.templates['not-found']) return;

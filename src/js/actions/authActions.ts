@@ -5,12 +5,15 @@ import type { AuthCredentials, RegisterData, ValidationResult } from '@/types';
 
 export const authActions = {
     async login(credentials: AuthCredentials): Promise<ValidationResult> {
-        const validation = AuthValidator.validateLogin(credentials.email, credentials.password);
+        const validation = AuthValidator.validateLogin(
+            credentials.email,
+            credentials.password,
+        );
         if (!validation.isValid) {
             return validation;
         }
 
-        store.setState({ isLoading: true, error: null });
+        store.setState({ error: null });
 
         try {
             const result = await authService.login(credentials);
@@ -19,13 +22,11 @@ export const authActions = {
                 store.setState({
                     isAuthenticated: true,
                     user: result.data,
-                    isLoading: false,
                 });
                 return { isValid: true };
             }
 
             store.setState({
-                isLoading: false,
                 error: result.error || 'Ошибка входа',
             });
 
@@ -35,8 +36,11 @@ export const authActions = {
                 fieldErrors: result.fieldErrors,
             };
         } catch (error) {
-            store.setState({ isLoading: false, error: 'Не удалось соединиться с сервером' });
-            return { isValid: false, error: 'Не удалось соединиться с сервером' };
+            store.setState({ error: 'Не удалось соединиться с сервером' });
+            return {
+                isValid: false,
+                error: 'Не удалось соединиться с сервером',
+            };
         }
     },
 
@@ -45,13 +49,13 @@ export const authActions = {
             data.name,
             data.email,
             data.password,
-            data.confirmPassword, 
+            data.confirmPassword,
         );
         if (!validation.isValid) {
             return validation;
         }
 
-        store.setState({ isLoading: true, error: null });
+        store.setState({ error: null });
 
         try {
             const result = await authService.register(data);
@@ -60,13 +64,11 @@ export const authActions = {
                 store.setState({
                     isAuthenticated: true,
                     user: result.data,
-                    isLoading: false,
                 });
                 return { isValid: true };
             }
 
             store.setState({
-                isLoading: false,
                 error: result.error || 'Ошибка регистрации',
             });
 
@@ -76,18 +78,19 @@ export const authActions = {
                 fieldErrors: result.fieldErrors,
             };
         } catch (error) {
-            store.setState({ isLoading: false, error: 'Не удалось соединиться с сервером' });
-            return { isValid: false, error: 'Не удалось соединиться с сервером' };
+            store.setState({ error: 'Не удалось соединиться с сервером' });
+            return {
+                isValid: false,
+                error: 'Не удалось соединиться с сервером',
+            };
         }
     },
 
     async logout(): Promise<void> {
-        store.setState({ isLoading: true });
         await authService.logout();
         store.setState({
             isAuthenticated: false,
             user: null,
-            isLoading: false,
         });
     },
 
