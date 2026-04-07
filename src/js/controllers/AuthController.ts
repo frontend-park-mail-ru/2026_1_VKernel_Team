@@ -138,7 +138,7 @@ export const AuthController = {
         if (!form) return;
 
         const errorDiv = document.createElement('div');
-        errorDiv.className = 'login-error alert-error'; // ← убрали 'alert'
+        errorDiv.className = 'login-error alert-error';
         errorDiv.textContent = message;
         form.parentNode?.insertBefore(errorDiv, form);
     },

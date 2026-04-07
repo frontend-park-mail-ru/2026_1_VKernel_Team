@@ -57,11 +57,8 @@ export const AdsController = {
                 const STATIC_BACKEND = 'http://clover-go.ru:8000';
 
                 if (photoPath.startsWith('http')) {
-                    // Уже полный URL — оставляем как есть
                     imageUrl = photoPath;
                 } else {
-                    // Локальный путь — добавляем бэкенд
-                    // Убираем дублирующий слеш: "/static" + "/img/1.webp" → "/static/img/1.webp"
                     const normalized = photoPath.startsWith('/')
                         ? photoPath
                         : `/${photoPath}`;
