@@ -74,19 +74,36 @@ export const AppController = {
     },
 
     registerHandlebarsHelpers(): void {
-        Handlebars.registerHelper('formatPrice', (price: number) => {
-            return price === 0 ? 'Бесплатно' : `${price} ₽`;
-        });
+    // Существующие хелперы
+    Handlebars.registerHelper('formatPrice', (price: number) => {
+        return price === 0 ? 'Бесплатно' : `${price} ₽`;
+    });
 
-        Handlebars.registerHelper(
-            'ifAuthenticated',
-            function (this: any, options: any) {
-                return store.isAuthenticated
-                    ? options.fn(this)
-                    : options.inverse(this);
-            },
-        );
-    },
+    Handlebars.registerHelper(
+        'ifAuthenticated',
+        function (this: any, options: any) {
+            return store.isAuthenticated
+                ? options.fn(this)
+                : options.inverse(this);
+        },
+    );
+    Handlebars.registerHelper('eq', function (a: any, b: any) {
+        return a === b;
+    });
+    
+    // Опционально: другие полезные хелперы
+    Handlebars.registerHelper('ne', function (a: any, b: any) {
+        return a !== b;
+    });
+    
+    Handlebars.registerHelper('gt', function (a: number, b: number) {
+        return a > b;
+    });
+    
+    Handlebars.registerHelper('lt', function (a: number, b: number) {
+        return a < b;
+    });
+},
 
     async checkAuth(): Promise<void> {
         await authActions.checkAuth();

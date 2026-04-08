@@ -10,33 +10,40 @@ import type { ApiResponse } from '@/types';
 const API_URL = CONFIG.API.API_URL;
 
 export const API_ENDPOINTS = {
-    AUTH: {
-        REGISTER: '/auth/register',
-        LOGIN: '/auth/login',
-        LOGOUT: '/auth/logout',
-        REFRESH: '/auth/refresh',
-    },
-    ADS: {
-        GET_ALL: '/ads',
-        GET_BY_ID: (id: number | string) => `/ads/${id}`,
-        CREATE: '/ads',
-        UPDATE: (id: number | string) => `/ads/${id}`,
-        DELETE: (id: number | string) => `/ads/${id}`,
-        SEARCH: '/ads/search',
-    },
-    USERS: {
-        PROFILE: '/profile',
-        GET_BY_ID: (id: number | string) => `/users/${id}`,
-    },
-    CATEGORIES: {
-        GET_ALL: '/categories',
-    },
-    FAVORITES: {
-        GET_ALL: '/favorites',
-        ADD: (id: number | string) => `/favorites/${id}`,
-        REMOVE: (id: number | string) => `/favorites/${id}`,
-        CHECK: (id: number | string) => `/favorites/${id}/check`,
-    },
+  AUTH: {
+    REGISTER: '/auth/register',
+    LOGIN: '/auth/login',
+    LOGOUT: '/auth/logout',
+    REFRESH: '/auth/refresh',
+  },
+  ADS: {
+    GET_ALL: '/ads',
+    GET_BY_ID: (id: number | string) => `/ads/${id}`,
+    CREATE: '/ads',
+    UPDATE: (id: number | string) => `/ads/${id}`,
+    DELETE: (id: number | string) => `/ads/${id}`,
+  },
+  USERS: {
+    PROFILE: '/profile',
+    GET_BY_ID: (id: number | string) => `/users/${id}`,
+    GET_ADS: (id: number | string) => `/users/${id}/ads`, 
+  },
+  CATEGORIES: {
+    GET_ALL: '/categories',
+  },
+  FAVORITES: {
+    GET_ALL: '/profile/favorites',
+    ADD: (id: number | string) => `/favorites/${id}`,
+    REMOVE: (id: number | string) => `/favorites/${id}`,
+    CHECK: (id: number | string) => `/favorites/${id}/check`,
+  },
+  PROFILE: {
+    UPDATE: '/profile/update',
+    AVATAR: '/profile/avatar',
+  },
+  CART: {
+    GET_ALL: '/cart',
+  },
 };
 
 const getCookie = (name: string): string | null => {

@@ -81,3 +81,19 @@ export interface UIConstants {
     EYE_CLOSED: string;
     LOADER_HTML: string;
 }
+
+export interface User {
+  id?: number;
+  name?: string;
+  email?: string;
+  created_at?: string;
+  avatar_path?: string;
+  rating?: number;
+  ads_count?: number;
+  favorites_count?: number;
+  cart_count?: number;
+  unread_messages_count?: number;
+  reviews_count?: number;
+  updated_at?: string;
+}
+export type ProfileTab = 'info' | 'ads' | 'favorites' | 'cart' | 'settings';
