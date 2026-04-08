@@ -2,7 +2,12 @@
  * Главный контроллер приложения
  * Управляет роутингом, инициализацией и глобальными обработчиками
  */
-
+import mainPageTpl from '@templates/main-page.hbs';
+import loginFormsTpl from '@templates/login-forms.hbs';
+import registerFormTpl from '@templates/register-form.hbs';
+import userProfileTpl from '@templates/user-profile.hbs';
+import authLinksTpl from '@templates/auth-links.hbs';
+import notFoundTpl from '@templates/not-found.hbs';
 import { AuthController } from '@/controllers/AuthController';
 import { AdsController } from '@/controllers/AdsController';
 import { ProfileController } from '@/controllers/ProfileController';
@@ -52,25 +57,16 @@ export const AppController = {
     },
 
     async loadTemplates(): Promise<void> {
-        const templateNames: TemplateName[] = [
-            'auth-links',
-            'login-forms',
-            'register-form',
-            'user-profile',
-            'main-page',
-            'not-found',
-        ];
-
-        for (const name of templateNames) {
-            try {
-                const response = await fetch(`/templates/${name}.hbs`);
-                const source = await response.text();
-                this.templates[name] = Handlebars.compile(source);
-            } catch (error) {
-                console.error(`Failed to load template ${name}:`, error);
-            }
-        }
-        this.registerHandlebarsHelpers();
+    // Шаблоны уже прекомпилированы лоадером, просто присваиваем их
+    this.templates['main-page'] = mainPageTpl;
+    this.templates['login-forms'] = loginFormsTpl;
+    this.templates['register-form'] = registerFormTpl;
+    this.templates['user-profile'] = userProfileTpl;
+    this.templates['auth-links'] = authLinksTpl;
+    this.templates['not-found'] = notFoundTpl;
+    
+    // Регистрация хелперов остаётся (они нужны для рендера)
+    this.registerHandlebarsHelpers();
     },
 
     registerHandlebarsHelpers(): void {
