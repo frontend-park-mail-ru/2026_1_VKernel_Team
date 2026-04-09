@@ -1,0 +1,274 @@
+/* public/css/ad-detail.css */
+/* Только новые стили, которых нет в main.css */
+
+/* Кнопка "Все категории" в поисковой строке */
+.btn-categories {
+    background: #f0f0f0;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 0 20px;
+    height: 44px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s;
+    white-space: nowrap;
+}
+
+.btn-categories:hover {
+    background: #e0e0e0;
+    border-color: #2bde8c;
+}
+
+/* Название товара */
+.ad-title-section {
+    margin-bottom: 24px;
+}
+
+.ad-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #333;
+    margin: 0;
+}
+
+/* ГАЛЕРЕЯ */
+.ad-gallery-section {
+    margin-bottom: 40px;
+}
+
+.ad-gallery-container {
+    display: flex;
+    gap: 20px;
+    position: relative;
+}
+
+.ad-main-photo-wrapper {
+    flex: 1;
+    position: relative;
+    background: #f5f5f5;
+    border-radius: 16px;
+    overflow: hidden;
+    aspect-ratio: 1;
+}
+
+.ad-main-photo {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+/* Кнопки навигации по фото */
+.gallery-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-size: 24px;
+    cursor: pointer;
+    transition: all 0.3s;
+    z-index: 10;
+}
+
+.gallery-nav:hover {
+    background: rgba(0, 0, 0, 0.8);
+}
+
+.gallery-nav.prev {
+    left: 10px;
+}
+
+.gallery-nav.next {
+    right: 10px;
+}
+
+/* Вертикальные миниатюры справа */
+.ad-thumbnails-vertical {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 80px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+/* Скрываем скроллбар но оставляем функционал */
+.ad-thumbnails-vertical::-webkit-scrollbar {
+    width: 4px;
+}
+
+.ad-thumbnails-vertical::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.ad-thumbnails-vertical::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 4px;
+}
+
+.thumbnail-vertical-wrapper {
+    cursor: pointer;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 2px solid transparent;
+    transition: all 0.3s;
+}
+
+.thumbnail-vertical-wrapper.active {
+    border-color: #2bde8c;
+}
+
+.thumbnail-vertical-wrapper:hover {
+    border-color: #2bde8c;
+}
+
+.thumbnail-vertical {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+}
+
+/* Секции */
+.section-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 16px;
+}
+
+/* Описание */
+.ad-description-section {
+    margin-bottom: 32px;
+}
+
+.ad-description {
+    line-height: 1.6;
+    color: #555;
+}
+
+.ad-description.collapsed {
+    max-height: 100px;
+    overflow: hidden;
+    position: relative;
+}
+
+.ad-description.collapsed::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 40px;
+    background: linear-gradient(transparent, white);
+}
+
+.btn-show-more {
+    background: none;
+    border: none;
+    color: #2bde8c;
+    cursor: pointer;
+    margin-top: 10px;
+    font-weight: 500;
+}
+
+.btn-show-more:hover {
+    text-decoration: underline;
+}
+
+/* Характеристики */
+.ad-attributes-section {
+    margin-bottom: 32px;
+}
+
+.attributes-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+}
+
+.attribute-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.attribute-name {
+    color: #888;
+    font-size: 14px;
+}
+
+.attribute-value {
+    color: #333;
+    font-weight: 500;
+}
+
+/* Местоположение */
+.ad-location-section {
+    margin-bottom: 32px;
+}
+
+.location-info {
+    display: flex;
+    gap: 12px;
+    padding: 16px;
+    background: #f8f9fa;
+    border-radius: 12px;
+}
+
+.location-icon {
+    font-size: 24px;
+}
+
+.location-details {
+    flex: 1;
+}
+
+.location-address {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 4px;
+}
+
+.seller-name, .seller-since {
+    font-size: 14px;
+    color: #888;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .ad-gallery-container {
+        flex-direction: column;
+    }
+    
+    .ad-thumbnails-vertical {
+        flex-direction: row;
+        width: 100%;
+        overflow-x: auto;
+        max-height: none;
+    }
+    
+    .thumbnail-vertical-wrapper {
+        width: 80px;
+        flex-shrink: 0;
+    }
+    
+    .attributes-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .ad-title {
+        font-size: 22px;
+    }
+    
+    .btn-categories {
+        padding: 0 12px;
+        font-size: 12px;
+    }
+}
