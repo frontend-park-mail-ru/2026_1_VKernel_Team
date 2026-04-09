@@ -1,65 +1,95 @@
 /* public/css/ad-detail.css */
-/* Только новые стили, которых нет в main.css */
+/* Все стили только для страницы объявления */
 
-/* Кнопка "Все категории" в поисковой строке */
-.btn-categories {
-    background: #f0f0f0;
-    border: 1px solid #ddd;
+.ad-detail-page .btn-categories {
+    background: #E9FCF3;
+    border: 1px solid #e9ecef;
     border-radius: 8px;
     padding: 0 20px;
     height: 44px;
+    transition: all 0.3s;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    color: #495057;
     font-size: 14px;
     font-weight: 500;
-    cursor: pointer;
-    transition: all 0.3s;
     white-space: nowrap;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
-.btn-categories:hover {
-    background: #e0e0e0;
+.ad-detail-page .btn-categories:hover {
+    background: #BFE4D5;
     border-color: #2bde8c;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Название товара */
-.ad-title-section {
-    margin-bottom: 24px;
+.ad-detail-page .btn-categories::after {
+    content: '→';
+    font-size: 18px;
+    font-weight: 700;
+    color: #495057;
+    opacity: 0;
+    transform: translateX(-5px);
+    transition: opacity 0.2s, transform 0.2s;
 }
 
-.ad-title {
-    font-size: 28px;
+.ad-detail-page .btn-categories:hover::after {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.ad-detail-page .ad-title-section .ad-title,
+.ad-detail-page .ad-description-section .section-title,
+.ad-detail-page .ad-attributes-section .section-title,
+.ad-detail-page .ad-location-section .section-title {
+    text-align: left !important;
+    margin-left: 0 !important;
+    padding-left: 0 !important;
+}
+
+.ad-detail-page .ad-title {
+    font-size: 24px;
     font-weight: 700;
     color: #333;
     margin: 0;
 }
 
-/* ГАЛЕРЕЯ */
-.ad-gallery-section {
+.ad-detail-page .ad-gallery-section {
     margin-bottom: 40px;
 }
 
-.ad-gallery-container {
+.ad-detail-page .ad-gallery-container {
     display: flex;
     gap: 20px;
     position: relative;
 }
 
-.ad-main-photo-wrapper {
-    flex: 1;
+.ad-detail-page .ad-main-photo-wrapper {
+    flex: 0 0 65%;
     position: relative;
     background: #f5f5f5;
     border-radius: 16px;
     overflow: hidden;
-    aspect-ratio: 1;
+    aspect-ratio: 4 / 3;
 }
 
-.ad-main-photo {
+.ad-detail-page .ad-main-photo {
     width: 100%;
     height: 100%;
     object-fit: contain;
+    transition: transform 0.3s;
+    cursor: pointer;
 }
 
-/* Кнопки навигации по фото */
-.gallery-nav {
+.ad-detail-page .ad-main-photo:hover {
+    transform: scale(1.02);
+}
+
+.ad-detail-page .gallery-nav {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
@@ -73,92 +103,94 @@
     cursor: pointer;
     transition: all 0.3s;
     z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.gallery-nav:hover {
+.ad-detail-page .gallery-nav:hover {
     background: rgba(0, 0, 0, 0.8);
+    transform: translateY(-50%) scale(1.1);
 }
 
-.gallery-nav.prev {
+.ad-detail-page .gallery-nav.prev {
     left: 10px;
 }
 
-.gallery-nav.next {
+.ad-detail-page .gallery-nav.next {
     right: 10px;
 }
 
-/* Вертикальные миниатюры справа */
-.ad-thumbnails-vertical {
+.ad-detail-page .ad-thumbnails-vertical {
+    flex: 0 0 30%;
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    width: 80px;
-    max-height: 400px;
+    gap: 12px;
+    max-height: 500px;
     overflow-y: auto;
 }
 
-/* Скрываем скроллбар но оставляем функционал */
-.ad-thumbnails-vertical::-webkit-scrollbar {
+.ad-detail-page .ad-thumbnails-vertical::-webkit-scrollbar {
     width: 4px;
 }
 
-.ad-thumbnails-vertical::-webkit-scrollbar-track {
+.ad-detail-page .ad-thumbnails-vertical::-webkit-scrollbar-track {
     background: #f1f1f1;
     border-radius: 4px;
 }
 
-.ad-thumbnails-vertical::-webkit-scrollbar-thumb {
+.ad-detail-page .ad-thumbnails-vertical::-webkit-scrollbar-thumb {
     background: #ccc;
     border-radius: 4px;
 }
 
-.thumbnail-vertical-wrapper {
+.ad-detail-page .thumbnail-vertical-wrapper {
     cursor: pointer;
     border-radius: 8px;
     overflow: hidden;
     border: 2px solid transparent;
     transition: all 0.3s;
-}
-
-.thumbnail-vertical-wrapper.active {
-    border-color: #2bde8c;
-}
-
-.thumbnail-vertical-wrapper:hover {
-    border-color: #2bde8c;
-}
-
-.thumbnail-vertical {
-    width: 100%;
     aspect-ratio: 1;
+}
+
+.ad-detail-page .thumbnail-vertical-wrapper.active {
+    border-color: #2bde8c;
+}
+
+.ad-detail-page .thumbnail-vertical-wrapper:hover {
+    border-color: #2bde8c;
+    transform: translateX(-2px);
+}
+
+.ad-detail-page .thumbnail-vertical {
+    width: 100%;
+    height: 100%;
     object-fit: cover;
 }
 
-/* Секции */
-.section-title {
+.ad-detail-page .section-title {
     font-size: 20px;
     font-weight: 600;
     color: #333;
     margin-bottom: 16px;
 }
 
-/* Описание */
-.ad-description-section {
+.ad-detail-page .ad-description-section {
     margin-bottom: 32px;
 }
 
-.ad-description {
+.ad-detail-page .ad-description {
     line-height: 1.6;
     color: #555;
 }
 
-.ad-description.collapsed {
+.ad-detail-page .ad-description.collapsed {
     max-height: 100px;
     overflow: hidden;
     position: relative;
 }
 
-.ad-description.collapsed::after {
+.ad-detail-page .ad-description.collapsed::after {
     content: '';
     position: absolute;
     bottom: 0;
@@ -168,7 +200,7 @@
     background: linear-gradient(transparent, white);
 }
 
-.btn-show-more {
+.ad-detail-page .btn-show-more {
     background: none;
     border: none;
     color: #2bde8c;
@@ -177,98 +209,121 @@
     font-weight: 500;
 }
 
-.btn-show-more:hover {
+.ad-detail-page .btn-show-more:hover {
     text-decoration: underline;
 }
 
-/* Характеристики */
-.ad-attributes-section {
+.ad-detail-page .ad-attributes-section {
     margin-bottom: 32px;
 }
 
-.attributes-grid {
+.ad-detail-page .attributes-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
+    gap: 0px 24px;
 }
 
-.attribute-item {
+.ad-detail-page .attribute-item {
     display: flex;
-    justify-content: space-between;
-    padding: 12px 0;
-    border-bottom: 1px solid #f0f0f0;
+    align-items: baseline;
+    padding: 2px 0;
+    border-bottom: none;
+    gap: 16px;
 }
 
-.attribute-name {
-    color: #888;
-    font-size: 14px;
+.ad-detail-page .attribute-name {
+    color: #797979;
+    font-size: 16px;
+    font-weight: 400;
+    flex-shrink: 0;
 }
 
-.attribute-value {
-    color: #333;
-    font-weight: 500;
+.ad-detail-page .attribute-value {
+    color: #000000;
+    font-weight: 400;
+    font-size: 16px;
+    text-align: right;
+    word-break: break-word;
 }
 
-/* Местоположение */
-.ad-location-section {
+.ad-detail-page .attribute-value:empty::before {
+    content: '—';
+    color: #ccc;
+}
+
+.ad-detail-page .ad-location-section {
     margin-bottom: 32px;
 }
 
-.location-info {
+.ad-detail-page .location-info {
     display: flex;
     gap: 12px;
-    padding: 16px;
-    background: #f8f9fa;
     border-radius: 12px;
 }
 
-.location-icon {
+.ad-detail-page .location-icon {
     font-size: 24px;
 }
 
-.location-details {
+.ad-detail-page .location-details {
     flex: 1;
 }
 
-.location-address {
+.ad-detail-page .location-address {
     font-weight: 600;
     color: #333;
     margin-bottom: 4px;
 }
 
-.seller-name, .seller-since {
+.ad-detail-page .seller-name,
+.ad-detail-page .seller-since {
     font-size: 14px;
     color: #888;
 }
 
-/* Адаптивность */
 @media (max-width: 768px) {
-    .ad-gallery-container {
+    .ad-detail-page .ad-gallery-container {
         flex-direction: column;
     }
-    
-    .ad-thumbnails-vertical {
+
+    .ad-detail-page .ad-main-photo-wrapper {
+        flex: 0 0 100%;
+        aspect-ratio: 4 / 3;
+    }
+
+    .ad-detail-page .ad-thumbnails-vertical {
+        flex: 0 0 auto;
         flex-direction: row;
         width: 100%;
         overflow-x: auto;
+        overflow-y: hidden;
         max-height: none;
+        gap: 10px;
+        padding-bottom: 8px;
     }
-    
-    .thumbnail-vertical-wrapper {
+
+    .ad-detail-page .thumbnail-vertical-wrapper {
         width: 80px;
         flex-shrink: 0;
+        aspect-ratio: 1;
     }
-    
-    .attributes-grid {
+
+    .ad-detail-page .attributes-grid {
         grid-template-columns: 1fr;
     }
-    
-    .ad-title {
+
+    .ad-detail-page .ad-title {
         font-size: 22px;
     }
-    
-    .btn-categories {
+
+    .ad-detail-page .btn-categories {
         padding: 0 12px;
         font-size: 12px;
+    }
+
+    .ad-detail-page .gallery-nav {
+        width: 32px;
+        height: 32px;
+        font-size: 18px;
     }
 }

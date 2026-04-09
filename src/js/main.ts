@@ -3,12 +3,7 @@
  * @module main
  */
 
-// === CSS ===
-import '@css/base.css';
-import '@css/components.css';
-import '@css/auth.css';
-import '@css/footer.css';
-import '@css/main.css';
+
 
 // === Side-effect модули (инициализация) ===
 import '@/utils/storage';
