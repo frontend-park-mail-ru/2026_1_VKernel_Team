@@ -6,7 +6,7 @@
 import { AuthController } from '@/controllers/AuthController';
 import { AdsController } from '@/controllers/AdsController';
 import { ProfileController } from '@/controllers/ProfileController';
-import { CartController } from '@/controllers/CartController';
+import { CartController } from '../../modules/cart/controller';
 import { store } from '@/core/store';
 import { uiActions } from '@/actions/uiActions';
 import type {
@@ -63,7 +63,6 @@ export const AppController = {
             'user-profile',
             'main-page',
             'not-found',
-            'cart',
         ];
 
         for (const name of templateNames) {
@@ -75,7 +74,49 @@ export const AppController = {
                 console.error(`Failed to load template ${name}:`, error);
             }
         }
+
+        // Load cart module templates and partials
+        await this.loadCartTemplates();
+
         this.registerHandlebarsHelpers();
+    },
+
+    async loadCartTemplates(): Promise<void> {
+        try {
+            // Load main cart template
+            const cartResponse = await fetch('/templates/cart/cart.hbs');
+            const cartSource = await cartResponse.text();
+            this.templates['cart'] = Handlebars.compile(cartSource);
+
+            // Load partials
+            const partials = [
+                'header',
+                'search-section',
+                'cart-back',
+                'cart-seller-group',
+                'cart-item',
+                'delivery-tabs',
+                'contacts-form',
+                'order-summary',
+                'payment-options',
+                'cart-button',
+            ];
+
+            for (const partial of partials) {
+                try {
+                    const path = ['header', 'search-section'].includes(partial)
+                        ? `/templates/common/${partial}.hbs`
+                        : `/templates/cart/components/${partial}.hbs`;
+                    const response = await fetch(path);
+                    const source = await response.text();
+                    Handlebars.registerPartial(partial, source);
+                } catch (error) {
+                    console.error(`Failed to load partial ${partial}:`, error);
+                }
+            }
+        } catch (error) {
+            console.error('Failed to load cart templates:', error);
+        }
     },
 
     registerHandlebarsHelpers(): void {

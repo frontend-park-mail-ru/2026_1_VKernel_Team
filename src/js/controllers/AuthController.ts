@@ -85,7 +85,6 @@ export const AuthController = {
             if (result.fieldErrors) {
                 this.showFieldErrors(result.fieldErrors);
             }
-            // 🔧 УБРАНО: this.showRegister() по той же причине. Форма уже на экране,
             // мы просто накладываем ошибки поверх существующих полей.
         }
     },

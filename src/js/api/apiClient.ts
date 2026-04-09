@@ -37,12 +37,6 @@ export const API_ENDPOINTS = {
         REMOVE: (id: number | string) => `/favorites/${id}`,
         CHECK: (id: number | string) => `/favorites/${id}/check`,
     },
-    CART: {
-        GET: '/cart',
-        ADD: '/cart',
-        REMOVE: (id: number | string) => `/cart/${id}`,
-        CHECKOUT: '/cart/checkout',
-    },
 };
 
 const getCookie = (name: string): string | null => {

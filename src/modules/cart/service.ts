@@ -2,33 +2,34 @@
  * Сервис для работы с корзиной
  * @module cartService
  */
-import { apiClient, API_ENDPOINTS } from '@/api/apiClient';
+import { apiClient } from '@/api/apiClient';
 import { CONFIG } from '@/core/config';
+import { CART_API_ENDPOINTS } from './config';
 import type {
     CartResponse,
     CheckoutResponse,
     CartItem,
     CartSellerGroup,
-} from '@/types';
+} from './types';
 
 const cartService = {
     async getCart() {
-        return apiClient.get<CartResponse>(API_ENDPOINTS.CART.GET);
+        return apiClient.get<CartResponse>(CART_API_ENDPOINTS.GET);
     },
 
     async addToCart(productId: number) {
-        return apiClient.post(API_ENDPOINTS.CART.ADD, {
+        return apiClient.post(CART_API_ENDPOINTS.ADD, {
             product_id: productId,
         });
     },
 
     async removeFromCart(productId: number) {
-        return apiClient.delete(API_ENDPOINTS.CART.REMOVE(productId));
+        return apiClient.delete(CART_API_ENDPOINTS.REMOVE(productId));
     },
 
     async checkout() {
         return apiClient.post<CheckoutResponse>(
-            API_ENDPOINTS.CART.CHECKOUT,
+            CART_API_ENDPOINTS.CHECKOUT,
             {},
         );
     },

@@ -3,8 +3,10 @@
  * Отображает страницу оформления доставки и управляет взаимодействием
  */
 
-import { cartActions } from '@/actions/cartActions';
-import { cartService } from '@/services/cartService';
+import './styles.css';
+import { cartActions } from './actions';
+import { cartService } from './service';
+import { cartStore } from './store';
 import { store } from '@/core/store';
 import type { HandlebarsTemplateFunction } from '@/types';
 
@@ -20,8 +22,9 @@ export const CartController = {
 
         document.body.classList.remove('auth-page');
 
-        const items = store.cartItems || [];
-        const totalPrice = store.cartTotal || 0;
+        const cartState = cartStore.getState();
+        const items = cartState.items;
+        const totalPrice = cartState.total;
         const sellerGroups = cartService.groupBySeller(items);
 
         const formattedGroups = sellerGroups.map((group) => ({
@@ -61,7 +64,7 @@ export const CartController = {
             });
         });
 
-        // Табы доставки
+        //Табы доставки
         document.querySelectorAll('.cart-delivery-tab').forEach((tab) => {
             tab.addEventListener('click', () => {
                 document.querySelectorAll('.cart-delivery-tab').forEach((t) => {

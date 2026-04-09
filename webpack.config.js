@@ -61,6 +61,16 @@ export default (env, argv) => {
                         noErrorOnMissing: true,
                     },
                     {
+                        from: 'src/modules/cart/templates',
+                        to: 'templates/cart',
+                        noErrorOnMissing: true,
+                    },
+                    {
+                        from: 'src/modules/common/components',
+                        to: 'templates/common',
+                        noErrorOnMissing: true,
+                    },
+                    {
                         from: 'public/site',
                         to: 'site',
                         noErrorOnMissing: true,
@@ -77,7 +87,7 @@ export default (env, argv) => {
             extensions: ['.ts', '.tsx', '.js', '.hbs'],
             alias: {
                 '@': path.resolve(__dirname, 'src/js'),
-                '@css': path.resolve(__dirname, 'public/css'), 
+                '@css': path.resolve(__dirname, 'public/css'),
                 'handlebars': 'handlebars/dist/handlebars.js',
             },
         },

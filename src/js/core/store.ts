@@ -5,7 +5,7 @@
 
 import { EventBus } from './eventBus';
 import { storage } from '@/utils/storage';
-import type { User, CartItem } from '@/types';
+import type { User } from '@/types';
 
 export interface AppState {
     isAuthenticated: boolean;
@@ -13,8 +13,6 @@ export interface AppState {
     ads: any[];
     currentPage: string;
     error: string | null;
-    cartItems: CartItem[];
-    cartTotal: number;
 }
 
 class Store {
@@ -24,8 +22,6 @@ class Store {
         ads: [],
         currentPage: 'main-page',
         error: null,
-        cartItems: [],
-        cartTotal: 0,
     };
 
     private eventBus: EventBus;
@@ -75,14 +71,6 @@ class Store {
 
     get error(): string | null {
         return this.state.error;
-    }
-
-    get cartItems(): CartItem[] {
-        return this.state.cartItems;
-    }
-
-    get cartTotal(): number {
-        return this.state.cartTotal;
     }
 }
 
