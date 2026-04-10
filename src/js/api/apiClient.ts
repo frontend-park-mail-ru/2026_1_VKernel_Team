@@ -119,12 +119,7 @@ export class ApiClient {
         }
 
         // CSRF токен для mutating методов
-        if (
-            method === 'POST' ||
-            method === 'PUT' ||
-            method === 'PATCH' ||
-            method === 'DELETE'
-        ) {
+        if (method === 'POST' || method === 'PUT' || method === 'PATCH' || method === 'DELETE') {
             const csrfToken = getCookie('csrf_token');
             if (csrfToken) {
                 headers['X-CSRF-Token'] = csrfToken;
@@ -143,12 +138,8 @@ export class ApiClient {
 
         try {
             let response = await fetch(`${API_URL}${endpoint}`, config);
-            
-            response = await this._handleUnauthorizedResponse(
-                response,
-                endpoint,
-                config,
-            );
+
+            response = await this._handleUnauthorizedResponse(response, endpoint, config);
 
             let data: any;
             const contentType = response.headers.get('content-type');
@@ -186,15 +177,26 @@ export class ApiClient {
         return this.request<T>(endpoint, 'GET', null, headers);
     }
 
-    post<T = any>(endpoint: string, body: any, headers: Record<string, string> = {}): Promise<ApiResponse<T>> {
+    post<T = any>(
+        endpoint: string,
+        body: any,
+        headers: Record<string, string> = {},
+    ): Promise<ApiResponse<T>> {
         return this.request<T>(endpoint, 'POST', body, headers);
     }
 
-    put<T = any>(endpoint: string, body: any, headers: Record<string, string> = {}): Promise<ApiResponse<T>> {
+    put<T = any>(
+        endpoint: string,
+        body: any,
+        headers: Record<string, string> = {},
+    ): Promise<ApiResponse<T>> {
         return this.request<T>(endpoint, 'PUT', body, headers);
     }
 
-    delete<T = any>(endpoint: string, headers: Record<string, string> = {}): Promise<ApiResponse<T>> {
+    delete<T = any>(
+        endpoint: string,
+        headers: Record<string, string> = {},
+    ): Promise<ApiResponse<T>> {
         return this.request<T>(endpoint, 'DELETE', null, headers);
     }
 }

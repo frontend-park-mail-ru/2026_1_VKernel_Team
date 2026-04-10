@@ -5,10 +5,7 @@ import type { AuthCredentials, RegisterData, ValidationResult } from '@/types';
 
 export const authActions = {
     async login(credentials: AuthCredentials): Promise<ValidationResult> {
-        const validation = AuthValidator.validateLogin(
-            credentials.email,
-            credentials.password,
-        );
+        const validation = AuthValidator.validateLogin(credentials.email, credentials.password);
         if (!validation.isValid) {
             return validation;
         }

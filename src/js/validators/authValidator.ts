@@ -41,7 +41,7 @@ export const AuthValidator = {
 
     validateName(name: string): string | null {
         const trimmedName = name.trim();
-        
+
         if (!trimmedName) return 'Имя не может быть пустым';
 
         const length = [...trimmedName].length;
@@ -53,7 +53,7 @@ export const AuthValidator = {
         }
 
         if (!this.NAME_REGEX.test(trimmedName)) {
-            return 'Имя может содержать только буквы, пробелы, дефисы (-) и апострофы (\')';
+            return "Имя может содержать только буквы, пробелы, дефисы (-) и апострофы (')";
         }
 
         return null;
@@ -63,8 +63,8 @@ export const AuthValidator = {
         if (!email || !password) {
             return { isValid: false, error: 'Заполните все поля' };
         }
-        
-        const emailError = this.validateEmail(email); 
+
+        const emailError = this.validateEmail(email);
         if (emailError) {
             return {
                 isValid: false,

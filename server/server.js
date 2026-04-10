@@ -55,10 +55,10 @@ function handleApiProxy(req, res) {
         hostname: targetUrl.hostname,
         port: targetUrl.port,
         path: targetUrl.pathname + targetUrl.search, // Сохраняем пути и параметры (например, ?limit=10)
-        method: req.method,                          // Сохраняем оригинальный метод (GET, POST и т.д.)
+        method: req.method, // Сохраняем оригинальный метод (GET, POST и т.д.)
         headers: {
-            ...req.headers,               // Пробрасываем все заголовки от браузера (включая куки!)
-            host: targetUrl.host,         // Подменяем host, чтобы бэкенд не отклонил запрос
+            ...req.headers, // Пробрасываем все заголовки от браузера (включая куки!)
+            host: targetUrl.host, // Подменяем host, чтобы бэкенд не отклонил запрос
         },
     };
 
@@ -205,7 +205,9 @@ const server = http.createServer(async (req, res) => {
 
 server.on('error', (err) => {
     if (err.code === 'EADDRINUSE') {
-        console.error(`Ошибка: порт ${PORT} уже занят. Закройте процесс, использующий этот порт или задайте другой PORT в файле .env.`);
+        console.error(
+            `Ошибка: порт ${PORT} уже занят. Закройте процесс, использующий этот порт или задайте другой PORT в файле .env.`,
+        );
         process.exit(1);
     }
     console.error('Ошибка сервера:', err);
