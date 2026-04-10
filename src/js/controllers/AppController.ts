@@ -116,50 +116,55 @@ export const AppController = {
     },
 
     onStateChange(state: any): void {
-        this.showLoading(state.isLoading);
-        if (state.error) {
-            uiActions.showError(state.error);
-        }
-        if (state.currentPage !== this._lastPage) {
-            this._lastPage = state.currentPage;
-            this.router();
-        }
+    this.showLoading(state.isLoading);
+    if (state.error) {
+        uiActions.showError(state.error);
+    }
+    // Добавляем защиту от рекурсии
+    if (state.currentPage && state.currentPage !== this._lastPage) {
+        this._lastPage = state.currentPage;
+        this.router();
+    }
     },
 
     router(): void {
-        const path = window.location.pathname;
-        uiActions.navigateTo(path);
+    const path = window.location.pathname;
+    // УБИРАЕМ эту строку - она вызывает рекурсию
+    // uiActions.navigateTo(path);
 
-        if (!store.isAuthenticated && path === '/profile') {
-            uiActions.navigateTo('/login');
+    if (!store.isAuthenticated && path === '/profile') {
+        uiActions.navigateTo('/login');
+        AuthController.showLogin();
+        return;
+    }
+
+    switch (path) {
+        case '/':
+        case '/index.html':
+            AdsController.renderMain();
+            break;
+        case '/login':
             AuthController.showLogin();
-            return;
-        }
+            break;
+        case '/register':
+            AuthController.showRegister();
+            break;
+        case '/profile':
+            ProfileController.showProfile();
+            break;
+        default:
+            this.renderNotFound();
+    }
+},
 
-        switch (path) {
-            case '/':
-            case '/index.html':
-                AdsController.renderMain();
-                break;
-            case '/login':
-                AuthController.showLogin();
-                break;
-            case '/register':
-                AuthController.showRegister();
-                break;
-            case '/profile':
-                ProfileController.showProfile();
-                break;
-            default:
-                this.renderNotFound();
-        }
-    },
+navigateTo(path: string): void {
+    window.history.pushState({}, '', path);
+    uiActions.navigateTo(path);
+},
 
-    navigateTo(path: string): void {
-        window.history.pushState({}, '', path);
-        uiActions.navigateTo(path);
-        this.router();
-    },
+
+
+
     renderNotFound(): void {
         const app = document.getElementById('app');
         if (!app || !this.templates['not-found']) return;

@@ -114,6 +114,7 @@ export class ApiClient {
         body: any = null,
         customHeaders: Record<string, string> = {},
     ): Promise<ApiResponse<T>> {
+        console.log(`API Request: ${method} ${API_URL}${endpoint}`, body); 
         const headers: Record<string, string> = {
             'Content-Type': 'application/json',
             ...customHeaders,

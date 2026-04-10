@@ -11,14 +11,13 @@ export const ProfileController = {
 
   showProfile(): void {
     if (!store.isAuthenticated) {
-      uiActions.navigateTo('/login');
-      return;
+        uiActions.navigateTo('/login');
+        return;
     }
     document.body.classList.add('profile-page');
     this.renderMainTemplate();
-    this.attachEventListeners();
     this.loadProfileData();
-  },
+},
 
   renderMainTemplate(): void {
     const app = document.getElementById('app');
@@ -36,99 +35,158 @@ export const ProfileController = {
 
   async loadProfileData(): Promise<void> {
     uiActions.showLoading(true);
-    const res = await apiClient.get<User>(API_ENDPOINTS.USERS.PROFILE);
-    uiActions.showLoading(false);
-
-    if (res.success && res.data) {
-      store.setState({ user: res.data });
-      this.renderMainTemplate(); // Обновляем статистику в шапке
-    } else {
-      uiActions.showError(res.error || 'Не удалось загрузить профиль');
+    try {
+        const res = await apiClient.get<User>(API_ENDPOINTS.USERS.PROFILE);
+        if (res.success && res.data) {
+            store.setState({ user: res.data });
+            this.renderMainTemplate();
+            this.attachEventListeners(); 
+        } else {
+            uiActions.showError(res.error || 'Не удалось загрузить профиль');
+        }
+    } catch {
+        uiActions.showError('Ошибка сети при загрузке профиля');
+    } finally {
+        uiActions.showLoading(false);
     }
-  },
+},
 
   attachEventListeners(): void {
+    // Очищаем старые обработчики (простой способ - клонирование)
+    const oldElements = document.querySelectorAll('[data-listener]');
+    oldElements.forEach(el => {
+        const newEl = el.cloneNode(true);
+        el.parentNode?.replaceChild(newEl, el);
+    });
+
     // 1. Переключение вкладок
     document.querySelectorAll('.profile-tab-btn').forEach(btn => {
-      btn.addEventListener('click', async (e) => {
-        e.preventDefault();
-        const tab = (e.currentTarget as HTMLElement).dataset.tab as ProfileTab;
-        if (tab && tab !== this.currentTab) {
-          this.currentTab = tab;
-          document.querySelectorAll('.profile-tab-btn').forEach(b => b.classList.remove('active'));
-          (e.currentTarget as HTMLElement).classList.add('active');
-          await this.loadTabContent(tab);
-        }
-      });
+        btn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            const tab = (e.currentTarget as HTMLElement).dataset.tab as ProfileTab;
+            if (tab && tab !== this.currentTab) {
+                this.currentTab = tab;
+                document.querySelectorAll('.profile-tab-btn').forEach(b => b.classList.remove('active'));
+                (e.currentTarget as HTMLElement).classList.add('active');
+                await this.loadTabContent(tab);
+            }
+        });
     });
 
     // 2. Модальное окно редактирования имени
     const modal = document.getElementById('editProfileModal');
-    document.getElementById('editNameBtn')?.addEventListener('click', () => modal?.classList.add('show'));
-    document.getElementById('cancelNameBtn')?.addEventListener('click', () => modal?.classList.remove('show'));
+    const editBtn = document.getElementById('editNameBtn');
+    const cancelBtn = document.getElementById('cancelNameBtn');
+    const saveBtn = document.getElementById('saveNameBtn');
     
-    document.getElementById('saveNameBtn')?.addEventListener('click', async () => {
-      const input = document.getElementById('editNameInput') as HTMLInputElement;
-      const newName = input.value.trim();
-      if (newName.length < 2) return uiActions.showError('Имя должно быть от 2 символов');
+    if (editBtn && modal) {
+        editBtn.addEventListener('click', () => modal.classList.add('show'));
+    }
+    
+    if (cancelBtn && modal) {
+        cancelBtn.addEventListener('click', () => modal.classList.remove('show'));
+    }
+    
+    if (modal) {
+        modal.addEventListener('click', (e) => {
+            if ((e.target as HTMLElement).classList.contains('modal-overlay')) {
+                modal.classList.remove('show');
+            }
+        });
+    }
 
-      uiActions.showLoading(true);
-      const res = await apiClient.post<User>(API_ENDPOINTS.PROFILE.UPDATE, { name: newName });
-      uiActions.showLoading(false);
+    if (saveBtn) {
+        saveBtn.addEventListener('click', async () => {
+            const input = document.getElementById('editNameInput') as HTMLInputElement;
+            if (!input) return;
+            
+            const newName = input.value.trim();
+            
+            if (newName.length < 3) return uiActions.showError('Имя должно быть от 3 символов');
 
-      if (res.success && res.data) {
-        store.setState({ user: res.data });
-        this.renderMainTemplate();
-        modal?.classList.remove('show');
-        uiActions.showSuccess('Имя успешно обновлено');
-      } else {
-        uiActions.showError(res.error || 'Ошибка обновления имени');
-      }
-    });
+            uiActions.showLoading(true);
+            try {
+               const res = await apiClient.request<User>('/profile', 'PATCH', { name: newName });
+                
+                if (res.success && res.data) {
+                    store.setState({ user: res.data });
+                    this.renderMainTemplate();
+                    modal?.classList.remove('show');
+                    uiActions.showSuccess('Имя успешно обновлено');
+                } else {
+                    uiActions.showError(res.error || 'Ошибка обновления имени');
+                }
+            } catch (err: any) {
+                console.error('Update error:', err);
+                uiActions.showError('Ошибка сети при обновлении');
+            } finally {
+                uiActions.showLoading(false);
+            }
+        });
+    }
 
     // 3. Загрузка аватара
     const avatarInput = document.getElementById('avatarUpload') as HTMLInputElement;
-    document.getElementById('changeAvatarBtn')?.addEventListener('click', () => avatarInput?.click());
+    const changeAvatarBtn = document.getElementById('changeAvatarBtn');
     
-    avatarInput?.addEventListener('change', async (e) => {
-      const file = (e.target as HTMLInputElement).files?.[0];
-      if (!file) return;
+    if (changeAvatarBtn && avatarInput) {
+        changeAvatarBtn.addEventListener('click', () => avatarInput.click());
+    }
 
-      uiActions.showLoading(true);
-      try {
-        const formData = new FormData();
-        formData.append('avatar', file);
-        const response = await fetch(`/api/v1${API_ENDPOINTS.PROFILE.AVATAR}`, {
-          method: 'POST',
-          headers: { 'X-CSRF-Token': this.getCookie('csrf_token') || '' },
-          credentials: 'include',
-          body: formData
+    if (avatarInput) {
+        avatarInput.addEventListener('change', async (e) => {
+            const file = (e.target as HTMLInputElement).files?.[0];
+            if (!file) return;
+
+            uiActions.showLoading(true);
+            try {
+                const formData = new FormData();
+                formData.append('avatar', file);
+                
+                const response = await fetch(`/api/v1${API_ENDPOINTS.PROFILE.AVATAR}`, {
+                    method: 'POST',
+                    headers: { 'X-CSRF-Token': this.getCookie('csrf_token') || '' },
+                    credentials: 'include',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    store.setState({ user: data });
+                    this.renderMainTemplate();
+                    this.attachEventListeners(); // Перевешиваем обработчики после обновления аватара
+                    uiActions.showSuccess('Аватар обновлен');
+                } else {
+                    uiActions.showError('Ошибка загрузки аватара');
+                }
+            } catch {
+                uiActions.showError('Ошибка сети при загрузке аватара');
+            } finally {
+                uiActions.showLoading(false);
+            }
         });
+    }
 
-        if (response.ok) {
-          const data = await response.json();
-          store.setState({ user: data });
-          this.renderMainTemplate();
-          uiActions.showSuccess('Аватар обновлен');
-        } else {
-          uiActions.showError('Ошибка загрузки аватара');
-        }
-      } catch {
-        uiActions.showError('Ошибка сети при загрузке аватара');
-      } finally {
-        uiActions.showLoading(false);
-      }
-    });
-
-    // 4. Выход
-    document.getElementById('logoutBtn')?.addEventListener('click', async () => {
-      uiActions.showLoading(true);
-      await apiClient.post(API_ENDPOINTS.AUTH.LOGOUT, {});
-      store.setState({ isAuthenticated: false, user: null });
-      uiActions.showLoading(false);
-      uiActions.navigateTo('/login');
-    });
-  },
+    // 4. Выход из аккаунта
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', async () => {
+            uiActions.showLoading(true);
+            try {
+                await apiClient.post(API_ENDPOINTS.AUTH.LOGOUT, null); // Отправляем null вместо {}
+                
+                store.setState({ isAuthenticated: false, user: null });
+                uiActions.navigateTo('/login');
+                uiActions.showSuccess('Вы успешно вышли из аккаунта');
+            } catch (err: any) {
+                console.error('Logout error:', err);
+                uiActions.showError('Ошибка при выходе');
+            } finally {
+                uiActions.showLoading(false);
+            }
+        });
+    }
+},
 
   async loadTabContent(tab: ProfileTab): Promise<void> {
     const contentEl = document.getElementById('tabContent');
