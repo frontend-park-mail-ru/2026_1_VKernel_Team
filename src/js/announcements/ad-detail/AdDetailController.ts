@@ -1,27 +1,12 @@
 /**
  * Контроллер страницы объявления
- * Feature: ad-detail
  */
 
 import Handlebars from 'handlebars';
 import { adsService } from '@/services/adsServices';
 import { store } from '@/core/store';
+import { AppController } from '@/controllers/AppController';
 import type { Ad } from '@/types';
-
-type AppControllerType = {
-    navigateTo: (path: string) => void;
-    showLoading: (show: boolean) => void;
-};
-
-let AppController: AppControllerType | null = null;
-
-async function getAppController(): Promise<AppControllerType> {
-    if (!AppController) {
-        const module = await import('@/controllers/AppController');
-        AppController = module.AppController;
-    }
-    return AppController;
-}
 
 export class AdDetailController {
     private static currentPhotoIndex: number = 0;
@@ -39,8 +24,7 @@ export class AdDetailController {
         
         document.body.classList.remove('auth-page');
         
-        const appController = await getAppController();
-        appController.showLoading(true);
+        AppController.showLoading(true);
         
         try {
             const response = await fetch('/src/js/announcements/ad-detail/templates/ad-detail.hbs');
@@ -66,7 +50,7 @@ export class AdDetailController {
             console.error('Error loading ad:', error);
             await this.showNotFound();
         } finally {
-            appController.showLoading(false);
+            AppController.showLoading(false);
         }
     }
     
@@ -74,10 +58,14 @@ export class AdDetailController {
         const app = document.getElementById('app');
         if (!app) return;
         
-        const response = await fetch('/templates/not-found.hbs');
-        const templateSource = await response.text();
-        const template = Handlebars.compile(templateSource);
-        app.innerHTML = template({});
+        try {
+            const response = await fetch('/templates/not-found.hbs');
+            const templateSource = await response.text();
+            const template = Handlebars.compile(templateSource);
+            app.innerHTML = template({});
+        } catch (error) {
+            app.innerHTML = '<h1>404 - Объявление не найдено</h1>';
+        }
     }
 
     private static prepareAdData(ad: Ad): any {

@@ -3,6 +3,7 @@
  * Управляет роутингом, инициализацией и глобальными обработчиками
  */
 
+import { PlaceAnAdController } from '@/announcements/place-an-ad';
 import { AdDetailController } from '@/announcements/ad-detail';
 import { AuthController } from '@/controllers/AuthController';
 import { AdsController } from '@/controllers/AdsController';
@@ -110,6 +111,15 @@ export const AppController = {
         const path = window.location.pathname;
         const adMatch = path.match(/^\/ad\/(\d+)$/);
         
+        if (path === '/place-ad') {
+            if (this._currentFeature === 'place-ad') {
+                PlaceAnAdController.cleanup();
+            }
+            this._currentFeature = 'place-ad';
+            PlaceAnAdController.render();
+            return;
+        }
+
         if (adMatch) {
             const adId = adMatch[1];
             console.log('Rendering ad detail for:', adId);

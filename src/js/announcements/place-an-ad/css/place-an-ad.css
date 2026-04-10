@@ -1,0 +1,377 @@
+.place-ad-page .btn-categories {
+    background: #E9FCF3;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 0 20px;
+    height: 44px;
+    transition: all 0.3s;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    color: #495057;
+    font-size: 14px;
+    font-weight: 500;
+    white-space: nowrap;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.place-ad-page .btn-categories:hover {
+    background: #BFE4D5;
+    border-color: #2bde8c;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.place-ad-page .btn-categories::after {
+    content: '→';
+    font-size: 18px;
+    font-weight: 700;
+    color: #495057;
+    opacity: 0;
+    transform: translateX(-5px);
+    transition: opacity 0.2s, transform 0.2s;
+}
+
+.place-ad-page .btn-categories:hover::after {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+
+.place-ad-page .page-header {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #e9ecef;
+}
+
+.place-ad-page .page-header h1 {
+    margin: 0;
+    font-size: 24px;
+    color: #333;
+    font-weight: 600;
+}
+
+.place-ad-page .back-btn {
+    background: none;
+    border: none;
+    font-size: 16px;
+    color: #6c757d;
+    cursor: pointer;
+    padding: 11px 16px 5px 16px;
+    border-radius: 8px;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.place-ad-page .back-btn:hover {
+    background: #f8f9fa;
+    color: #2bde8c;
+}
+
+.place-ad-page .place-ad-form {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+}
+
+.place-ad-page .form-section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.place-ad-page .section-label {
+    font-size: 15px;
+    font-weight: 600;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.place-ad-page .optional-badge {
+    font-size: 12px;
+    font-weight: 400;
+    color: #6c757d;
+    background: #f8f9fa;
+    padding: 2px 8px;
+    border-radius: 12px;
+}
+
+.place-ad-page .form-input,
+.place-ad-page .form-select {
+    padding: 12px 16px;
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    font-size: 16px;
+    transition: all 0.3s;
+    font-family: inherit;
+    background: white;
+}
+
+.place-ad-page .form-textarea {
+    padding: 12px 16px;
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    font-size: 16px;
+    transition: all 0.3s;
+    font-family: inherit;
+    background: white;
+    resize: none;
+    max-height: 300px;
+    min-height: 120px;
+}
+
+.place-ad-page .form-input:focus,
+.place-ad-page .form-select:focus,
+.place-ad-page .form-textarea:focus {
+    outline: none;
+    border-color: #2bde8c;
+    box-shadow: 0 0 0 3px rgba(43, 222, 140, 0.1);
+}
+
+.place-ad-page .form-input.error,
+.place-ad-page .form-select.error,
+.place-ad-page .form-textarea.error {
+    border-color: #ff6b6b;
+    background: #fff5f5;
+}
+
+.place-ad-page .input-hint {
+    font-size: 12px;
+    color: #6c757d;
+    margin-top: 4px;
+}
+
+.place-ad-page .price-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.place-ad-page .price-input-wrapper input {
+    flex: 1;
+    padding-right: 50px;
+}
+
+.place-ad-page .price-currency {
+    position: absolute;
+    right: 16px;
+    font-size: 18px;
+    font-weight: 500;
+    color: #6c757d;
+}
+
+/* Фото */
+.place-ad-page .photo-upload-area {
+    border: 2px dashed #dee2e6;
+    border-radius: 16px;
+    padding: 24px;
+    text-align: center;
+    transition: all 0.3s;
+    background: #fafbfc;
+    cursor: pointer;
+}
+
+.place-ad-page .photo-upload-area:hover {
+    border-color: #2bde8c;
+    background: #f8fff9;
+}
+
+.place-ad-page .photo-upload-area input[type="file"] {
+    display: none;
+}
+
+.place-ad-page .upload-placeholder {
+    cursor: pointer;
+}
+
+.place-ad-page .upload-icon {
+    font-size: 48px;
+    margin-bottom: 12px;
+}
+
+.place-ad-page .upload-text {
+    font-size: 16px;
+    font-weight: 500;
+    color: #333;
+    margin-bottom: 8px;
+}
+
+.place-ad-page .upload-hint {
+    font-size: 13px;
+    color: #6c757d;
+}
+
+.place-ad-page .photo-preview-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.place-ad-page .photo-preview {
+    position: relative;
+    width: 100px;
+    height: 100px;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 2px solid #e9ecef;
+    background: #f8f9fa;
+}
+
+.place-ad-page .photo-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.place-ad-page .remove-photo {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #ff6b6b;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    z-index: 10;
+}
+
+.place-ad-page .remove-photo:hover {
+    background: #ee5253;
+    transform: scale(1.1);
+}
+
+/* Кнопки */
+.place-ad-page .form-actions {
+    display: flex;
+    gap: 16px;
+    justify-content: flex-end;
+    margin-top: 10px;
+    padding-top: 24px;
+    border-top: 1px solid #e9ecef;
+}
+
+.place-ad-page .btn-cancel {
+    padding: 12px 28px;
+    background: #f8f9fa;
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s;
+    color: #495057;
+}
+
+.place-ad-page .btn-cancel:hover {
+    background: #e9ecef;
+    border-color: #ced4da;
+}
+
+.place-ad-page .btn-submit {
+    padding: 12px 36px;
+    background: linear-gradient(135deg, #2bde8c, #2bc0de);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.place-ad-page .btn-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(43, 222, 140, 0.3);
+}
+
+/* Правая колонка */
+.place-ad-page .tips-section {
+    background: #f8fff9;
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 20px;
+    border: 1px solid #e0f0e5;
+}
+
+.place-ad-page .tips-section:last-child {
+    margin-bottom: 0;
+}
+
+.place-ad-page .tips-section h3 {
+    font-size: 16px;
+    color: #2bde8c;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+.place-ad-page .tips-section ul {
+    margin: 0;
+    padding-left: 20px;
+}
+
+.place-ad-page .tips-section li {
+    margin-bottom: 10px;
+    color: #495057;
+    line-height: 1.5;
+    font-size: 14px;
+}
+
+.place-ad-page .field-error {
+    color: #ee5253;
+    font-size: 13px;
+    margin-top: 4px;
+    font-weight: 500;
+    animation: fadeInError 0.2s ease;
+}
+
+/* Адаптив */
+@media (max-width: 768px) {
+    .place-ad-page .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    
+    .place-ad-page .page-header h1 {
+        font-size: 22px;
+    }
+    
+    .place-ad-page .form-actions {
+        flex-direction: column;
+    }
+    
+    .place-ad-page .btn-cancel,
+    .place-ad-page .btn-submit {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+@keyframes fadeInError {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
