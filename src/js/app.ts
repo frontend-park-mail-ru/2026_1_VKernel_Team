@@ -1,4 +1,3 @@
-
 // /**
 //  * Главный файл приложения
 //  * Здесь вся логика: роутинг (переходы между страницами),
@@ -127,7 +126,6 @@
 //         // await this.renderFooter();
 //     },
 
-
 //     async navigateTo(path: string) {
 //         window.history.pushState({}, '', path);
 //         await this.router();
@@ -165,14 +163,14 @@
 //         if (document.querySelector('.footer')) {
 //             return;
 //         }
-        
+
 //         try {
 //             if (!this.templates['footer']) {
 //                 const response = await fetch('/templates/footer.hbs');
 //                 const source = await response.text();
 //                 this.templates['footer'] = Handlebars.compile(source);
 //             }
-            
+
 //             const footerHtml = this.templates['footer']({});
 //             const app = document.getElementById('app');
 //             if (app && !document.querySelector('.footer')) {

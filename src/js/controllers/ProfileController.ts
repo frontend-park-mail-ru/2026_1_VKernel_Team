@@ -16,23 +16,23 @@ export const ProfileController = {
     },
 
     showProfile(): void {
-    document.body.classList.add('auth-page');
-    
-    const app = document.getElementById('app');
-    const template = this.templates['user-profile'];
-    if (!app || !template) return;
+        document.body.classList.add('auth-page');
 
-    const user = store.user;
+        const app = document.getElementById('app');
+        const template = this.templates['user-profile'];
+        if (!app || !template) return;
 
-    app.innerHTML = template({
-        isAuthenticated: store.isAuthenticated,
-        user: store.user,
-        email: user?.email || 'Неизвестно',
-        name: user?.name || user?.email?.split('@')[0] || 'Пользователь',
-        registeredAt: user?.created_at
-            ? new Date(user.created_at).toLocaleDateString('ru-RU')
-            : 'неизвестно',
-        avatar: this.UI_CONSTANTS.DEFAULT_AVATAR,
-    });
-}
+        const user = store.user;
+
+        app.innerHTML = template({
+            isAuthenticated: store.isAuthenticated,
+            user: store.user,
+            email: user?.email || 'Неизвестно',
+            name: user?.name || user?.email?.split('@')[0] || 'Пользователь',
+            registeredAt: user?.created_at
+                ? new Date(user.created_at).toLocaleDateString('ru-RU')
+                : 'неизвестно',
+            avatar: this.UI_CONSTANTS.DEFAULT_AVATAR,
+        });
+    },
 };

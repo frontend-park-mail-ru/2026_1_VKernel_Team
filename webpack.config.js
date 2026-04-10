@@ -77,8 +77,8 @@ export default (env, argv) => {
             extensions: ['.ts', '.tsx', '.js', '.hbs'],
             alias: {
                 '@': path.resolve(__dirname, 'src/js'),
-                '@css': path.resolve(__dirname, 'public/css'), 
-                'handlebars': 'handlebars/dist/handlebars.js',
+                '@css': path.resolve(__dirname, 'public/css'),
+                handlebars: 'handlebars/dist/handlebars.js',
             },
         },
     };
