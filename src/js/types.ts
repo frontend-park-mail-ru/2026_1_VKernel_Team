@@ -20,6 +20,13 @@ export interface Ad {
     favorites_count?: number;
     created_at?: string;
     location?: string;
+    status?: 'active' | 'draft' | 'reserved' | 'sold' | 'archived';
+    
+    seller_id?: number;
+    seller_name?: string;
+    seller_created_at?: string;
+    category_id?: number;
+    condition?: string;
 }
 
 export interface FormattedAd {
