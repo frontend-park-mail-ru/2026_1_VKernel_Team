@@ -13,11 +13,7 @@ import { AdsController } from '@/controllers/AdsController';
 import { ProfileController } from '@/controllers/ProfileController';
 import { store } from '@/core/store';
 import { uiActions } from '@/actions/uiActions';
-import type {
-    HandlebarsTemplateFunction,
-    TemplateName,
-    UIConstants,
-} from '@/types';
+import type { HandlebarsTemplateFunction, TemplateName, UIConstants } from '@/types';
 import { authActions } from '@/actions/authActions';
 
 declare const Handlebars: any;
@@ -74,14 +70,9 @@ export const AppController = {
             return price === 0 ? 'Бесплатно' : `${price} ₽`;
         });
 
-        Handlebars.registerHelper(
-            'ifAuthenticated',
-            function (this: any, options: any) {
-                return store.isAuthenticated
-                    ? options.fn(this)
-                    : options.inverse(this);
-            },
-        );
+        Handlebars.registerHelper('ifAuthenticated', function (this: any, options: any) {
+            return store.isAuthenticated ? options.fn(this) : options.inverse(this);
+        });
     },
 
     async checkAuth(): Promise<void> {
