@@ -119,12 +119,7 @@ export class ApiClient {
         }
 
         // CSRF токен для mutating методов
-        if (
-            method === 'POST' ||
-            method === 'PUT' ||
-            method === 'PATCH' ||
-            method === 'DELETE'
-        ) {
+        if (method === 'POST' || method === 'PUT' || method === 'PATCH' || method === 'DELETE') {
             const csrfToken = getCookie('csrf_token');
             if (csrfToken) {
                 headers['X-CSRF-Token'] = csrfToken;

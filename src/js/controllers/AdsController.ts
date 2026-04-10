@@ -54,9 +54,7 @@ export const AdsController = {
                 if (photoPath.startsWith('http')) {
                     imageUrl = photoPath;
                 } else {
-                    const normalized = photoPath.startsWith('/')
-                        ? photoPath
-                        : `/${photoPath}`;
+                    const normalized = photoPath.startsWith('/') ? photoPath : `/${photoPath}`;
                     imageUrl = `${STATIC_BACKEND}${normalized}`;
                 }
             }
@@ -64,16 +62,11 @@ export const AdsController = {
 
         return {
             ...ad,
-            formattedPrice:
-                ad.price === 0
-                    ? 'Бесплатно'
-                    : ad.price.toLocaleString('ru-RU') + ' ₽',
+            formattedPrice: ad.price === 0 ? 'Бесплатно' : ad.price.toLocaleString('ru-RU') + ' ₽',
             mainPhoto: imageUrl,
             image: imageUrl, // Для совместимости с шаблоном {{image}}
             views: ad.views_count || 0,
-            createdDate: ad.created_at
-                ? new Date(ad.created_at).toLocaleDateString('ru-RU')
-                : '',
+            createdDate: ad.created_at ? new Date(ad.created_at).toLocaleDateString('ru-RU') : '',
         };
     },
 
