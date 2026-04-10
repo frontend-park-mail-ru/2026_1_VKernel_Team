@@ -3,7 +3,7 @@
  */
 
 import { EventBus } from '@/core/eventBus';
-import type { CartItem, CartSellerGroup } from './types';
+import type { CartItem, CartSellerGroup } from '@modules/cart/types';
 
 export interface CartState {
     items: CartItem[];

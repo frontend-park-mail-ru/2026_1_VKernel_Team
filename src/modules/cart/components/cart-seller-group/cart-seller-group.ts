@@ -3,7 +3,7 @@
  * Простой компонент группы товаров по продавцу без логики
  */
 
-import './styles.css';
+import '@modules/cart/components/cart-seller-group/styles.css';
 
 export const CartSellerGroupComponent = {
     getTemplate(): string {

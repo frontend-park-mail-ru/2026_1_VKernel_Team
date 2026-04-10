@@ -1,4 +1,4 @@
-import './styles.css';
+import '@modules/common/components/header/styles.css';
 
 export const HeaderComponent = {
     getTemplate(): string {

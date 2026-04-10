@@ -139,11 +139,7 @@ export class ApiClient {
         try {
             let response = await fetch(`${API_URL}${endpoint}`, config);
 
-            response = await this._handleUnauthorizedResponse(
-                response,
-                endpoint,
-                config,
-            );
+            response = await this._handleUnauthorizedResponse(response, endpoint, config);
 
             let data: any;
             const contentType = response.headers.get('content-type');
@@ -164,10 +160,7 @@ export class ApiClient {
 
             return {
                 success: false,
-                error:
-                    data.message ||
-                    data.error ||
-                    'Произошла неизвестная ошибка',
+                error: data.message || data.error || 'Произошла неизвестная ошибка',
                 data: data as T,
                 status: response.status,
             };
@@ -180,10 +173,7 @@ export class ApiClient {
         }
     }
 
-    get<T = any>(
-        endpoint: string,
-        headers: Record<string, string> = {},
-    ): Promise<ApiResponse<T>> {
+    get<T = any>(endpoint: string, headers: Record<string, string> = {}): Promise<ApiResponse<T>> {
         return this.request<T>(endpoint, 'GET', null, headers);
     }
 

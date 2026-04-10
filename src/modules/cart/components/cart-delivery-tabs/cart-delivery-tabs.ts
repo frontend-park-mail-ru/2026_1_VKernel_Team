@@ -1,4 +1,4 @@
-import './styles.css';
+import '@modules/cart/components/cart-delivery-tabs/styles.css';
 
 export const CartDeliveryTabsComponent = {
     getTemplate(): string {
@@ -22,22 +22,16 @@ export const CartDeliveryTabsComponent = {
     },
 
     initAll(): void {
-        document
-            .querySelectorAll<HTMLElement>('.cart-delivery-tabs')
-            .forEach((tabsContainer) => {
-                if (!tabsContainer.hasAttribute('data-delivery-initialized')) {
-                    this.initTabs(tabsContainer);
-                    tabsContainer.setAttribute(
-                        'data-delivery-initialized',
-                        'true',
-                    );
-                }
-            });
+        document.querySelectorAll<HTMLElement>('.cart-delivery-tabs').forEach((tabsContainer) => {
+            if (!tabsContainer.hasAttribute('data-delivery-initialized')) {
+                this.initTabs(tabsContainer);
+                tabsContainer.setAttribute('data-delivery-initialized', 'true');
+            }
+        });
     },
 
     initTabs(tabsContainer: HTMLElement): void {
-        const tabs =
-            tabsContainer.querySelectorAll<HTMLElement>('.cart-delivery-tab');
+        const tabs = tabsContainer.querySelectorAll<HTMLElement>('.cart-delivery-tab');
 
         tabs.forEach((tab) => {
             tab.addEventListener('click', () => {

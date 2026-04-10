@@ -2,9 +2,9 @@
  * Действия для работы с корзиной
  */
 
-import { cartService } from './service';
-import { cartStore } from './store';
-import type { CartItem } from './types';
+import { cartService } from '@modules/cart/service';
+import { cartStore } from '@modules/cart/store';
+import type { CartItem } from '@modules/cart/types';
 
 export const cartActions = {
     async loadCart(): Promise<void> {

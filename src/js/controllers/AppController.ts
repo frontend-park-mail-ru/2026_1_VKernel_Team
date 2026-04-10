@@ -85,16 +85,12 @@ export const AppController = {
             this.templates['cart'] = Handlebars.compile(cartSource);
 
             // Load common component partials from TS modules
-            const { HeaderComponent } =
-                await import('@modules/common/components/header/header');
+            const { HeaderComponent } = await import('@modules/common/components/header/header');
             const { SearchSectionComponent } =
                 await import('@modules/common/components/search-section/search-section');
 
             Handlebars.registerPartial('header', HeaderComponent.getTemplate());
-            Handlebars.registerPartial(
-                'search-section',
-                SearchSectionComponent.getTemplate(),
-            );
+            Handlebars.registerPartial('search-section', SearchSectionComponent.getTemplate());
 
             // Load cart component partials (internal subcomponents)
             const { CartBackComponent } =
@@ -116,22 +112,10 @@ export const AppController = {
             const { CartPaymentOptionsComponent } =
                 await import('@modules/cart/components/cart-payment-options/cart-payment-options');
 
-            Handlebars.registerPartial(
-                'cart-back',
-                CartBackComponent.getTemplate(),
-            );
-            Handlebars.registerPartial(
-                'cart-item',
-                CartItemComponent.getTemplate(),
-            );
-            Handlebars.registerPartial(
-                'cart-seller-group',
-                CartSellerGroupComponent.getTemplate(),
-            );
-            Handlebars.registerPartial(
-                'cart-button',
-                CartButtonComponent.getTemplate(),
-            );
+            Handlebars.registerPartial('cart-back', CartBackComponent.getTemplate());
+            Handlebars.registerPartial('cart-item', CartItemComponent.getTemplate());
+            Handlebars.registerPartial('cart-seller-group', CartSellerGroupComponent.getTemplate());
+            Handlebars.registerPartial('cart-button', CartButtonComponent.getTemplate());
             Handlebars.registerPartial(
                 'cart-order-summary',
                 CartOrderSummaryComponent.getTemplate(),
@@ -189,10 +173,7 @@ export const AppController = {
         const path = window.location.pathname;
         uiActions.navigateTo(path);
 
-        if (
-            !store.isAuthenticated &&
-            (path === '/profile' || path === '/cart')
-        ) {
+        if (!store.isAuthenticated && (path === '/profile' || path === '/cart')) {
             uiActions.navigateTo('/login');
             AuthController.showLogin();
             return;

@@ -1,4 +1,4 @@
-import './styles.css';
+import '@modules/cart/components/cart-contacts-form/styles.css';
 
 export const CartContactsFormComponent = {
     getTemplate(): string {

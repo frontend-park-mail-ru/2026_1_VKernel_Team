@@ -3,7 +3,7 @@
  * Простой компонент кнопки "назад" без логики
  */
 
-import './styles.css';
+import '@modules/cart/components/cart-back/styles.css';
 
 export const CartBackComponent = {
     getTemplate(): string {

@@ -1,4 +1,4 @@
-import './styles.css';
+import '@modules/common/components/search-section/styles.css';
 
 export const SearchSectionComponent = {
     getTemplate(): string {

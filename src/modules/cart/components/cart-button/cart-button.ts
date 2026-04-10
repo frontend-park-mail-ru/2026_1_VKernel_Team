@@ -1,4 +1,4 @@
-import './styles.css';
+import '@modules/cart/components/cart-button/styles.css';
 import { cartActions } from '@modules/cart/actions';
 import { cartService } from '@modules/cart/service';
 import { cartStore } from '@modules/cart/store';
@@ -24,14 +24,12 @@ export const CartButtonComponent = {
     },
 
     initAll(): void {
-        document
-            .querySelectorAll<HTMLElement>('[data-cart-add]')
-            .forEach((button) => {
-                if (!button.hasAttribute('data-cart-initialized')) {
-                    this.initButton(button);
-                    button.setAttribute('data-cart-initialized', 'true');
-                }
-            });
+        document.querySelectorAll<HTMLElement>('[data-cart-add]').forEach((button) => {
+            if (!button.hasAttribute('data-cart-initialized')) {
+                this.initButton(button);
+                button.setAttribute('data-cart-initialized', 'true');
+            }
+        });
     },
 
     initButton(button: HTMLElement): void {

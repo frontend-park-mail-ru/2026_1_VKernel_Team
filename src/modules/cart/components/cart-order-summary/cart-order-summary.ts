@@ -1,4 +1,4 @@
-import './styles.css';
+import '@modules/cart/components/cart-order-summary/styles.css';
 
 export const CartOrderSummaryComponent = {
     getTemplate(): string {

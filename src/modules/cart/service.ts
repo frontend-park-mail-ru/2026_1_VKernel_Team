@@ -4,13 +4,8 @@
  */
 import { apiClient } from '@/api/apiClient';
 import { CONFIG } from '@/core/config';
-import { CART_API_ENDPOINTS } from './config';
-import type {
-    CartResponse,
-    CheckoutResponse,
-    CartItem,
-    CartSellerGroup,
-} from './types';
+import { CART_API_ENDPOINTS } from '@modules/cart/config';
+import type { CartResponse, CheckoutResponse, CartItem, CartSellerGroup } from './types';
 
 const cartService = {
     async getCart() {
@@ -28,10 +23,7 @@ const cartService = {
     },
 
     async checkout() {
-        return apiClient.post<CheckoutResponse>(
-            CART_API_ENDPOINTS.CHECKOUT,
-            {},
-        );
+        return apiClient.post<CheckoutResponse>(CART_API_ENDPOINTS.CHECKOUT, {});
     },
 
     /**
@@ -61,9 +53,7 @@ const cartService = {
         if (!imagePath) return '/images/default-ad.jpg';
         if (imagePath.startsWith('http')) return imagePath;
 
-        const normalized = imagePath.startsWith('/')
-            ? imagePath
-            : `/${imagePath}`;
+        const normalized = imagePath.startsWith('/') ? imagePath : `/${imagePath}`;
         return `${CONFIG.API.BASE_URL}${normalized}`;
     },
 

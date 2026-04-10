@@ -96,7 +96,7 @@ export default (env, argv) => {
                 '@utils': path.resolve(__dirname, 'src/js/utils'),
                 '@types': path.resolve(__dirname, 'src/js/types'),
                 '@modules': path.resolve(__dirname, 'src/modules'),
-                'handlebars': 'handlebars/dist/handlebars.js',
+                handlebars: 'handlebars/dist/handlebars.js',
             },
         },
     };

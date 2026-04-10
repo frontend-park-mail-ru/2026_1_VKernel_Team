@@ -7,9 +7,9 @@
  */
 
 import '@modules/cart/styles.css';
-import { cartActions } from './actions';
-import { cartService } from './service';
-import { cartStore } from './store';
+import { cartActions } from '@modules/cart/actions';
+import { cartService } from '@modules/cart/service';
+import { cartStore } from '@modules/cart/store';
 import { store } from '@/core/store';
 import type { HandlebarsTemplateFunction } from '@/types';
 

@@ -3,7 +3,7 @@
  * Простой компонент товара в корзине без логики
  */
 
-import './styles.css';
+import '@modules/cart/components/cart-item/styles.css';
 
 export const CartItemComponent = {
     getTemplate(): string {

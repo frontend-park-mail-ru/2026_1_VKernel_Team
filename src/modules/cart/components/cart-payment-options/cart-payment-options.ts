@@ -1,4 +1,4 @@
-import './styles.css';
+import '@modules/cart/components/cart-payment-options/styles.css';
 
 export const CartPaymentOptionsComponent = {
     getTemplate(): string {
@@ -26,26 +26,17 @@ export const CartPaymentOptionsComponent = {
     },
 
     initAll(): void {
-        document
-            .querySelectorAll<HTMLElement>('.cart-payment')
-            .forEach((paymentContainer) => {
-                if (
-                    !paymentContainer.hasAttribute('data-payment-initialized')
-                ) {
-                    this.initPaymentOptions(paymentContainer);
-                    paymentContainer.setAttribute(
-                        'data-payment-initialized',
-                        'true',
-                    );
-                }
-            });
+        document.querySelectorAll<HTMLElement>('.cart-payment').forEach((paymentContainer) => {
+            if (!paymentContainer.hasAttribute('data-payment-initialized')) {
+                this.initPaymentOptions(paymentContainer);
+                paymentContainer.setAttribute('data-payment-initialized', 'true');
+            }
+        });
     },
 
     initPaymentOptions(paymentContainer: HTMLElement): void {
         const radioButtons =
-            paymentContainer.querySelectorAll<HTMLInputElement>(
-                'input[name="payment"]',
-            );
+            paymentContainer.querySelectorAll<HTMLInputElement>('input[name="payment"]');
 
         radioButtons.forEach((radio) => {
             radio.addEventListener('change', () => {
