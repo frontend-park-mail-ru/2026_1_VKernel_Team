@@ -1,207 +1,3 @@
-{{!-- <div class="main-container ad-detail-page">
-    <!-- НАВБАР -->
-    <header class="header">
-        <div class="header-content">
-            <!-- Левая часть с иконками -->
-            <div class="header-left">
-                <div class="nav-icon">
-                    <a href="#" class="nav-link">
-                        <span class="icon">💼</span>
-                        <span class="nav-text">Для бизнеса</span>
-                    </a>
-                </div>
-                <div class="nav-icon">
-                    <a href="#" class="nav-link">
-                        <span class="icon">✉️</span>
-                        <span class="nav-text">Сообщения</span>
-                    </a>
-                </div>
-                <div class="nav-icon">
-                    <a href="#" class="nav-link">
-                        <span class="icon favorites">♡</span>
-                        <span class="nav-text">Избранное</span>
-                    </a>
-                </div>
-                <div class="nav-icon">
-                    <a href="#" class="nav-link">
-                        <span class="icon">🛒</span>
-                        <span class="nav-text">Корзина</span>
-                    </a>
-                </div>
-
-            </div>
-            
-            <!-- Правая часть -->
-            <div class="header-right">                
-                {{#if isAuthenticated}}
-                    <button class="btn place-ad-btn" data-nav="/place-ad">Разместить объявление</button>
-                <!--Нужна проверка в будущем на загрузку своей аватарки пользователем-->
-                    <a href="">
-                        <img src="/images/logo/avatar.jpeg" alt="Аватар" class="avatar">
-                    </a>
-                    <button class="btn btn-danger logout-btn" data-action="logout">
-                        Выйти
-                    </button>
-                {{else}}
-                    <button class="btn place-ad-btn" data-nav="/login">Разместить объявление</button>
-                    <p>
-                        <a href="#" class="nav-login" data-nav="/login">Войти</a>
-                    </p>
-                {{/if}}
-            </div>
-        </div>
-    </header>
-
-    <!-- ОСНОВНОЙ КОНТЕНТ -->
-    <main class="main-content">
-        <!-- Поисковый блок -->
-        <div class="search-section">
-            <!-- Лого и название в одной строке с поиском -->
-            <div class="search-row">
-                <div class="brand">
-                    <a href="/" data-nav="/">
-                        <img src="/images/logo/logo_clover2.jpeg" alt="Логотип" class="logo">
-                    </a>
-                </div>
-
-                <!-- Кнопка "Все категории" -->
-                <button class="btn-categories" data-action="show-categories">
-                    Все категории
-                </button>
-
-                <div class="search-wrapper">
-                    <input 
-                        type="text" 
-                        class="search-input" 
-                        placeholder="Поиск объявлений..."
-                    >
-                    <button class="btn place-ad-btn">Найти</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Здесь будет остальной контент -->
-        <div class="content-grid">
-            <!-- Левая колонка (9/12) -->
-            <div class="main-column">
-                <!-- Название товара -->
-                <div class="ad-title-section">
-                    <h1 class="ad-title">{{title}}</h1>
-                </div>
-
-                <!-- ГАЛЕРЕЯ ФОТО -->
-                <div class="ad-gallery-section">
-                    <div class="ad-gallery-container">
-                        <!-- Главное фото -->
-                        <div class="ad-main-photo-wrapper">
-                            <img 
-                                src="{{mainPhoto}}" 
-                                alt="{{title}}" 
-                                class="ad-main-photo" 
-                                id="mainPhoto"
-                            >
-                            {{#if hasMultiplePhotos}}
-                            <button class="gallery-nav prev" data-gallery-prev>‹</button>
-                            <button class="gallery-nav next" data-gallery-next>›</button>
-                            {{/if}}
-                        </div>
-                        
-                        <!-- Миниатюры справа (вертикальные) -->
-                        {{#if hasMultiplePhotos}}
-                        <div class="ad-thumbnails-vertical">
-                            {{#each allPhotos}}
-                            <div class="thumbnail-vertical-wrapper {{#if @first}}active{{/if}}" data-thumb-index="{{@index}}">
-                                <img 
-                                    src="{{this}}" 
-                                    alt="Фото" 
-                                    class="thumbnail-vertical"
-                                    data-thumbnail="{{this}}"
-                                >
-                            </div>
-                            {{/each}}
-                        </div>
-                        {{/if}}
-                    </div>
-                </div>
-
-                <!-- ОПИСАНИЕ ТОВАРА -->
-                <div class="ad-description-section">
-                    <h2 class="section-title">Описание</h2>
-                    <div class="ad-description {{#if isDescriptionLong}}collapsed{{/if}}" id="adDescription">
-                        <p>{{description}}</p>
-                    </div>
-                    {{#if isDescriptionLong}}
-                    <button class="btn-show-more" data-action="toggle-description">
-                        <span class="show-more-text">Показать полностью</span>
-                        <span class="show-less-text" style="display: none;">Свернуть</span>
-                    </button>
-                    {{/if}}
-                </div>
-
-                <!-- ХАРАКТЕРИСТИКИ (2 колонки по 4 строки) -->
-                <div class="ad-attributes-section">
-                    <h2 class="section-title">Характеристики</h2>
-                    <div class="attributes-grid">
-                        {{#each attributes}}
-                            <div class="attribute-item">
-                                <span class="attribute-name">{{name}}:</span>
-                                <span class="attribute-value">{{value}}</span>
-                            </div>
-                        {{/each}}
-                        {{#unless attributes}}
-                            <div class="attribute-item">
-                                <span class="attribute-name">Состояние:</span>
-                                <span class="attribute-value">Как новое</span>
-                            </div>
-                            <div class="attribute-item">
-                                <span class="attribute-name">Год выпуска:</span>
-                                <span class="attribute-value">2024</span>
-                            </div>
-                            <div class="attribute-item">
-                                <span class="attribute-name">Гарантия</span>
-                                <span class="attribute-value">12 месяцев</span>
-                            </div>
-                            <div class="attribute-item">
-                                <span class="attribute-name">Доставка</span>
-                                <span class="attribute-value">Есть</span>
-                            </div>
-                            <div class="attribute-item">
-                                <span class="attribute-name">Состояние</span>
-                                <span class="attribute-value">Как новое</span>
-                            </div>
-                            <div class="attribute-item">
-                                <span class="attribute-name">Год выпуска</span>
-                                <span class="attribute-value">2024</span>
-                            </div>
-                            <div class="attribute-item">
-                                <span class="attribute-name">Гарантия</span>
-                                <span class="attribute-value">12 месяцев</span>
-                            </div>
-                            <div class="attribute-item">
-                                <span class="attribute-name">Доставка</span>
-                                <span class="attribute-value">Есть</span>
-                            </div>
-                        {{/unless}}
-                    </div>
-                </div>
-
-                <!-- МЕСТОПОЛОЖЕНИЕ ПРОДАВЦА -->
-                <div class="ad-location-section">
-                    <h2 class="section-title">Местоположение</h2>
-                    <div class="location-info">
-                        {{!-- <span class="location-icon">📍</span> --}}
-                        <div class="location-details">
-                            <div class="location-address">{{location}}</div>
-                            <div class="seller-name">Продавец: {{sellerName}}</div>
-                            <div class="seller-since">На сайте с: {{sellerSince}}</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </main>
-</div> --}}
-
 <div class="main-container place-ad-page">
     <!-- НАВБАР -->
     <header class="header">
@@ -251,10 +47,9 @@
     </header>
 
     <!-- ОСНОВНОЙ КОНТЕНТ -->
-    <main class="main-content" style="margin-top: 135px !important; padding-top: 0px !important;">
+    <main class="main-content">
         <!-- Поисковый блок -->
         <div class="search-section">
-            <!-- Лого и название в одной строке с поиском -->
             <div class="search-row">
                 <div class="brand">
                     <a href="/" data-nav="/">
@@ -262,7 +57,6 @@
                     </a>
                 </div>
 
-                <!-- Кнопка "Все категории" -->
                 <button class="btn-categories" data-action="show-categories">
                     Все категории
                 </button>
@@ -286,95 +80,156 @@
                 </div>
 
                 <form id="placeAdForm" class="place-ad-form" enctype="multipart/form-data">
-                    <!-- Блок фотографий -->
-                    <div class="form-section">
-                        <label class="section-label">
-                            Фотографии
-                            <span class="optional-badge">до 10 шт.</span>
-                        </label>
-                        <div class="photo-upload-area" id="photoUploadArea">
-                            <input type="file" id="photos" accept="image/jpeg,image/png,image/webp" multiple>
-                            <div class="upload-placeholder">
-                                <div class="upload-icon">📸</div>
-                                <div class="upload-text">Нажмите или перетащите фото</div>
-                                <div class="upload-hint">Поддерживаются JPEG, PNG, WEBP</div>
+                    <div class="form-card">
+                        <h3 class="form-card-title">Фотографии</h3>
+                        <div class="form-card-content">
+                            <div class="photos-section">
+                                <div class="photos-grid" id="photosGrid">
+                                    <div class="photo-add-btn" id="addPhotoBtn">
+                                        <div class="add-photo-icon">+</div>
+                                        <span class="add-photo-text">Добавить фото</span>
+                                        <input type="file" id="photosInput" accept="image/jpeg,image/png,image/webp" multiple style="display: none;">
+                                    </div>
+                                </div>
+                                <div class="photos-hint">
+                                    <span>📷</span> Можно добавить до 10 фотографий. Первое фото будет обложкой объявления.
+                                </div>
                             </div>
-                            <div id="photoPreviewContainer" class="photo-preview-container"></div>
                         </div>
                     </div>
 
-                    <!-- Название -->
-                    <div class="form-section">
-                        <label for="title" class="section-label">Название *</label>
-                        <input 
-                            type="text" 
-                            id="title" 
-                            class="form-input" 
-                            placeholder="Например, iPhone 13 Pro Max, 256GB"
-                            maxlength="100"
-                            autocomplete="off"
-                        >
-                        <div class="input-hint">До 100 символов</div>
-                    </div>
-
-                    <!-- Категория -->
-                    <div class="form-section">
-                        <label for="category" class="section-label">Категория *</label>
-                        <select id="category" class="form-select">
-                            <option value="">Выберите категорию</option>
-                            {{#each categories}}
-                            <option value="{{id}}">{{name}}</option>
-                            {{/each}}
-                        </select>
-                    </div>
-
-                    <!-- Цена -->
-                    <div class="form-section">
-                        <label for="price" class="section-label">Цена *</label>
-                        <div class="price-input-wrapper">
-                            <input 
-                                type="number" 
-                                id="price" 
-                                class="form-input" 
-                                placeholder="0"
-                                min="0"
-                                step="1"
-                                value="0"
-                            >
-                            <span class="price-currency">₽</span>
+                    <!-- Скрытый шаблон для фото-карточки -->
+                    <template id="photoCardTemplate">
+                        <div class="photo-card">
+                            <img src="" alt="Фото">
+                            <button type="button" class="photo-remove-btn"></button>
+                            <div class="photo-cover-badge">Обложка</div>
                         </div>
-                        <div class="input-hint">Укажите 0, если бесплатно</div>
+                    </template>
+
+                    <div class="form-card">
+                        <h3 class="form-card-title">Основная информация</h3>
+                        <div class="form-card-content">
+                            <!-- Название -->
+                            <div class="form-section">
+                                <label for="title" class="section-label">Название *</label>
+                                <input 
+                                    type="text" 
+                                    id="title" 
+                                    class="form-input" 
+                                    placeholder="Например, iPhone 13 Pro Max, 256GB"
+                                    maxlength="100"
+                                    autocomplete="off"
+                                >
+                                <div class="input-hint">До 100 символов</div>
+                            </div>
+
+                            <!-- Категория -->
+                            <div class="form-section">
+                                <label for="category" class="section-label">Категория *</label>
+                                <select id="category" class="form-select">
+                                    <option value="">Выберите категорию</option>
+                                    {{#each categories}}
+                                    <option value="{{id}}">{{name}}</option>
+                                    {{/each}}
+                                </select>
+                            </div>
+
+                            <!-- Цена -->
+                            <div class="form-section">
+                                <label for="price" class="section-label">Цена *</label>
+                                <div class="price-input-wrapper">
+                                    <input 
+                                        type="number" 
+                                        id="price" 
+                                        class="form-input" 
+                                        placeholder="0"
+                                        min="0"
+                                        step="1"
+                                        value="0"
+                                    >
+                                    <span class="price-currency">₽</span>
+                                </div>
+                                <div class="input-hint">Укажите 0, если бесплатно</div>
+                            </div>
+                        </div>
                     </div>
 
-                    <!-- Локация -->
-                    <div class="form-section">
-                        <label for="location" class="section-label">Местоположение</label>
-                        <input 
-                            type="text" 
-                            id="location" 
-                            class="form-input" 
-                            placeholder="Например, Москва, м. Тверская"
-                            autocomplete="off"
-                        >
+                    <div class="form-card">
+                        <h3 class="form-card-title">Описание</h3>
+                        <div class="form-card-content">
+                            <div class="form-section">
+                                <textarea 
+                                    id="description" 
+                                    class="form-textarea" 
+                                    rows="6" 
+                                    placeholder="Расскажите о товаре подробнее: состояние, комплектация, причина продажи..."
+                                    maxlength="5000"
+                                ></textarea>
+                                <div class="input-hint">До 5000 символов</div>
+                            </div>
+                        </div>
                     </div>
 
-                    <!-- Описание -->
-                    <div class="form-section">
-                        <label for="description" class="section-label">Описание</label>
-                        <textarea 
-                            id="description" 
-                            class="form-textarea" 
-                            rows="6" 
-                            placeholder="Расскажите о товаре подробнее: состояние, комплектация, причина продажи..."
-                            maxlength="5000"
-                        ></textarea>
-                        <div class="input-hint">До 5000 символов</div>
+                    <div class="form-card">
+                        <h3 class="form-card-title">Характеристики</h3>
+                        <div class="form-card-content">
+                            <!-- Обязательные характеристики -->
+                            <div class="form-section">
+                                <label for="condition" class="section-label">Состояние *</label>
+                                <select id="condition" class="form-select">
+                                    <option value="">Выберите состояние</option>
+                                    {{#each state}}
+                                        <option value="{{id}}">{{name}}</option>
+                                    {{/each}}
+                                </select>
+                            </div>
+
+                            <div class="form-section">
+                                <label for="brand" class="section-label">Производитель *</label>
+                                <input 
+                                    type="text" 
+                                    id="brand" 
+                                    class="form-input" 
+                                    placeholder="Например, Apple, Samsung, Nike..."
+                                    autocomplete="off"
+                                >
+                            </div>
+
+                            <!-- Динамические характеристики -->
+                            <div id="dynamicAttributesContainer">
+                                <!-- Сюда будут добавляться дополнительные характеристики -->
+                            </div>
+
+                            <!-- Кнопка добавления характеристики -->
+                            <button type="button" id="addAttributeBtn" class="btn-add-attribute">
+                                <span class="plus-icon">+</span>
+                                Добавить характеристику
+                            </button>
+                        </div>
                     </div>
 
-                    <!-- Кнопки -->
+                    <div class="form-card">
+                        <h3 class="form-card-title">Местоположение</h3>
+                        <div class="form-card-content">
+                            <div class="form-section">
+                                <input 
+                                    type="text" 
+                                    id="location" 
+                                    class="form-input" 
+                                    placeholder="Например, Москва, м. Тверская"
+                                    autocomplete="off"
+                                >
+                                <div class="input-hint">Укажите город или район</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Кнопки формы -->
                     <div class="form-actions">
                         <button type="button" class="btn-cancel" data-action="back">Отмена</button>
-                        <button type="submit" class="btn-submit">Опубликовать</button>
+                        <button type="button" class="btn-draft" id="saveDraftBtn">Сохранить в черновик</button>
+                        <button type="button" class="btn-preview" id="previewBtn">Посмотреть результат</button>
                     </div>
                 </form>
             </div>

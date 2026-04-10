@@ -1,0 +1,213 @@
+<div class="main-container ad-detail-page">
+    <!-- НАВБАР -->
+    <header class="header">
+        <div class="header-content">
+            <!-- Левая часть с иконками -->
+            <div class="header-left">
+                <div class="nav-icon">
+                    <a href="#" class="nav-link">
+                        <span class="icon">💼</span>
+                        <span class="nav-text">Для бизнеса</span>
+                    </a>
+                </div>
+                <div class="nav-icon">
+                    <a href="#" class="nav-link">
+                        <span class="icon">✉️</span>
+                        <span class="nav-text">Сообщения</span>
+                    </a>
+                </div>
+                <div class="nav-icon">
+                    <a href="#" class="nav-link">
+                        <span class="icon favorites">♡</span>
+                        <span class="nav-text">Избранное</span>
+                    </a>
+                </div>
+                <div class="nav-icon">
+                    <a href="#" class="nav-link">
+                        <span class="icon">🛒</span>
+                        <span class="nav-text">Корзина</span>
+                    </a>
+                </div>
+
+            </div>
+            
+            <!-- Правая часть -->
+            <div class="header-right">                
+                {{#if isAuthenticated}}
+                    <button class="btn place-ad-btn" data-nav="/place-ad">Разместить объявление</button>
+                <!--Нужна проверка в будущем на загрузку своей аватарки пользователем-->
+                    <a href="">
+                        <img src="/images/logo/avatar.jpeg" alt="Аватар" class="avatar">
+                    </a>
+                    <button class="btn btn-danger logout-btn" data-action="logout">
+                        Выйти
+                    </button>
+                {{else}}
+                    <button class="btn place-ad-btn" data-nav="/login">Разместить объявление</button>
+                    <p>
+                        <a href="#" class="nav-login" data-nav="/login">Войти</a>
+                    </p>
+                {{/if}}
+            </div>
+        </div>
+    </header>
+
+    <!-- ОСНОВНОЙ КОНТЕНТ -->
+    <main class="main-content">
+        <!-- Поисковый блок -->
+        <div class="search-section">
+            <!-- Лого и название в одной строке с поиском -->
+            <div class="search-row">
+                <div class="brand">
+                    <a href="/" data-nav="/">
+                        <img src="/images/logo/logo_clover2.jpeg" alt="Логотип" class="logo">
+                    </a>
+                </div>
+
+                <!-- Кнопка "Все категории" -->
+                <button class="btn-categories" data-action="show-categories">
+                    Все категории
+                </button>
+
+                <div class="search-wrapper">
+                    <input 
+                        type="text" 
+                        class="search-input" 
+                        placeholder="Поиск объявлений..."
+                    >
+                    <button class="btn place-ad-btn">Найти</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Здесь будет остальной контент -->
+        <div class="content-grid">
+            <!-- Левая колонка (9/12) -->
+            <div class="main-column">
+                <!-- Название товара -->
+                <div class="ad-title-section">
+                    <h1 class="ad-title">{{title}}</h1>
+                </div>
+
+                <!-- ГАЛЕРЕЯ ФОТО -->
+                <div class="ad-gallery-section">
+                    <div class="ad-gallery-container">
+                        <!-- Главное фото -->
+                        <div class="ad-main-photo-wrapper">
+                            <img 
+                                src="{{mainPhoto}}" 
+                                alt="{{title}}" 
+                                class="ad-main-photo" 
+                                id="mainPhoto"
+                            >
+                            {{#if hasMultiplePhotos}}
+                            <button class="gallery-nav prev" data-gallery-prev>‹</button>
+                            <button class="gallery-nav next" data-gallery-next>›</button>
+                            {{/if}}
+                        </div>
+                        
+                        <!-- Миниатюры справа (вертикальные) -->
+                        {{#if hasMultiplePhotos}}
+                        <div class="ad-thumbnails-vertical">
+                            {{#each allPhotos}}
+                            <div class="thumbnail-vertical-wrapper {{#if @first}}active{{/if}}" data-thumb-index="{{@index}}">
+                                <img 
+                                    src="{{this}}" 
+                                    alt="Фото" 
+                                    class="thumbnail-vertical"
+                                    data-thumbnail="{{this}}"
+                                >
+                            </div>
+                            {{/each}}
+                        </div>
+                        {{/if}}
+                    </div>
+                </div>
+
+                <!-- ОПИСАНИЕ ТОВАРА -->
+                <div class="ad-description-section">
+                    <h2 class="section-title">Описание</h2>
+                    <div class="ad-description {{#if isDescriptionLong}}collapsed{{/if}}" id="adDescription">
+                        <p>{{description}}</p>
+                    </div>
+                    {{#if isDescriptionLong}}
+                    <button class="btn-show-more" data-action="toggle-description">
+                        <span class="show-more-text">Показать полностью</span>
+                        <span class="show-less-text" style="display: none;">Свернуть</span>
+                    </button>
+                    {{/if}}
+                </div>
+
+                <!-- ХАРАКТЕРИСТИКИ (2 колонки по 4 строки) -->
+                <div class="ad-attributes-section">
+                    <h2 class="section-title">Характеристики</h2>
+                    <div class="attributes-grid">
+                        {{#each attributes}}
+                            <div class="attribute-item">
+                                <span class="attribute-name">{{name}}:</span>
+                                <span class="attribute-value">{{value}}</span>
+                            </div>
+                        {{/each}}
+                        {{#unless attributes}}
+                            <div class="attribute-item">
+                                <span class="attribute-name">Состояние:</span>
+                                <span class="attribute-value">Как новое</span>
+                            </div>
+                            <div class="attribute-item">
+                                <span class="attribute-name">Год выпуска:</span>
+                                <span class="attribute-value">2024</span>
+                            </div>
+                            <div class="attribute-item">
+                                <span class="attribute-name">Гарантия</span>
+                                <span class="attribute-value">12 месяцев</span>
+                            </div>
+                            <div class="attribute-item">
+                                <span class="attribute-name">Доставка</span>
+                                <span class="attribute-value">Есть</span>
+                            </div>
+                            <div class="attribute-item">
+                                <span class="attribute-name">Состояние</span>
+                                <span class="attribute-value">Как новое</span>
+                            </div>
+                            <div class="attribute-item">
+                                <span class="attribute-name">Год выпуска</span>
+                                <span class="attribute-value">2024</span>
+                            </div>
+                            <div class="attribute-item">
+                                <span class="attribute-name">Гарантия</span>
+                                <span class="attribute-value">12 месяцев</span>
+                            </div>
+                            <div class="attribute-item">
+                                <span class="attribute-name">Доставка</span>
+                                <span class="attribute-value">Есть</span>
+                            </div>
+                        {{/unless}}
+                    </div>
+                </div>
+
+                <!-- МЕСТОПОЛОЖЕНИЕ ПРОДАВЦА -->
+                <div class="ad-location-section">
+                    <h2 class="section-title">Местоположение</h2>
+                    <div class="location-info">
+                        {{!-- <span class="location-icon">📍</span> --}}
+                        <div class="location-details">
+                            <div class="location-address">{{location}}</div>
+                            <div class="seller-name">Продавец: {{sellerName}}</div>
+                            <div class="seller-since">На сайте с: {{sellerSince}}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="preview-actions">
+                    <button type="button" class="btn-back-edit" data-action="back-to-edit">← Назад к редактированию</button>
+                    <button type="button" class="btn-publish-final" data-action="publish-ad">Опубликовать объявление</button>
+                </div>
+            </div>
+            
+            <!-- Правая колонка с рекламой (3/12) -->
+            <div class="ad-column">
+                Рекламное место
+            </div>
+        </div>
+    </main>
+</div>
