@@ -4,6 +4,7 @@
  */
 
 import { PlaceAnAdController } from '@/announcements/place-an-ad';
+import { AdPreviewController } from '@/announcements/ad-preview';
 import { AdDetailController } from '@/announcements/ad-detail';
 import { AuthController } from '@/controllers/AuthController';
 import { AdsController } from '@/controllers/AdsController';
@@ -117,6 +118,15 @@ export const AppController = {
             }
             this._currentFeature = 'place-ad';
             PlaceAnAdController.render();
+            return;
+        }
+
+        if (path === '/ad-preview') {
+            if (this._currentFeature === 'ad-preview') {
+                AdPreviewController.cleanup();
+            }
+            this._currentFeature = 'ad-preview';
+            AdPreviewController.render();
             return;
         }
 
