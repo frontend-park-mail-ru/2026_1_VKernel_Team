@@ -70,5 +70,4 @@ export default (env, argv) => {
       },
     },
   };
-
 };
