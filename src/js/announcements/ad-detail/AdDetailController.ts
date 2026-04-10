@@ -53,14 +53,7 @@ export class AdDetailController {
             const result = await adsService.getAdById(adId);
             
             if (!result.success || !result.data) {
-                app.innerHTML = `
-                    <div style="text-align: center; margin-top: 100px;">
-                        <h2>Объявление не найдено</h2>
-                        <p>Объявление с ID ${adId} не существует или было удалено</p>
-                        <a href="/" data-nav="/" style="color: #2bde8c;">Вернуться на главную</a>
-                    </div>
-                `;
-                appController.showLoading(false);
+                await this.showNotFound();
                 return;
             }
             
@@ -71,12 +64,22 @@ export class AdDetailController {
             
         } catch (error) {
             console.error('Error loading ad:', error);
-            app.innerHTML = '<div style="text-align: center; margin-top: 100px;">Ошибка загрузки объявления</div>';
+            await this.showNotFound();
         } finally {
             appController.showLoading(false);
         }
     }
     
+    private static async showNotFound(): Promise<void> {
+        const app = document.getElementById('app');
+        if (!app) return;
+        
+        const response = await fetch('/templates/not-found.hbs');
+        const templateSource = await response.text();
+        const template = Handlebars.compile(templateSource);
+        app.innerHTML = template({});
+    }
+
     private static prepareAdData(ad: Ad): any {
         let mainPhoto = '/images/default-ad.jpg';
         let allPhotos: string[] = [];
