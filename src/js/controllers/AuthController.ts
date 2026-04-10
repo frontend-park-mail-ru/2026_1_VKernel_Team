@@ -2,7 +2,7 @@ import { authActions } from '@/actions/authActions';
 import { store } from '@/core/store';
 import { uiActions } from '@/actions/uiActions';
 import type { HandlebarsTemplateFunction } from '@/types';
-import { AppController } from './AppController';
+import { AppController } from '@/controllers/AppController';
 
 declare const Handlebars: any;
 

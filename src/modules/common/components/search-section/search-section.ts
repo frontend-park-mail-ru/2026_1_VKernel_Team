@@ -1,4 +1,8 @@
-<!-- ПОИСКОВЫЙ БЛОК -->
+import './styles.css';
+
+export const SearchSectionComponent = {
+    getTemplate(): string {
+        return `
 <div class="search-section">
     <div class="search-row">
         <div class="brand">
@@ -14,3 +18,6 @@
         </div>
     </div>
 </div>
+        `.trim();
+    },
+};

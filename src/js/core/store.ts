@@ -3,7 +3,7 @@
  * Все данные хранятся в одном месте, компоненты подписываются на изменения
  */
 
-import { EventBus } from './eventBus';
+import { EventBus } from '@/core/eventBus';
 import { storage } from '@/utils/storage';
 import type { User } from '@/types';
 

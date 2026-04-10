@@ -17,4 +17,6 @@
 
 .cart-back-arrow {
     font-size: 18px;
+    position: relative;
+    top: 2px;
 }

@@ -1,0 +1,54 @@
+import './styles.css';
+
+export const HeaderComponent = {
+    getTemplate(): string {
+        return `
+<div class="header">
+    <div class="header-content">
+        <div class="header-left">
+            <div class="nav-icon">
+                <a href="#" class="nav-link">
+                    <span class="icon">💼</span>
+                    <span class="nav-text">Для бизнеса</span>
+                </a>
+            </div>
+            <div class="nav-icon">
+                <a href="#" class="nav-link">
+                    <span class="icon">✉️</span>
+                    <span class="nav-text">Сообщения</span>
+                </a>
+            </div>
+            <div class="nav-icon">
+                <a href="#" class="nav-link">
+                    <span class="icon favorites">♡</span>
+                    <span class="nav-text">Избранное</span>
+                </a>
+            </div>
+            <div class="nav-icon">
+                <a href="#" class="nav-link cart-active" data-nav="/cart">
+                    <span class="icon">🛒</span>
+                    <span class="nav-text">Корзина</span>
+                </a>
+            </div>
+        </div>
+        <div class="header-right">
+            {{#if isAuthenticated}}
+                <button class="btn place-ad-btn">Разместить объявление</button>
+                <a href="">
+                    <img src="images/logo/avatar.jpeg" alt="Аватар" class="avatar">
+                </a>
+                <button class="btn btn-danger logout-btn" data-action="logout">
+                    Выйти
+                </button>
+            {{else}}
+                <button class="btn place-ad-btn" data-nav="/login">Разместить объявление</button>
+                <p>
+                    <a href="#" class="nav-login" data-nav="/login">Войти</a>
+                </p>
+            {{/if}}
+        </div>
+    </div>
+</div>
+        `.trim();
+    },
+};

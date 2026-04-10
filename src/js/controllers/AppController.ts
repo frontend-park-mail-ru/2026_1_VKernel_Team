@@ -88,15 +88,17 @@ export const AppController = {
             const cartSource = await cartResponse.text();
             this.templates['cart'] = Handlebars.compile(cartSource);
 
-            // Load common partials used by cart template
-            const commonPartials = ['header', 'search-section'];
-            for (const partial of commonPartials) {
-                const response = await fetch(
-                    `/templates/common/${partial}.hbs`,
-                );
-                const source = await response.text();
-                Handlebars.registerPartial(partial, source);
-            }
+            // Load common component partials from TS modules
+            const { HeaderComponent } =
+                await import('@modules/common/components/header/header');
+            const { SearchSectionComponent } =
+                await import('@modules/common/components/search-section/search-section');
+
+            Handlebars.registerPartial('header', HeaderComponent.getTemplate());
+            Handlebars.registerPartial(
+                'search-section',
+                SearchSectionComponent.getTemplate(),
+            );
 
             // Load cart component partials (internal subcomponents)
             const { CartBackComponent } =

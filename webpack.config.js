@@ -66,8 +66,8 @@ export default (env, argv) => {
                         noErrorOnMissing: true,
                     },
                     {
-                        from: 'src/modules/common/components',
-                        to: 'templates/common',
+                        from: 'src/modules/common/components/**/*.hbs',
+                        to: 'templates/common/[name][ext]',
                         noErrorOnMissing: true,
                     },
                     {
