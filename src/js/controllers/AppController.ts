@@ -6,7 +6,7 @@
 import { AuthController } from '@/controllers/AuthController';
 import { AdsController } from '@/controllers/AdsController';
 import { ProfileController } from '@/controllers/ProfileController';
-import { CartController } from '../../modules/cart/controller';
+import { CartController } from '@modules/cart/controller';
 import { store } from '@/core/store';
 import { uiActions } from '@/actions/uiActions';
 import type {
@@ -75,7 +75,7 @@ export const AppController = {
             }
         }
 
-        // Load cart module templates and partials
+        // Load cart module component template and its internal partials
         await this.loadCartTemplates();
 
         this.registerHandlebarsHelpers();
@@ -83,37 +83,75 @@ export const AppController = {
 
     async loadCartTemplates(): Promise<void> {
         try {
-            // Load main cart template
+            // Load top-level cart component template
             const cartResponse = await fetch('/templates/cart/cart.hbs');
             const cartSource = await cartResponse.text();
             this.templates['cart'] = Handlebars.compile(cartSource);
 
-            // Load partials
-            const partials = [
-                'header',
-                'search-section',
-                'cart-back',
-                'cart-seller-group',
-                'cart-item',
-                'delivery-tabs',
-                'contacts-form',
-                'order-summary',
-                'payment-options',
-                'cart-button',
-            ];
-
-            for (const partial of partials) {
-                try {
-                    const path = ['header', 'search-section'].includes(partial)
-                        ? `/templates/common/${partial}.hbs`
-                        : `/templates/cart/components/${partial}.hbs`;
-                    const response = await fetch(path);
-                    const source = await response.text();
-                    Handlebars.registerPartial(partial, source);
-                } catch (error) {
-                    console.error(`Failed to load partial ${partial}:`, error);
-                }
+            // Load common partials used by cart template
+            const commonPartials = ['header', 'search-section'];
+            for (const partial of commonPartials) {
+                const response = await fetch(
+                    `/templates/common/${partial}.hbs`,
+                );
+                const source = await response.text();
+                Handlebars.registerPartial(partial, source);
             }
+
+            // Load cart component partials (internal subcomponents)
+            const { CartBackComponent } =
+                await import('@modules/cart/components/cart-back/cart-back');
+            const { CartItemComponent } =
+                await import('@modules/cart/components/cart-item/cart-item');
+            const { CartSellerGroupComponent } =
+                await import('@modules/cart/components/cart-seller-group/cart-seller-group');
+            const { CartButtonComponent } =
+                await import('@modules/cart/components/cart-button/cart-button');
+            const { CartOrderSummaryComponent } =
+                await import('@modules/cart/components/cart-order-summary/cart-order-summary');
+
+            // Load additional cart components (currently disabled in template)
+            const { CartContactsFormComponent } =
+                await import('@modules/cart/components/cart-contacts-form/cart-contacts-form');
+            const { CartDeliveryTabsComponent } =
+                await import('@modules/cart/components/cart-delivery-tabs/cart-delivery-tabs');
+            const { CartPaymentOptionsComponent } =
+                await import('@modules/cart/components/cart-payment-options/cart-payment-options');
+
+            Handlebars.registerPartial(
+                'cart-back',
+                CartBackComponent.getTemplate(),
+            );
+            Handlebars.registerPartial(
+                'cart-item',
+                CartItemComponent.getTemplate(),
+            );
+            Handlebars.registerPartial(
+                'cart-seller-group',
+                CartSellerGroupComponent.getTemplate(),
+            );
+            Handlebars.registerPartial(
+                'cart-button',
+                CartButtonComponent.getTemplate(),
+            );
+            Handlebars.registerPartial(
+                'cart-order-summary',
+                CartOrderSummaryComponent.getTemplate(),
+            );
+
+            // Register additional components (currently disabled in template)
+            Handlebars.registerPartial(
+                'cart-contacts-form',
+                CartContactsFormComponent.getTemplate(),
+            );
+            Handlebars.registerPartial(
+                'cart-delivery-tabs',
+                CartDeliveryTabsComponent.getTemplate(),
+            );
+            Handlebars.registerPartial(
+                'cart-payment-options',
+                CartPaymentOptionsComponent.getTemplate(),
+            );
         } catch (error) {
             console.error('Failed to load cart templates:', error);
         }

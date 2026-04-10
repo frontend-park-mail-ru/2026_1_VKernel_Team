@@ -1,9 +1,12 @@
 /**
- * Контроллер корзины
- * Отображает страницу оформления доставки и управляет взаимодействием
+ * Cart component controller
+ * Top-level компонент корзины: шаблон + стили + логика.
+ *
+ * Внутри этого компонента используются partial’ы из
+ * `templates/components/`, которые являются подкомпонентами.
  */
 
-import './styles.css';
+import '@modules/cart/styles.css';
 import { cartActions } from './actions';
 import { cartService } from './service';
 import { cartStore } from './store';

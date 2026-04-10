@@ -4,25 +4,6 @@
     margin-top: 20px;
 }
 
-.cart-back {
-    font-size: 16px;
-    color: #333;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    margin-bottom: 8px;
-    transition: color 0.2s;
-}
-
-.cart-back:hover {
-    color: #2bde8c;
-}
-
-.cart-back-arrow {
-    font-size: 18px;
-}
-
 .cart-title {
     font-size: 28px;
     font-weight: 700;
@@ -111,126 +92,6 @@
 
 .cart-delivery-tab:hover:not(.active) {
     background: #f8f8f8;
-}
-
-/* ========== ГРУППА ПРОДАВЦА ========== */
-.cart-seller-group {
-    background: white;
-    border-radius: 12px;
-    padding: 20px 24px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-    margin-bottom: 16px;
-}
-
-.cart-seller-header {
-    padding-bottom: 12px;
-    border-bottom: 1px solid #e9ecef;
-    margin-bottom: 16px;
-}
-
-.cart-seller-name {
-    font-size: 16px;
-    font-weight: 600;
-    color: #333;
-}
-
-/* ========== ТОВАР В КОРЗИНЕ ========== */
-.cart-item {
-    display: grid;
-    grid-template-columns: 120px 1fr 1fr 40px;
-    gap: 16px;
-    align-items: center;
-    padding: 16px 0;
-    border-bottom: 1px solid #f0f0f0;
-}
-
-.cart-item:last-child {
-    border-bottom: none;
-    padding-bottom: 0;
-}
-
-.cart-item-image {
-    width: 120px;
-    height: 90px;
-    border-radius: 8px;
-    overflow: hidden;
-}
-
-.cart-item-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.cart-item-info {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.cart-item-title {
-    font-size: 15px;
-    font-weight: 500;
-    color: #333;
-    line-height: 1.4;
-}
-
-.cart-item-price {
-    font-size: 16px;
-    font-weight: 700;
-    color: #2bde8c;
-}
-
-.cart-item-delivery {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    font-size: 13px;
-    color: #666;
-}
-
-.cart-item-address-label {
-    color: #999;
-}
-
-.cart-item-address-value {
-    display: block;
-    font-weight: 500;
-    color: #333;
-}
-
-.cart-item-time {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-}
-
-.cart-item-time-icon {
-    font-size: 14px;
-}
-
-.cart-item-schedule {
-    font-size: 12px;
-    color: #999;
-}
-
-.cart-item-delete {
-    background: none;
-    border: none;
-    font-size: 18px;
-    cursor: pointer;
-    padding: 8px;
-    border-radius: 8px;
-    transition: background 0.2s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0.5;
-}
-
-.cart-item-delete:hover {
-    background: #fff0f0;
-    opacity: 1;
 }
 
 /* ========== ФОРМА КОНТАКТОВ ========== */
@@ -418,6 +279,146 @@
     opacity: 1;
 }
 
+/* ========== КНОПКА «НАЗАД» ========== */
+.cart-back {
+    font-size: 16px;
+    color: #333;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 8px;
+    transition: color 0.2s;
+}
+
+.cart-back:hover {
+    color: #2bde8c;
+}
+
+.cart-back-arrow {
+    font-size: 18px;
+}
+
+/* ========== ГРУППА ПРОДАВЦА ========== */
+.cart-seller-group {
+    background: white;
+    border-radius: 12px;
+    padding: 20px 24px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    margin-bottom: 16px;
+}
+
+.cart-seller-header {
+    padding-bottom: 12px;
+    border-bottom: 1px solid #e9ecef;
+    margin-bottom: 16px;
+}
+
+.cart-seller-name {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+}
+
+/* ========== ТОВАР В КОРЗИНЕ ========== */
+.cart-item {
+    display: grid;
+    grid-template-columns: 120px 1fr 1fr 40px;
+    gap: 16px;
+    align-items: center;
+    padding: 16px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.cart-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.cart-item-image {
+    width: 120px;
+    height: 90px;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.cart-item-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.cart-item-info {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.cart-item-title {
+    font-size: 15px;
+    font-weight: 500;
+    color: #333;
+    line-height: 1.4;
+}
+
+.cart-item-price {
+    font-size: 16px;
+    font-weight: 700;
+    color: #2bde8c;
+}
+
+.cart-item-delivery {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 13px;
+    color: #666;
+}
+
+.cart-item-address-label {
+    color: #999;
+}
+
+.cart-item-address-value {
+    display: block;
+    font-weight: 500;
+    color: #333;
+}
+
+.cart-item-time {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.cart-item-time-icon {
+    font-size: 14px;
+}
+
+.cart-item-schedule {
+    font-size: 12px;
+    color: #999;
+}
+
+.cart-item-delete {
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 8px;
+    transition: background 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.5;
+}
+
+.cart-item-delete:hover {
+    background: #fff0f0;
+    opacity: 1;
+}
+
 /* ========== КНОПКА КОРЗИНЫ ========== */
 .rec-card-cart {
     background: #f5f5f5;
@@ -475,4 +476,64 @@
     background: #e53935;
     border-color: #e53935;
     color: #fff;
+}
+
+/* ========== АДАПТИВНОСТЬ ========== */
+@media (max-width: 1024px) {
+    .cart-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .cart-right {
+        position: static;
+    }
+
+    .cart-item {
+        grid-template-columns: 100px 1fr 40px;
+    }
+
+    .cart-item-delivery {
+        display: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .cart-title {
+        font-size: 22px;
+    }
+
+    .cart-layout {
+        gap: 16px;
+    }
+
+    .cart-section {
+        padding: 16px 20px;
+    }
+
+    .cart-order-summary {
+        padding: 20px;
+    }
+
+    .cart-delivery-tabs {
+        flex-direction: column;
+    }
+
+    .cart-delivery-tab {
+        border-right: none;
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+    .cart-delivery-tab:last-child {
+        border-bottom: none;
+    }
+
+    .cart-item {
+        grid-template-columns: 80px 1fr 32px;
+        gap: 12px;
+    }
+
+    .cart-item-image {
+        width: 80px;
+        height: 60px;
+    }
 }
