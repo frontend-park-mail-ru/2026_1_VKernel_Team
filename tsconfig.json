@@ -7,6 +7,7 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/js/*"],
+      "@templates/*": ["src/templates/*"],
       "@css/*": ["public/css/*"],
       "@core/*": ["src/js/core/*"],
       "@api/*": ["src/js/api/*"],
@@ -31,6 +32,10 @@
     "noEmit": false,
     "lib": ["ES2020", "DOM", "DOM.Iterable"]
   },
-  "include": ["src/**/*"],
+  "include": [
+    "src/js/**/*",
+    "src/**/*",
+    "src/templates/**/*.hbs"
+  ],
   "exclude": ["node_modules", "public", "dist"]
 }

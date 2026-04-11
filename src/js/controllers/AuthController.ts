@@ -59,13 +59,9 @@ export const AuthController = {
 
         if (result.isValid) {
             uiActions.showSuccess('Вход выполнен!');
-            window.history.pushState({}, '', '/');
-            if (typeof AppController?.router === 'function') {
-                AppController.router();
-            }
+            uiActions.navigateTo('/');
         } else {
             uiActions.showError(result.error || 'Ошибка входа');
-            this.clearLoginError();
             this.showLoginError(result.error ?? 'Ошибка входа');
         }
     },
@@ -74,28 +70,17 @@ export const AuthController = {
         const result = await authActions.register(data);
 
         if (result.isValid) {
-            uiActions.showSuccess('Вход выполнен!');
-            window.history.pushState({}, '', '/');
-            if (typeof AppController?.router === 'function') {
-                AppController.router();
-            }
+            uiActions.showSuccess('Регистрация успешна!');
+            uiActions.navigateTo('/');
         } else {
             uiActions.showError(result.error || 'Ошибка регистрации');
-            this.clearFieldErrors();
-            if (result.fieldErrors) {
-                this.showFieldErrors(result.fieldErrors);
-            }
-            // мы просто накладываем ошибки поверх существующих полей.
         }
     },
 
     async handleLogout(): Promise<void> {
         await authActions.logout();
         localStorage.removeItem('authToken');
-        window.history.pushState({}, '', '/');
-        if (typeof AppController?.router === 'function') {
-            AppController.router();
-        }
+        uiActions.navigateTo('/');
     },
 
     initPasswordToggles(): void {
