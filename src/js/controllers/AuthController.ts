@@ -1,8 +1,8 @@
 import { authActions } from '@/actions/authActions';
 import { store } from '@/core/store';
 import { uiActions } from '@/actions/uiActions';
+import { AppController } from '@/controllers/AppController'; // Добавляем импорт
 import type { HandlebarsTemplateFunction } from '@/types';
-import { AppController } from './AppController';
 
 declare const Handlebars: any;
 
@@ -55,72 +55,110 @@ export const AuthController = {
     },
 
     async handleLoginSubmit(email: string, password: string): Promise<void> {
-        const result = await authActions.login({ email, password });
+        uiActions.showLoading(true); // Показываем лоадер
+        
+        try {
+            const result = await authActions.login({ email, password });
 
-        if (result.isValid) {
-            uiActions.showSuccess('Вход выполнен!');
-            window.history.pushState({}, '', '/');
-            if (typeof AppController?.router === 'function') {
-                AppController.router();
+            if (result.isValid) {
+                // Проверяем, что store обновился
+                console.log('Login success, isAuthenticated:', store.isAuthenticated);
+                console.log('User:', store.user);
+                
+                uiActions.showSuccess('Вход выполнен!');
+                
+                // Небольшая задержка для обновления store
+                await new Promise(resolve => setTimeout(resolve, 100));
+                
+                // Используем AppController для навигации
+                AppController.navigateTo('/');
+                // или прямой вызов
+                // window.location.href = '/';
+            } else {
+                uiActions.showError(result.error || 'Ошибка входа');
+                this.showLoginError(result.error ?? 'Ошибка входа');
             }
-        } else {
-            uiActions.showError(result.error || 'Ошибка входа');
-            this.clearLoginError();
-            this.showLoginError(result.error ?? 'Ошибка входа');
+        } catch (error) {
+            console.error('Login error:', error);
+            uiActions.showError('Ошибка сети при входе');
+            this.showLoginError('Ошибка сети при входе');
+        } finally {
+            uiActions.showLoading(false); // Скрываем лоадер
         }
     },
 
     async handleRegisterSubmit(data: any): Promise<void> {
-        const result = await authActions.register(data);
+        uiActions.showLoading(true);
+        
+        try {
+            const result = await authActions.register(data);
 
-        if (result.isValid) {
-            uiActions.showSuccess('Вход выполнен!');
-            window.history.pushState({}, '', '/');
-            if (typeof AppController?.router === 'function') {
-                AppController.router();
+            if (result.isValid) {
+                uiActions.showSuccess('Регистрация успешна!');
+                
+                // Небольшая задержка для обновления store
+                await new Promise(resolve => setTimeout(resolve, 100));
+                
+                AppController.navigateTo('/');
+            } else {
+                uiActions.showError(result.error || 'Ошибка регистрации');
+                
+                // Показываем ошибки полей, если они есть
+                if (result.fieldErrors) {
+                    this.showFieldErrors(result.fieldErrors);
+                }
             }
-        } else {
-            uiActions.showError(result.error || 'Ошибка регистрации');
-            this.clearFieldErrors();
-            if (result.fieldErrors) {
-                this.showFieldErrors(result.fieldErrors);
-            }
-            // мы просто накладываем ошибки поверх существующих полей.
+        } catch (error) {
+            console.error('Register error:', error);
+            uiActions.showError('Ошибка сети при регистрации');
+        } finally {
+            uiActions.showLoading(false);
         }
     },
 
     async handleLogout(): Promise<void> {
-        await authActions.logout();
-        localStorage.removeItem('authToken');
-        window.history.pushState({}, '', '/');
-        if (typeof AppController?.router === 'function') {
-            AppController.router();
+        uiActions.showLoading(true);
+        
+        try {
+            await authActions.logout();
+            localStorage.removeItem('authToken');
+            
+            // Очищаем store
+            store.setState({ isAuthenticated: false, user: null });
+            
+            uiActions.showSuccess('Вы успешно вышли из аккаунта');
+            AppController.navigateTo('/');
+        } catch (error) {
+            console.error('Logout error:', error);
+            uiActions.showError('Ошибка при выходе');
+        } finally {
+            uiActions.showLoading(false);
         }
     },
 
     initPasswordToggles(): void {
-        const toggles = document.querySelectorAll(
-            '#togglePassword, #toggleConfirmPassword',
-        );
+        const toggles = document.querySelectorAll('#togglePassword, #toggleConfirmPassword');
 
         toggles.forEach((toggleBtn) => {
             const btn = toggleBtn as HTMLButtonElement;
             const eyeIcon = btn.querySelector('img') as HTMLImageElement;
             const wrapper = btn.closest('.password-wrapper');
-            const input = wrapper?.querySelector(
-                'input[type="password"]',
-            ) as HTMLInputElement;
+            const input = wrapper?.querySelector('input[type="password"]') as HTMLInputElement;
 
             if (input && eyeIcon) {
-                btn.addEventListener('click', () => {
+                // Удаляем старые обработчики
+                const newBtn = btn.cloneNode(true) as HTMLButtonElement;
+                btn.parentNode?.replaceChild(newBtn, btn);
+                
+                const newEyeIcon = newBtn.querySelector('img') as HTMLImageElement;
+                
+                newBtn.addEventListener('click', () => {
                     const isPassword = input.type === 'password';
                     input.type = isPassword ? 'text' : 'password';
-                    eyeIcon.src = isPassword
+                    newEyeIcon.src = isPassword
                         ? this.UI_CONSTANTS.EYE_OPEN
                         : this.UI_CONSTANTS.EYE_CLOSED;
-                    eyeIcon.alt = isPassword
-                        ? 'Скрыть пароль'
-                        : 'Показать пароль';
+                    newEyeIcon.alt = isPassword ? 'Скрыть пароль' : 'Показать пароль';
                 });
             }
         });
@@ -143,9 +181,7 @@ export const AuthController = {
     },
 
     clearLoginError(): void {
-        document
-            .querySelectorAll('.login-error, .alert-error')
-            .forEach((el) => el.remove());
+        document.querySelectorAll('.login-error, .alert-error').forEach((el) => el.remove());
         ['email', 'password'].forEach((id) => {
             const el = document.getElementById(id);
             if (el) el.classList.remove('error');
@@ -157,8 +193,7 @@ export const AuthController = {
 
         Object.entries(fieldErrors).forEach(([field, error]) => {
             if (!error) return;
-            const inputId =
-                field === 'confirmPassword' ? 'confirm-password' : field;
+            const inputId = field === 'confirmPassword' ? 'confirm-password' : field;
             const input = document.getElementById(inputId);
 
             if (input) {
@@ -173,28 +208,38 @@ export const AuthController = {
 
     clearFieldErrors(): void {
         document.querySelectorAll('.field-error').forEach((el) => el.remove());
-        document
-            .querySelectorAll('.error')
-            .forEach((el) => el.classList.remove('error'));
+        document.querySelectorAll('.error').forEach((el) => el.classList.remove('error'));
     },
 
     attachLoginListeners(): void {
         const form = document.getElementById('login-forms') as HTMLFormElement;
         if (!form) return;
 
+        // Удаляем старый обработчик
         if (this._loginHandler) {
             form.removeEventListener('submit', this._loginHandler);
         }
 
-        const handler: EventListener = (e: Event) => {
+        const handler: EventListener = async (e: Event) => {
             e.preventDefault();
-            const email =
-                (document.getElementById('email') as HTMLInputElement)?.value ||
-                '';
-            const password =
-                (document.getElementById('password') as HTMLInputElement)
-                    ?.value || '';
-            this.handleLoginSubmit(email, password);
+            
+            // Блокируем повторную отправку
+            const submitBtn = form.querySelector('button[type="submit"]') as HTMLButtonElement;
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Вход...';
+            }
+            
+            const email = (document.getElementById('email') as HTMLInputElement)?.value || '';
+            const password = (document.getElementById('password') as HTMLInputElement)?.value || '';
+            
+            await this.handleLoginSubmit(email, password);
+            
+            // Разблокируем кнопку
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Войти';
+            }
         };
 
         this._loginHandler = handler;
@@ -202,35 +247,39 @@ export const AuthController = {
     },
 
     attachRegisterListeners(): void {
-        const form = document.getElementById(
-            'register-form',
-        ) as HTMLFormElement;
+        const form = document.getElementById('register-form') as HTMLFormElement;
         if (!form) return;
 
+        // Удаляем старый обработчик
         if (this._registerHandler) {
             form.removeEventListener('submit', this._registerHandler);
         }
 
-        const handler: EventListener = (e: Event) => {
+        const handler: EventListener = async (e: Event) => {
             e.preventDefault();
+            
+            // Блокируем повторную отправку
+            const submitBtn = form.querySelector('button[type="submit"]') as HTMLButtonElement;
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Регистрация...';
+            }
+            
             const data = {
-                name:
-                    (document.getElementById('name') as HTMLInputElement)
-                        ?.value || '',
-                email:
-                    (document.getElementById('email') as HTMLInputElement)
-                        ?.value || '',
-                password:
-                    (document.getElementById('password') as HTMLInputElement)
-                        ?.value || '',
+                name: (document.getElementById('name') as HTMLInputElement)?.value || '',
+                email: (document.getElementById('email') as HTMLInputElement)?.value || '',
+                password: (document.getElementById('password') as HTMLInputElement)?.value || '',
                 confirmPassword:
-                    (
-                        document.getElementById(
-                            'confirm-password',
-                        ) as HTMLInputElement
-                    )?.value || '',
+                    (document.getElementById('confirm-password') as HTMLInputElement)?.value || '',
             };
-            this.handleRegisterSubmit(data);
+            
+            await this.handleRegisterSubmit(data);
+            
+            // Разблокируем кнопку
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Зарегистрироваться';
+            }
         };
 
         this._registerHandler = handler;

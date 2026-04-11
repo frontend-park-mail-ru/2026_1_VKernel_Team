@@ -24,7 +24,8 @@ const AuthErrorMap: AuthErrorMapType = {
     // Ошибки для поля password (могут приходить в поле 'password')
     'password must be at least 8 characters long': 'Пароль должен быть не менее 8 символов', // ErrPasswordTooShort
     'password must contain at least one digit': 'Пароль должен содержать хотя бы одну цифру', // ErrPasswordRequiresDigit
-    'password must contain at least one latin letter': 'Пароль должен содержать хотя бы одну латинскую букву', // ErrPasswordRequiresLetter
+    'password must contain at least one latin letter':
+        'Пароль должен содержать хотя бы одну латинскую букву', // ErrPasswordRequiresLetter
 
     // Ошибки для поля name
     'name cannot be empty': 'Имя не может быть пустым', // ErrNameEmpty
@@ -92,7 +93,9 @@ const authService = {
             };
         }
 
-        const translatedError = result.error ? (AuthErrorMap[result.error] || result.error) : 'Ошибка';
+        const translatedError = result.error
+            ? AuthErrorMap[result.error] || result.error
+            : 'Ошибка';
         return {
             success: false,
             error: translatedError,
@@ -129,7 +132,9 @@ const authService = {
             };
         }
 
-        const translatedError = result.error ? (AuthErrorMap[result.error] || result.error) : 'Ошибка';
+        const translatedError = result.error
+            ? AuthErrorMap[result.error] || result.error
+            : 'Ошибка';
         return {
             success: false,
             error: translatedError,

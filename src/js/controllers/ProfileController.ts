@@ -9,29 +9,61 @@ export const ProfileController = {
   templates: {} as Record<string, HandlebarsTemplateFunction>,
   currentTab: 'info' as ProfileTab,
 
-  showProfile(): void {
+   showProfile(): void {
     if (!store.isAuthenticated) {
         uiActions.navigateTo('/login');
         return;
-    }
+     }
     document.body.classList.add('profile-page');
-    this.renderMainTemplate();
+     this.renderMainTemplate();
     this.loadProfileData();
 },
 
+  // renderMainTemplate(): void {
+  //   const app = document.getElementById('app');
+  //   const template = this.templates['user-profile'];
+  //   if (!app || !template) return;
+
+  //   const user = store.user || {};
+  //   app.innerHTML = template({
+  //     user,
+  //     registeredAt: user.created_at ? new Date(user.created_at).toLocaleDateString('ru-RU') : '—',
+  //     activeTab: this.currentTab,
+  //     avatarUrl: user.avatar_path ? `/api/v1${user.avatar_path}` : '/images/logo/avatar.jpeg'
+  //   });
+  // },
   renderMainTemplate(): void {
     const app = document.getElementById('app');
     const template = this.templates['user-profile'];
-    if (!app || !template) return;
+    if (!app || !template) {
+        console.error('App element or template not found');
+        return;
+    }
 
     const user = store.user || {};
+    
+    // Вычисляем URL аватара
+    const avatarUrl = user.avatar_path 
+        ? `/api/v1${user.avatar_path}` 
+        : '/images/logo/avatar.jpeg';
+    
+    // Форматируем дату
+    const registeredAt = user.created_at 
+        ? new Date(user.created_at).toLocaleDateString('ru-RU')
+        : '—';
+    
     app.innerHTML = template({
-      user,
-      registeredAt: user.created_at ? new Date(user.created_at).toLocaleDateString('ru-RU') : '—',
-      activeTab: this.currentTab,
-      avatarUrl: user.avatar_path ? `/api/v1${user.avatar_path}` : '/images/logo/avatar.jpeg'
+        user: user,
+        registeredAt: registeredAt,
+        activeTab: this.currentTab || 'info', // Убедимся, что есть значение по умолчанию
+        avatarUrl: avatarUrl,
+        // Добавляем проверку для eq хелпера
+        eq: (a: any, b: any) => a === b
     });
-  },
+    
+    console.log('Profile rendered with user:', user);
+    console.log('Active tab:', this.currentTab);
+},
 
   async loadProfileData(): Promise<void> {
     uiActions.showLoading(true);
@@ -259,4 +291,5 @@ export const ProfileController = {
     const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
     return match ? match[2] : null;
   }
+
 };

@@ -32,7 +32,7 @@ export class EventBus {
      * Публикация события
      */
     emit(event: string, data?: any): void {
-        this.events.get(event)?.forEach(callback => callback(data));
+        this.events.get(event)?.forEach((callback) => callback(data));
     }
 
     /**
