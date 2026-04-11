@@ -173,9 +173,15 @@ export const AppController = {
         }
     },
 
+    // В AppController.ts
     navigateTo(path: string): void {
         window.history.pushState({}, '', path);
-        uiActions.navigateTo(path);
+        window.dispatchEvent(new PopStateEvent('popstate'));
+    
+    // Если uiActions.navigateTo просто пишет в лог/URL, оставляем:
+        if (typeof uiActions.navigateTo === 'function') {
+            uiActions.navigateTo(path);
+        }
     },
 
     renderNotFound(): void {
