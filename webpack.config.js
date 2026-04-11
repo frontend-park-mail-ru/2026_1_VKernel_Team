@@ -38,6 +38,12 @@ export default (env, argv) => {
                 },
                 {
                     test: /\.hbs$/i,
+                    resourceQuery: /raw/,
+                    type: 'asset/source',
+                },
+                {
+                    test: /\.hbs$/i,
+                    resourceQuery: { not: [/raw/] },
                     loader: 'handlebars-loader',
                 },
             ],
@@ -58,11 +64,6 @@ export default (env, argv) => {
                     {
                         from: 'src/templates',
                         to: 'templates',
-                        noErrorOnMissing: true,
-                    },
-                    {
-                        from: 'src/modules/cart/templates',
-                        to: 'templates/cart',
                         noErrorOnMissing: true,
                     },
                     {

@@ -70,7 +70,6 @@ export type TemplateName =
     | 'register-form'
     | 'user-profile'
     | 'main-page'
-    | 'cart'
     | 'not-found';
 
 export type HandlebarsTemplateFunction = (context?: any) => string;

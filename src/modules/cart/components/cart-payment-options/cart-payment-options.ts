@@ -1,28 +1,9 @@
 import '@modules/cart/components/cart-payment-options/styles.css';
+import template from '@modules/cart/components/cart-payment-options/cart-payment-options.hbs?raw';
 
 export const CartPaymentOptionsComponent = {
     getTemplate(): string {
-        return `
-<!-- Способы оплаты -->
-<div class="cart-payment">
-    <h3 class="cart-payment-title">Способы оплаты</h3>
-    <label class="cart-payment-option">
-        <input type="radio" name="payment" value="wallet">
-        <span class="cart-payment-radio"></span>
-        <span>Кошелёк</span>
-    </label>
-    <label class="cart-payment-option">
-        <input type="radio" name="payment" value="card" checked>
-        <span class="cart-payment-radio"></span>
-        <span>Карта или СБП</span>
-    </label>
-    <label class="cart-payment-option">
-        <input type="radio" name="payment" value="on-delivery">
-        <span class="cart-payment-radio"></span>
-        <span>При получении</span>
-    </label>
-</div>
-        `.trim();
+        return template;
     },
 
     initAll(): void {

@@ -4,13 +4,10 @@
  */
 
 import '@modules/cart/components/cart-back/styles.css';
+import template from '@modules/cart/components/cart-back/cart-back.hbs?raw';
 
 export const CartBackComponent = {
     getTemplate(): string {
-        return `
-<div class="cart-back" data-nav="/">
-    <span class="cart-back-arrow">←</span> Назад
-</div>
-        `.trim();
+        return template;
     },
 };

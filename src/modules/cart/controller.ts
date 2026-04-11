@@ -1,26 +1,20 @@
 /**
- * Cart component controller
- * Top-level компонент корзины: шаблон + стили + логика.
- *
- * Внутри этого компонента используются partial’ы из
- * `templates/components/`, которые являются подкомпонентами.
+ * Cart controller
+ * Рендеринг страницы корзины и обработка событий.
  */
 
-import '@modules/cart/styles.css';
 import { cartActions } from '@modules/cart/actions';
 import { cartService } from '@modules/cart/service';
 import { cartStore } from '@modules/cart/store';
 import { store } from '@/core/store';
-import type { HandlebarsTemplateFunction } from '@/types';
+import { getTemplate } from '@modules/cart/pages/cart/cart';
 
 export const CartController = {
-    templates: {} as Record<string, HandlebarsTemplateFunction>,
-
     async renderCart(): Promise<void> {
         await cartActions.loadCart();
 
         const app = document.getElementById('app');
-        const template = this.templates['cart'];
+        const template = getTemplate();
         if (!app || !template) return;
 
         document.body.classList.remove('auth-page');
@@ -67,7 +61,7 @@ export const CartController = {
             });
         });
 
-        //Табы доставки
+        // Табы доставки
         document.querySelectorAll('.cart-delivery-tab').forEach((tab) => {
             tab.addEventListener('click', () => {
                 document.querySelectorAll('.cart-delivery-tab').forEach((t) => {

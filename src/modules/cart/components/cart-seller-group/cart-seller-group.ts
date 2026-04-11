@@ -4,18 +4,10 @@
  */
 
 import '@modules/cart/components/cart-seller-group/styles.css';
+import template from '@modules/cart/components/cart-seller-group/cart-seller-group.hbs?raw';
 
 export const CartSellerGroupComponent = {
     getTemplate(): string {
-        return `
-<div class="cart-seller-group">
-    <div class="cart-seller-header">
-        <div class="cart-seller-name">{{sellerName}}</div>
-    </div>
-    {{#each items}}
-        {{> cart-item this}}
-    {{/each}}
-</div>
-        `.trim();
+        return template;
     },
 };

@@ -7,7 +7,7 @@
 - `controller.ts` — top-level cart component controller.
   - отвечает за загрузку данных, рендер страницы корзины и привязку событий.
 - `styles.css` — стили компонента корзины (только layout и общие стили).
-- `templates/cart.hbs` — основной шаблон cart-компонента.
+- `pages/cart/cart.hbs` — основной шаблон cart-компонента.
 - `components/` — папка с подкомпонентами:
   - `cart-back/` — компонент кнопки "назад"
     - `cart-back.hbs` — шаблон
@@ -46,7 +46,7 @@
 ## Разграничение
 
 - `CartController` = компонент страницы корзины.
-- `templates/cart/cart.hbs` = шаблон этого компонента.
+- `pages/cart/cart.hbs` = шаблон этого компонента.
 - `components/*/` = полноценные компоненты с hbs + ts + css.
 - `AppController` загружает cart-компонент и регистрирует его partial'ы через Handlebars.
 

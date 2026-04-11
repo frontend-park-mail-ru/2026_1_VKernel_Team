@@ -1,24 +1,9 @@
 import '@modules/cart/components/cart-delivery-tabs/styles.css';
+import template from '@modules/cart/components/cart-delivery-tabs/cart-delivery-tabs.hbs?raw';
 
 export const CartDeliveryTabsComponent = {
     getTemplate(): string {
-        return `
-<!-- Способ получения -->
-<div class="cart-section">
-    <h2 class="cart-section-title">Способ получения</h2>
-    <div class="cart-delivery-tabs">
-        <button class="cart-delivery-tab active" data-delivery="pickup">
-            <span class="cart-tab-check">✓</span> Самовывоз
-        </button>
-        <button class="cart-delivery-tab" data-delivery="point">
-            Доставка в пункт выдачи
-        </button>
-        <button class="cart-delivery-tab" data-delivery="courier">
-            Курьерская доставка
-        </button>
-    </div>
-</div>
-        `.trim();
+        return template;
     },
 
     initAll(): void {
