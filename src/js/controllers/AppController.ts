@@ -6,6 +6,7 @@
 import { AuthController } from '@/controllers/AuthController';
 import { AdsController } from '@/controllers/AdsController';
 import { ProfileController } from '@/controllers/ProfileController';
+import { SellerPageController } from '../../modules/seller-page/SellerPageController';
 import { store } from '@/core/store';
 import { uiActions } from '@/actions/uiActions';
 import type {
@@ -116,6 +117,12 @@ export const AppController = {
         if (!store.isAuthenticated && path === '/profile') {
             uiActions.navigateTo('/login');
             AuthController.showLogin();
+            return;
+        }
+
+        const sellerMatch = path.match(/^\/seller\/(\d+)$/);
+        if (sellerMatch) {
+            SellerPageController.render(sellerMatch[1]);
             return;
         }
 

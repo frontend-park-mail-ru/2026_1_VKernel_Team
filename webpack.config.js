@@ -61,6 +61,11 @@ export default (env, argv) => {
                         noErrorOnMissing: true,
                     },
                     {
+                        from: 'src/modules/*/*.hbs',
+                        to: 'templates/[name][ext]',
+                        noErrorOnMissing: true,
+                    },
+                    {
                         from: 'public/site',
                         to: 'site',
                         noErrorOnMissing: true,

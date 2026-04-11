@@ -1,0 +1,329 @@
+/* ========== СТРАНИЦА ПРОДАВЦА ========== */
+
+.seller-page-layout {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 24px;
+    margin-top: 20px;
+    align-items: stretch;
+}
+
+/* ========== САЙДБАР ПРОДАВЦА ========== */
+
+.seller-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    height: 100%;
+}
+
+.seller-info-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.seller-avatar-wrapper {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: #e9ecef;
+    margin-bottom: 16px;
+    flex-shrink: 0;
+}
+
+.seller-avatar {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.seller-name {
+    font-size: 20px;
+    font-weight: 600;
+    color: #333;
+    text-align: center;
+    margin-bottom: 8px;
+}
+
+.seller-rating-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.seller-rating-value {
+    font-size: 18px;
+    font-weight: 700;
+    color: #333;
+}
+
+.seller-rating-stars {
+    color: #f5c518;
+    font-size: 18px;
+    letter-spacing: 1px;
+}
+
+.seller-reviews-link {
+    font-size: 14px;
+    color: #2bde8c;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.seller-reviews-link:hover {
+    text-decoration: underline;
+}
+
+.seller-meta {
+    width: 100%;
+    border-top: 1px solid #e9ecef;
+    padding-top: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.seller-meta-item {
+    font-size: 14px;
+    color: #666;
+    text-align: center;
+}
+
+.seller-meta-item strong {
+    color: #333;
+}
+
+/* Баннер рекламы */
+.seller-ad-banner {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 40px 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border: 2px dashed #2bde8c;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #666;
+    font-weight: 500;
+    min-height: 200px;
+    flex: 1;
+    min-height: 0;
+}
+
+/* ========== СЕКЦИЯ ОБЪЯВЛЕНИЙ ========== */
+
+.seller-ads-section {
+    background: #fff;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.seller-ads-title {
+    font-size: 24px;
+    font-weight: 600;
+    color: #333;
+    text-align: left;
+    margin-bottom: 16px;
+}
+
+/* ========== ТАБЫ ========== */
+
+.seller-tabs {
+    display: flex;
+    gap: 0;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #e9ecef;
+}
+
+.seller-tab {
+    padding: 10px 20px;
+    background: none;
+    border: none;
+    font-size: 15px;
+    font-weight: 500;
+    color: #666;
+    cursor: pointer;
+    position: relative;
+    transition: color 0.2s;
+}
+
+.seller-tab:hover {
+    color: #333;
+}
+
+.seller-tab--active {
+    color: #2bde8c;
+    font-weight: 600;
+}
+
+.seller-tab--active::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: #2bde8c;
+}
+
+/* ========== КОНТЕНТ ТАБОВ ========== */
+
+.seller-tab-content--hidden {
+    display: none;
+}
+
+.seller-ads-empty {
+    font-size: 16px;
+    color: #999;
+    text-align: center;
+    padding: 40px 0;
+}
+
+/* ========== СТИЛИ КАРТОЧЕК (ТОЧНО КАК НА ГЛАВНОЙ) ========== */
+
+.recommendations-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);  /* 4 карточки в ряд */
+    gap: 10px;  /* Расстояние между карточками */
+}
+
+.rec-card {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    transition: transform 0.2s, box-shadow 0.2s;
+    height: 300px;  /* Фиксированная высота */
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #e9ecef;
+}
+
+.rec-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+}
+
+.rec-card-image-container {
+    position: relative;
+    width: 100%;
+    height: 60%;
+    overflow: hidden;
+}
+
+.rec-card-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    background: #f0f0f0;
+}
+
+.rec-card-content {
+    height: 40%;  /* 2/5 от высоты карточки */
+    padding: 12px 12px;
+    display: flex;
+    gap: 8px;
+    align-items: stretch;
+}
+
+.rec-card-footer {
+    display: grid;
+    grid-template-columns: 150px 70px;
+    gap: 10px;
+    align-items: center;
+    margin-top: auto;
+    margin-bottom: 10px;
+}
+
+.rec-card-footer-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;  /* Важно для обрезки текста */
+}
+
+.rec-card-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;      /* Две строки */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.3;
+}
+
+.rec-card-price {
+    font-size: 16px;
+    font-weight: 700;
+    color: #000000;
+}
+
+.rec-card-location {
+    font-size: 14px;
+    color: #999;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+
+.location-icon {
+    font-size: 12px;
+}
+
+.rec-card-footer-actions {
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    justify-content: flex-end;  /* Выравнивание по нижнему краю */
+    align-items: flex-end;
+}
+
+.rec-card-fav,
+.rec-card-cart {
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.rec-card-fav:hover {
+    background: #fff0f0;
+    transform: scale(1.1);
+}
+
+.rec-card-cart:hover {
+    background: #e8f5e9;
+    transform: scale(1.1);
+}
+
+/* ========== АДАПТИВНОСТЬ ========== */
+
+@media (max-width: 900px) {
+    .seller-page-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .seller-sidebar {
+        order: -1;
+    }
+}
