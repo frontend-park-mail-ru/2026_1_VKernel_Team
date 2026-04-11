@@ -1,0 +1,72 @@
+.seller-page-layout {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 24px;
+    margin-top: 20px;
+    align-items: stretch;
+}
+
+.seller-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    height: 100%;
+}
+
+.seller-ad-banner {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 40px 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border: 2px dashed #2bde8c;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #666;
+    font-weight: 500;
+    min-height: 200px;
+    flex: 1;
+    min-height: 0;
+}
+
+.seller-ads-section {
+    background: #fff;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.seller-ads-title {
+    font-size: 24px;
+    font-weight: 600;
+    color: #333;
+    text-align: left;
+    margin-bottom: 16px;
+}
+
+.seller-tab-content--hidden {
+    display: none;
+}
+
+.seller-ads-empty {
+    font-size: 16px;
+    color: #999;
+    text-align: center;
+    padding: 40px 0;
+}
+
+.recommendations-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+}
+
+@media (max-width: 900px) {
+    .seller-page-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .seller-sidebar {
+        order: -1;
+    }
+}
