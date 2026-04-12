@@ -19,11 +19,11 @@
 // Определяем, где запущен фронтенд
 const _isLocal =
     typeof window !== 'undefined' &&
-    (window.location.hostname === 'localhost' ||
-        window.location.hostname === '127.0.0.1');
+    (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
 
 const CONFIG = {
     API: {
+        // Всегда используем HTTPS + продакшен-домен
         BASE_URL: 'http://clover-go.ru:8000',
 
         // API_URL: локально проксируем через Node.js, на проде — напрямую

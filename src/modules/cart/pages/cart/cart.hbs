@@ -1,0 +1,40 @@
+<div class="main-container">
+    {{> header isAuthenticated=isAuthenticated user=user}}
+
+    {{> search-section}}
+
+    <main class="main-content">
+        <!-- КОНТЕНТ КОРЗИНЫ -->
+        <div class="cart-page">
+            {{> cart-back}}
+            <h1 class="cart-title">Оформление заказа</h1>
+
+        {{#if isEmpty}}
+        <div class="cart-empty">
+            <p class="cart-empty-text">Ваша корзина пуста</p>
+            <button class="btn place-ad-btn" data-nav="/">Перейти к покупкам</button>
+        </div>
+        {{else}}
+        <div class="cart-layout">
+            <!-- Левая колонка -->
+            <div class="cart-left">
+                {{!-- {{> delivery-tabs}} --}}
+
+                {{#each sellerGroups}}
+                    {{> cart-seller-group this}}
+                {{/each}}
+
+                {{!-- {{> contacts-form}} --}}
+            </div>
+
+            <!-- Правая колонка -->
+            <div class="cart-right">
+                {{> cart-order-summary itemCount=itemCount totalFormatted=totalFormatted}}
+
+                {{!-- {{> payment-options}} --}}
+            </div>
+        </div>
+        {{/if}}
+        </div>
+    </main>
+</div>

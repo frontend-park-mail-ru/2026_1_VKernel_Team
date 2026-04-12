@@ -212,8 +212,6 @@ module.exports = {
     // false: don't look at process.getBuiltinModule calls (the default)
     // true: dependency-cruiser will detect calls to process.getBuiltinModule/
     // globalThis.process.getBuiltinModule as imports.
-    detectProcessBuiltinModuleCalls: true,
-
     // prefix for links in html, d2, mermaid and dot/ svg output (e.g. 'https://github.com/you/yourrepo/blob/main/'
     // to open it on your online repo or `vscode://file/${process.cwd()}/` to
     // open it in visual studio code),
@@ -314,8 +312,6 @@ module.exports = {
     // skipAnalysisNotInRules will make dependency-cruiser execute
     // analysis strictly necessary for checking the rule set only.
     // See https://github.com/sverweij/dependency-cruiser/blob/main/doc/options-reference.md#skipanalysisnotinrules
-    skipAnalysisNotInRules: true,
-
     reporterOptions: {
       dot: {
         // Pattern of modules to consolidate to. The default pattern in this configuration

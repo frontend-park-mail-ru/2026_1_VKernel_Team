@@ -1,3 +1,7 @@
+/**
+ * Главный контроллер приложения
+ * Управляет роутингом, инициализацией и глобальными обработчиками
+ */
 import mainPageTpl from '@templates/main-page.hbs';
 import loginFormsTpl from '@templates/login-forms.hbs';
 import registerFormTpl from '@templates/register-form.hbs';
@@ -9,13 +13,11 @@ import { AdsController } from '@/controllers/AdsController';
 import { ProfileController } from '@/controllers/ProfileController';
 import { SellerPageController } from '@modules/seller-page/controller';
 import { loadTemplates as loadSellerPageTemplates } from '@modules/seller-page/pages/seller-page/seller-page';
+import { CartController } from '@modules/cart/controller';
+import { loadTemplates as loadCartTemplates } from '@modules/cart/pages/cart/cart';
 import { store } from '@/core/store';
 import { uiActions } from '@/actions/uiActions';
-import type {
-    HandlebarsTemplateFunction,
-    TemplateName,
-    UIConstants,
-} from '@/types';
+import type { HandlebarsTemplateFunction, TemplateName, UIConstants } from '@/types';
 import { authActions } from '@/actions/authActions';
 import { CONFIG } from '@/core/config';
 
@@ -36,6 +38,7 @@ export const AppController = {
     async init(): Promise<void> {
         await this.loadTemplates();
         loadSellerPageTemplates();
+        loadCartTemplates();
         AuthController.templates = {
             'login-forms': this.templates['login-forms'],
             'register-form': this.templates['register-form'],
@@ -57,6 +60,7 @@ export const AppController = {
     },
 
     async loadTemplates(): Promise<void> {
+        // Шаблоны уже прекомпилированы лоадером, просто присваиваем их
         this.templates['main-page'] = mainPageTpl;
         this.templates['login-forms'] = loginFormsTpl;
         this.templates['register-form'] = registerFormTpl;
@@ -64,6 +68,7 @@ export const AppController = {
         this.templates['auth-links'] = authLinksTpl;
         this.templates['not-found'] = notFoundTpl;
 
+        // Регистрация хелперов остаётся (они нужны для рендера)
         this.registerHandlebarsHelpers();
     },
 
@@ -72,42 +77,29 @@ export const AppController = {
             return price === 0 ? 'Бесплатно' : `${price} ₽`;
         });
 
-        Handlebars.registerHelper(
-            'ifAuthenticated',
-            function (this: any, options: any) {
-                return store.isAuthenticated
-                    ? options.fn(this)
-                    : options.inverse(this);
-            },
-        );
+        Handlebars.registerHelper('ifAuthenticated', function (this: any, options: any) {
+            return store.isAuthenticated ? options.fn(this) : options.inverse(this);
+        });
 
-        Handlebars.registerHelper(
-            'avatarUrl',
-            (avatar: string, avatarPath: string) => {
-                const DEFAULT_AVATAR = '/images/logo/avatar.jpeg';
-                const source = avatar || avatarPath || '';
-                if (!source) {
-                    return DEFAULT_AVATAR;
-                }
+        Handlebars.registerHelper('avatarUrl', (avatar: string, avatarPath: string) => {
+            const DEFAULT_AVATAR = '/images/logo/avatar.jpeg';
+            const source = avatar || avatarPath || '';
+            if (!source) {
+                return DEFAULT_AVATAR;
+            }
 
-                const trimmed = source.trim();
-                if (!trimmed) {
-                    return DEFAULT_AVATAR;
-                }
+            const trimmed = source.trim();
+            if (!trimmed) {
+                return DEFAULT_AVATAR;
+            }
 
-                if (
-                    trimmed.startsWith('http://') ||
-                    trimmed.startsWith('https://')
-                ) {
-                    return trimmed;
-                }
+            if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
+                return trimmed;
+            }
 
-                const normalized = trimmed.startsWith('/')
-                    ? trimmed
-                    : `/${trimmed}`;
-                return `${CONFIG.API.BASE_URL}${normalized}`;
-            },
-        );
+            const normalized = trimmed.startsWith('/') ? trimmed : `/${trimmed}`;
+            return `${CONFIG.API.BASE_URL}${normalized}`;
+        });
     },
 
     async checkAuth(): Promise<void> {
@@ -134,7 +126,8 @@ export const AppController = {
         const path = window.location.pathname;
         uiActions.navigateTo(path);
 
-        if (!store.isAuthenticated && path === '/profile') {
+        if (!store.isAuthenticated && (path === '/profile' || path === '/cart')) {
+            window.history.pushState({}, '', '/login');
             uiActions.navigateTo('/login');
             AuthController.showLogin();
             return;
@@ -159,6 +152,9 @@ export const AppController = {
                 break;
             case '/profile':
                 ProfileController.showProfile();
+                break;
+            case '/cart':
+                CartController.renderCart();
                 break;
             default:
                 this.renderNotFound();

@@ -2,7 +2,7 @@ import { authActions } from '@/actions/authActions';
 import { store } from '@/core/store';
 import { uiActions } from '@/actions/uiActions';
 import type { HandlebarsTemplateFunction } from '@/types';
-import { AppController } from './AppController';
+import { AppController } from '@/controllers/AppController';
 
 declare const Handlebars: any;
 
@@ -59,13 +59,9 @@ export const AuthController = {
 
         if (result.isValid) {
             uiActions.showSuccess('Вход выполнен!');
-            window.history.pushState({}, '', '/');
-            if (typeof AppController?.router === 'function') {
-                AppController.router();
-            }
+            AppController.navigateTo('/');
         } else {
             uiActions.showError(result.error || 'Ошибка входа');
-            this.clearLoginError();
             this.showLoginError(result.error ?? 'Ошибка входа');
         }
     },
@@ -74,42 +70,27 @@ export const AuthController = {
         const result = await authActions.register(data);
 
         if (result.isValid) {
-            uiActions.showSuccess('Вход выполнен!');
-            window.history.pushState({}, '', '/');
-            if (typeof AppController?.router === 'function') {
-                AppController.router();
-            }
+            uiActions.showSuccess('Регистрация успешна!');
+            AppController.navigateTo('/');
         } else {
             uiActions.showError(result.error || 'Ошибка регистрации');
-            this.clearFieldErrors();
-            if (result.fieldErrors) {
-                this.showFieldErrors(result.fieldErrors);
-            }
-            // мы просто накладываем ошибки поверх существующих полей.
         }
     },
 
     async handleLogout(): Promise<void> {
         await authActions.logout();
         localStorage.removeItem('authToken');
-        window.history.pushState({}, '', '/');
-        if (typeof AppController?.router === 'function') {
-            AppController.router();
-        }
+        AppController.navigateTo('/');
     },
 
     initPasswordToggles(): void {
-        const toggles = document.querySelectorAll(
-            '#togglePassword, #toggleConfirmPassword',
-        );
+        const toggles = document.querySelectorAll('#togglePassword, #toggleConfirmPassword');
 
         toggles.forEach((toggleBtn) => {
             const btn = toggleBtn as HTMLButtonElement;
             const eyeIcon = btn.querySelector('img') as HTMLImageElement;
             const wrapper = btn.closest('.password-wrapper');
-            const input = wrapper?.querySelector(
-                'input[type="password"]',
-            ) as HTMLInputElement;
+            const input = wrapper?.querySelector('input[type="password"]') as HTMLInputElement;
 
             if (input && eyeIcon) {
                 btn.addEventListener('click', () => {
@@ -118,9 +99,7 @@ export const AuthController = {
                     eyeIcon.src = isPassword
                         ? this.UI_CONSTANTS.EYE_OPEN
                         : this.UI_CONSTANTS.EYE_CLOSED;
-                    eyeIcon.alt = isPassword
-                        ? 'Скрыть пароль'
-                        : 'Показать пароль';
+                    eyeIcon.alt = isPassword ? 'Скрыть пароль' : 'Показать пароль';
                 });
             }
         });
@@ -143,9 +122,7 @@ export const AuthController = {
     },
 
     clearLoginError(): void {
-        document
-            .querySelectorAll('.login-error, .alert-error')
-            .forEach((el) => el.remove());
+        document.querySelectorAll('.login-error, .alert-error').forEach((el) => el.remove());
         ['email', 'password'].forEach((id) => {
             const el = document.getElementById(id);
             if (el) el.classList.remove('error');
@@ -157,8 +134,7 @@ export const AuthController = {
 
         Object.entries(fieldErrors).forEach(([field, error]) => {
             if (!error) return;
-            const inputId =
-                field === 'confirmPassword' ? 'confirm-password' : field;
+            const inputId = field === 'confirmPassword' ? 'confirm-password' : field;
             const input = document.getElementById(inputId);
 
             if (input) {
@@ -173,9 +149,7 @@ export const AuthController = {
 
     clearFieldErrors(): void {
         document.querySelectorAll('.field-error').forEach((el) => el.remove());
-        document
-            .querySelectorAll('.error')
-            .forEach((el) => el.classList.remove('error'));
+        document.querySelectorAll('.error').forEach((el) => el.classList.remove('error'));
     },
 
     attachLoginListeners(): void {
@@ -188,12 +162,8 @@ export const AuthController = {
 
         const handler: EventListener = (e: Event) => {
             e.preventDefault();
-            const email =
-                (document.getElementById('email') as HTMLInputElement)?.value ||
-                '';
-            const password =
-                (document.getElementById('password') as HTMLInputElement)
-                    ?.value || '';
+            const email = (document.getElementById('email') as HTMLInputElement)?.value || '';
+            const password = (document.getElementById('password') as HTMLInputElement)?.value || '';
             this.handleLoginSubmit(email, password);
         };
 
@@ -202,9 +172,7 @@ export const AuthController = {
     },
 
     attachRegisterListeners(): void {
-        const form = document.getElementById(
-            'register-form',
-        ) as HTMLFormElement;
+        const form = document.getElementById('register-form') as HTMLFormElement;
         if (!form) return;
 
         if (this._registerHandler) {
@@ -214,21 +182,11 @@ export const AuthController = {
         const handler: EventListener = (e: Event) => {
             e.preventDefault();
             const data = {
-                name:
-                    (document.getElementById('name') as HTMLInputElement)
-                        ?.value || '',
-                email:
-                    (document.getElementById('email') as HTMLInputElement)
-                        ?.value || '',
-                password:
-                    (document.getElementById('password') as HTMLInputElement)
-                        ?.value || '',
+                name: (document.getElementById('name') as HTMLInputElement)?.value || '',
+                email: (document.getElementById('email') as HTMLInputElement)?.value || '',
+                password: (document.getElementById('password') as HTMLInputElement)?.value || '',
                 confirmPassword:
-                    (
-                        document.getElementById(
-                            'confirm-password',
-                        ) as HTMLInputElement
-                    )?.value || '',
+                    (document.getElementById('confirm-password') as HTMLInputElement)?.value || '',
             };
             this.handleRegisterSubmit(data);
         };

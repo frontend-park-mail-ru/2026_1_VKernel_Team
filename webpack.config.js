@@ -48,6 +48,9 @@ export default (env, argv) => {
             esModule: true,
             runtime: 'handlebars/dist/handlebars.runtime.js',
             knownHelpers: ['if', 'unless', 'each', 'with', 'log', 'formatPrice'],
+            partialDirs: [
+              path.resolve(__dirname, 'src/modules/cart/components/cart-button'),
+            ],
           },
         },
       ],
