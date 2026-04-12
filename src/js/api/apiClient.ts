@@ -57,7 +57,6 @@ export class ApiClient {
     /**
      * Обновляет токен доступа через запрос на рефреш
      */
-    
     private async _refreshAccessToken(): Promise<ApiResponse> {
         if (!this._isRefreshing) {
             this._isRefreshing = true;
@@ -118,7 +117,7 @@ export class ApiClient {
             ...customHeaders,
         };
 
-        // Токен авторизации
+        // Подставляем токен из LocalStorage, если он есть
         const token = storage.getToken();
         if (token) {
             headers['Authorization'] = `Bearer ${token}`;
@@ -145,6 +144,14 @@ export class ApiClient {
         try {
             let response = await fetch(`${API_URL}${endpoint}`, config);
 
+            // ИСПРАВЛЕНИЕ: Пытаемся поймать токен из заголовков ответа
+            // (Часто бэкенды шлют токен в Authorization или X-Token)
+            const authHeader = response.headers.get('Authorization') || response.headers.get('X-Token');
+            if (authHeader) {
+                const extractedToken = authHeader.replace('Bearer ', '');
+                storage.setToken(extractedToken);
+            }
+
             response = await this._handleUnauthorizedResponse(response, endpoint, config);
 
             let data: any;
@@ -158,6 +165,14 @@ export class ApiClient {
             } else {
                 const text = await response.text();
                 data = { message: text };
+            }
+
+            // ИСПРАВЛЕНИЕ: Если бэкенд возвращает токен внутри тела JSON, но не в объекте data
+            if (response.ok && endpoint === API_ENDPOINTS.AUTH.LOGIN) {
+                const possibleToken = data?.token || data?.access_token || data?.data?.token || data?.data?.access_token;
+                if (possibleToken) {
+                    storage.setToken(possibleToken);
+                }
             }
 
             if (response.ok) {

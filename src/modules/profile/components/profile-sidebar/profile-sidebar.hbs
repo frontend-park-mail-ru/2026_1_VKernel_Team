@@ -1,23 +1,33 @@
 <aside class="profile-sidebar">
   <nav class="profile-nav">
-    {{#each (array 'info' 'ads' 'favorites' 'cart' 'messages' 'purchases' 'wallet' 'settings') as |tab|}}
-      <button 
-        class="profile-nav-item {{#eq ../currentTab tab}}active{{/eq}}" 
-        data-tab="{{tab}}"
-      >
-        <span class="nav-icon">{{iconForTab tab}}</span>
-        <span class="nav-label">{{labelForTab tab}}</span>
-        {{#if (gt (concat 'user.' tab '_count') 0)}}
-          <span class="nav-badge">{{lookup ../user (concat tab '_count')}}</span>
-        {{/if}}
-      </button>
-    {{/each}}
+    
+    <button class="profile-nav-item {{#eq currentTab 'info'}}active{{/eq}}" data-tab="info">
+      <span class="nav-icon">👤</span> 
+      <span class="nav-label">Личные данные</span>
+    </button>
+    
+    <button class="profile-nav-item {{#eq currentTab 'ads'}}active{{/eq}}" data-tab="ads">
+      <span class="nav-icon">📦</span> 
+      <span class="nav-label">Мои объявления</span>
+      {{#if (gt user.ads_count 0)}}
+        <span class="nav-badge">{{user.ads_count}}</span>
+      {{/if}}
+    </button>
+    
+    <button class="profile-nav-item {{#eq currentTab 'favorites'}}active{{/eq}}" data-tab="favorites">
+      <span class="nav-icon">❤️</span> 
+      <span class="nav-label">Избранное</span>
+      {{#if (gt user.favorites_count 0)}}
+        <span class="nav-badge">{{user.favorites_count}}</span>
+      {{/if}}
+    </button>
+
+    <div class="nav-divider"></div>
+
+    <button class="profile-nav-item logout-item" data-action="logout">
+      <span class="nav-icon">🚪</span> 
+      <span class="nav-label">Выйти</span>
+    </button>
+
   </nav>
-  
-  {{#if user.balance}}
-    <div class="profile-balance">
-      <span>Баланс:</span>
-      <strong>{{formatPrice user.balance}}</strong>
-    </div>
-  {{/if}}
 </aside>

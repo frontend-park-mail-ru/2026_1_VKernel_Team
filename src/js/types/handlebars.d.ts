@@ -8,3 +8,8 @@ declare module '*.hbs' {
     const template: (context: Record<string, unknown>, options?: any) => string;
     export default template;
 }
+
+declare module 'handlebars/dist/handlebars.runtime.js' {
+    import Handlebars from 'handlebars';
+    export default Handlebars;
+}   

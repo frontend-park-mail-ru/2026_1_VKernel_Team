@@ -35,11 +35,11 @@
             <div class="header-right">
                 {{#if isAuthenticated}}
                     <button class="btn place-ad-btn">Разместить объявление</button>
-                <!--Нужна проверка в будущем на загрузку своей аватарки пользователем-->
-
-                    <a href="">
+                    
+                    <a href="/profile" class="profile-icon" data-nav="/profile" style="text-decoration: none;">
                         <img src="{{avatarImageUrl}}" alt="Аватар" class="avatar">
                     </a>
+                    
                     <button class="btn btn-danger logout-btn" data-action="logout">
                         Выйти
                     </button>

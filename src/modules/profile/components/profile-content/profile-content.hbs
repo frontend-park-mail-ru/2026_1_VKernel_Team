@@ -1,15 +1,29 @@
-<div class="profile-tab-content" data-tab="info">
+<div class="profile-tab-content">
+  
   {{#eq currentTab 'info'}}
-    {{> profile-info user=user}}
+    <div class="profile-info-section">
+      <h2 class="section-title">Личные данные</h2>
+      <div class="profile-details">
+        <p><strong>Имя:</strong> {{user.name}}</p>
+        <p><strong>Email:</strong> {{user.email}}</p>
+        <p><strong>Рейтинг:</strong> {{user.rating}} ⭐</p>
+        <p><strong>Зарегистрирован:</strong> {{formatDate user.created_at}}</p>
+      </div>
+    </div>
   {{/eq}}
   
   {{#eq currentTab 'ads'}}
-    {{> profile-ads ads=ads filter=adFilter stats=adsStats}}
+    <div class="profile-ads-section">
+      <h2 class="section-title">Мои объявления</h2>
+      <p class="empty-state">Здесь скоро появится сетка ваших товаров.</p>
+    </div>
   {{/eq}}
   
   {{#eq currentTab 'favorites'}}
-    <p>Избранное (в разработке)</p>
+    <div class="profile-favorites-section">
+      <h2 class="section-title">Избранное</h2>
+      <p class="empty-state">Ваши сохраненные объявления.</p>
+    </div>
   {{/eq}}
-  
-  {{!-- остальные вкладки --}}
+
 </div>

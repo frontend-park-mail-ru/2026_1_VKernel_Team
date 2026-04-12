@@ -1,10 +1,18 @@
 import { store } from '@/core/store';
 import { uiActions } from '@/actions/uiActions';
 import { ProfileService } from './service';
-import type { ProfileTab } from './types';
+import type { ProfileTab, HandlebarsTemplateFunction } from '@/types';
+
+// Импортируем шаблоны для вкладок
+import profileContentTpl from './components/profile-content/profile-content.hbs';
+import profileSidebarTpl from './components/profile-sidebar/profile-sidebar.hbs';
 
 export const ProfileController = {
   currentTab: 'info' as ProfileTab,
+  _isEventsAttached: false,
+  
+  // Сюда AppController при инициализации положит шаблон профиля
+  templates: {} as Record<string, HandlebarsTemplateFunction>,
 
   async showProfile(): Promise<void> {
     if (!store.isAuthenticated) {
@@ -15,47 +23,45 @@ export const ProfileController = {
     const app = document.getElementById('app');
     if (!app) return;
 
-    // Загружаем шаблон через глобальный хелпер AppController (или импорт, если настроен)
-    const template = (window as any).AppController?.templates?.['profile-page'];
+    // Теперь берем шаблон напрямую из своих ресурсов
+    const template = this.templates['profile-page'];
     if (!template) {
-      app.innerHTML = '<div style="padding:40px;text-align:center;color:red">Шаблон профиля не загружен</div>';
+      app.innerHTML = '<div style="padding:40px;text-align:center;color:red">Ошибка: Шаблон профиля не передан в контроллер.</div>';
       return;
     }
 
     app.innerHTML = template({
-      user: store.user || { name: 'Пользователь', rating: 0, reviews_count: 0, ads_count: 0, favorites_count: 0, cart_count: 0, messages_count: 0 },
+      user: store.user || { name: 'Пользователь', rating: 0, ads_count: 0, favorites_count: 0 },
       currentTab: this.currentTab,
-      avatarUrl: store.user?.avatar_path ? `/api/v1${store.user.avatar_path}` : ''
+      avatarUrl: store.user?.avatar_path ? `/api/v1${store.user.avatar_path}` : '/images/logo/avatar.jpeg'
     });
 
     this.attachEventListeners();
-    this.loadProfileData();
+    await this.loadProfileData();
   },
 
   attachEventListeners(): void {
-    // Переключение табов
-    document.querySelectorAll('.profile-tab-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
+    if (this._isEventsAttached) return; 
+    this._isEventsAttached = true;
+
+    document.addEventListener('click', (e) => {
+      const target = e.target as HTMLElement;
+      
+      const tabBtn = target.closest('.profile-nav-item[data-tab]');
+      if (tabBtn) {
         e.preventDefault();
-        const tab = (e.currentTarget as HTMLElement).dataset.tab as ProfileTab;
+        const tab = (tabBtn as HTMLElement).dataset.tab as ProfileTab;
         if (tab && tab !== this.currentTab) {
           this.currentTab = tab;
           this.rerenderTab();
+          this.rerenderSidebar(); 
         }
-      });
-    });
+      }
 
-    // Кнопки
-    document.getElementById('editNameBtn')?.addEventListener('click', () => this.openModal(true));
-    document.getElementById('cancelNameBtn')?.addEventListener('click', () => this.openModal(false));
-    document.getElementById('saveNameBtn')?.addEventListener('click', () => this.saveName());
-    document.getElementById('changeAvatarBtn')?.addEventListener('click', () => document.getElementById('avatarUpload')?.click());
-    document.getElementById('logoutBtn')?.addEventListener('click', () => this.handleLogout());
-    document.getElementById('sidebarLogoutBtn')?.addEventListener('click', () => this.handleLogout());
-
-    // Закрытие модалки по клику вне
-    document.getElementById('editProfileModal')?.addEventListener('click', (e) => {
-      if ((e.target as HTMLElement).classList.contains('modal-overlay')) this.openModal(false);
+      if (target.closest('[data-action="logout"]')) {
+         e.preventDefault();
+         this.handleLogout();
+      }
     });
   },
 
@@ -65,10 +71,11 @@ export const ProfileController = {
       const res = await ProfileService.getProfile();
       if (res.success && res.data) {
         store.setState({ user: res.data });
-        this.rerenderTab(); // обновляем только контент таба
+        this.rerenderTab(); 
+        this.rerenderSidebar();
       }
     } catch (err) {
-      uiActions.showError('Не удалось загрузить профиль');
+      uiActions.showError('Не удалось обновить данные профиля');
     } finally {
       uiActions.showLoading(false);
     }
@@ -77,44 +84,19 @@ export const ProfileController = {
   rerenderTab(): void {
     const contentEl = document.getElementById('tabContent');
     if (!contentEl) return;
-    // Здесь позже будет рендер компонентов. Пока заглушка:
-    contentEl.innerHTML = `<div class="tab-content-placeholder"><h2 class="section-title">${this.getTabTitle()}</h2><p>Загрузка раздела "${this.currentTab}"...</p></div>`;
+    contentEl.innerHTML = profileContentTpl({
+      currentTab: this.currentTab,
+      user: store.user
+    });
   },
 
-  getTabTitle(): string {
-    const titles: Record<ProfileTab, string> = {
-      info: 'Личные данные', ads: 'Мои объявления', favorites: 'Избранное', cart: 'Корзина',
-      messages: 'Сообщения', purchases: 'Мои покупки', wallet: 'Кошелёк', settings: 'Настройки'
-    };
-    return titles[this.currentTab] || 'Профиль';
-  },
-
-  openModal(show: boolean): void {
-    const modal = document.getElementById('editProfileModal');
-    if (show) modal?.classList.add('show');
-    else modal?.classList.remove('show');
-  },
-
-  async saveName(): Promise<void> {
-    const input = document.getElementById('editNameInput') as HTMLInputElement;
-    if (!input) return;
-    const name = input.value.trim();
-    if (name.length < 2) return uiActions.showError('Имя слишком короткое');
-
-    uiActions.showLoading(true);
-    try {
-      const res = await ProfileService.updateName(name);
-      if (res.success && res.data) {
-        store.setState({ user: res.data });
-        this.openModal(false);
-        uiActions.showSuccess('Имя обновлено');
-        this.rerenderTab();
-      }
-    } catch (err) {
-      uiActions.showError('Ошибка при сохранении');
-    } finally {
-      uiActions.showLoading(false);
-    }
+  rerenderSidebar(): void {
+    const sidebarEl = document.querySelector('.profile-layout__sidebar');
+    if (!sidebarEl) return;
+    sidebarEl.innerHTML = profileSidebarTpl({
+      currentTab: this.currentTab,
+      user: store.user
+    });
   },
 
   async handleLogout(): Promise<void> {
@@ -122,7 +104,10 @@ export const ProfileController = {
       await ProfileService.logout();
       store.setState({ isAuthenticated: false, user: null });
       uiActions.showSuccess('Вы вышли из аккаунта');
-      uiActions.navigateTo('/login');
+      
+      // Корректный переход на главную без window.AppController
+      window.history.pushState({}, '', '/');
+      window.dispatchEvent(new PopStateEvent('popstate'));
     } catch (err) {
       uiActions.showError('Ошибка при выходе');
     }

@@ -15,7 +15,7 @@ import { SellerPageController } from '@modules/seller-page/controller';
 import { loadTemplates as loadSellerPageTemplates } from '@modules/seller-page/pages/seller-page/seller-page';
 import { CartController } from '@modules/cart/controller';
 import { loadTemplates as loadCartTemplates } from '@modules/cart/pages/cart/cart';
-import { ProfileController } from '@modules/profile/controller'; // Добавлен импорт профиля
+import { ProfileController } from '@modules/profile/controller'; 
 
 import { store } from '@/core/store';
 import { uiActions } from '@/actions/uiActions';
@@ -23,7 +23,8 @@ import type { HandlebarsTemplateFunction, TemplateName, UIConstants } from '@/ty
 import { authActions } from '@/actions/authActions';
 import { CONFIG } from '@/core/config';
 
-declare const Handlebars: any;
+// ИСПРАВЛЕНИЕ: Импортируем ТОТ ЖЕ самый runtime, который использует webpack handlebars-loader
+import Handlebars from 'handlebars/dist/handlebars.runtime.js';
 
 export const AppController = {
     _lastPage: '',
@@ -50,6 +51,9 @@ export const AppController = {
         AdsController.templates = {
             'main-page': this.templates['main-page'],
         };
+        ProfileController.templates = {
+            'profile-page': this.templates['user-profile'],
+        };
 
         this.setupGlobalHandlers();
         this.setupStoreSubscription();
@@ -67,11 +71,13 @@ export const AppController = {
         this.templates['register-form'] = registerFormTpl;
         this.templates['auth-links'] = authLinksTpl;
         this.templates['not-found'] = notFoundTpl;
+        this.templates['user-profile'] = userProfileTpl;
 
         this.registerHandlebarsHelpers();
     },
 
     registerHandlebarsHelpers(): void {
+        // Базовые хелперы
         Handlebars.registerHelper('formatPrice', (price: number) => {
             return price === 0 ? 'Бесплатно' : `${price} ₽`;
         });
@@ -95,6 +101,33 @@ export const AppController = {
             const normalized = trimmed.startsWith('/') ? trimmed : `/${trimmed}`;
             return `${CONFIG.API.BASE_URL}${normalized}`;
         });
+
+        // ИСПРАВЛЕНИЕ: Добавляем все хелперы для шаблонов профиля
+        Handlebars.registerHelper('eq', function (a: any, b: any) { return a === b; });
+        Handlebars.registerHelper('gt', function (a: any, b: any) { return a > b; });
+        Handlebars.registerHelper('concat', function (...args: any[]) { return args.slice(0, -1).join(''); });
+        Handlebars.registerHelper('array', function (...args: any[]) { return args.slice(0, -1); });
+        
+        Handlebars.registerHelper('iconForTab', function (tab: string) {
+            const icons: Record<string, string> = {
+                info: '👤', ads: '📦', favorites: '❤️', cart: '🛒',
+                messages: '✉️', purchases: '🛍️', wallet: '💳', settings: '⚙️'
+            };
+            return icons[tab] || '📁';
+        });
+
+        Handlebars.registerHelper('labelForTab', function (tab: string) {
+            const labels: Record<string, string> = {
+                info: 'Личные данные', ads: 'Мои объявления', favorites: 'Избранное', cart: 'Корзина',
+                messages: 'Сообщения', purchases: 'Мои покупки', wallet: 'Кошелёк', settings: 'Настройки'
+            };
+            return labels[tab] || tab;
+        });
+
+        Handlebars.registerHelper('formatDate', function (dateString: string) {
+            if (!dateString) return '—';
+            return new Date(dateString).toLocaleDateString('ru-RU');
+        });
     },
 
     async checkAuth(): Promise<void> {
@@ -111,14 +144,11 @@ export const AppController = {
         if (state.error) {
             uiActions.showError(state.error);
         }
-        // Роутим только если путь реально изменился
         if (state.currentPage && state.currentPage !== this._lastPage) {
             this._lastPage = state.currentPage;
             this.router();
         }
     },
-
-    
 
     router(): void {
         const path = window.location.pathname;
@@ -173,7 +203,6 @@ export const AppController = {
         document.addEventListener('click', (e: Event) => {
             const target = e.target as HTMLElement;
 
-            // Обработка ссылок с data-nav
             const navElement = target.closest('[data-nav]');
             if (navElement) {
                 e.preventDefault();
@@ -182,7 +211,6 @@ export const AppController = {
                 return;
             }
 
-            // Обработка кнопок действий (например, logout)
             const actionElement = target.closest('[data-action]');
             if (actionElement) {
                 e.preventDefault();
@@ -197,12 +225,10 @@ export const AppController = {
 
     showLoading(show: boolean): void {
         let loader = document.getElementById('global-loader');
-
         if (!show) {
             loader?.remove();
             return;
         }
-
         if (!loader) {
             loader = document.createElement('div');
             loader.id = 'global-loader';
