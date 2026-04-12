@@ -2,18 +2,26 @@
  * Главный контроллер приложения
  * Управляет роутингом, инициализацией и глобальными обработчиками
  */
+import mainPageTpl from '@templates/main-page.hbs';
+import loginFormsTpl from '@templates/login-forms.hbs';
+import registerFormTpl from '@templates/register-form.hbs';
+import userProfileTpl from '@modules/profile/pages/profile/profile.hbs';
+import authLinksTpl from '@templates/auth-links.hbs';
+import notFoundTpl from '@templates/not-found.hbs';
 
 import { AuthController } from '@/controllers/AuthController';
 import { AdsController } from '@/controllers/AdsController';
+import { SellerPageController } from '@modules/seller-page/controller';
+import { loadTemplates as loadSellerPageTemplates } from '@modules/seller-page/pages/seller-page/seller-page';
+import { CartController } from '@modules/cart/controller';
+import { loadTemplates as loadCartTemplates } from '@modules/cart/pages/cart/cart';
+import { ProfileController } from '@modules/profile/controller'; // Добавлен импорт профиля
+
 import { store } from '@/core/store';
 import { uiActions } from '@/actions/uiActions';
-import type {
-    HandlebarsTemplateFunction,
-    TemplateName,
-    UIConstants,
-} from '@/types';
+import type { HandlebarsTemplateFunction, TemplateName, UIConstants } from '@/types';
 import { authActions } from '@/actions/authActions';
-import { initProfilePage } from '@modules/profile/pages/profile/profile';
+import { CONFIG } from '@/core/config';
 
 declare const Handlebars: any;
 
@@ -31,6 +39,10 @@ export const AppController = {
 
     async init(): Promise<void> {
         await this.loadTemplates();
+        loadSellerPageTemplates();
+        loadCartTemplates();
+
+        // Прокидываем шаблоны в дочерние контроллеры
         AuthController.templates = {
             'login-forms': this.templates['login-forms'],
             'register-form': this.templates['register-form'],
@@ -42,6 +54,7 @@ export const AppController = {
         this.setupGlobalHandlers();
         this.setupStoreSubscription();
 
+        // Проверяем авторизацию перед первым роутингом
         await this.checkAuth().catch(() => {});
 
         this.router();
@@ -49,55 +62,38 @@ export const AppController = {
     },
 
     async loadTemplates(): Promise<void> {
-        const templateNames: TemplateName[] = [
-            'auth-links',
-            'login-forms',
-            'register-form',
-            'main-page',
-            'not-found',
-        ];
+        this.templates['main-page'] = mainPageTpl;
+        this.templates['login-forms'] = loginFormsTpl;
+        this.templates['register-form'] = registerFormTpl;
+        this.templates['auth-links'] = authLinksTpl;
+        this.templates['not-found'] = notFoundTpl;
 
-        for (const name of templateNames) {
-            try {
-                const response = await fetch(`/templates/${name}.hbs`);
-                const source = await response.text();
-                this.templates[name] = Handlebars.compile(source);
-            } catch (error) {
-                console.error(`Failed to load template ${name}:`, error);
-            }
-        }
         this.registerHandlebarsHelpers();
     },
 
     registerHandlebarsHelpers(): void {
-        // Существующие хелперы
         Handlebars.registerHelper('formatPrice', (price: number) => {
             return price === 0 ? 'Бесплатно' : `${price} ₽`;
         });
 
-        Handlebars.registerHelper(
-            'ifAuthenticated',
-            function (this: any, options: any) {
-                return store.isAuthenticated
-                    ? options.fn(this)
-                    : options.inverse(this);
-            },
-        );
-        Handlebars.registerHelper('eq', function (a: any, b: any) {
-            return a === b;
+        Handlebars.registerHelper('ifAuthenticated', function (this: any, options: any) {
+            return store.isAuthenticated ? options.fn(this) : options.inverse(this);
         });
-        
-        // Опционально: другие полезные хелперы
-        Handlebars.registerHelper('ne', function (a: any, b: any) {
-            return a !== b;
-        });
-        
-        Handlebars.registerHelper('gt', function (a: number, b: number) {
-            return a > b;
-        });
-        
-        Handlebars.registerHelper('lt', function (a: number, b: number) {
-            return a < b;
+
+        Handlebars.registerHelper('avatarUrl', (avatar: string, avatarPath: string) => {
+            const DEFAULT_AVATAR = '/images/logo/avatar.jpeg';
+            const source = avatar || avatarPath || '';
+            if (!source) return DEFAULT_AVATAR;
+
+            const trimmed = source.trim();
+            if (!trimmed) return DEFAULT_AVATAR;
+
+            if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
+                return trimmed;
+            }
+
+            const normalized = trimmed.startsWith('/') ? trimmed : `/${trimmed}`;
+            return `${CONFIG.API.BASE_URL}${normalized}`;
         });
     },
 
@@ -112,23 +108,29 @@ export const AppController = {
     },
 
     onStateChange(state: any): void {
-        this.showLoading(state.isLoading);
         if (state.error) {
             uiActions.showError(state.error);
         }
-        // Добавляем защиту от рекурсии
+        // Роутим только если путь реально изменился
         if (state.currentPage && state.currentPage !== this._lastPage) {
             this._lastPage = state.currentPage;
             this.router();
         }
     },
 
+    
+
     router(): void {
         const path = window.location.pathname;
 
-        // Force login if accessing profile while unauthenticated
-        if (!store.isAuthenticated && path === '/profile') {
+        if (!store.isAuthenticated && (path === '/profile' || path === '/cart')) {
             this.navigateTo('/login');
+            return;
+        }
+
+        const sellerMatch = path.match(/^\/seller\/(\d+)$/);
+        if (sellerMatch) {
+            SellerPageController.renderSellerPage(sellerMatch[1]);
             return;
         }
 
@@ -144,7 +146,10 @@ export const AppController = {
                 AuthController.showRegister();
                 break;
             case '/profile':
-                initProfilePage(); 
+                ProfileController.showProfile();
+                break;
+            case '/cart':
+                CartController.renderCart();
                 break;
             default:
                 this.renderNotFound();
@@ -152,20 +157,23 @@ export const AppController = {
     },
 
     navigateTo(path: string): void {
+        if (window.location.pathname === path) return;
         window.history.pushState({}, '', path);
         uiActions.navigateTo(path);
+        this.router();
     },
 
     renderNotFound(): void {
         const app = document.getElementById('app');
         if (!app || !this.templates['not-found']) return;
-        app.innerHTML = this.templates['not-found']();
+        app.innerHTML = this.templates['not-found']({});
     },
 
     setupGlobalHandlers(): void {
         document.addEventListener('click', (e: Event) => {
             const target = e.target as HTMLElement;
 
+            // Обработка ссылок с data-nav
             const navElement = target.closest('[data-nav]');
             if (navElement) {
                 e.preventDefault();
@@ -174,6 +182,7 @@ export const AppController = {
                 return;
             }
 
+            // Обработка кнопок действий (например, logout)
             const actionElement = target.closest('[data-action]');
             if (actionElement) {
                 e.preventDefault();

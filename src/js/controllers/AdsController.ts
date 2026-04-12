@@ -5,8 +5,10 @@
  */
 
 import { adsActions } from '@/actions/adsActions';
+import { eventBus } from '@/core/eventBus';
 import { store } from '@/core/store';
-import type { Ad, FormattedAd, HandlebarsTemplateFunction } from '@/types';
+import { CONFIG } from '@/core/config';
+import type { Ad, HandlebarsTemplateFunction } from '@/types';
 
 declare const Handlebars: any;
 
@@ -31,12 +33,25 @@ export const AdsController = {
         const formattedAds = ads.map((ad: Ad) => this.formatAdCard(ad));
         document.body.classList.remove('auth-page');
 
+        const user = store.user;
+        let avatarImageUrl = '/images/logo/avatar.jpeg';
+        if (user) {
+            const src = (user.avatar || user.avatar_path || '').trim();
+            if (src) {
+                avatarImageUrl = src.startsWith('http')
+                    ? src
+                    : `${CONFIG.API.BASE_URL}${src.startsWith('/') ? src : `/${src}`}`;
+            }
+        }
+
         app.innerHTML = template({
             isAuthenticated: store.isAuthenticated,
-            user: store.user,
+            user,
+            avatarImageUrl,
             recommendations: formattedAds,
         });
 
+        eventBus.emit('page:adsRendered');
         this.attachMainEventListeners();
     },
 

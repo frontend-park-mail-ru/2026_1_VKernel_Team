@@ -1,0 +1,178 @@
+<div class="main-container">
+    <!-- НАВБАР -->
+    <header class="header">
+        <div class="header-content">
+            <div class="header-left">
+                <div class="nav-icon">
+                    <a href="#" class="nav-link">
+                        <span class="icon">💼</span>
+                        <span class="nav-text">Для бизнеса</span>
+                    </a>
+                </div>
+                <div class="nav-icon">
+                    <a href="#" class="nav-link">
+                        <span class="icon">✉️</span>
+                        <span class="nav-text">Сообщения</span>
+                    </a>
+                </div>
+                <div class="nav-icon">
+                    <a href="#" class="nav-link">
+                        <span class="icon favorites">♡</span>
+                        <span class="nav-text">Избранное</span>
+                    </a>
+                </div>
+                <div class="nav-icon">
+                    <a href="#" class="nav-link">
+                        <span class="icon">🛒</span>
+                        <span class="nav-text">Корзина</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="header-right">
+                {{#if isAuthenticated}}
+                    <button class="btn place-ad-btn">Разместить объявление</button>
+                    <a href="">
+                        <img src="/images/logo/avatar.jpeg" alt="Аватар" class="avatar">
+                    </a>
+                    <button class="btn btn-danger logout-btn" data-action="logout">
+                        Выйти
+                    </button>
+                {{else}}
+                    <button class="btn place-ad-btn" data-nav="/login">Разместить объявление</button>
+                    <p>
+                        <a href="#" class="nav-login" data-nav="/login">Войти</a>
+                    </p>
+                {{/if}}
+            </div>
+        </div>
+    </header>
+
+    <!-- ОСНОВНОЙ КОНТЕНТ -->
+    <main class="main-content">
+        <!-- Поисковый блок -->
+        <div class="search-section">
+            <div class="search-row">
+                <div class="brand">
+                    <a data-nav="/">
+                        <img src="/images/logo/logo_clover2.jpeg" alt="Логотип" class="logo">
+                    </a>
+                </div>
+                <div class="search-wrapper">
+                    <input type="text" class="search-input" placeholder="Поиск объявлений...">
+                    <button class="btn place-ad-btn">Найти</button>
+                </div>
+                <div class="geo">
+                    <span class="icon">📍</span>
+                    <span class="city">Москва</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Контент страницы продавца -->
+        <div class="seller-page-layout">
+            <!-- Левая колонка — информация о продавце -->
+            <aside class="seller-sidebar">
+                <div class="seller-info-card">
+                    <div class="seller-avatar-wrapper">
+                        <img src="{{seller.avatarUrl}}" alt="{{seller.name}}" class="seller-avatar">
+                    </div>
+                    <h2 class="seller-name">{{seller.name}}</h2>
+
+                    <div class="seller-rating-row">
+                        <span class="seller-rating-value">{{seller.rating}}</span>
+                        <span class="seller-rating-stars">{{{seller.ratingStars}}}</span>
+                        <a href="#" class="seller-reviews-link">{{seller.reviewsText}}</a>
+                    </div>
+
+                    <div class="seller-meta">
+                        <p class="seller-meta-item">Зарегистрирован {{seller.registrationDate}}</p>
+                        <p class="seller-meta-item">Всего объявлений: <strong>{{seller.adsCount}}</strong></p>
+                    </div>
+                </div>
+
+                <div class="seller-ad-banner">
+                    <span>Здесь будет реклама</span>
+                </div>
+            </aside>
+
+            <!-- Правая колонка — объявления продавца -->
+            <section class="seller-ads-section">
+                <h2 class="seller-ads-title">Объявления продавца</h2>
+
+                <div class="seller-tabs">
+                    <button class="seller-tab seller-tab--active" data-tab="active">
+                        Активные ({{activeAdsCount}})
+                    </button>
+                    <button class="seller-tab" data-tab="closed">
+                        Завершённые ({{closedAdsCount}})
+                    </button>
+                </div>
+
+                <div class="seller-tab-content" data-tab-content="active">
+                    {{#if activeAds.length}}
+                        <div class="recommendations-row">
+                            {{#each activeAds}}
+                            <div class="rec-card" data-id="{{id}}">
+                                <div class="rec-card-image-container">
+                                    <img src="{{image}}" alt="{{title}}" class="rec-card-image">
+                                    <button class="rec-card-fav">♡</button>
+                                </div>
+                                <div class="rec-card-content">
+                                    <span class="rec-card-title">{{title}}</span>
+                                    <div class="rec-card-footer">
+                                        <div class="rec-card-footer-info">
+                                            <span class="rec-card-price">{{formattedPrice}}</span>
+                                            <span class="rec-card-location">
+                                                <span class="location-icon">📍</span>
+                                                {{location}}
+                                            </span>
+                                        </div>
+                                        <div class="rec-card-footer-actions">
+                                            <button class="rec-card-cart">🛒</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {{/each}}
+                        </div>
+                    {{else}}
+                        <p class="seller-ads-empty">У продавца нет активных объявлений</p>
+                    {{/if}}
+                </div>
+
+                <div class="seller-tab-content seller-tab-content--hidden" data-tab-content="closed">
+                    {{#if closedAds.length}}
+                        <div class="recommendations-row">
+                            {{#each closedAds}}
+                            <div class="rec-card" data-id="{{id}}">
+                                <div class="rec-card-image-container">
+                                    <img src="{{image}}" alt="{{title}}" class="rec-card-image">
+                                    <button class="rec-card-fav">♡</button>
+                                </div>
+                                <div class="rec-card-content">
+                                    <span class="rec-card-title">{{title}}</span>
+                                    <div class="rec-card-footer">
+                                        <div class="rec-card-footer-info">
+                                            <span class="rec-card-price">{{formattedPrice}}</span>
+                                            <span class="rec-card-location">
+                                                <span class="location-icon">📍</span>
+                                                {{location}}
+                                            </span>
+                                        </div>
+                                        <div class="rec-card-footer-actions">
+                                            <button class="rec-card-cart">🛒</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {{/each}}
+                        </div>
+                    {{else}}
+                        <p class="seller-ads-empty">У продавца нет завершённых объявлений</p>
+                    {{/if}}
+                </div>
+            </section>
+        </div>
+    </main>
+</div>

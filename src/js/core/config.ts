@@ -23,6 +23,7 @@ const _isLocal =
 
 const CONFIG = {
     API: {
+        // Всегда используем HTTPS + продакшен-домен
         BASE_URL: 'http://clover-go.ru:8000',
         // Шлем запросы напрямую на машину бэкенда, игнорируя локальный прокси
         API_URL: 'http://clover-go.ru:8000/api/v1', 

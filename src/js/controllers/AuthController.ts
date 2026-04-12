@@ -2,6 +2,7 @@ import { authActions } from '@/actions/authActions';
 import { store } from '@/core/store';
 import { uiActions } from '@/actions/uiActions';
 import type { HandlebarsTemplateFunction } from '@/types';
+import { AppController } from '@/controllers/AppController';
 declare const Handlebars: any;
 
 export const AuthController = {
@@ -58,75 +59,36 @@ export const AuthController = {
     this.initPasswordToggles();
   },
 
-  async handleLoginSubmit(email: string, password: string): Promise<void> {
-    uiActions.showLoading(true);
-    
-    try {
-      const result = await authActions.login({ email, password });
+    async handleLoginSubmit(email: string, password: string): Promise<void> {
+        const result = await authActions.login({ email, password });
 
-      if (result.isValid) {
-        console.log('Login success, isAuthenticated:', store.isAuthenticated);
-        console.log('User:', store.user);
-        
-        uiActions.showSuccess('Вход выполнен!');
-        await new Promise(resolve => setTimeout(resolve, 100));
-        this.navigateTo('/');
-      } else {
-        uiActions.showError(result.error || 'Ошибка входа');
-        this.showLoginError(result.error ?? 'Ошибка входа'); 
-      }
-    } catch (error) {
-      console.error('Login error:', error);
-      uiActions.showError('Ошибка сети при входе');
-      this.showLoginError('Ошибка сети при входе');
-    } finally {
-      uiActions.showLoading(false);
-    }
-  },
-
-  async handleRegisterSubmit(data: any): Promise<void> {
-    uiActions.showLoading(true);
-    
-    try {
-      const result = await authActions.register(data);
-
-      if (result.isValid) {
-        uiActions.showSuccess('Регистрация успешна!');
-        await new Promise(resolve => setTimeout(resolve, 100));
-        this.navigateTo('/');
-      } else {
-        uiActions.showError(result.error || 'Ошибка регистрации');
-        
-        if (result.fieldErrors) {
-          this.showFieldErrors(result.fieldErrors);
+        if (result.isValid) {
+            await authActions.checkAuth();
+            uiActions.showSuccess('Вход выполнен!');
+            AppController.navigateTo('/');
+        } else {
+            uiActions.showError(result.error || 'Ошибка входа');
+            this.showLoginError(result.error ?? 'Ошибка входа');
         }
-      }
-    } catch (error) {
-      console.error('Register error:', error);
-      uiActions.showError('Ошибка сети при регистрации');
-    } finally {
-      uiActions.showLoading(false);
-    }
-  },
+    },
 
-  async handleLogout(): Promise<void> {
-    uiActions.showLoading(true);
-    
-    try {
-      await authActions.logout();
-      localStorage.removeItem('authToken');
-      
-      store.setState({ isAuthenticated: false, user: null });
-      
-      uiActions.showSuccess('Вы успешно вышли из аккаунта');
-      this.navigateTo('/');
-    } catch (error) {
-      console.error('Logout error:', error);
-      uiActions.showError('Ошибка при выходе');
-    } finally {
-      uiActions.showLoading(false);
-    }
-  },
+    async handleRegisterSubmit(data: any): Promise<void> {
+        const result = await authActions.register(data);
+
+        if (result.isValid) {
+            await authActions.checkAuth();
+            uiActions.showSuccess('Регистрация успешна!');
+            AppController.navigateTo('/');
+        } else {
+            uiActions.showError(result.error || 'Ошибка регистрации');
+        }
+    },
+
+    async handleLogout(): Promise<void> {
+        await authActions.logout();
+        localStorage.removeItem('authToken');
+        AppController.navigateTo('/');
+    },
 
    initPasswordToggles(): void {
     const toggles = document.querySelectorAll('#togglePassword, #toggleConfirmPassword');

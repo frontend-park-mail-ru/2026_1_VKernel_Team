@@ -1,0 +1,8 @@
+<div class="cart-seller-group">
+    <div class="cart-seller-header">
+        <span class="cart-seller-name">{{seller_name}}</span>
+    </div>
+    {{#each items}}
+        {{> cart-item this}}
+    {{/each}}
+</div>

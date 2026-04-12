@@ -6,7 +6,7 @@ export const SearchSectionComponent = {
 <div class="search-section">
     <div class="search-row">
         <div class="brand">
-            <img src="images/logo/logo_clover2.jpeg" alt="Логотип" class="logo" data-nav="/">
+            <img src="/images/logo/logo_clover2.jpeg" alt="Логотип" class="logo" data-nav="/">
         </div>
         <div class="search-wrapper">
             <input type="text" class="search-input" placeholder="Поиск объявлений...">
