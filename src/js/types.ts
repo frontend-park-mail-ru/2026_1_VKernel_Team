@@ -70,7 +70,19 @@ export type TemplateName =
     | 'register-form'
     | 'user-profile'
     | 'main-page'
-    | 'not-found';
+    | 'not-found'
+    | 'profile-sidebar'
+    | 'profile-content'
+    | 'profile-modal-edit-name'
+    | 'profile-avatar'
+    | 'profile-actions'
+    | 'profile-ads-grid'
+    | 'profile-ads-tabs'
+    | 'profile-empty-state'
+    | 'profile-item-card'
+    | 'profile-stats'
+    | 'profile-tab-btn'
+    | 'profile-user-info';
 
 export type HandlebarsTemplateFunction = (context?: any) => string;
 

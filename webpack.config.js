@@ -66,6 +66,7 @@ export default (env, argv) => {
         '@': path.resolve(__dirname, 'src/js'),
         '@templates': path.resolve(__dirname, 'src/templates'), 
         '@css': path.resolve(__dirname, 'public/css'),
+        '@modules': path.resolve(__dirname, 'src/modules'),
         'handlebars': 'handlebars/dist/handlebars.runtime.js',
       },
     },

@@ -1,13 +1,25 @@
-<div class="profile-container">
-  {{> profile-header}}
-  
-  <div class="profile-layout">
-    {{> profile-sidebar}}
+{{!-- <div class="page-container">
+  {{!-- Подключаем шапку сайта --}}
+  {{> common/components/header/header }}
+
+  {{!-- Главный контейнер профиля --}}
+  <main class="profile-layout">
     
-    <main class="profile-content" id="tabContent">
-      {{> profile-content}}
-    </main>
-  </div>
-  
-  {{> profile-modal-edit-name}}
+    {{!-- Левая колонка (Сайдбар) --}}
+    <aside class="profile-layout__sidebar">
+      {{> modules/profile/components/profile-sidebar/profile-sidebar }}
+    </aside>
+
+    {{!-- Правая колонка (Основной контент) --}}
+    <section class="profile-layout__content">
+      {{> modules/profile/components/profile-content/profile-content }}
+    </section>
+
+  </main>
+
+  {{!-- Если есть футер, подключаем его --}}
+  {{> templates/footer }}
+</div> --}}
+<div class="page-container">
+  <h1 style="color: red; padding: 50px;">ЕСЛИ ТЫ ВИДИШЬ ЭТОТ ТЕКСТ, РОУТЕР И ШАБЛОН РАБОТАЮТ!</h1>
 </div>

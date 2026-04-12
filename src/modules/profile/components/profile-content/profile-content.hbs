@@ -1,0 +1,15 @@
+<div class="profile-tab-content" data-tab="info">
+  {{#eq currentTab 'info'}}
+    {{> profile-info user=user}}
+  {{/eq}}
+  
+  {{#eq currentTab 'ads'}}
+    {{> profile-ads ads=ads filter=adFilter stats=adsStats}}
+  {{/eq}}
+  
+  {{#eq currentTab 'favorites'}}
+    <p>Избранное (в разработке)</p>
+  {{/eq}}
+  
+  {{!-- остальные вкладки --}}
+</div>

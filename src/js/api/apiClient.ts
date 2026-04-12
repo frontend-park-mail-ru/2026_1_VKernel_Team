@@ -41,9 +41,6 @@ export const API_ENDPOINTS = {
     UPDATE: '/profile/update',
     AVATAR: '/profile/avatar',
   },
-  CART: {
-    GET_ALL: '/cart',
-  },
 };
 
 const getCookie = (name: string): string | null => {

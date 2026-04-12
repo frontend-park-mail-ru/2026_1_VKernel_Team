@@ -1,10 +1,43 @@
-.profile-container { /* общий контейнер */ }
-.profile-layout { display: grid; grid-template-columns: 240px 1fr; }
-.profile-sidebar { /* позиционирование сайдбара */ }
-.profile-content { /* отступы, паддинги контента */ }
-.items-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
+/* Общая обертка страницы, чтобы футер всегда прижимался к низу */
+.page-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #f5f5f5; /* Легкий серый фон (часто используется в профилях) */
+}
 
-/* Адаптивность */
+/* Наша сетка для профиля */
+.profile-layout {
+  display: grid;
+  grid-template-columns: 300px 1fr; /* 300px под сайдбар, остальное под контент */
+  gap: 24px; /* Расстояние между колонками */
+  max-width: 1200px; /* Ограничиваем максимальную ширину контента */
+  margin: 40px auto; /* Центрируем по горизонтали и делаем отступ сверху */
+  padding: 0 20px; /* Безопасные отступы по бокам */
+  flex-grow: 1; /* Заставляем блок растягиваться, отодвигая футер */
+  align-items: start; /* Чтобы сайдбар не растягивался по высоте контента */
+}
+
+/* Левая колонка */
+.profile-layout__sidebar {
+  /* Делаем сайдбар "липким", чтобы он оставался на экране при прокрутке длинного списка объявлений */
+  position: sticky;
+  top: 24px; 
+}
+
+/* Правая колонка */
+.profile-layout__content {
+  min-width: 0; /* Фикс бага CSS Grid, чтобы карточки внутри не разрывали сетку */
+}
+
+/* Адаптив: перестраиваем в одну колонку на мобильных устройствах */
 @media (max-width: 768px) {
-  .profile-layout { grid-template-columns: 1fr; }
+  .profile-layout {
+    grid-template-columns: 1fr;
+    margin: 20px auto;
+  }
+
+  .profile-layout__sidebar {
+    position: static; /* Отключаем "липкость" на смартфонах */
+  }
 }

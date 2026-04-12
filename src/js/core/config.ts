@@ -24,9 +24,8 @@ const _isLocal =
 const CONFIG = {
     API: {
         BASE_URL: 'http://clover-go.ru:8000',
-
-        // API_URL: локально проксируем через Node.js, на проде — напрямую
-        API_URL: _isLocal ? '/api/v1' : 'http://clover-go.ru:8000/api/v1',
+        // Шлем запросы напрямую на машину бэкенда, игнорируя локальный прокси
+        API_URL: 'http://clover-go.ru:8000/api/v1', 
     },
     APP: {
         NAME: 'Клевер',

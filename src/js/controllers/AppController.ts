@@ -2,13 +2,18 @@
  * Главный контроллер приложения
  * Управляет роутингом, инициализацией и глобальными обработчиками
  */
+
 import { AuthController } from '@/controllers/AuthController';
 import { AdsController } from '@/controllers/AdsController';
-import { ProfileController } from '../../modules/profile/controller';
 import { store } from '@/core/store';
 import { uiActions } from '@/actions/uiActions';
-import type { HandlebarsTemplateFunction, TemplateName, UIConstants } from '@/types';
+import type {
+    HandlebarsTemplateFunction,
+    TemplateName,
+    UIConstants,
+} from '@/types';
 import { authActions } from '@/actions/authActions';
+import { initProfilePage } from '@modules/profile/pages/profile/profile';
 
 declare const Handlebars: any;
 
@@ -25,12 +30,7 @@ export const AppController = {
     } as UIConstants,
 
     async init(): Promise<void> {
-        // 1. Сначала регистрируем хелперы ДО импорта шаблонов
-        this.registerHandlebarsHelpers();
-        
-        // 2. Затем загружаем шаблоны
         await this.loadTemplates();
-        
         AuthController.templates = {
             'login-forms': this.templates['login-forms'],
             'register-form': this.templates['register-form'],
@@ -38,9 +38,6 @@ export const AppController = {
         AdsController.templates = {
             'main-page': this.templates['main-page'],
         };
-        // ProfileController.templates = {
-        //     'user-profile': this.templates['user-profile'],
-        // };
 
         this.setupGlobalHandlers();
         this.setupStoreSubscription();
@@ -51,11 +48,29 @@ export const AppController = {
         window.addEventListener('popstate', () => this.router());
     },
 
+    async loadTemplates(): Promise<void> {
+        const templateNames: TemplateName[] = [
+            'auth-links',
+            'login-forms',
+            'register-form',
+            'main-page',
+            'not-found',
+        ];
+
+        for (const name of templateNames) {
+            try {
+                const response = await fetch(`/templates/${name}.hbs`);
+                const source = await response.text();
+                this.templates[name] = Handlebars.compile(source);
+            } catch (error) {
+                console.error(`Failed to load template ${name}:`, error);
+            }
+        }
+        this.registerHandlebarsHelpers();
+    },
+
     registerHandlebarsHelpers(): void {
-        // Проверяем, не зарегистрированы ли уже хелперы
-        if (Handlebars.helpers.formatPrice) return;
-        
-        // Базовые хелперы
+        // Существующие хелперы
         Handlebars.registerHelper('formatPrice', (price: number) => {
             return price === 0 ? 'Бесплатно' : `${price} ₽`;
         });
@@ -68,11 +83,11 @@ export const AppController = {
                     : options.inverse(this);
             },
         );
-        
         Handlebars.registerHelper('eq', function (a: any, b: any) {
             return a === b;
         });
         
+        // Опционально: другие полезные хелперы
         Handlebars.registerHelper('ne', function (a: any, b: any) {
             return a !== b;
         });
@@ -84,46 +99,8 @@ export const AppController = {
         Handlebars.registerHelper('lt', function (a: number, b: number) {
             return a < b;
         });
-        
-        Handlebars.registerHelper('gte', function (a: number, b: number) {
-            return a >= b;
-        });
-        
-        Handlebars.registerHelper('lte', function (a: number, b: number) {
-            return a <= b;
-        });
-        
-        Handlebars.registerHelper('and', function (a: any, b: any) {
-            return a && b;
-        });
-        
-        Handlebars.registerHelper('or', function (a: any, b: any) {
-            return a || b;
-        });
-        
-        Handlebars.registerHelper('not', function (a: any) {
-            return !a;
-        });
     },
 
-    async loadTemplates(): Promise<void> {
-        // Динамический импорт шаблонов ПОСЛЕ регистрации хелперов
-        const mainPageTpl = (await import('@templates/main-page.hbs')).default;
-        const loginFormsTpl = (await import('@templates/login-forms.hbs')).default;
-        const registerFormTpl = (await import('@templates/register-form.hbs')).default;
-        const userProfileTpl = (await import('@templates/user-profile.hbs')).default;
-        const authLinksTpl = (await import('@templates/auth-links.hbs')).default;
-        const notFoundTpl = (await import('@templates/not-found.hbs')).default;
-        
-        this.templates['main-page'] = mainPageTpl;
-        this.templates['login-forms'] = loginFormsTpl;
-        this.templates['register-form'] = registerFormTpl;
-        this.templates['user-profile'] = userProfileTpl;
-        this.templates['auth-links'] = authLinksTpl;
-        this.templates['not-found'] = notFoundTpl;
-    },
-
-    // Остальной код без изменений...
     async checkAuth(): Promise<void> {
         await authActions.checkAuth();
     },
@@ -139,6 +116,7 @@ export const AppController = {
         if (state.error) {
             uiActions.showError(state.error);
         }
+        // Добавляем защиту от рекурсии
         if (state.currentPage && state.currentPage !== this._lastPage) {
             this._lastPage = state.currentPage;
             this.router();
@@ -148,9 +126,9 @@ export const AppController = {
     router(): void {
         const path = window.location.pathname;
 
+        // Force login if accessing profile while unauthenticated
         if (!store.isAuthenticated && path === '/profile') {
-            uiActions.navigateTo('/login');
-            AuthController.showLogin();
+            this.navigateTo('/login');
             return;
         }
 
@@ -166,22 +144,16 @@ export const AppController = {
                 AuthController.showRegister();
                 break;
             case '/profile':
-                ProfileController.showProfile();
+                initProfilePage(); 
                 break;
             default:
                 this.renderNotFound();
         }
     },
 
-    // В AppController.ts
     navigateTo(path: string): void {
         window.history.pushState({}, '', path);
-        window.dispatchEvent(new PopStateEvent('popstate'));
-    
-    // Если uiActions.navigateTo просто пишет в лог/URL, оставляем:
-        if (typeof uiActions.navigateTo === 'function') {
-            uiActions.navigateTo(path);
-        }
+        uiActions.navigateTo(path);
     },
 
     renderNotFound(): void {
