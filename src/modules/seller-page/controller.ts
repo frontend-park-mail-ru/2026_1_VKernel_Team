@@ -2,6 +2,9 @@ import { sellerPageActions } from '@modules/seller-page/actions';
 import { sellerPageStore } from '@modules/seller-page/store';
 import { store } from '@/core/store';
 import { getTemplate } from '@modules/seller-page/pages/seller-page/seller-page';
+import { CartButtonComponent } from '@modules/cart/components/cart-button/cart-button';
+import { cartActions } from '@modules/cart/actions';
+import { cartStore } from '@modules/cart/store';
 
 export const SellerPageController = {
     async renderSellerPage(sellerId: string): Promise<void> {
@@ -21,6 +24,9 @@ export const SellerPageController = {
 
         document.body.classList.remove('auth-page');
 
+        const isOwner = store.isAuthenticated && store.user?.id === state.profile.id;
+        const showCartButton = store.isAuthenticated && !isOwner;
+
         app.innerHTML = template({
             isAuthenticated: store.isAuthenticated,
             user: store.user,
@@ -29,7 +35,15 @@ export const SellerPageController = {
             closedAds: state.closedAds,
             activeAdsCount: state.activeAds.length,
             closedAdsCount: state.closedAds.length,
+            showCartButton,
         });
+
+        if (showCartButton) {
+            if (cartStore.getState().items.length === 0) {
+                await cartActions.loadCart();
+            }
+            CartButtonComponent.initAll();
+        }
 
         this.attachEventListeners();
     },

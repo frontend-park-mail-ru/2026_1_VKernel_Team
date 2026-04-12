@@ -58,6 +58,7 @@ export const AuthController = {
         const result = await authActions.login({ email, password });
 
         if (result.isValid) {
+            await authActions.checkAuth();
             uiActions.showSuccess('Вход выполнен!');
             AppController.navigateTo('/');
         } else {
@@ -70,6 +71,7 @@ export const AuthController = {
         const result = await authActions.register(data);
 
         if (result.isValid) {
+            await authActions.checkAuth();
             uiActions.showSuccess('Регистрация успешна!');
             AppController.navigateTo('/');
         } else {

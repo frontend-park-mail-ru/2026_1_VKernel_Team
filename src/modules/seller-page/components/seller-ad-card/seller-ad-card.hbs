@@ -14,7 +14,9 @@
                 </span>
             </div>
             <div class="rec-card-footer-actions">
-                <button class="rec-card-cart">🛒</button>
+                {{#if showCartButton}}
+                    {{> cart-button productId=id}}
+                {{/if}}
             </div>
         </div>
     </div>
