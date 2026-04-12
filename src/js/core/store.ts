@@ -3,14 +3,13 @@
  * Все данные хранятся в одном месте, компоненты подписываются на изменения
  */
 
-import { EventBus } from './eventBus';
+import { EventBus } from '@/core/eventBus';
 import { storage } from '@/utils/storage';
 import type { User } from '@/types';
 
 export interface AppState {
     isAuthenticated: boolean;
     user: User | null;
-    isLoading: boolean;
     ads: any[];
     currentPage: string;
     error: string | null;
@@ -20,7 +19,6 @@ class Store {
     private state: AppState = {
         isAuthenticated: storage.isAuthenticated(),
         user: storage.getUser(),
-        isLoading: false,
         ads: [],
         currentPage: 'main-page',
         error: null,
@@ -61,10 +59,6 @@ class Store {
 
     get user(): User | null {
         return this.state.user;
-    }
-
-    get isLoading(): boolean {
-        return this.state.isLoading;
     }
 
     get ads(): any[] {

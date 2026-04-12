@@ -11,6 +11,8 @@ import notFoundTpl from '@templates/not-found.hbs';
 import { AuthController } from '@/controllers/AuthController';
 import { AdsController } from '@/controllers/AdsController';
 import { ProfileController } from '@/controllers/ProfileController';
+import { CartController } from '@modules/cart/controller';
+import { loadTemplates as loadCartTemplates } from '@modules/cart/pages/cart/cart';
 import { store } from '@/core/store';
 import { uiActions } from '@/actions/uiActions';
 import type { HandlebarsTemplateFunction, TemplateName, UIConstants } from '@/types';
@@ -32,6 +34,7 @@ export const AppController = {
 
     async init(): Promise<void> {
         await this.loadTemplates();
+        loadCartTemplates();
         AuthController.templates = {
             'login-forms': this.templates['login-forms'],
             'register-form': this.templates['register-form'],
@@ -53,16 +56,16 @@ export const AppController = {
     },
 
     async loadTemplates(): Promise<void> {
-    // Шаблоны уже прекомпилированы лоадером, просто присваиваем их
-    this.templates['main-page'] = mainPageTpl;
-    this.templates['login-forms'] = loginFormsTpl;
-    this.templates['register-form'] = registerFormTpl;
-    this.templates['user-profile'] = userProfileTpl;
-    this.templates['auth-links'] = authLinksTpl;
-    this.templates['not-found'] = notFoundTpl;
-    
-    // Регистрация хелперов остаётся (они нужны для рендера)
-    this.registerHandlebarsHelpers();
+        // Шаблоны уже прекомпилированы лоадером, просто присваиваем их
+        this.templates['main-page'] = mainPageTpl;
+        this.templates['login-forms'] = loginFormsTpl;
+        this.templates['register-form'] = registerFormTpl;
+        this.templates['user-profile'] = userProfileTpl;
+        this.templates['auth-links'] = authLinksTpl;
+        this.templates['not-found'] = notFoundTpl;
+
+        // Регистрация хелперов остаётся (они нужны для рендера)
+        this.registerHandlebarsHelpers();
     },
 
     registerHandlebarsHelpers(): void {
@@ -86,7 +89,6 @@ export const AppController = {
     },
 
     onStateChange(state: any): void {
-        this.showLoading(state.isLoading);
         if (state.error) {
             uiActions.showError(state.error);
         }
@@ -100,7 +102,7 @@ export const AppController = {
         const path = window.location.pathname;
         uiActions.navigateTo(path);
 
-        if (!store.isAuthenticated && path === '/profile') {
+        if (!store.isAuthenticated && (path === '/profile' || path === '/cart')) {
             uiActions.navigateTo('/login');
             AuthController.showLogin();
             return;
@@ -119,6 +121,9 @@ export const AppController = {
                 break;
             case '/profile':
                 ProfileController.showProfile();
+                break;
+            case '/cart':
+                CartController.renderCart();
                 break;
             default:
                 this.renderNotFound();

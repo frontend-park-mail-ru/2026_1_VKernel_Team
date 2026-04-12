@@ -15,6 +15,7 @@ import '@/utils/storage';
 import '@/validators/authValidator';
 import '@/services/authService';
 import '@/services/adsServices';
+import '@modules/cart/init';
 import '@/api/apiClient';
 
 // === Точка входа: AppController вместо устаревшего App ===

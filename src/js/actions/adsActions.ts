@@ -34,7 +34,7 @@ export const adsActions = {
         return result.success && result.data ? result.data : null;
     },
     async searchAds(query: string): Promise<void> {
-        store.setState({ isLoading: true, error: null });
+        store.setState({ error: null });
 
         try {
             const result = await adsService.getAllAds();
@@ -45,17 +45,14 @@ export const adsActions = {
                 );
                 store.setState({
                     ads: filtered,
-                    isLoading: false,
                 });
             } else {
                 store.setState({
-                    isLoading: false,
                     error: result.error || 'Не удалось выполнить поиск',
                 });
             }
         } catch (error) {
             store.setState({
-                isLoading: false,
                 error: 'Не удалось соединиться с сервером',
             });
         }

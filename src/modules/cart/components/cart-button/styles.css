@@ -1,0 +1,59 @@
+/* ========== КНОПКА КОРЗИНЫ ========== */
+
+.rec-card-cart {
+    background: #f5f5f5;
+    border: 1.5px solid #e0e0e0;
+    cursor: pointer;
+    padding: 0;
+    border-radius: 10px;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.22s ease;
+    color: #555;
+    position: relative;
+}
+
+.rec-card-cart .cart-icon { display: none; }
+.rec-card-cart .cart-icon--add { display: block; }
+
+/* В корзине */
+.rec-card-cart.in-cart {
+    background: #00a650;
+    border-color: #00a650;
+    color: #fff;
+}
+.rec-card-cart.in-cart .cart-icon--add { display: none; }
+.rec-card-cart.in-cart .cart-icon--check { display: block; }
+
+/* Загрузка */
+.rec-card-cart.loading {
+    background: #f0f0f0;
+    border-color: #ddd;
+    color: #999;
+    pointer-events: none;
+}
+.rec-card-cart.loading .cart-icon--add { display: none; }
+.rec-card-cart.loading .cart-icon--spinner { display: block; }
+
+@keyframes cart-spin {
+    to { transform: rotate(360deg); }
+}
+.rec-card-cart.loading .cart-icon--spinner {
+    animation: cart-spin 0.7s linear infinite;
+}
+
+.rec-card-cart:hover {
+    background: #e8f5e9;
+    border-color: #00a650;
+    color: #00a650;
+    transform: scale(1.08);
+}
+
+.rec-card-cart.in-cart:hover {
+    background: #e53935;
+    border-color: #e53935;
+    color: #fff;
+}

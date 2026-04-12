@@ -8,7 +8,7 @@ const __dirname = path.dirname(__filename);
 
 export default (env, argv) => {
   const isDevelopment = argv?.mode === 'development';
-  
+
   return {
     entry: './src/js/main.ts',
     output: {
@@ -36,12 +36,21 @@ export default (env, argv) => {
         },
         {
           test: /\.hbs$/i,
+          resourceQuery: /raw/,
+          type: 'asset/source',
+        },
+        {
+          test: /\.hbs$/i,
+          resourceQuery: { not: [/raw/] },
           loader: 'handlebars-loader',
           options: {
-            precompile: true,           
-            esModule: true,           
-            runtime: 'handlebars/dist/handlebars.runtime.js', 
-            knownHelpers: ['if', 'unless', 'each', 'with', 'log', 'formatPrice'], 
+            precompile: true,
+            esModule: true,
+            runtime: 'handlebars/dist/handlebars.runtime.js',
+            knownHelpers: ['if', 'unless', 'each', 'with', 'log', 'formatPrice'],
+            partialDirs: [
+              path.resolve(__dirname, 'src/modules/cart/components/cart-button'),
+            ],
           },
         },
       ],
@@ -64,9 +73,17 @@ export default (env, argv) => {
       extensions: ['.ts', '.tsx', '.js', '.hbs'],
       alias: {
         '@': path.resolve(__dirname, 'src/js'),
-        '@templates': path.resolve(__dirname, 'src/templates'), 
         '@css': path.resolve(__dirname, 'public/css'),
-        'handlebars': 'handlebars/dist/handlebars.runtime.js',
+        '@core': path.resolve(__dirname, 'src/js/core'),
+        '@api': path.resolve(__dirname, 'src/js/api'),
+        '@services': path.resolve(__dirname, 'src/js/services'),
+        '@controllers': path.resolve(__dirname, 'src/js/controllers'),
+        '@validators': path.resolve(__dirname, 'src/js/validators'),
+        '@utils': path.resolve(__dirname, 'src/js/utils'),
+        '@types': path.resolve(__dirname, 'src/js/types'),
+        '@templates': path.resolve(__dirname, 'src/templates'),
+        '@modules': path.resolve(__dirname, 'src/modules'),
+                'handlebars$': 'handlebars/dist/handlebars.js',
       },
     },
   };

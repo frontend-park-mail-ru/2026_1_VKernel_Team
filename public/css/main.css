@@ -67,7 +67,7 @@ body .main-container {
     font-size: 20px;
     line-height: 1;
     display: inline-flex;
-    align-items: center;  
+    align-items: center;
     justify-content: center;
     vertical-align: middle;  /* классическое выравнивание */
 }
@@ -168,7 +168,7 @@ body .main-container {
     left: 0;
     right: 0;
     z-index: 999;
-    
+
     /*Чтобы поиск был на одной линии с контентом */
     max-width: 1400px;       /*как у main-content*/
     width: calc(100% - 80px);
@@ -197,7 +197,7 @@ body .main-container {
     top: 50%;
     left: -5px; /* Прижимаем к самому краю search-section, игнорируя padding */
     transform: translateY(-50%); /* Центрируем по вертикали */
-    
+
     width: 160px;  /* Любой нужный размер */
     height: auto;
     max-height: 80px;
@@ -538,21 +538,6 @@ body .main-container {
     line-height: 1;
 }
 
-.rec-card-cart {
-    background: none;
-    border: none;
-    font-size: 18px;
-    cursor: pointer;
-    padding: 4px;
-    border-radius: 50%;
-    width: 32px;
-    height: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s;
-}
-
 .rec-card-views {
     display: flex;
     align-items: center;
@@ -582,11 +567,6 @@ body .main-container {
     transform: scale(1.1);
 }
 
-.rec-card-cart:hover {
-    background: #e8f5e9;
-    transform: scale(1.1);
-}
-
 /* ========== АДАПТИВНОСТЬ ========== */
 @media (max-width: 1200px) {
     .header-content,
@@ -602,24 +582,24 @@ body .main-container {
         padding-left: 20px;
         padding-right: 20px;
     }
-    
+
     .search-section {
         flex-direction: column;
         align-items: stretch;
     }
-    
+
     .header-left {
         gap: 15px;
     }
-    
+
     .nav-icon .nav-link {
         display: none;
     }
-    
+
     .content-grid {
         grid-template-columns: 1fr;
     }
-    
+
     .ad-column {
         display: none;
     }

@@ -2,6 +2,7 @@ import { authActions } from '@/actions/authActions';
 import { store } from '@/core/store';
 import { uiActions } from '@/actions/uiActions';
 import type { HandlebarsTemplateFunction } from '@/types';
+import { AppController } from '@/controllers/AppController';
 
 declare const Handlebars: any;
 
@@ -54,33 +55,33 @@ export const AuthController = {
     },
 
     async handleLoginSubmit(email: string, password: string): Promise<void> {
-    const result = await authActions.login({ email, password });
+        const result = await authActions.login({ email, password });
 
-    if (result.isValid) {
-        uiActions.showSuccess('Вход выполнен!');
-        uiActions.navigateTo('/'); 
-    } else {
-        uiActions.showError(result.error || 'Ошибка входа');
-        this.showLoginError(result.error ?? 'Ошибка входа');
-    }
+        if (result.isValid) {
+            uiActions.showSuccess('Вход выполнен!');
+            uiActions.navigateTo('/');
+        } else {
+            uiActions.showError(result.error || 'Ошибка входа');
+            this.showLoginError(result.error ?? 'Ошибка входа');
+        }
     },
 
     async handleRegisterSubmit(data: any): Promise<void> {
-    const result = await authActions.register(data);
+        const result = await authActions.register(data);
 
-    if (result.isValid) {
-        uiActions.showSuccess('Регистрация успешна!');
-        uiActions.navigateTo('/'); 
-    } else {
-        uiActions.showError(result.error || 'Ошибка регистрации');
-    }
-},
+        if (result.isValid) {
+            uiActions.showSuccess('Регистрация успешна!');
+            uiActions.navigateTo('/');
+        } else {
+            uiActions.showError(result.error || 'Ошибка регистрации');
+        }
+    },
 
     async handleLogout(): Promise<void> {
-    await authActions.logout();
-    localStorage.removeItem('authToken');
-    uiActions.navigateTo('/');  
-},
+        await authActions.logout();
+        localStorage.removeItem('authToken');
+        uiActions.navigateTo('/');
+    },
 
     initPasswordToggles(): void {
         const toggles = document.querySelectorAll('#togglePassword, #toggleConfirmPassword');

@@ -12,12 +12,6 @@ export const uiActions = {
         }
     },
 
-    showLoading(show: boolean): void {
-        if (store.getState().isLoading !== show) {
-            store.setState({ isLoading: show });
-        }
-    },
-
     showError(message: string): void {
         console.error('UI Error:', message);
         // TODO: Добавить систему toast-уведомлений без store

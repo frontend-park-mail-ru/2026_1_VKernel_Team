@@ -5,8 +5,9 @@
  */
 
 import { adsActions } from '@/actions/adsActions';
+import { eventBus } from '@/core/eventBus';
 import { store } from '@/core/store';
-import type { Ad, FormattedAd, HandlebarsTemplateFunction } from '@/types';
+import type { Ad, HandlebarsTemplateFunction } from '@/types';
 
 declare const Handlebars: any;
 
@@ -37,6 +38,7 @@ export const AdsController = {
             recommendations: formattedAds,
         });
 
+        eventBus.emit('page:adsRendered');
         this.attachMainEventListeners();
     },
 
