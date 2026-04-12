@@ -1,0 +1,84 @@
+.seller-info-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.seller-avatar-wrapper {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: #e9ecef;
+    margin-bottom: 16px;
+    flex-shrink: 0;
+}
+
+.seller-avatar {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.seller-name {
+    font-size: 20px;
+    font-weight: 600;
+    color: #333;
+    text-align: center;
+    margin-bottom: 8px;
+}
+
+.seller-rating-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.seller-rating-value {
+    font-size: 18px;
+    font-weight: 700;
+    color: #333;
+}
+
+.seller-rating-stars {
+    color: #f5c518;
+    font-size: 18px;
+    letter-spacing: 1px;
+}
+
+.seller-reviews-link {
+    font-size: 14px;
+    color: #2bde8c;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.seller-reviews-link:hover {
+    text-decoration: underline;
+}
+
+.seller-meta {
+    width: 100%;
+    border-top: 1px solid #e9ecef;
+    padding-top: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.seller-meta-item {
+    font-size: 14px;
+    color: #666;
+    text-align: center;
+}
+
+.seller-meta-item strong {
+    color: #333;
+}

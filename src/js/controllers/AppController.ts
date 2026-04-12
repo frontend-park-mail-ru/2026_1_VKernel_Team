@@ -11,12 +11,15 @@ import notFoundTpl from '@templates/not-found.hbs';
 import { AuthController } from '@/controllers/AuthController';
 import { AdsController } from '@/controllers/AdsController';
 import { ProfileController } from '@/controllers/ProfileController';
+import { SellerPageController } from '@modules/seller-page/controller';
+import { loadTemplates as loadSellerPageTemplates } from '@modules/seller-page/pages/seller-page/seller-page';
 import { CartController } from '@modules/cart/controller';
 import { loadTemplates as loadCartTemplates } from '@modules/cart/pages/cart/cart';
 import { store } from '@/core/store';
 import { uiActions } from '@/actions/uiActions';
 import type { HandlebarsTemplateFunction, TemplateName, UIConstants } from '@/types';
 import { authActions } from '@/actions/authActions';
+import { CONFIG } from '@/core/config';
 
 declare const Handlebars: any;
 
@@ -34,6 +37,7 @@ export const AppController = {
 
     async init(): Promise<void> {
         await this.loadTemplates();
+        loadSellerPageTemplates();
         loadCartTemplates();
         AuthController.templates = {
             'login-forms': this.templates['login-forms'],
@@ -76,6 +80,26 @@ export const AppController = {
         Handlebars.registerHelper('ifAuthenticated', function (this: any, options: any) {
             return store.isAuthenticated ? options.fn(this) : options.inverse(this);
         });
+
+        Handlebars.registerHelper('avatarUrl', (avatar: string, avatarPath: string) => {
+            const DEFAULT_AVATAR = '/images/logo/avatar.jpeg';
+            const source = avatar || avatarPath || '';
+            if (!source) {
+                return DEFAULT_AVATAR;
+            }
+
+            const trimmed = source.trim();
+            if (!trimmed) {
+                return DEFAULT_AVATAR;
+            }
+
+            if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
+                return trimmed;
+            }
+
+            const normalized = trimmed.startsWith('/') ? trimmed : `/${trimmed}`;
+            return `${CONFIG.API.BASE_URL}${normalized}`;
+        });
     },
 
     async checkAuth(): Promise<void> {
@@ -103,8 +127,15 @@ export const AppController = {
         uiActions.navigateTo(path);
 
         if (!store.isAuthenticated && (path === '/profile' || path === '/cart')) {
+            window.history.pushState({}, '', '/login');
             uiActions.navigateTo('/login');
             AuthController.showLogin();
+            return;
+        }
+
+        const sellerMatch = path.match(/^\/seller\/(\d+)$/);
+        if (sellerMatch) {
+            SellerPageController.renderSellerPage(sellerMatch[1]);
             return;
         }
 
@@ -135,6 +166,7 @@ export const AppController = {
         uiActions.navigateTo(path);
         this.router();
     },
+
     renderNotFound(): void {
         const app = document.getElementById('app');
         if (!app || !this.templates['not-found']) return;

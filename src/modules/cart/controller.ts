@@ -30,6 +30,7 @@ export const CartController = {
                 ...item,
                 imageUrl: cartService.getImageUrl(item.image_path),
                 formattedPrice: cartService.formatPrice(item.price),
+                location: item.location || 'Не указано',
             })),
         }));
 

@@ -9,6 +9,7 @@ export interface CartItem {
     image_path: string;
     seller_id: number;
     seller_name: string;
+    location?: string;
 }
 
 export interface CartResponse {

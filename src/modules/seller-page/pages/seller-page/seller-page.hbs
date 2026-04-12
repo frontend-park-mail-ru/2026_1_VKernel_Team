@@ -1,0 +1,49 @@
+<div class="main-container">
+    {{> header isAuthenticated=isAuthenticated user=user}}
+
+    {{> search-section}}
+
+    <main class="main-content">
+        <div class="seller-page-layout">
+            <!-- Левая колонка -->
+            <aside class="seller-sidebar">
+                {{> seller-info-card seller=seller}}
+
+                <div class="seller-ad-banner">
+                    <span>Здесь будет реклама</span>
+                </div>
+            </aside>
+
+            <!-- Правая колонка -->
+            <section class="seller-ads-section">
+                <h2 class="seller-ads-title">Объявления продавца</h2>
+
+                {{> seller-tabs activeAdsCount=activeAdsCount closedAdsCount=closedAdsCount}}
+
+                <div class="seller-tab-content" data-tab-content="active">
+                    {{#if activeAds.length}}
+                        <div class="recommendations-row">
+                            {{#each activeAds}}
+                                {{> seller-ad-card this showCartButton=../showCartButton}}
+                            {{/each}}
+                        </div>
+                    {{else}}
+                        <p class="seller-ads-empty">У продавца нет активных объявлений</p>
+                    {{/if}}
+                </div>
+
+                <div class="seller-tab-content seller-tab-content--hidden" data-tab-content="closed">
+                    {{#if closedAds.length}}
+                        <div class="recommendations-row">
+                            {{#each closedAds}}
+                                {{> seller-ad-card this showCartButton=../showCartButton}}
+                            {{/each}}
+                        </div>
+                    {{else}}
+                        <p class="seller-ads-empty">У продавца нет завершённых объявлений</p>
+                    {{/if}}
+                </div>
+            </section>
+        </div>
+    </main>
+</div>

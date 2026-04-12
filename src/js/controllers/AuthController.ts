@@ -58,8 +58,9 @@ export const AuthController = {
         const result = await authActions.login({ email, password });
 
         if (result.isValid) {
+            await authActions.checkAuth();
             uiActions.showSuccess('Вход выполнен!');
-            uiActions.navigateTo('/');
+            AppController.navigateTo('/');
         } else {
             uiActions.showError(result.error || 'Ошибка входа');
             this.showLoginError(result.error ?? 'Ошибка входа');
@@ -70,8 +71,9 @@ export const AuthController = {
         const result = await authActions.register(data);
 
         if (result.isValid) {
+            await authActions.checkAuth();
             uiActions.showSuccess('Регистрация успешна!');
-            uiActions.navigateTo('/');
+            AppController.navigateTo('/');
         } else {
             uiActions.showError(result.error || 'Ошибка регистрации');
         }
@@ -80,7 +82,7 @@ export const AuthController = {
     async handleLogout(): Promise<void> {
         await authActions.logout();
         localStorage.removeItem('authToken');
-        uiActions.navigateTo('/');
+        AppController.navigateTo('/');
     },
 
     initPasswordToggles(): void {

@@ -1,0 +1,17 @@
+<div class="seller-info-card">
+    <div class="seller-avatar-wrapper">
+        <img src="{{seller.avatarUrl}}" alt="{{seller.name}}" class="seller-avatar">
+    </div>
+    <h2 class="seller-name">{{seller.name}}</h2>
+
+    <div class="seller-rating-row">
+        <span class="seller-rating-value">{{seller.rating}}</span>
+        <span class="seller-rating-stars">{{{seller.ratingStars}}}</span>
+        <a href="#" class="seller-reviews-link">{{seller.reviewsText}}</a>
+    </div>
+
+    <div class="seller-meta">
+        <p class="seller-meta-item">Зарегистрирован {{seller.registrationDate}}</p>
+        <p class="seller-meta-item">Всего объявлений: <strong>{{seller.adsCount}}</strong></p>
+    </div>
+</div>

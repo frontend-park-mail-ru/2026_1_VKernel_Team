@@ -7,6 +7,8 @@ export interface User {
     user_id?: number;
     email?: string;
     name?: string;
+    avatar?: string;
+    avatar_path?: string;
     created_at?: string;
 }
 
