@@ -50,9 +50,6 @@ function handleApiProxy(req, res) {
     // Указываем адрес боевого бэкенда на сервере
     const targetUrl = new URL(req.url, 'http://clover-go.ru:8000');
 
-    // Local - для локального тестирования - локальный бэкенд
-    // const targetUrl = new URL(req.url, 'http://localhost:8000');
-
     // Формируем настройки для внутреннего запроса от Node.js к бэкенду
     const options = {
         hostname: targetUrl.hostname,

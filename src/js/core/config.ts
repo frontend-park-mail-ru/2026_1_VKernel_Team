@@ -26,9 +26,6 @@ const CONFIG = {
     API: {
         BASE_URL: 'http://clover-go.ru:8000',
 
-        // Local - для локального тестирования - локальный бэкенд
-        // BASE_URL: _isLocal ? 'http://localhost:8000' : 'http://clover-go.ru:8000',
-
         // API_URL: локально проксируем через Node.js, на проде — напрямую
         API_URL: _isLocal ? '/api/v1' : 'http://clover-go.ru:8000/api/v1',
     },
