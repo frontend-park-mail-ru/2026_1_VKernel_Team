@@ -36,7 +36,11 @@ export default (env, argv) => {
             precompile: true,
             esModule: true,
             runtime: 'handlebars/dist/handlebars.runtime.js',
-            knownHelpers: ['if', 'unless', 'each', 'with', 'log', 'formatPrice'],
+            knownHelpers: [
+                'if', 'unless', 'each', 'with', 'log', 'lookup',
+                'formatPrice', 'formatDate', 'eq', 'gt', 'concat', 
+                'array', 'iconForTab', 'labelForTab', 'ifAuthenticated', 'avatarUrl'
+            ],
             partialDirs: [
                 path.resolve(__dirname, 'src'),
                 path.resolve(__dirname, 'src/modules'),

@@ -1,17 +1,24 @@
 <div class="page-container">
+  {{!-- От папки src --}}
   {{> common/components/header/header }}
+
+  {{!-- От папки src --}}
+  {{> common/components/search-section/search-section }}
 
   <main class="profile-layout">
     <aside class="profile-layout__sidebar">
+      {{!-- От папки src/modules --}}
       {{> profile/components/profile-sidebar/profile-sidebar }}
     </aside>
 
     <section class="profile-layout__content">
       <div id="tabContent">
+        {{!-- От папки src/modules --}}
         {{> profile/components/profile-content/profile-content }}
       </div>
     </section>
   </main>
 
+  {{!-- От папки src/templates --}}
   {{> footer }}
 </div>

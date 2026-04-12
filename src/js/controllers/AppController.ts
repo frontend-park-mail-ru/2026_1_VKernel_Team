@@ -22,8 +22,6 @@ import { uiActions } from '@/actions/uiActions';
 import type { HandlebarsTemplateFunction, TemplateName, UIConstants } from '@/types';
 import { authActions } from '@/actions/authActions';
 import { CONFIG } from '@/core/config';
-
-// ИСПРАВЛЕНИЕ: Импортируем ТОТ ЖЕ самый runtime, который использует webpack handlebars-loader
 import Handlebars from 'handlebars/dist/handlebars.runtime.js';
 
 export const AppController = {

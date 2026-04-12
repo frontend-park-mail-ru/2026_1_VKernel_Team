@@ -1,29 +1,47 @@
 <div class="profile-tab-content">
-  
   {{#eq currentTab 'info'}}
-    <div class="profile-info-section">
-      <h2 class="section-title">Личные данные</h2>
+    <h2 class="section-title">Личные данные</h2>
+
+    <div class="profile-card">
+      {{!-- Подключаем твой компонент аватара --}}
+      {{> profile/components/profile-avatar/profile-avatar }}
+
       <div class="profile-details">
-        <p><strong>Имя:</strong> {{user.name}}</p>
-        <p><strong>Email:</strong> {{user.email}}</p>
-        <p><strong>Рейтинг:</strong> {{user.rating}} ⭐</p>
-        <p><strong>Зарегистрирован:</strong> {{formatDate user.created_at}}</p>
+        <div class="detail-row">
+          <span class="detail-label">Имя:</span>
+          <span class="detail-value">{{user.name}}</span>
+          <button class="btn-edit" data-action="open-edit-name">✏️ Изменить</button>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Email:</span>
+          <span class="detail-value">{{user.email}}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Рейтинг:</span>
+          <span class="detail-value">⭐ {{#if user.rating}}{{user.rating}}{{else}}0{{/if}}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">На Клевере с:</span>
+          <span class="detail-value">{{formatDate user.created_at}}</span>
+        </div>
       </div>
+    </div>
+
+    {{!-- Модалка остается здесь же --}}
+    <div id="editNameModal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <h3>Изменить имя</h3>
+            <input type="text" id="editNameInput" value="{{user.name}}" class="modal-input">
+            <div class="modal-actions">
+                <button class="btn btn-secondary" data-action="close-modal">Отмена</button>
+                <button class="btn btn-primary" data-action="save-name">Сохранить</button>
+            </div>
+        </div>
     </div>
   {{/eq}}
   
   {{#eq currentTab 'ads'}}
-    <div class="profile-ads-section">
-      <h2 class="section-title">Мои объявления</h2>
-      <p class="empty-state">Здесь скоро появится сетка ваших товаров.</p>
-    </div>
+    <h2 class="section-title">Мои объявления</h2>
+    <p class="empty-state">Список ваших объявлений пуст.</p>
   {{/eq}}
-  
-  {{#eq currentTab 'favorites'}}
-    <div class="profile-favorites-section">
-      <h2 class="section-title">Избранное</h2>
-      <p class="empty-state">Ваши сохраненные объявления.</p>
-    </div>
-  {{/eq}}
-
 </div>

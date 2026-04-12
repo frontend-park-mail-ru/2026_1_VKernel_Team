@@ -1,43 +1,205 @@
-/* Общая обертка страницы, чтобы футер всегда прижимался к низу */
-.page-container {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  background-color: #f5f5f5; /* Легкий серый фон (часто используется в профилях) */
-}
-
-/* Наша сетка для профиля */
+/* Макет профиля */
 .profile-layout {
-  display: grid;
-  grid-template-columns: 300px 1fr; /* 300px под сайдбар, остальное под контент */
-  gap: 24px; /* Расстояние между колонками */
-  max-width: 1200px; /* Ограничиваем максимальную ширину контента */
-  margin: 40px auto; /* Центрируем по горизонтали и делаем отступ сверху */
-  padding: 0 20px; /* Безопасные отступы по бокам */
-  flex-grow: 1; /* Заставляем блок растягиваться, отодвигая футер */
-  align-items: start; /* Чтобы сайдбар не растягивался по высоте контента */
+    display: flex;
+    gap: 30px;
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 0 20px;
+    align-items: flex-start;
 }
 
-/* Левая колонка */
-.profile-layout__sidebar {
-  /* Делаем сайдбар "липким", чтобы он оставался на экране при прокрутке длинного списка объявлений */
-  position: sticky;
-  top: 24px; 
+/* Сайдбар (Левое меню) */
+.profile-sidebar {
+    width: 280px;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    padding: 20px;
+    flex-shrink: 0;
 }
 
-/* Правая колонка */
+.profile-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.profile-nav-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    border: none;
+    background: transparent;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 16px;
+    color: #333;
+    transition: all 0.2s ease;
+}
+
+.profile-nav-item:hover {
+    background: #f5f5f5;
+}
+
+.profile-nav-item.active {
+    background: #E9FCF3; /* Светло-зеленый фон как в макете */
+    color: #2bde8c;
+    font-weight: 500;
+}
+
+.nav-icon {
+    margin-right: 12px;
+    font-size: 20px;
+}
+
+.nav-badge {
+    margin-left: auto;
+    background: #1892E5; /* Синий бейджик */
+    color: white;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.nav-divider {
+    height: 1px;
+    background: #eee;
+    margin: 10px 0;
+}
+
+.logout-item {
+    color: #ff4d4f;
+}
+
+.logout-item:hover {
+    background: #fff1f0;
+}
+
+/* Основной контент (Правая часть) */
 .profile-layout__content {
-  min-width: 0; /* Фикс бага CSS Grid, чтобы карточки внутри не разрывали сетку */
+    flex: 1;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    padding: 40px;
+    min-height: 500px;
 }
 
-/* Адаптив: перестраиваем в одну колонку на мобильных устройствах */
-@media (max-width: 768px) {
-  .profile-layout {
-    grid-template-columns: 1fr;
-    margin: 20px auto;
-  }
+.section-title {
+    font-size: 28px;
+    margin-bottom: 30px;
+    color: #333;
+}
 
-  .profile-layout__sidebar {
-    position: static; /* Отключаем "липкость" на смартфонах */
-  }
+/* Карточка личных данных */
+.profile-card {
+    display: flex;
+    gap: 40px;
+    align-items: flex-start;
+}
+
+.profile-avatar-container {
+    position: relative;
+}
+
+.profile-avatar-large {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid #E9FCF3;
+}
+
+.btn-edit-avatar {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    background: #2bde8c;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    color: white;
+    font-size: 18px;
+}
+
+.profile-details {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.detail-row {
+    display: flex;
+    align-items: center;
+    font-size: 18px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.detail-label {
+    width: 180px;
+    color: #888;
+}
+
+.detail-value {
+    font-weight: 500;
+    color: #333;
+    flex: 1;
+}
+
+.btn-edit {
+    background: transparent;
+    border: none;
+    color: #1892E5; /* Синий цвет как в макете */
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.btn-edit:hover {
+    text-decoration: underline;
+}
+
+/* Модальное окно */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: white;
+    padding: 30px;
+    border-radius: 16px;
+    width: 400px;
+    max-width: 90%;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+.modal-input {
+    width: 100%;
+    padding: 12px;
+    margin: 20px 0;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
 }
