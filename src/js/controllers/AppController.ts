@@ -4,7 +4,7 @@
  */
 import { AuthController } from '@/controllers/AuthController';
 import { AdsController } from '@/controllers/AdsController';
-import { ProfileController } from '@/controllers/ProfileController';
+import { ProfileController } from '../../modules/profile/controller';
 import { store } from '@/core/store';
 import { uiActions } from '@/actions/uiActions';
 import type { HandlebarsTemplateFunction, TemplateName, UIConstants } from '@/types';
@@ -38,9 +38,9 @@ export const AppController = {
         AdsController.templates = {
             'main-page': this.templates['main-page'],
         };
-        ProfileController.templates = {
-            'user-profile': this.templates['user-profile'],
-        };
+        // ProfileController.templates = {
+        //     'user-profile': this.templates['user-profile'],
+        // };
 
         this.setupGlobalHandlers();
         this.setupStoreSubscription();

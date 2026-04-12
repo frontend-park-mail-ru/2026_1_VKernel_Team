@@ -1,0 +1,10 @@
+.profile-container { /* общий контейнер */ }
+.profile-layout { display: grid; grid-template-columns: 240px 1fr; }
+.profile-sidebar { /* позиционирование сайдбара */ }
+.profile-content { /* отступы, паддинги контента */ }
+.items-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  .profile-layout { grid-template-columns: 1fr; }
+}

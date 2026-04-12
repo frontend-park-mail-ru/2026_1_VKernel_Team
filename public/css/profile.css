@@ -1,74 +1,32 @@
-.profile-container {
-  max-width: 1200px;
-  margin: 2rem auto;
-  padding: 0 1rem;
-}
+/* === Дополнения к profile.css === */
+.section-title { font-size: 1.5rem; margin: 0 0 1rem; font-weight: 600; color: #1e1e1e; }
 
-.profile-header {
-  background: #fff;
-  border-radius: 16px;
-  padding: 2rem;
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  gap: 2rem;
-  align-items: center;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-  margin-bottom: 2rem;
-}
+/* Табы объявлений */
+.ads-tabs { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; border-bottom: 1px solid #eee; padding-bottom: 0.75rem; flex-wrap: wrap; }
+.tab-pill { background: #f3f4f6; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; font-weight: 500; color: #666; transition: 0.2s; }
+.tab-pill:hover { background: #e5e7eb; }
+.tab-pill--active { background: #1f2937; color: #fff; }
 
-.avatar-wrapper { position: relative; width: 110px; height: 110px; }
-.avatar-img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; border: 3px solid #f0f0f0; }
-.avatar-btn {
-  position: absolute; bottom: 0; right: 0; background: #35e392; color: #fff;
-  width: 34px; height: 34px; border-radius: 50%; border: none; cursor: pointer;
-  display: flex; align-items: center; justify-content: center; font-size: 16px;
-}
+/* Бейджи в меню */
+.badge { background: #e5e7eb; padding: 2px 6px; border-radius: 4px; font-size: 0.8rem; margin-left: 4px; }
 
-.username { margin: 0 0 0.5rem; font-size: 1.75rem; color: #1e1e1e; }
-.user-meta { color: #666; margin: 0 0 0.5rem; }
-.user-stats { display: flex; gap: 1.5rem; font-weight: 500; color: #444; }
-.header-actions { display: flex; gap: 0.75rem; }
+/* Кнопки */
+.btn { padding: 0.6rem 1.2rem; border: none; border-radius: 6px; cursor: pointer; font-weight: 500; transition: 0.2s; font-size: 0.9rem; }
+.btn-secondary { background: #f3f4f6; color: #333; }
+.btn-secondary:hover { background: #e5e7eb; }
+.btn-danger { background: #ef4444; color: #fff; }
+.btn-danger:hover { background: #dc2626; }
+.btn-primary { background: #35e392; color: #fff; }
+.btn-primary:hover { background: #2bc77a; }
 
-.profile-layout { display: flex; gap: 2rem; align-items: flex-start; }
-.profile-sidebar { width: 260px; background: #fff; border-radius: 12px; padding: 1rem; box-shadow: 0 4px 12px rgba(0,0,0,0.05); position: sticky; top: 100px; }
-.sidebar-nav { display: flex; flex-direction: column; gap: 0.5rem; }
-.nav-item {
-  padding: 0.75rem 1rem; border-radius: 8px; color: #555; text-decoration: none;
-  transition: all 0.2s; font-weight: 500;
-}
-.nav-item:hover { background: #f5f5f5; color: #2bde8c; }
-.nav-item.active { background: #e6fffa; color: #2bde8c; }
+/* Выход в сайдбаре */
+.nav-item--logout { color: #ef4444; margin-top: 0.5rem; border-top: 1px solid #eee; padding-top: 1rem; }
+.sidebar-divider { height: 1px; background: #eee; margin: 0.5rem 0; }
 
-.profile-content {
-  flex: 1; background: #fff; border-radius: 12px; padding: 2rem;
-  min-height: 400px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-}
+/* Плейсхолдеры пустого состояния */
+.empty-placeholders { display: flex; gap: 1rem; justify-content: center; margin-bottom: 1.5rem; }
+.placeholder-card { width: 140px; height: 180px; background: #f3f4f6; border-radius: 8px; }
+.placeholder-card:nth-child(2) { margin-top: 1.5rem; }
 
-.items-grid, .cart-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1.5rem; }
-.item-card, .cart-item { background: #fafafa; border-radius: 10px; overflow: hidden; transition: 0.2s; border: 1px solid #eee; }
-.item-card:hover { transform: translateY(-4px); box-shadow: 0 6px 15px rgba(0,0,0,0.1); }
-.item-card img, .cart-item img { width: 100%; height: 150px; object-fit: cover; }
-.item-info, .item-details { padding: 1rem; }
-.price { font-weight: 700; font-size: 1.1rem; margin: 0.5rem 0; color: #2bde8c; }
-.location, .seller { font-size: 0.85rem; color: #888; }
-
-.empty-state, .error-state { text-align: center; padding: 3rem; color: #888; background: #f9f9f9; border-radius: 10px; }
-.loader-wrapper { display: flex; justify-content: center; padding: 3rem; }
-
-.modal-overlay {
-  position: fixed; inset: 0; background: rgba(0,0,0,0.4); display: none;
-  justify-content: center; align-items: center; z-index: 100;
-}
-.modal-overlay.show { display: flex; }
-.modal-content { background: #fff; padding: 2rem; border-radius: 14px; width: 100%; max-width: 400px; }
-.modal-actions { display: flex; gap: 0.75rem; margin-top: 1.5rem; justify-content: flex-end; }
-
-@media (max-width: 900px) {
-  .profile-header { grid-template-columns: 1fr; text-align: center; }
-  .avatar-wrapper { margin: 0 auto; }
-  .user-stats { justify-content: center; }
-  .header-actions { justify-content: center; }
-  .profile-layout { flex-direction: column; }
-  .profile-sidebar { width: 100%; position: static; margin-bottom: 1rem; }
-  .sidebar-nav { flex-direction: row; overflow-x: auto; }
-}
+/* Карточка объявления */
+.item-title { font-size: 1rem; margin: 0.5rem 0 0.25rem; font-weight: 500; color: #1e1e1e; }

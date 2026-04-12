@@ -60,6 +60,7 @@ export class ApiClient {
     /**
      * Обновляет токен доступа через запрос на рефреш
      */
+    
     private async _refreshAccessToken(): Promise<ApiResponse> {
         if (!this._isRefreshing) {
             this._isRefreshing = true;
@@ -206,6 +207,14 @@ export class ApiClient {
         headers: Record<string, string> = {},
     ): Promise<ApiResponse<T>> {
         return this.request<T>(endpoint, 'DELETE', null, headers);
+    }
+
+    patch<T = any>(
+        endpoint: string,
+        body: any,
+        headers: Record<string, string> = {},
+    ): Promise<ApiResponse<T>> {
+        return this.request<T>(endpoint, 'PATCH', body, headers);
     }
 }
 
