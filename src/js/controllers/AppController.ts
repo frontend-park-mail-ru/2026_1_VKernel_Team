@@ -2,12 +2,17 @@
  * Главный контроллер приложения
  * Управляет роутингом, инициализацией и глобальными обработчиками
  */
+import adDetailTpl from '@modules/announcements/ad-detail/templates/ad-detail.hbs';
 import mainPageTpl from '@templates/main-page.hbs';
 import loginFormsTpl from '@templates/login-forms.hbs';
 import registerFormTpl from '@templates/register-form.hbs';
 import userProfileTpl from '@templates/user-profile.hbs';
 import authLinksTpl from '@templates/auth-links.hbs';
 import notFoundTpl from '@templates/not-found.hbs';
+
+import { PlaceAnAdController } from '@modules/announcements/place-an-ad';
+import { AdPreviewController } from '@modules/announcements/ad-preview';
+import { AdDetailController } from '@modules/announcements/ad-detail';
 import { AuthController } from '@/controllers/AuthController';
 import { AdsController } from '@/controllers/AdsController';
 import { ProfileController } from '@/controllers/ProfileController';
@@ -25,6 +30,7 @@ declare const Handlebars: any;
 
 export const AppController = {
     _lastPage: '',
+    _currentFeature: '',
     templates: {} as Record<TemplateName, HandlebarsTemplateFunction>,
 
     UI_CONSTANTS: {
@@ -34,6 +40,9 @@ export const AppController = {
         EYE_CLOSED: '/images/icons/Eye-off.jpeg',
         LOADER_HTML: '<div class="spinner"></div>',
     } as UIConstants,
+
+    currentPhotoIndex: 0,
+    allPhotosArray: [] as string[],
 
     async init(): Promise<void> {
         await this.loadTemplates();
@@ -60,6 +69,7 @@ export const AppController = {
     },
 
     async loadTemplates(): Promise<void> {
+
         // Шаблоны уже прекомпилированы лоадером, просто присваиваем их
         this.templates['main-page'] = mainPageTpl;
         this.templates['login-forms'] = loginFormsTpl;
@@ -67,6 +77,7 @@ export const AppController = {
         this.templates['user-profile'] = userProfileTpl;
         this.templates['auth-links'] = authLinksTpl;
         this.templates['not-found'] = notFoundTpl;
+        this.templates['ad-detail'] = adDetailTpl;
 
         // Регистрация хелперов остаётся (они нужны для рендера)
         this.registerHandlebarsHelpers();
@@ -124,7 +135,36 @@ export const AppController = {
 
     router(): void {
         const path = window.location.pathname;
-        uiActions.navigateTo(path);
+        const adMatch = path.match(/^\/ad\/(\d+)$/);
+        
+        if (path === '/place-ad') {
+            if (this._currentFeature === 'place-ad') {
+                PlaceAnAdController.cleanup();
+            }
+            this._currentFeature = 'place-ad';
+            PlaceAnAdController.render();
+            return;
+        }
+
+        if (path === '/ad-preview') {
+            if (this._currentFeature === 'ad-preview') {
+                AdPreviewController.cleanup();
+            }
+            this._currentFeature = 'ad-preview';
+            AdPreviewController.render();
+            return;
+        }
+
+        if (adMatch) {
+            const adId = adMatch[1];
+            
+            if (this._currentFeature === 'ad-detail') {
+                AdDetailController.cleanup();
+            }
+            this._currentFeature = 'ad-detail';
+            AdDetailController.render(adId);
+            return;
+        }
 
         if (!store.isAuthenticated && (path === '/profile' || path === '/cart')) {
             window.history.pushState({}, '', '/login');

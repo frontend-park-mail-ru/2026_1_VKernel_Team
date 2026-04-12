@@ -34,7 +34,7 @@
             <!-- Правая часть -->
             <div class="header-right">
                 {{#if isAuthenticated}}
-                    <button class="btn place-ad-btn">Разместить объявление</button>
+                    <button class="btn place-ad-btn" data-nav="/place-ad">Разместить объявление</button>
                 <!--Нужна проверка в будущем на загрузку своей аватарки пользователем-->
                     <a href="">
                         <img src="{{avatarImageUrl}}" alt="Аватар" class="avatar">
@@ -59,7 +59,9 @@
             <!-- Лого и название в одной строке с поиском -->
             <div class="search-row">
                 <div class="brand">
-                    <img src="images/logo/logo_clover2.jpeg" alt="Логотип" class="logo">
+                    <a href="/" data-nav="/">
+                        <img src="/images/logo/logo_clover2.jpeg" alt="Логотип" class="logo">
+                    </a>
                 </div>
 
                 <div class="search-wrapper">
@@ -171,10 +173,6 @@
 
             <!-- Правая колонка с рекламой (3/12) -->
             <div class="ad-column">
-                Цвета у кнопок "Разместить объявление" и "Найти" одинаковые!
-                Посмотрите через утилиты на них, пожалуйста)))
-                Также решил оставить одну корзину в карточках товара, оставил ее по центру относительно геопозиции и цены,
-                подумал, что так лучше, могу ошибаться. Отступы справа у корзины и лайка одинаковый, проверил)
                 Рекламное место
             </div>
         </div>

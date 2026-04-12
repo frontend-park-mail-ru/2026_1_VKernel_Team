@@ -19,9 +19,6 @@ export const AdsController = {
         DEFAULT_AD_IMAGE: '/images/default-ad.jpg',
     },
 
-    /**
-     * Рендер главной страницы с объявлениями
-     */
     async renderMain(): Promise<void> {
         await adsActions.loadAds();
 
@@ -83,12 +80,25 @@ export const AdsController = {
         };
     },
 
-    attachMainEventListeners(): void {
-        document.querySelectorAll('.ad-card').forEach((card) => {
-            card.addEventListener('click', () => {
-                const adId = (card as HTMLElement).dataset.id;
-                console.log('Ad clicked:', adId);
-            });
+attachMainEventListeners(): void {
+    // Находим все карточки объявлений
+    document.querySelectorAll('.rec-card, .ad-card').forEach((card) => {
+        card.addEventListener('click', (e) => {
+            // Если кликнули на кнопку внутри (лайк, корзина) - не переходим
+            const target = e.target as HTMLElement;
+            if (target.closest('.rec-card-fav') || target.closest('.rec-card-cart')) {
+                return;
+            }
+            
+            // Получаем ID объявления из data-id атрибута
+            const adId = (card as HTMLElement).dataset.id;
+            if (adId) {
+                // Используем navigateTo из AppController
+                import('@/controllers/AppController').then(({ AppController }) => {
+                    AppController.navigateTo(`/ad/${adId}`);
+                });
+            }
         });
-    },
+    });
+},
 };

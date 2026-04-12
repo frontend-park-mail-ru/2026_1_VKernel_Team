@@ -78,14 +78,14 @@
 }
 
 .btn-danger.logout-btn {
-    background: #f27683;
+    background: #a3a3a3;
     color: white;
     border: none;
     box-shadow: none;
 }
 
 .btn-danger.logout-btn:hover {
-    background: #c82333;
+    background: #797979;
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
