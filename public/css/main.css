@@ -464,7 +464,7 @@ body .main-container {
 
 .rec-card-footer {
     display: grid;
-    grid-template-columns: 150px 70px;  /* левая колонка тянется, правая под контент */
+    grid-template-columns: minmax(0, 1fr) auto;
     gap: 10px;
     align-items: center;
     margin-top: auto;  /*прижимаем к низу */
@@ -514,6 +514,7 @@ body .main-container {
     flex-shrink: 0;
     justify-content: flex-end;
     align-items: flex-end;
+    margin-right: -4px;
 }
 
 /* Кнопка лайка в правом верхнем углу */
