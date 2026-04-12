@@ -5,8 +5,10 @@
  */
 
 import { adsActions } from '@/actions/adsActions';
+import { eventBus } from '@/core/eventBus';
 import { store } from '@/core/store';
-import type { Ad, FormattedAd, HandlebarsTemplateFunction } from '@/types';
+import { CONFIG } from '@/core/config';
+import type { Ad, HandlebarsTemplateFunction } from '@/types';
 
 declare const Handlebars: any;
 
@@ -17,9 +19,6 @@ export const AdsController = {
         DEFAULT_AD_IMAGE: '/images/default-ad.jpg',
     },
 
-    /**
-     * Рендер главной страницы с объявлениями
-     */
     async renderMain(): Promise<void> {
         await adsActions.loadAds();
 
@@ -31,12 +30,25 @@ export const AdsController = {
         const formattedAds = ads.map((ad: Ad) => this.formatAdCard(ad));
         document.body.classList.remove('auth-page');
 
+        const user = store.user;
+        let avatarImageUrl = '/images/logo/avatar.jpeg';
+        if (user) {
+            const src = (user.avatar || user.avatar_path || '').trim();
+            if (src) {
+                avatarImageUrl = src.startsWith('http')
+                    ? src
+                    : `${CONFIG.API.BASE_URL}${src.startsWith('/') ? src : `/${src}`}`;
+            }
+        }
+
         app.innerHTML = template({
             isAuthenticated: store.isAuthenticated,
-            user: store.user,
+            user,
+            avatarImageUrl,
             recommendations: formattedAds,
         });
 
+        eventBus.emit('page:adsRendered');
         this.attachMainEventListeners();
     },
 
@@ -67,16 +79,6 @@ export const AdsController = {
             createdDate: ad.created_at ? new Date(ad.created_at).toLocaleDateString('ru-RU') : '',
         };
     },
-
-    // attachMainEventListeners(): void {
-    //     document.querySelectorAll('.ad-card').forEach((card) => {
-    //         card.addEventListener('click', () => {
-    //             const adId = (card as HTMLElement).dataset.id;
-    //             console.log('Ad clicked:', adId);
-    //         });
-    //     });
-    // },
-    // AdsController.ts - обновляем attachMainEventListeners
 
 attachMainEventListeners(): void {
     // Находим все карточки объявлений

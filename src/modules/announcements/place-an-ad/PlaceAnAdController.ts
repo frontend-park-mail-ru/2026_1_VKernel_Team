@@ -41,7 +41,6 @@ export class PlaceAnAdController {
     private static readonly MAX_CUSTOM_CHARS = 10;
 
     static async render(): Promise<void> {
-        console.log('=== PlaceAnAdController.render ===');
         
         const app = document.getElementById('app');
         if (!app) return;
@@ -92,8 +91,6 @@ export class PlaceAnAdController {
     private static async restoreDraft(): Promise<void> {
         const draft = AdDraftService.get();
         if (!draft) return;
-        
-        console.log('🔄 Restoring draft...');
         
         const titleInput = document.getElementById('title') as HTMLInputElement;
         const categorySelect = document.getElementById('category') as HTMLSelectElement;

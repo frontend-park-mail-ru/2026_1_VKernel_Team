@@ -24,48 +24,8 @@ export class AdPreviewController {
     private static draftData: { formData: any; photoFiles: File[] } | null = null;
     private static currentPhotoIndex: number = 0;
     private static categoryCharacteristicsDefs: CategoryCharacteristic[] = [];
-    //private static photoPreviews: string[] = [];
-    
-    // static async render(): Promise<void> {
-    //     console.log('=== AdPreviewController.render ===');
-        
-    //     const app = document.getElementById('app');
-    //     if (!app) return;
-        
-    //     this.draftData = AdDraftService.get();
-    //     if (!this.draftData) {
-    //         uiActions.showError('Нет данных для предпросмотра');
-    //         AppController.navigateTo('/place-ad');
-    //         return;
-    //     }
-        
-    //     document.body.classList.remove('auth-page');
-        
-    //     AppController.showLoading(true);
-        
-    //     try {
-    //         const response = await fetch('/src/modules/announcements/ad-preview/templates/before-publication.hbs');
-    //         if (!response.ok) {
-    //             throw new Error(`Failed to load template: ${response.status}`);
-    //         }
-    //         const templateSource = await response.text();
-    //         const template = Handlebars.compile(templateSource);
-            
-    //         const photoPreviews = await this.createPhotoPreviews(this.draftData.photoFiles);
-    //         const templateData = this.preparePreviewData(this.draftData.formData, photoPreviews);
-            
-    //         app.innerHTML = template(templateData);
-    //         this.attachEventListeners();
-            
-    //     } catch (error) {
-    //         console.error('Error loading preview page:', error);
-    //         app.innerHTML = '<h1>Ошибка загрузки страницы</h1>';
-    //     } finally {
-    //         AppController.showLoading(false);
-    //     }
-    // }
+
     static async render(): Promise<void> {
-        console.log('=== AdPreviewController.render ===');
         
         const app = document.getElementById('app');
         if (!app) return;
@@ -77,13 +37,11 @@ export class AdPreviewController {
             return;
         }
         
-        // ✅ ЗАГРУЖАЕМ ОПРЕДЕЛЕНИЯ ХАРАКТЕРИСТИК ДЛЯ КАТЕГОРИИ
         if (this.draftData.formData.category_id) {
             try {
                 this.categoryCharacteristicsDefs = await categoryService.getCategoryCharacteristics(
                     this.draftData.formData.category_id
                 );
-                console.log('📋 Loaded characteristic definitions for preview:', this.categoryCharacteristicsDefs);
             } catch (error) {
                 console.error('Failed to load characteristic definitions:', error);
             }
@@ -129,58 +87,19 @@ export class AdPreviewController {
         
         return previews;
     }
-    
-    // private static preparePreviewData(formData: any, photoPreviews: string[]): any {
-    //     const mainPhoto = photoPreviews.length > 0 ? photoPreviews[0] : '/images/default-ad.jpg';
-        
-    //     const formattedPrice = formData.price === 0 
-    //         ? 'Бесплатно' 
-    //         : formData.price.toLocaleString('ru-RU') + ' ₽';
-        
-    //     const attributes = [
-    //         ...(formData.category_characteristics || []),
-    //         ...(formData.custom_characteristics || [])
-    //     ];
-        
-    //     const isDescriptionLong = formData.description && formData.description.length > 300;
-        
-    //     return {
-    //         title: formData.title || 'Без названия',
-    //         formattedPrice: formattedPrice,
-    //         location: formData.location || 'Не указано',
-    //         description: formData.description || 'Описание отсутствует',
-    //         mainPhoto: mainPhoto,
-    //         allPhotos: photoPreviews,
-    //         hasMultiplePhotos: photoPreviews.length > 1,
-    //         isDescriptionLong: isDescriptionLong,
-    //         attributes: attributes,
-    //         isAuthenticated: store.isAuthenticated,
-    //         user: store.user,
-    //         sellerName: store.user?.name || 'Вы',
-    //         sellerSince: store.user?.created_at 
-    //             ? new Date(store.user.created_at).toLocaleDateString('ru-RU', { month: 'long', year: 'numeric' })
-    //             : 'сегодня',
-    //     };
-    // }
 
     private static preparePreviewData(formData: any, photoPreviews: string[]): any {
         const mainPhoto = photoPreviews.length > 0 ? photoPreviews[0] : '/images/default-ad.jpg';
-        //this.photoPreviews = photoPreviews;
         const formattedPrice = formData.price === 0 
             ? 'Бесплатно' 
             : formData.price.toLocaleString('ru-RU') + ' ₽';
         
         const isDescriptionLong = formData.description && formData.description.length > 300;
         
-        // ✅ ФОРМИРУЕМ ХАРАКТЕРИСТИКИ ДЛЯ ПРЕДПРОСМОТРА
         const attributes: Array<{name: string, value: string}> = [];
         
-        // 1. Добавляем категорийные характеристики
-        // Нужно получить их названия из определений категории
+        // Категорийные характеристики
         if (formData.category_characteristics && formData.category_characteristics.length > 0) {
-            // Здесь formData.category_characteristics имеет формат CharacteristicInput[]
-            // То есть { category_characteristic_id: number, value: string }
-            // Нам нужно получить названия этих характеристик
             for (const char of formData.category_characteristics) {
                 // Ищем определение характеристики по ID
                 const definition = this.categoryCharacteristicsDefs.find(
@@ -189,26 +108,25 @@ export class AdPreviewController {
                 
                 if (definition && char.value) {
                     attributes.push({
-                        name: definition.name,  // ← Название из определения
-                        value: char.value       // ← Значение, которое выбрал пользователь
+                        name: definition.name,  
+                        value: char.value  
                     });
                 }
             }
         }
         
-        // 2. Добавляем пользовательские характеристики
+        // Пользовательские характеристики
         if (formData.custom_characteristics && formData.custom_characteristics.length > 0) {
             for (const char of formData.custom_characteristics) {
                 if (char.name && char.value) {
                     attributes.push({
-                        name: char.name,   // ← Название, которое ввел пользователь
-                        value: char.value  // ← Значение, которое ввел пользователь
+                        name: char.name,
+                        value: char.value
                     });
                 }
             }
         }
         
-        console.log('📊 Preview attributes:', attributes); // Для отладки
         
         return {
             title: formData.title || 'Без названия',
@@ -219,7 +137,7 @@ export class AdPreviewController {
             allPhotos: photoPreviews,
             hasMultiplePhotos: photoPreviews.length > 1,
             isDescriptionLong: isDescriptionLong,
-            attributes: attributes,  // ← Теперь с правильными названиями
+            attributes: attributes,
             isAuthenticated: store.isAuthenticated,
             user: store.user,
             sellerName: store.user?.name || 'Вы',
@@ -239,31 +157,16 @@ export class AdPreviewController {
             backBtn.addEventListener('click', handler);
             this._handlers.set('back-to-edit', handler);
         }
-        
-        // const publishBtn = document.querySelector('[data-action="publish-ad"]');
-        // if (publishBtn) {
-        //     const handler = async (e: Event) => {
-        //         e.preventDefault();
-        //         await this.publishAd();
-        //     };
-        //     publishBtn.addEventListener('click', handler);
-        //     this._handlers.set('publish-ad', handler);
-        // }
-        
-        console.log('🔧 AdPreviewController: attaching listeners...');
-        
+                
         const publishBtn = document.querySelector('[data-action="publish-ad"]');
-        console.log('Publish button found:', publishBtn);
         
         if (publishBtn) {
             const handler = async (e: Event) => {
                 e.preventDefault();
-                console.log('📤 Publish button clicked!');
                 await this.publishAd();
             };
             publishBtn.addEventListener('click', handler);
             this._handlers.set('publish-ad', handler);
-            console.log('✅ Publish handler attached');
         } else {
             console.error('❌ Publish button NOT found in DOM');
         }
@@ -324,7 +227,7 @@ export class AdPreviewController {
             this._handlers.set(`thumb-${index}`, handler);
         });
 
-        // ✅ Добавляем обработчик для открытия просмотрщика фото
+        // Обработчик для открытия просмотрщика фото
         const mainPhoto = document.getElementById('mainPhoto');
         if (mainPhoto && this.draftData?.photoFiles) {
             const handler = async (e: Event) => {
@@ -378,84 +281,7 @@ export class AdPreviewController {
         this.currentPhotoIndex = activeIndex;
     }
     
-    // private static async publishAd(): Promise<void> {
-    //     AppController.showLoading(true);
-        
-    //     try {
-    //         if (!this.draftData) {
-    //             throw new Error('Нет данных для публикации');
-    //         }
-            
-    //         if (this.draftData.photoFiles.length === 0) {
-    //             uiActions.showError('Добавьте хотя бы одно фото');
-    //             return;
-    //         }
-            
-    //         const formData = new FormData();
-            
-    //         const adData = {
-    //             title: this.draftData.formData.title,
-    //             description: this.draftData.formData.description || '',
-    //             price: this.draftData.formData.price,
-    //             category_id: this.draftData.formData.category_id,
-    //             status: 'active',
-    //             location: this.draftData.formData.location || '',
-    //             category_characteristics: this.draftData.formData.category_characteristics || [],
-    //             custom_characteristics: this.draftData.formData.custom_characteristics || []
-    //         };
-            
-    //         console.log('📤 Publishing ad:', {
-    //             title: adData.title,
-    //             category_id: adData.category_id,
-    //             price: adData.price,
-    //             category_chars: adData.category_characteristics.length,
-    //             custom_chars: adData.custom_characteristics.length,
-    //             photos: this.draftData.photoFiles.length
-    //         });
-            
-    //         formData.append('data', JSON.stringify(adData));
-            
-    //         this.draftData.photoFiles.forEach((file: File) => {
-    //             formData.append('photos', file);
-    //         });
-            
-    //         const token = localStorage.getItem('token');
-    //         const csrfToken = getCookie('csrf_token');
-            
-    //         const headers: HeadersInit = {};
-    //         if (token) headers['Authorization'] = `Bearer ${token}`;
-    //         if (csrfToken) headers['X-CSRF-Token'] = csrfToken;
-            
-    //         const response = await fetch('/api/v1/ads', {
-    //             method: 'POST',
-    //             headers: headers,
-    //             body: formData
-    //         });
-            
-    //         const result = await response.json();
-            
-    //         if (response.ok) {
-    //             uiActions.showSuccess('Объявление успешно опубликовано!');
-    //             AdDraftService.clear();
-                
-    //             const adId = result.data?.id || result;
-    //             AppController.navigateTo(`/ad/${adId}`);
-    //         } else {
-    //             console.error('Publish error:', result);
-    //             uiActions.showError(result.error || 'Ошибка при публикации объявления');
-    //         }
-            
-    //     } catch (error) {
-    //         console.error('Error publishing ad:', error);
-    //         uiActions.showError('Не удалось опубликовать объявление');
-    //     } finally {
-    //         AppController.showLoading(false);
-    //     }
-    // }
-    
     private static async publishAd(): Promise<void> {
-        console.log('🚀 publishAd called');
-        console.log('draftData:', this.draftData);
         AppController.showLoading(true);
         
         try {
@@ -481,15 +307,6 @@ export class AdPreviewController {
                 category_characteristics: this.draftData.formData.category_characteristics || [],
                 custom_characteristics: this.draftData.formData.custom_characteristics || []
             };
-            
-            console.log('📤 Publishing ad:', {
-                title: adData.title,
-                category_id: adData.category_id,
-                price: adData.price,
-                category_chars: adData.category_characteristics?.length || 0,
-                custom_chars: adData.custom_characteristics?.length || 0,
-                photos: this.draftData.photoFiles.length
-            });
             
             formData.append('data', JSON.stringify(adData));
             

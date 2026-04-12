@@ -2,7 +2,7 @@ import { authActions } from '@/actions/authActions';
 import { store } from '@/core/store';
 import { uiActions } from '@/actions/uiActions';
 import type { HandlebarsTemplateFunction } from '@/types';
-import { AppController } from './AppController';
+import { AppController } from '@/controllers/AppController';
 
 declare const Handlebars: any;
 
@@ -58,14 +58,11 @@ export const AuthController = {
         const result = await authActions.login({ email, password });
 
         if (result.isValid) {
+            await authActions.checkAuth();
             uiActions.showSuccess('Вход выполнен!');
-            window.history.pushState({}, '', '/');
-            if (typeof AppController?.router === 'function') {
-                AppController.router();
-            }
+            AppController.navigateTo('/');
         } else {
             uiActions.showError(result.error || 'Ошибка входа');
-            this.clearLoginError();
             this.showLoginError(result.error ?? 'Ошибка входа');
         }
     },
@@ -74,28 +71,18 @@ export const AuthController = {
         const result = await authActions.register(data);
 
         if (result.isValid) {
-            uiActions.showSuccess('Вход выполнен!');
-            window.history.pushState({}, '', '/');
-            if (typeof AppController?.router === 'function') {
-                AppController.router();
-            }
+            await authActions.checkAuth();
+            uiActions.showSuccess('Регистрация успешна!');
+            AppController.navigateTo('/');
         } else {
             uiActions.showError(result.error || 'Ошибка регистрации');
-            this.clearFieldErrors();
-            if (result.fieldErrors) {
-                this.showFieldErrors(result.fieldErrors);
-            }
-            // мы просто накладываем ошибки поверх существующих полей.
         }
     },
 
     async handleLogout(): Promise<void> {
         await authActions.logout();
         localStorage.removeItem('authToken');
-        window.history.pushState({}, '', '/');
-        if (typeof AppController?.router === 'function') {
-            AppController.router();
-        }
+        AppController.navigateTo('/');
     },
 
     initPasswordToggles(): void {

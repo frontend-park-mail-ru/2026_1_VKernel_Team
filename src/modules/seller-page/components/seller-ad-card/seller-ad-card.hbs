@@ -1,0 +1,23 @@
+<div class="rec-card" data-id="{{id}}">
+    <div class="rec-card-image-container">
+        <img src="{{image}}" alt="{{title}}" class="rec-card-image">
+        <button class="rec-card-fav">♡</button>
+    </div>
+    <div class="rec-card-content">
+        <span class="rec-card-title">{{title}}</span>
+        <div class="rec-card-footer">
+            <div class="rec-card-footer-info">
+                <span class="rec-card-price">{{formattedPrice}}</span>
+                <span class="rec-card-location">
+                    <span class="location-icon">📍</span>
+                    {{location}}
+                </span>
+            </div>
+            <div class="rec-card-footer-actions">
+                {{#if showCartButton}}
+                    {{> cart-button productId=id}}
+                {{/if}}
+            </div>
+        </div>
+    </div>
+</div>

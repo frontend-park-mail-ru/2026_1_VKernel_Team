@@ -7,80 +7,84 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export default (env, argv) => {
-    const isDevelopment = argv?.mode === 'development';
+  const isDevelopment = argv?.mode === 'development';
 
-    return {
-        entry: './src/js/main.ts',
-        output: {
-            path: path.resolve(__dirname, 'dist'),
-            filename: 'js/[name].[contenthash].js',
-            clean: true,
-            publicPath: '/',
+  return {
+    entry: './src/js/main.ts',
+    output: {
+      path: path.resolve(__dirname, 'dist'),
+      filename: 'js/[name].[contenthash].js',
+      clean: true,
+      publicPath: '/',
+    },
+    devtool: isDevelopment ? 'source-map' : false,
+    module: {
+      rules: [
+        {
+          test: /\.tsx?$/,
+          use: 'ts-loader',
+          exclude: /node_modules/,
         },
-        devtool: isDevelopment ? 'source-map' : false,
-        module: {
-            rules: [
-                {
-                    test: /\.tsx?$/,
-                    use: 'ts-loader',
-                    exclude: /node_modules/,
-                },
-                {
-                    test: /\.css$/i,
-                    use: ['style-loader', 'css-loader'],
-                },
-                {
-                    test: /\.(png|jpe?g|gif|svg|webp)$/i,
-                    type: 'asset/resource',
-                    generator: {
-                        filename: 'images/[hash][ext][query]',
-                    },
-                },
-                {
-                    test: /\.hbs$/i,
-                    loader: 'handlebars-loader',
-                },
+        {
+          test: /\.css$/i,
+          use: ['style-loader', 'css-loader'],
+        },
+        {
+          test: /\.(png|jpe?g|gif|svg|webp)$/i,
+          type: 'asset/resource',
+          generator: { filename: 'images/[hash][ext][query]' },
+        },
+        {
+          test: /\.hbs$/i,
+          resourceQuery: /raw/,
+          type: 'asset/source',
+        },
+        {
+          test: /\.hbs$/i,
+          resourceQuery: { not: [/raw/] },
+          loader: 'handlebars-loader',
+          options: {
+            precompile: true,
+            esModule: true,
+            runtime: 'handlebars/dist/handlebars.runtime.js',
+            knownHelpers: ['if', 'unless', 'each', 'with', 'log', 'formatPrice'],
+            partialDirs: [
+              path.resolve(__dirname, 'src/modules/cart/components/cart-button'),
             ],
+          },
         },
-        plugins: [
-            new HtmlWebpackPlugin({
-                template: './public/index.html',
-                filename: 'index.html',
-                inject: 'body',
-            }),
-            new CopyWebpackPlugin({
-                patterns: [
-                    {
-                        from: 'public/images',
-                        to: 'images',
-                        noErrorOnMissing: true,
-                    },
-                    {
-                        from: 'src/templates',
-                        to: 'templates',
-                        noErrorOnMissing: true,
-                    },
-                    {
-                        from: 'public/site',
-                        to: 'site',
-                        noErrorOnMissing: true,
-                    },
-                    {
-                        from: 'public/css',
-                        to: 'css',
-                        noErrorOnMissing: true,
-                    },
-                ],
-            }),
+      ],
+    },
+    plugins: [
+      new HtmlWebpackPlugin({
+        template: './public/index.html',
+        filename: 'index.html',
+        inject: 'body',
+      }),
+      new CopyWebpackPlugin({
+        patterns: [
+          { from: 'public/images', to: 'images', noErrorOnMissing: true },
+          { from: 'public/site', to: 'site', noErrorOnMissing: true },
+          { from: 'public/css', to: 'css', noErrorOnMissing: true },
         ],
-        resolve: {
-            extensions: ['.ts', '.tsx', '.js', '.hbs'],
-            alias: {
-                '@': path.resolve(__dirname, 'src/js'),
-                '@modules': path.resolve(__dirname, 'src/modules'),
-                '@css': path.resolve(__dirname, 'public/css'),
-                handlebars: 'handlebars/dist/handlebars.js',
-            },
-        },
-    };
+      }),
+    ],
+    resolve: {
+      extensions: ['.ts', '.tsx', '.js', '.hbs'],
+      alias: {
+        '@': path.resolve(__dirname, 'src/js'),
+        '@css': path.resolve(__dirname, 'public/css'),
+        '@core': path.resolve(__dirname, 'src/js/core'),
+        '@api': path.resolve(__dirname, 'src/js/api'),
+        '@services': path.resolve(__dirname, 'src/js/services'),
+        '@controllers': path.resolve(__dirname, 'src/js/controllers'),
+        '@validators': path.resolve(__dirname, 'src/js/validators'),
+        '@utils': path.resolve(__dirname, 'src/js/utils'),
+        '@types': path.resolve(__dirname, 'src/js/types'),
+        '@templates': path.resolve(__dirname, 'src/templates'),
+        '@modules': path.resolve(__dirname, 'src/modules'),
+                'handlebars$': 'handlebars/dist/handlebars.js',
+      },
+    },
+  };
 };
