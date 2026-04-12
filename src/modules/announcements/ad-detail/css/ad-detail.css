@@ -39,6 +39,12 @@
     transform: translateX(0);
 }
 
+.ad-detail-page .ad-title-section {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
 .ad-detail-page .ad-title-section .ad-title,
 .ad-detail-page .ad-description-section .section-title,
 .ad-detail-page .ad-attributes-section .section-title,
@@ -276,6 +282,26 @@
 .ad-detail-page .seller-since {
     font-size: 14px;
     color: #888;
+}
+
+.ad-detail-page .back-btn {
+    width: 104px;
+    background: none;
+    border: none;
+    font-size: 16px;
+    color: #6c757d;
+    cursor: pointer;
+    padding: 11px 16px 5px 16px;
+    border-radius: 8px;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.ad-detail-page .back-btn:hover {
+    background: #f8f9fa;
+    color: #2bde8c;
 }
 
 @media (max-width: 768px) {

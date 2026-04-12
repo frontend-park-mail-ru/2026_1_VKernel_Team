@@ -86,6 +86,7 @@
             <div class="main-column">
                 <!-- Название товара -->
                 <div class="ad-title-section">
+                    <button class="back-btn" data-action="back">← Назад</button>
                     <h1 class="ad-title">{{title}}</h1>
                 </div>
 
@@ -148,40 +149,6 @@
                                 <span class="attribute-value">{{value}}</span>
                             </div>
                         {{/each}}
-                        {{#unless attributes}}
-                            <div class="attribute-item">
-                                <span class="attribute-name">Состояние:</span>
-                                <span class="attribute-value">Как новое</span>
-                            </div>
-                            <div class="attribute-item">
-                                <span class="attribute-name">Год выпуска:</span>
-                                <span class="attribute-value">2024</span>
-                            </div>
-                            <div class="attribute-item">
-                                <span class="attribute-name">Гарантия</span>
-                                <span class="attribute-value">12 месяцев</span>
-                            </div>
-                            <div class="attribute-item">
-                                <span class="attribute-name">Доставка</span>
-                                <span class="attribute-value">Есть</span>
-                            </div>
-                            <div class="attribute-item">
-                                <span class="attribute-name">Состояние</span>
-                                <span class="attribute-value">Как новое</span>
-                            </div>
-                            <div class="attribute-item">
-                                <span class="attribute-name">Год выпуска</span>
-                                <span class="attribute-value">2024</span>
-                            </div>
-                            <div class="attribute-item">
-                                <span class="attribute-name">Гарантия</span>
-                                <span class="attribute-value">12 месяцев</span>
-                            </div>
-                            <div class="attribute-item">
-                                <span class="attribute-name">Доставка</span>
-                                <span class="attribute-value">Есть</span>
-                            </div>
-                        {{/unless}}
                     </div>
                 </div>
 
@@ -196,11 +163,6 @@
                             <div class="seller-since">На сайте с: {{sellerSince}}</div>
                         </div>
                     </div>
-                </div>
-
-                <div class="preview-actions">
-                    <button type="button" class="btn-back-edit" data-action="back-to-edit">← Назад к редактированию</button>
-                    <button type="button" class="btn-publish-final" data-action="publish-ad">Опубликовать объявление</button>
                 </div>
             </div>
             

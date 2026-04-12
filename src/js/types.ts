@@ -12,6 +12,7 @@ export interface User {
 
 export interface Ad {
     id: number;
+    category_id: number;
     title: string;
     description?: string;
     price: number;
@@ -19,13 +20,15 @@ export interface Ad {
     views_count?: number;
     favorites_count?: number;
     created_at?: string;
+    updated_at?: string;
     location?: string;
     status?: 'active' | 'draft' | 'reserved' | 'sold' | 'archived';
     
+    category_characteristics: ProductCharacteristic[];
+    custom_characteristics: ProductCustomCharacteristic[];
     seller_id?: number;
     seller_name?: string;
     seller_created_at?: string;
-    category_id?: number;
     condition?: string;
 }
 
@@ -78,7 +81,9 @@ export type TemplateName =
     | 'user-profile'
     | 'main-page'
     | 'not-found'
-    | 'ad-detail';
+    | 'ad-detail'
+    | 'before-publication'
+    | 'place-an-ad';
 
 export type HandlebarsTemplateFunction = (context?: any) => string;
 
@@ -88,4 +93,108 @@ export interface UIConstants {
     EYE_OPEN: string;
     EYE_CLOSED: string;
     LOADER_HTML: string;
+}
+
+export interface DraftCategoryCharacteristic {
+    category_characteristic_id: number;
+    value: string;
+}
+
+export interface DraftCustomCharacteristic {
+    name: string;
+    value: string;
+}
+
+export interface DraftFormData {
+    title: string;
+    category_id: number;
+    price: number;
+    description: string;
+    location: string;
+    category_characteristics: DraftCategoryCharacteristic[];
+    custom_characteristics: DraftCustomCharacteristic[];
+}
+
+export interface DraftData {
+    id: string;
+    formData: DraftFormData;
+    photoCount: number;
+    timestamp: number;
+}
+
+export interface Category {
+    id: number;
+    name: string;
+    parent_id?: number | null;
+    sort_order?: number;
+}
+
+export interface CategoryCharacteristic {
+    id: number;
+    category_id: number;
+    name: string;
+    allowed_values: string[] | null; // null = свободный ввод, массив = enum (dropdown)
+    sort_order: number;
+}
+
+export interface ProductCharacteristic {
+    name: string;
+    value: string;
+}
+
+export interface ProductCustomCharacteristic {
+    name: string;
+    value: string;
+}
+
+export interface CharacteristicInput {
+    category_characteristic_id: number;
+    value: string; // "" = удалить
+}
+
+export interface CustomCharacteristicInput {
+    name: string;
+    value: string; // "" = удалить
+}
+
+export interface CreateAdData {
+    category_id: number;
+    title: string;
+    description: string;
+    price: number;
+    status: string;
+    location: string;
+    category_characteristics?: CharacteristicInput[];
+    custom_characteristics?: CustomCharacteristicInput[];
+}
+
+export interface UpdateAdData {
+    category_id?: number;
+    title?: string;
+    description?: string;
+    price?: number;
+    status?: string;
+    location?: string;
+    category_characteristics?: CharacteristicInput[];
+    custom_characteristics?: CustomCharacteristicInput[];
+}
+
+export interface ApiError {
+    error: string;
+}
+
+export interface ValidationErrors {
+    email?: string;
+    password?: string;
+    name?: string;
+    user_id?: string;
+    category_id?: string;
+    title?: string;
+    description?: string;
+    price?: string;
+    status?: string;
+    location?: string;
+    photos?: string[];
+    category_characteristics?: string;
+    custom_characteristics?: string;
 }

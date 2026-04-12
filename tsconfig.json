@@ -6,6 +6,7 @@
     
     "paths": {
       "@/*": ["./src/js/*"],
+      "@modules/*": ["./src/modules/*"],
       "@css/*": ["./public/css/*"],
       "@core/*": ["./src/js/core/*"],
       "@api/*": ["./src/js/api/*"],
@@ -17,7 +18,7 @@
     },
     
     "outDir": "./dist",
-    "rootDir": "./src/js",
+    "rootDir": "./src",
     
     "strict": true,
     "esModuleInterop": true,
@@ -29,7 +30,7 @@
     "noEmit": false,
     "lib": ["ES2020", "DOM", "DOM.Iterable"]
   },
-  "include": ["src/js/**/*"],
+  "include": ["src/**/*"],
   "exclude": ["node_modules", "public", "dist"],
   "ts-node": {
     "compilerOptions": {

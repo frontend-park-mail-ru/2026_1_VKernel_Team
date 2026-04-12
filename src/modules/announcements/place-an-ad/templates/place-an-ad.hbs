@@ -156,6 +156,16 @@
                     </div>
 
                     <div class="form-card">
+                        <h3 class="form-card-title">Характеристики товара</h3>
+                        <div class="form-card-content">
+                            <div id="categoryCharacteristicsContainer">
+                                <!-- Сюда динамически подставятся характеристики категории -->
+                                <div class="no-characteristics">Выберите категорию, чтобы увидеть характеристики</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-card">
                         <h3 class="form-card-title">Описание</h3>
                         <div class="form-card-content">
                             <div class="form-section">
@@ -172,36 +182,11 @@
                     </div>
 
                     <div class="form-card">
-                        <h3 class="form-card-title">Характеристики</h3>
+                        <h3 class="form-card-title">Дополнительные характеристики</h3>
                         <div class="form-card-content">
-                            <!-- Обязательные характеристики -->
-                            <div class="form-section">
-                                <label for="condition" class="section-label">Состояние *</label>
-                                <select id="condition" class="form-select">
-                                    <option value="">Выберите состояние</option>
-                                    {{#each state}}
-                                        <option value="{{id}}">{{name}}</option>
-                                    {{/each}}
-                                </select>
-                            </div>
-
-                            <div class="form-section">
-                                <label for="brand" class="section-label">Производитель *</label>
-                                <input 
-                                    type="text" 
-                                    id="brand" 
-                                    class="form-input" 
-                                    placeholder="Например, Apple, Samsung, Nike..."
-                                    autocomplete="off"
-                                >
-                            </div>
-
-                            <!-- Динамические характеристики -->
                             <div id="dynamicAttributesContainer">
-                                <!-- Сюда будут добавляться дополнительные характеристики -->
+                                <div class="no-characteristics">Добавьте свои характеристики</div>
                             </div>
-
-                            <!-- Кнопка добавления характеристики -->
                             <button type="button" id="addAttributeBtn" class="btn-add-attribute">
                                 <span class="plus-icon">+</span>
                                 Добавить характеристику
