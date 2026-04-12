@@ -151,12 +151,12 @@ export interface ProductCustomCharacteristic {
 
 export interface CharacteristicInput {
     category_characteristic_id: number;
-    value: string; // "" = удалить
+    value: string;
 }
 
 export interface CustomCharacteristicInput {
     name: string;
-    value: string; // "" = удалить
+    value: string;
 }
 
 export interface CreateAdData {
