@@ -27,7 +27,7 @@ export interface UserProfile {
   ads_count: number;
   favorites_count: number;
   cart_count: number;
-  messages_count: number;
+  messages_count?: number;
   created_at: string;
   is_verified?: boolean;
   balance?: number;

@@ -18,6 +18,21 @@ export default (env, argv) => {
       publicPath: '/',
     },
     devtool: isDevelopment ? 'source-map' : false,
+    
+    // === ДОБАВЛЯЕМ БЛОК DEVSERVER СЮДА ===
+    devServer: {
+      port: 8080,
+      historyApiFallback: true, // Чтобы работали роуты (SPA)
+      proxy: [
+        {
+          context: ['/api'], // Все запросы, начинающиеся с /api
+          target: 'http://clover-go.ru:8000', // Будут лететь на твой бэкенд
+          changeOrigin: true, // Подменяет origin, чтобы бэкенд не ругался
+        },
+      ],
+    },
+    // =====================================
+
     module: {
       rules: [
         { test: /\.tsx?$/, use: 'ts-loader', exclude: /node_modules/ },

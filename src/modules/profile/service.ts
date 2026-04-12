@@ -1,11 +1,9 @@
 import { API_ENDPOINTS, apiClient } from '@/api/apiClient';
 import { PROFILE_CONFIG } from './config';
-// Заменяем ProfileData на User
-import type { User } from '@/types';
+import type { User, ApiResponse } from '@/types';
 
 export const ProfileService = {
   async getProfile() {
-    // Используем User вместо ProfileData
     return apiClient.get<User>(PROFILE_CONFIG.API.GET_PROFILE);
   },
 
@@ -13,14 +11,25 @@ export const ProfileService = {
     return apiClient.patch<User>(PROFILE_CONFIG.API.UPDATE_PROFILE, { name: newName });
   },
 
-  async uploadAvatar(file: File) {
+  async uploadAvatar(file: File): Promise<ApiResponse<User>> {
     const formData = new FormData();
     formData.append('avatar', file);
-    return fetch(`/api/v1${PROFILE_CONFIG.API.UPLOAD_AVATAR}`, {
+    
+    // Используем базовый URL из apiClient
+    const apiUrl = apiClient.getApiUrl(); 
+    
+    const response = await fetch(`${apiUrl}${PROFILE_CONFIG.API.UPLOAD_AVATAR}`, {
       method: 'POST',
       body: formData,
       credentials: 'include'
-    }).then(res => res.json());
+    });
+
+    const data = await response.json();
+
+    return {
+      success: response.ok,
+      data: data
+    };
   },
   
   async logout() {

@@ -22,7 +22,81 @@ import { uiActions } from '@/actions/uiActions';
 import type { HandlebarsTemplateFunction, TemplateName, UIConstants } from '@/types';
 import { authActions } from '@/actions/authActions';
 import { CONFIG } from '@/core/config';
-import Handlebars from 'handlebars/dist/handlebars.runtime.js';
+
+// === УЛЬТИМАТИВНЫЙ ИМПОРТ: Берем все возможные версии Handlebars ===
+import * as HandlebarsFull from 'handlebars';
+import * as HandlebarsRuntime from 'handlebars/dist/handlebars.runtime.js';
+
+// ============================================================================
+// === УНИВЕРСАЛЬНАЯ РЕГИСТРАЦИЯ ХЕЛПЕРОВ (Защита от багов Webpack) ===
+// ============================================================================
+const registerHelpers = (Hbs: any) => {
+    // Если хелперы тут уже есть или это не объект Handlebars — пропускаем
+    if (!Hbs || !Hbs.registerHelper || Hbs.helpers?.avatarUrl) return;
+
+    Hbs.registerHelper('formatPrice', (price: number) => {
+        return price === 0 ? 'Бесплатно' : `${price} ₽`;
+    });
+
+    Hbs.registerHelper('ifAuthenticated', function (this: any, options: any) {
+        return store.isAuthenticated ? options.fn(this) : options.inverse(this);
+    });
+
+    Hbs.registerHelper('avatarUrl', function (avatar: any, avatarPath: any) {
+    const DEFAULT_AVATAR = '/images/logo/avatar.jpeg';
+    
+    // Защита от объектов Handlebars: берем только реальные строки
+    let source = typeof avatar === 'string' ? avatar : 
+                (typeof avatarPath === 'string' ? avatarPath : '');
+                
+    if (!source) return DEFAULT_AVATAR;
+
+    const trimmed = source.trim();
+    if (!trimmed) return DEFAULT_AVATAR;
+
+    if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
+        return trimmed;
+    }
+
+    const normalized = trimmed.startsWith('/') ? trimmed : `/${trimmed}`;
+    return `${CONFIG.API.BASE_URL}${normalized}`;
+});
+
+    Hbs.registerHelper('eq', function (a: any, b: any) { return a === b; });
+    Hbs.registerHelper('gt', function (a: any, b: any) { return a > b; });
+    Hbs.registerHelper('concat', function (...args: any[]) { return args.slice(0, -1).join(''); });
+    Hbs.registerHelper('array', function (...args: any[]) { return args.slice(0, -1); });
+
+    Hbs.registerHelper('iconForTab', function (tab: string) {
+        const icons: Record<string, string> = {
+            info: '👤', ads: '📦', favorites: '❤️', cart: '🛒',
+            messages: '✉️', purchases: '🛍️', wallet: '💳', settings: '⚙️'
+        };
+        return icons[tab] || '📁';
+    });
+
+    Hbs.registerHelper('labelForTab', function (tab: string) {
+        const labels: Record<string, string> = {
+            info: 'Личные данные', ads: 'Мои объявления', favorites: 'Избранное', cart: 'Корзина',
+            messages: 'Сообщения', purchases: 'Мои покупки', wallet: 'Кошелёк', settings: 'Настройки'
+        };
+        return labels[tab] || tab;
+    });
+
+    Hbs.registerHelper('formatDate', function (dateString: string) {
+        if (!dateString) return '—';
+        return new Date(dateString).toLocaleDateString('ru-RU');
+    });
+};
+
+// Регистрируем везде, чтобы шаблонизатор 100% нашел их!
+registerHelpers(HandlebarsFull);
+registerHelpers(HandlebarsRuntime);
+// Если Handlebars загружен через <script> глобально
+if (typeof window !== 'undefined' && (window as any).Handlebars) {
+    registerHelpers((window as any).Handlebars);
+}
+
 
 export const AppController = {
     _lastPage: '',
@@ -70,62 +144,6 @@ export const AppController = {
         this.templates['auth-links'] = authLinksTpl;
         this.templates['not-found'] = notFoundTpl;
         this.templates['user-profile'] = userProfileTpl;
-
-        this.registerHandlebarsHelpers();
-    },
-
-    registerHandlebarsHelpers(): void {
-        // Базовые хелперы
-        Handlebars.registerHelper('formatPrice', (price: number) => {
-            return price === 0 ? 'Бесплатно' : `${price} ₽`;
-        });
-
-        Handlebars.registerHelper('ifAuthenticated', function (this: any, options: any) {
-            return store.isAuthenticated ? options.fn(this) : options.inverse(this);
-        });
-
-        Handlebars.registerHelper('avatarUrl', (avatar: string, avatarPath: string) => {
-            const DEFAULT_AVATAR = '/images/logo/avatar.jpeg';
-            const source = avatar || avatarPath || '';
-            if (!source) return DEFAULT_AVATAR;
-
-            const trimmed = source.trim();
-            if (!trimmed) return DEFAULT_AVATAR;
-
-            if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
-                return trimmed;
-            }
-
-            const normalized = trimmed.startsWith('/') ? trimmed : `/${trimmed}`;
-            return `${CONFIG.API.BASE_URL}${normalized}`;
-        });
-
-        // ИСПРАВЛЕНИЕ: Добавляем все хелперы для шаблонов профиля
-        Handlebars.registerHelper('eq', function (a: any, b: any) { return a === b; });
-        Handlebars.registerHelper('gt', function (a: any, b: any) { return a > b; });
-        Handlebars.registerHelper('concat', function (...args: any[]) { return args.slice(0, -1).join(''); });
-        Handlebars.registerHelper('array', function (...args: any[]) { return args.slice(0, -1); });
-        
-        Handlebars.registerHelper('iconForTab', function (tab: string) {
-            const icons: Record<string, string> = {
-                info: '👤', ads: '📦', favorites: '❤️', cart: '🛒',
-                messages: '✉️', purchases: '🛍️', wallet: '💳', settings: '⚙️'
-            };
-            return icons[tab] || '📁';
-        });
-
-        Handlebars.registerHelper('labelForTab', function (tab: string) {
-            const labels: Record<string, string> = {
-                info: 'Личные данные', ads: 'Мои объявления', favorites: 'Избранное', cart: 'Корзина',
-                messages: 'Сообщения', purchases: 'Мои покупки', wallet: 'Кошелёк', settings: 'Настройки'
-            };
-            return labels[tab] || tab;
-        });
-
-        Handlebars.registerHelper('formatDate', function (dateString: string) {
-            if (!dateString) return '—';
-            return new Date(dateString).toLocaleDateString('ru-RU');
-        });
     },
 
     async checkAuth(): Promise<void> {

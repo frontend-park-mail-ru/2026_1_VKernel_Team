@@ -1,12 +1,12 @@
 import { store } from '@/core/store';
 import { uiActions } from '@/actions/uiActions';
 import { ProfileService } from './service';
-import type { ProfileTab, HandlebarsTemplateFunction } from '@/types';
+import type { HandlebarsTemplateFunction } from '@/types'; 
+import type { ProfileTab, UserProfile } from './types'; 
 
 // Импорт стилей
 import './pages/profile/profile.css';
-
-// Импорт шаблонов для динамики
+// Импорт шаблонов
 import profileContentTpl from './components/profile-content/profile-content.hbs';
 import profileSidebarTpl from './components/profile-sidebar/profile-sidebar.hbs';
 
@@ -15,6 +15,9 @@ export const ProfileController = {
   _isEventsAttached: false,
   templates: {} as Record<string, HandlebarsTemplateFunction>,
 
+  /**
+   * Главный метод инициализации страницы профиля.
+   */
   async showProfile(): Promise<void> {
     if (!store.isAuthenticated) {
       uiActions.navigateTo('/login');
@@ -25,30 +28,28 @@ export const ProfileController = {
     const template = this.templates['profile-page'];
     if (!app || !template) return;
 
-    // Данные для отрисовки (с аватаркой по умолчанию)
-    const user = {
-        ...(store.user || {}),
-        name: store.user?.name || 'Пользователь',
-        avatar_path: store.user?.avatar_path || ''
-    };
+    // Сначала берем данные из стора (быстрая отрисовка)
+    const user = store.user || { name: 'Пользователь', avatar_path: '' };
 
-    // Рендерим основной каркас
+    // Отрисовка основного каркаса страницы
     app.innerHTML = template({
       user: user,
       currentTab: this.currentTab,
-      isAuthenticated: store.isAuthenticated,
-      avatarUrl: user.avatar_path ? `/api/v1${user.avatar_path}` : '/images/logo/avatar.jpeg'
+      isAuthenticated: store.isAuthenticated
     });
 
     this.attachEventListeners();
     
-    // Сразу отрисовываем контент, чтобы не было пустоты
-    this.rerenderTab();
-    this.rerenderSidebar();
+    // Отрисовываем динамические части
+    this.refreshUI();
 
+    // Загружаем свежие данные с сервера
     await this.loadProfileData();
   },
 
+  /**
+   * Навешивание обработчиков событий
+   */
   attachEventListeners(): void {
     if (this._isEventsAttached) return; 
     this._isEventsAttached = true;
@@ -56,41 +57,40 @@ export const ProfileController = {
     document.addEventListener('click', (e) => {
       const target = e.target as HTMLElement;
       
+      // Клик по аватару
+      if (target.closest('.avatar-wrapper') || target.closest('[data-action="edit-avatar"]')) {
+         document.getElementById('avatarUpload')?.click();
+      }
+
       // Переключение вкладок
       const tabBtn = target.closest('.profile-nav-item[data-tab]');
       if (tabBtn) {
         e.preventDefault();
         this.currentTab = (tabBtn as HTMLElement).dataset.tab as ProfileTab;
-        this.rerenderTab();
-        this.rerenderSidebar(); 
+        this.refreshUI();
       }
 
-      // Управление модалкой
+      // Модалка имени
       if (target.closest('[data-action="open-edit-name"]')) {
          const modal = document.getElementById('editNameModal');
          if (modal) modal.style.display = 'flex';
       }
-
       if (target.closest('[data-action="close-modal"]')) {
          const modal = document.getElementById('editNameModal');
          if (modal) modal.style.display = 'none';
       }
-
       if (target.closest('[data-action="save-name"]')) {
          this.saveName();
       }
 
-      // Клик по аватару
-      if (target.closest('.avatar-btn') || target.closest('[data-action="edit-avatar"]')) {
-         document.getElementById('avatarUpload')?.click();
-      }
-
+      // Выход
       if (target.closest('[data-action="logout"]')) {
          e.preventDefault();
          this.handleLogout();
       }
     });
 
+    // Загрузка файла
     document.addEventListener('change', async (e) => {
       const target = e.target as HTMLInputElement;
       if (target.id === 'avatarUpload' && target.files?.length) {
@@ -99,41 +99,56 @@ export const ProfileController = {
     });
   },
 
+  /**
+   * Загрузка данных профиля с API
+   */
   async loadProfileData(): Promise<void> {
-    uiActions.showLoading(true);
     try {
       const res = await ProfileService.getProfile();
       if (res.success && res.data) {
         store.setState({ user: res.data });
-        this.rerenderTab(); 
-        this.rerenderSidebar();
+        this.refreshUI();
       }
     } catch (err) {
-      console.error('Ошибка загрузки профиля:', err);
-    } finally {
-      uiActions.showLoading(false);
+      console.error('Не удалось загрузить данные профиля:', err);
     }
   },
 
-  rerenderTab(): void {
+  /**
+   * Обновление всех динамических зон на странице
+   */
+  refreshUI(): void {
+ // Собираем объект, который гарантированно соответствует UserProfile
+    const user = {
+        name: 'Пользователь',
+        avatar_path: '',
+        messages_count: 0, // Добавляем дефолтное значение
+        ...(store.user || {}),
+    } as UserProfile; // Явное приведение типа
+    
+    this.rerenderTab(user);
+    this.rerenderSidebar(user);
+  },
+
+  rerenderTab(user: UserProfile): void {
     const contentEl = document.getElementById('tabContent');
     if (!contentEl) return;
     
-    const user = store.user || { name: 'Пользователь' };
     contentEl.innerHTML = profileContentTpl({
       currentTab: this.currentTab,
       user: user,
-      avatarUrl: (user as any).avatar_path ? `/api/v1${(user as any).avatar_path}` : '/images/logo/avatar.jpeg'
+      isAuthenticated: store.isAuthenticated
     });
   },
 
-  rerenderSidebar(): void {
+  rerenderSidebar(user: UserProfile): void {
     const sidebarEl = document.querySelector('.profile-layout__sidebar');
     if (!sidebarEl) return;
     
     sidebarEl.innerHTML = profileSidebarTpl({
       currentTab: this.currentTab,
-      user: store.user || {}
+      user: user,
+      isAuthenticated: store.isAuthenticated
     });
   },
 
@@ -146,14 +161,14 @@ export const ProfileController = {
     try {
       const res = await ProfileService.updateName(newName);
       if (res.success) {
-        store.setState({ user: { ...store.user, name: newName } });
+        store.setState({ user: { ...store.user, name: newName } as UserProfile });
         const modal = document.getElementById('editNameModal');
         if (modal) modal.style.display = 'none';
-        uiActions.showSuccess('Имя изменено');
-        this.rerenderTab();
+        uiActions.showSuccess('Имя успешно изменено');
+        this.refreshUI();
       }
     } catch (err) {
-      uiActions.showError('Ошибка сохранения');
+      uiActions.showError('Ошибка при сохранении имени');
     } finally {
       uiActions.showLoading(false);
     }
@@ -163,14 +178,16 @@ export const ProfileController = {
     uiActions.showLoading(true);
     try {
       const res = await ProfileService.uploadAvatar(file);
-      if (res.success) {
-        const newPath = res.avatar_path || res.data?.avatar_path;
-        store.setState({ user: { ...store.user, avatar_path: newPath } });
-        uiActions.showSuccess('Фото обновлено');
-        this.rerenderTab();
+      if (res.success && res.data) {
+        // Сервер вернул новый путь в avatar_path
+        store.setState({ 
+            user: { ...store.user, avatar_path: res.data.avatar_path } as UserProfile 
+        });
+        uiActions.showSuccess('Фото профиля обновлено');
+        this.refreshUI();
       }
     } catch (err) {
-      uiActions.showError('Ошибка загрузки');
+      uiActions.showError('Не удалось загрузить фото');
     } finally {
       uiActions.showLoading(false);
     }
@@ -182,7 +199,7 @@ export const ProfileController = {
       store.setState({ isAuthenticated: false, user: null });
       uiActions.navigateTo('/login');
     } catch (err) {
-      uiActions.showError('Ошибка выхода');
+      uiActions.showError('Ошибка при выходе');
     }
   }
 };

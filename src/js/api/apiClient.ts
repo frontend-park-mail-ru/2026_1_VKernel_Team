@@ -75,7 +75,9 @@ export class ApiClient {
         }
         return this._refreshPromise!;
     }
-
+    getApiUrl(): string {
+        return API_URL;
+    }
     /**
      * Обрабатывает 401 ошибку и повторяет запрос после рефреша
      */
