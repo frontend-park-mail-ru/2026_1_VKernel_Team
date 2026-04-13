@@ -94,8 +94,15 @@ export class ApiClient {
             return response;
         }
 
-        // Токен обновлен, повторяем исходный запрос
-        return fetch(`${API_URL}${endpoint}`, config);
+        // Токен обновлен, повторяем исходный запрос с новым AbortController
+        const retryController = new AbortController();
+        const retryTimeout = setTimeout(() => retryController.abort(), 2000);
+        const retryConfig = { ...config, signal: retryController.signal };
+        try {
+            return await fetch(`${API_URL}${endpoint}`, retryConfig);
+        } finally {
+            clearTimeout(retryTimeout);
+        }
     }
 
     /**
@@ -136,10 +143,15 @@ export class ApiClient {
             config.body = JSON.stringify(body);
         }
 
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 2000);
+        config.signal = controller.signal;
+
         try {
             let response = await fetch(`${API_URL}${endpoint}`, config);
 
             response = await this._handleUnauthorizedResponse(response, endpoint, config);
+            clearTimeout(timeoutId);
 
             let data: any;
             const contentType = response.headers.get('content-type');
@@ -165,6 +177,7 @@ export class ApiClient {
                 status: response.status,
             };
         } catch (error) {
+            clearTimeout(timeoutId);
             return {
                 success: false,
                 error: 'Не удалось соединиться с сервером',

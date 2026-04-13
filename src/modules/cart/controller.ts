@@ -7,12 +7,23 @@ import { cartActions } from '@modules/cart/actions';
 import { cartService } from '@modules/cart/service';
 import { cartStore } from '@modules/cart/store';
 import { store } from '@/core/store';
+import { networkStatus } from '@modules/common/offline/network/networkStatus';
 import { getTemplate } from '@modules/cart/pages/cart/cart';
 
 export const CartController = {
     async renderCart(): Promise<void> {
-        await cartActions.loadCart();
+        // Сначала показываем кешированные данные
+        await cartActions.loadFromCache();
+        this.renderFromState();
 
+        // Потом обновляем с сервера (не блокируя UI)
+        if (networkStatus.isOnline) {
+            await cartActions.loadCart();
+            this.renderFromState();
+        }
+    },
+
+    renderFromState(): void {
         const app = document.getElementById('app');
         const template = getTemplate();
         if (!app || !template) return;
@@ -56,7 +67,7 @@ export const CartController = {
                 if (productId) {
                     const success = await cartActions.removeFromCart(productId);
                     if (success) {
-                        this.renderCart();
+                        this.renderFromState();
                     }
                 }
             });
@@ -87,7 +98,7 @@ export const CartController = {
             checkoutBtn.addEventListener('click', async () => {
                 const success = await cartActions.checkout();
                 if (success) {
-                    this.renderCart();
+                    this.renderFromState();
                 }
             });
         }

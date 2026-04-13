@@ -66,6 +66,7 @@ export default (env, argv) => {
           { from: 'public/images', to: 'images', noErrorOnMissing: true },
           { from: 'public/site', to: 'site', noErrorOnMissing: true },
           { from: 'public/css', to: 'css', noErrorOnMissing: true },
+          { from: 'public/sw.js', to: 'sw.js' },
         ],
       }),
     ],
