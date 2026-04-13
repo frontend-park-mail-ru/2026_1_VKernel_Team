@@ -4,16 +4,40 @@
 
 import { cartService } from '@modules/cart/service';
 import { cartStore } from '@modules/cart/store';
+import { networkStatus } from '@modules/common/offline/network/networkStatus';
+import { syncQueue } from '@modules/common/offline/sync/syncQueue';
+import { NotificationComponent } from '@modules/common/notifications/notification';
 import type { CartItem } from '@modules/cart/types';
 
+function isNetworkError(result: { success: boolean; status?: number }): boolean {
+    return !result.success && result.status === 0;
+}
+
+function enqueue(type: 'ADD_TO_CART' | 'REMOVE_FROM_CART', productId: number): void {
+    syncQueue
+        .add({ type, payload: { product_id: productId }, timestamp: Date.now() })
+        .catch(() => {});
+}
+
 export const cartActions = {
+    async loadFromCache(): Promise<void> {
+        await cartStore.loadFromCache();
+    },
+
     async loadCart(): Promise<void> {
         cartStore.setState({ error: null, isLoading: true });
 
         try {
             const result = await cartService.getCart();
 
+            if (isNetworkError(result)) {
+                networkStatus.setOffline();
+                cartStore.setState({ isLoading: false });
+                return;
+            }
+
             if (result.success && result.data) {
+                networkStatus.setOnline();
                 cartStore.setState({
                     items: result.data.items || [],
                     total: result.data.total_price || 0,
@@ -21,58 +45,110 @@ export const cartActions = {
                 });
             } else {
                 cartStore.setState({
-                    items: [],
-                    total: 0,
                     error: result.error || 'Не удалось загрузить корзину',
                     isLoading: false,
                 });
             }
-        } catch (error) {
-            cartStore.setState({
-                error: 'Не удалось соединиться с сервером',
-                isLoading: false,
-            });
+        } catch {
+            networkStatus.setOffline();
+            cartStore.setState({ isLoading: false });
         }
     },
 
-    async removeFromCart(productId: number): Promise<boolean> {
-        try {
-            const result = await cartService.removeFromCart(productId);
+    async addToCart(productId: number, product?: CartItem): Promise<boolean> {
+        if (networkStatus.isOnline) {
+            try {
+                const result = await cartService.addToCart(productId);
 
-            if (result.success) {
-                const currentItems = cartStore.getState().items;
-                const updatedItems = currentItems.filter(
-                    (item: CartItem) => item.product_id !== productId,
-                );
+                if (result.success) {
+                    networkStatus.setOnline();
+                    await cartActions.loadCart();
+                    return true;
+                }
+
+                if (isNetworkError(result)) {
+                    networkStatus.setOffline();
+                } else {
+                    return false;
+                }
+            } catch {
+                networkStatus.setOffline();
+            }
+        }
+
+        // Офлайн-путь (или фолбек после сетевой ошибки)
+        if (product) {
+            const currentItems = cartStore.getState().items;
+            const alreadyInCart = currentItems.some(
+                (item: CartItem) => item.product_id === productId,
+            );
+            if (!alreadyInCart) {
+                const updatedItems = [...currentItems, product];
                 const updatedTotal = updatedItems.reduce(
                     (sum: number, item: CartItem) => sum + item.price,
                     0,
                 );
-
-                cartStore.setState({
-                    items: updatedItems,
-                    total: updatedTotal,
-                });
-                return true;
+                cartStore.setState({ items: updatedItems, total: updatedTotal });
             }
-
-            return false;
-        } catch (error) {
-            return false;
         }
+
+        enqueue('ADD_TO_CART', productId);
+        return true;
+    },
+
+    async removeFromCart(productId: number): Promise<boolean> {
+        const currentItems = cartStore.getState().items;
+        const updatedItems = currentItems.filter((item: CartItem) => item.product_id !== productId);
+        const updatedTotal = updatedItems.reduce(
+            (sum: number, item: CartItem) => sum + item.price,
+            0,
+        );
+        cartStore.setState({ items: updatedItems, total: updatedTotal });
+
+        if (networkStatus.isOnline) {
+            try {
+                const result = await cartService.removeFromCart(productId);
+
+                if (isNetworkError(result)) {
+                    networkStatus.setOffline();
+                } else {
+                    if (result.success) networkStatus.setOnline();
+                    return result.success;
+                }
+            } catch {
+                networkStatus.setOffline();
+            }
+        }
+
+        enqueue('REMOVE_FROM_CART', productId);
+        return true;
     },
 
     async checkout(): Promise<boolean> {
+        if (!networkStatus.isOnline) {
+            NotificationComponent.show({
+                type: 'warning',
+                message: 'Оформление заказа недоступно без подключения к интернету',
+            });
+            return false;
+        }
+
         cartStore.setState({ error: null });
 
         try {
             const result = await cartService.checkout();
 
-            if (result.success) {
-                cartStore.setState({
-                    items: [],
-                    total: 0,
+            if (isNetworkError(result)) {
+                networkStatus.setOffline();
+                NotificationComponent.show({
+                    type: 'warning',
+                    message: 'Оформление заказа недоступно без подключения к интернету',
                 });
+                return false;
+            }
+
+            if (result.success) {
+                cartStore.setState({ items: [], total: 0 });
                 return true;
             }
 
@@ -80,9 +156,11 @@ export const cartActions = {
                 error: result.error || 'Не удалось оформить заказ',
             });
             return false;
-        } catch (error) {
-            cartStore.setState({
-                error: 'Не удалось соединиться с сервером',
+        } catch {
+            networkStatus.setOffline();
+            NotificationComponent.show({
+                type: 'warning',
+                message: 'Оформление заказа недоступно без подключения к интернету',
             });
             return false;
         }

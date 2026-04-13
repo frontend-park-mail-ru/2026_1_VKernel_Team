@@ -25,6 +25,7 @@ import { uiActions } from '@/actions/uiActions';
 import type { HandlebarsTemplateFunction, TemplateName, UIConstants } from '@/types';
 import { authActions } from '@/actions/authActions';
 import { CONFIG } from '@/core/config';
+import { initOfflineIndicator } from '@modules/common/offline/offline-indicator';
 
 declare const Handlebars: any;
 
@@ -66,10 +67,11 @@ export const AppController = {
 
         this.router();
         window.addEventListener('popstate', () => this.router());
+
+        initOfflineIndicator();
     },
 
     async loadTemplates(): Promise<void> {
-
         // Шаблоны уже прекомпилированы лоадером, просто присваиваем их
         this.templates['main-page'] = mainPageTpl;
         this.templates['login-forms'] = loginFormsTpl;
@@ -136,7 +138,7 @@ export const AppController = {
     router(): void {
         const path = window.location.pathname;
         const adMatch = path.match(/^\/ad\/(\d+)$/);
-        
+
         if (path === '/place-ad') {
             if (this._currentFeature === 'place-ad') {
                 PlaceAnAdController.cleanup();
@@ -157,7 +159,7 @@ export const AppController = {
 
         if (adMatch) {
             const adId = adMatch[1];
-            
+
             if (this._currentFeature === 'ad-detail') {
                 AdDetailController.cleanup();
             }
