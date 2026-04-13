@@ -11,25 +11,18 @@ export const ProfileService = {
     return apiClient.patch<User>(PROFILE_CONFIG.API.UPDATE_PROFILE, { name: newName });
   },
 
-  async uploadAvatar(file: File): Promise<ApiResponse<User>> {
+  async uploadAvatar(file: File) {
     const formData = new FormData();
-    formData.append('avatar', file);
-    
-    // Используем базовый URL из apiClient
-    const apiUrl = apiClient.getApiUrl(); 
-    
-    const response = await fetch(`${apiUrl}${PROFILE_CONFIG.API.UPLOAD_AVATAR}`, {
-      method: 'POST',
-      body: formData,
-      credentials: 'include'
-    });
+    formData.append('avatar', file); 
 
-    const data = await response.json();
-
-    return {
-      success: response.ok,
-      data: data
-    };
+    try {
+      // УБРАЛИ headers. Браузер сам поставит правильный multipart/form-data + boundary!
+      const response = await apiClient.post<User>(PROFILE_CONFIG.API.UPLOAD_AVATAR, formData);
+      return response.data; 
+    } catch (error) {
+      console.error('Ошибка в ProfileService.uploadAvatar:', error);
+      throw error;
+    }
   },
   
   async logout() {

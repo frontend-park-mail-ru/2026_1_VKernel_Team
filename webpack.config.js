@@ -23,6 +23,9 @@ export default (env, argv) => {
     devServer: {
       port: 8080,
       historyApiFallback: true, // Чтобы работали роуты (SPA)
+      static: {
+        directory: path.resolve(__dirname, 'public'),
+      },
       proxy: [
         {
           context: ['/api'], // Все запросы, начинающиеся с /api

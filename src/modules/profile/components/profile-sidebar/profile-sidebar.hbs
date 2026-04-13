@@ -1,4 +1,10 @@
 <aside class="profile-sidebar">
+  
+  {{!-- ВСТАВЛЯЕМ КОМПОНЕНТ АВАТАРКИ СЮДА --}}
+  <div class="profile-sidebar__avatar-section">
+    {{> profile/components/profile-avatar/profile-avatar }}
+  </div>
+
   <nav class="profile-nav">
     {{#each (array 'info' 'ads' 'favorites' 'cart' 'messages' 'purchases' 'wallet' 'settings') as |tab|}}
       <button 
@@ -8,7 +14,6 @@
         <span class="nav-icon">{{iconForTab tab}}</span>
         <span class="nav-label">{{labelForTab tab}}</span>
         
-        {{!-- Используем lookup для подтягивания счетчиков (ads_count, favorites_count и т.д.) --}}
         {{#if (gt (lookup ../user (concat tab '_count')) 0)}}
           <span class="nav-badge">{{lookup ../user (concat tab '_count')}}</span>
         {{/if}}

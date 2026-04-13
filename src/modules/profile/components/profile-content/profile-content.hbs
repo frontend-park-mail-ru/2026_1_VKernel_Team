@@ -1,29 +1,48 @@
 <div class="profile-tab-content">
-  {{#eq currentTab 'info'}}
+  {{!-- Используем #if (eq ...) вместо прямого #eq --}}
+  {{#if (eq currentTab 'info')}}
     <h2 class="section-title">Личные данные</h2>
 
     <div class="profile-card" style="display: flex; gap: 40px; align-items: flex-start; margin-top: 20px;">
       {{> profile/components/profile-avatar/profile-avatar user=user }}
+      
       <div class="profile-details" style="flex: 1; display: flex; flex-direction: column; gap: 20px;">
-        <div class="detail-row" style="display: flex; font-size: 18px; border-bottom: 1px solid #eee; padding-bottom: 10px;">
+        {{!-- Имя --}}
+        <div class="detail-row" style="display: flex; align-items: center; font-size: 18px; border-bottom: 1px solid #eee; padding-bottom: 10px;">
           <span style="width: 180px; color: #888;">Имя:</span>
           <span style="flex: 1; font-weight: 500;">{{user.name}}</span>
           <button class="btn-edit" data-action="open-edit-name" style="background: none; border: none; color: #1892E5; cursor: pointer;">✏️ Изменить</button>
         </div>
-        <div class="detail-row" style="display: flex; font-size: 18px; border-bottom: 1px solid #eee; padding-bottom: 10px;">
+
+        {{!-- Email --}}
+        <div class="detail-row" style="display: flex; align-items: center; font-size: 18px; border-bottom: 1px solid #eee; padding-bottom: 10px;">
           <span style="width: 180px; color: #888;">Email:</span>
           <span style="flex: 1; font-weight: 500;">{{user.email}}</span>
         </div>
+
+        {{!-- Пароль --}}
+        <div class="detail-row" style="display: flex; align-items: center; font-size: 18px; border-bottom: 1px solid #eee; padding-bottom: 10px;">
+          <span style="width: 180px; color: #888;">Пароль:</span>
+          <div style="flex: 1; display: flex; align-items: center; gap: 10px; position: relative;">
+            <input type="password" id="profile-password" value="********" readonly 
+                   style="border: none; background: none; font-size: 18px; font-weight: 500; font-family: monospace; outline: none; flex: 1;">
+            <button type="button" data-action="toggle-password" 
+                    style="background: none; border: none; cursor: pointer; padding: 0; display: flex; align-items: center;">
+              <img src="/images/icons/views.jpeg" id="eye-icon" alt="Показать" style="width: 24px; height: 24px; object-fit: contain;">
+            </button>
+          </div>
+        </div>
+
         <div class="detail-row" style="display: flex; font-size: 18px; border-bottom: 1px solid #eee; padding-bottom: 10px;">
           <span style="width: 180px; color: #888;">Рейтинг:</span>
           <span style="flex: 1; font-weight: 500;">⭐ {{#if user.rating}}{{user.rating}}{{else}}0{{/if}}</span>
         </div>
+        
         <div class="detail-row" style="display: flex; font-size: 18px; border-bottom: 1px solid #eee; padding-bottom: 10px;">
           <span style="width: 180px; color: #888;">На Клевере с:</span>
           <span style="flex: 1; font-weight: 500;">{{formatDate user.created_at}}</span>
         </div>
       </div>
-
     </div>
 
     {{!-- Модалка --}}
@@ -37,10 +56,10 @@
             </div>
         </div>
     </div>
-  {{/eq}}
-  
-  {{#eq currentTab 'ads'}}
+  {{/if}}
+
+  {{#if (eq currentTab 'ads')}}
     <h2 class="section-title">Мои объявления</h2>
     <p class="empty-state">Список ваших объявлений пуст.</p>
-  {{/eq}}
+  {{/if}}
 </div>

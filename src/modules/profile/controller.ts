@@ -39,11 +39,7 @@ export const ProfileController = {
     });
 
     this.attachEventListeners();
-    
-    // Отрисовываем динамические части
     this.refreshUI();
-
-    // Загружаем свежие данные с сервера
     await this.loadProfileData();
   },
 
@@ -56,13 +52,23 @@ export const ProfileController = {
 
     document.addEventListener('click', (e) => {
       const target = e.target as HTMLElement;
-      
-      // Клик по аватару
-      if (target.closest('.avatar-wrapper') || target.closest('[data-action="edit-avatar"]')) {
-         document.getElementById('avatarUpload')?.click();
-      }
 
-      // Переключение вкладок
+    // Логика переключения видимости пароля
+    const toggleBtn = target.closest('[data-action="toggle-password"]');
+    if (toggleBtn) {
+        const input = document.getElementById('profile-password') as HTMLInputElement;
+        const icon = document.getElementById('eye-icon') as HTMLImageElement;
+
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.src = '/images/icons/Eye-off.jpeg'; // Иконка закрытого глаза 
+            icon.alt = 'Скрыть';
+        } else {
+            input.type = 'password';
+            icon.src = '/images/icons/views.jpeg'; // Иконка открытого глаза 
+            icon.alt = 'Показать';
+        }
+    }
       const tabBtn = target.closest('.profile-nav-item[data-tab]');
       if (tabBtn) {
         e.preventDefault();
@@ -70,7 +76,7 @@ export const ProfileController = {
         this.refreshUI();
       }
 
-      // Модалка имени
+      // 3. Модалка имени
       if (target.closest('[data-action="open-edit-name"]')) {
          const modal = document.getElementById('editNameModal');
          if (modal) modal.style.display = 'flex';
@@ -83,18 +89,24 @@ export const ProfileController = {
          this.saveName();
       }
 
-      // Выход
+      // 4. Выход
       if (target.closest('[data-action="logout"]')) {
          e.preventDefault();
          this.handleLogout();
       }
     });
 
-    // Загрузка файла
+    // Обработка загрузки файла
     document.addEventListener('change', async (e) => {
       const target = e.target as HTMLInputElement;
-      if (target.id === 'avatarUpload' && target.files?.length) {
-        await this.handleAvatarUpload(target.files[0]);
+      
+      if (target.type === 'file' && target.closest('.avatar-wrapper') && target.files?.length) {
+        const file = target.files[0];
+        
+        // Очищаем value инпута, чтобы можно было загрузить этот же файл повторно
+        target.value = ''; 
+        
+        await this.handleAvatarUpload(file);
       }
     });
   },
@@ -118,13 +130,12 @@ export const ProfileController = {
    * Обновление всех динамических зон на странице
    */
   refreshUI(): void {
- // Собираем объект, который гарантированно соответствует UserProfile
     const user = {
         name: 'Пользователь',
         avatar_path: '',
-        messages_count: 0, // Добавляем дефолтное значение
+        messages_count: 0,
         ...(store.user || {}),
-    } as UserProfile; // Явное приведение типа
+    } as UserProfile; 
     
     this.rerenderTab(user);
     this.rerenderSidebar(user);
@@ -175,21 +186,30 @@ export const ProfileController = {
   },
 
   async handleAvatarUpload(file: File): Promise<void> {
+    const previewUrl = URL.createObjectURL(file);
+    const avatarImages = document.querySelectorAll('.avatar-img');
+    avatarImages.forEach(img => {
+      (img as HTMLImageElement).src = previewUrl;
+    });
+
     uiActions.showLoading(true);
     try {
       const res = await ProfileService.uploadAvatar(file);
-      if (res.success && res.data) {
-        // Сервер вернул новый путь в avatar_path
+      
+      // ИСПРАВЛЕННАЯ ПРОВЕРКА: Проверяем, вернул ли сервер поле avatar_path
+      if (res && res.avatar_path) {
         store.setState({ 
-            user: { ...store.user, avatar_path: res.data.avatar_path } as UserProfile 
+            // Обновляем ссылку в сторе прямо из res.avatar_path
+            user: { ...store.user, avatar_path: res.avatar_path } as UserProfile 
         });
         uiActions.showSuccess('Фото профиля обновлено');
-        this.refreshUI();
       }
     } catch (err) {
       uiActions.showError('Не удалось загрузить фото');
+      this.refreshUI(); 
     } finally {
       uiActions.showLoading(false);
+      URL.revokeObjectURL(previewUrl); 
     }
   },
 

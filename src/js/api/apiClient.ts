@@ -75,9 +75,11 @@ export class ApiClient {
         }
         return this._refreshPromise!;
     }
+
     getApiUrl(): string {
         return API_URL;
     }
+
     /**
      * Обрабатывает 401 ошибку и повторяет запрос после рефреша
      */
@@ -113,9 +115,10 @@ export class ApiClient {
         body: any = null,
         customHeaders: Record<string, string> = {},
     ): Promise<ApiResponse<T>> {
-        console.log(`API Request: ${method} ${API_URL}${endpoint}`, body); 
+        // Улучшенное логирование, чтобы в консоли было видно, когда летит FormData
+        console.log(`API Request: ${method} ${API_URL}${endpoint}`, body instanceof FormData ? '[FormData File]' : body); 
+        
         const headers: Record<string, string> = {
-            'Content-Type': 'application/json',
             ...customHeaders,
         };
 
@@ -139,15 +142,28 @@ export class ApiClient {
             credentials: 'include',
         };
 
+        // =========================================================
+        // ГЛАВНОЕ ИСПРАВЛЕНИЕ: Логика обработки тела запроса
+        // =========================================================
         if (body) {
-            config.body = JSON.stringify(body);
+            if (body instanceof FormData) {
+                // Если передали файл: отдаем FormData как есть, без stringify
+                config.body = body;
+                // Удаляем Content-Type, чтобы браузер сам сгенерировал multipart/form-data и boundary
+                delete (config.headers as Record<string, string>)['Content-Type'];
+            } else {
+                // Если передали обычный объект: ставим JSON
+                if (!headers['Content-Type']) {
+                    headers['Content-Type'] = 'application/json';
+                }
+                config.body = JSON.stringify(body);
+            }
         }
 
         try {
             let response = await fetch(`${API_URL}${endpoint}`, config);
 
-            // ИСПРАВЛЕНИЕ: Пытаемся поймать токен из заголовков ответа
-            // (Часто бэкенды шлют токен в Authorization или X-Token)
+            // Пытаемся поймать токен из заголовков ответа
             const authHeader = response.headers.get('Authorization') || response.headers.get('X-Token');
             if (authHeader) {
                 const extractedToken = authHeader.replace('Bearer ', '');
@@ -169,7 +185,7 @@ export class ApiClient {
                 data = { message: text };
             }
 
-            // ИСПРАВЛЕНИЕ: Если бэкенд возвращает токен внутри тела JSON, но не в объекте data
+            // Если бэкенд возвращает токен внутри тела JSON
             if (response.ok && endpoint === API_ENDPOINTS.AUTH.LOGIN) {
                 const possibleToken = data?.token || data?.access_token || data?.data?.token || data?.data?.access_token;
                 if (possibleToken) {

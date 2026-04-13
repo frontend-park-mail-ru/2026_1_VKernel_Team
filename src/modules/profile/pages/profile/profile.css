@@ -107,14 +107,17 @@
 }
 
 /* === СТИЛИ АВАТАРКИ === */
+
 .avatar-wrapper {
     position: relative; 
     width: 140px; 
     height: 140px;
     flex-shrink: 0;
     transition: opacity 0.2s ease;
+    
+    /* ДОБАВЛЯЕМ ЭТУ СТРОКУ: */
+    margin: 20px auto; 
 }
-
 .avatar-wrapper:hover {
     opacity: 0.8;
 }
@@ -143,7 +146,7 @@
     justify-content: center;
     box-shadow: 0 2px 5px rgba(0,0,0,0.2);
     color: white;
-    pointer-events: none; /* Пропускает клик на обертку */
+    pointer-events: none;
 }
 
 /* Детали профиля */
@@ -220,4 +223,37 @@
     display: flex;
     justify-content: flex-end;
     gap: 15px;
+}
+
+
+.password-input-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.password-toggle {
+    position: absolute;
+    right: 10px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+}
+
+.eye-icon {
+    width: 20px;
+    height: 20px;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+}
+
+.eye-icon:hover {
+    opacity: 1;
+}
+
+.profile-input:disabled {
+    background-color: #f9f9f9;
+    color: #999;
+    cursor: not-allowed;
 }
