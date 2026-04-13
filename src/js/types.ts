@@ -25,7 +25,7 @@ export interface Ad {
     updated_at?: string;
     location?: string;
     status?: 'active' | 'draft' | 'reserved' | 'sold' | 'archived';
-    
+
     category_characteristics: ProductCharacteristic[];
     custom_characteristics: ProductCustomCharacteristic[];
     seller_id?: number;

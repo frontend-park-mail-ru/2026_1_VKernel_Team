@@ -2,6 +2,7 @@ export interface StoreSchema {
     name: string;
     keyPath?: string;
     autoIncrement?: boolean;
+    recreate?: boolean;
     indexes?: { name: string; keyPath: string; unique?: boolean }[];
 }
 
@@ -16,7 +17,13 @@ class CloverDB {
                 const db = (event.target as IDBOpenDBRequest).result;
 
                 for (const schema of stores) {
-                    if (db.objectStoreNames.contains(schema.name)) continue;
+                    if (db.objectStoreNames.contains(schema.name)) {
+                        if (schema.recreate) {
+                            db.deleteObjectStore(schema.name);
+                        } else {
+                            continue;
+                        }
+                    }
 
                     const store = db.createObjectStore(schema.name, {
                         keyPath: schema.keyPath,

@@ -1,9 +1,11 @@
 import { cloverDB } from '@modules/common/offline/db/indexedDB';
 
+export type SyncOperationType = 'ADD_TO_CART' | 'REMOVE_FROM_CART' | 'CREATE_AD';
+
 export interface SyncOperation {
     id?: number;
-    type: 'ADD_TO_CART' | 'REMOVE_FROM_CART';
-    payload: { product_id: number };
+    type: SyncOperationType;
+    payload: Record<string, unknown>;
     timestamp: number;
     retries: number;
 }

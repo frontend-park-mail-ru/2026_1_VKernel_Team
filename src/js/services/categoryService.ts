@@ -9,7 +9,7 @@ const API_ENDPOINTS = {
     CATEGORIES: {
         GET_ALL: '/categories',
         GET_CHARACTERISTICS: (id: number) => `/categories/${id}/characteristics`,
-    }
+    },
 };
 
 export const categoryService = {
@@ -18,31 +18,31 @@ export const categoryService = {
      */
     async getAllCategories(): Promise<Category[]> {
         const result = await apiClient.get<Category[]>(API_ENDPOINTS.CATEGORIES.GET_ALL);
-        
+
         if (result.success && result.data) {
             return result.data;
         }
-        
+
         console.warn('Failed to load categories from API, using fallback');
         return this.getFallbackCategories();
     },
-    
+
     /**
      * Получение характеристик категории
      */
     async getCategoryCharacteristics(categoryId: number): Promise<CategoryCharacteristic[]> {
         const result = await apiClient.get<CategoryCharacteristic[]>(
-            API_ENDPOINTS.CATEGORIES.GET_CHARACTERISTICS(categoryId)
+            API_ENDPOINTS.CATEGORIES.GET_CHARACTERISTICS(categoryId),
         );
-        
+
         if (result.success && result.data) {
             // Сортируем по sort_order
             return result.data.sort((a, b) => a.sort_order - b.sort_order);
         }
-        
+
         return [];
     },
-    
+
     /**
      * Фолбэк-категории (на случай, если API еще не готов)
      */
@@ -69,5 +69,5 @@ export const categoryService = {
             { id: 19, name: 'Спорт' },
             { id: 20, name: 'Канцелярия' },
         ];
-    }
+    },
 };

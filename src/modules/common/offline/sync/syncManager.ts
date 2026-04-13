@@ -1,13 +1,22 @@
-import { syncQueue, SyncOperation } from '@modules/common/offline/sync/syncQueue';
-import { cartService } from '@modules/cart/service';
-import { cartActions } from '@modules/cart/actions';
+import {
+    syncQueue,
+    SyncOperation,
+    SyncOperationType,
+} from '@modules/common/offline/sync/syncQueue';
 import { networkStatus } from '@modules/common/offline/network/networkStatus';
 import { NotificationComponent } from '@modules/common/notifications/notification';
 
 const MAX_RETRIES = 3;
 
+export type SyncHandler = (op: SyncOperation) => Promise<'success' | 'conflict' | 'network_error'>;
+
 class SyncManager {
     private isSyncing = false;
+    private handlers = new Map<SyncOperationType, SyncHandler>();
+
+    registerHandler(type: SyncOperationType, handler: SyncHandler): void {
+        this.handlers.set(type, handler);
+    }
 
     init(): void {
         networkStatus.subscribe((isOnline) => {
@@ -15,6 +24,11 @@ class SyncManager {
                 this.sync();
             }
         });
+
+        // Синхронизируем накопленные операции при старте, если онлайн
+        if (networkStatus.isOnline) {
+            this.sync();
+        }
     }
 
     async sync(): Promise<void> {
@@ -30,7 +44,14 @@ class SyncManager {
             for (const op of operations) {
                 if (!networkStatus.isOnline) break;
 
-                const result = await this.executeOperation(op);
+                const handler = this.handlers.get(op.type);
+                if (!handler) {
+                    await syncQueue.remove(op.id!);
+                    hasConflicts = true;
+                    continue;
+                }
+
+                const result = await handler(op);
 
                 if (result === 'success' || result === 'conflict') {
                     await syncQueue.remove(op.id!);
@@ -46,14 +67,10 @@ class SyncManager {
                 }
             }
 
-            if (networkStatus.isOnline) {
-                await cartActions.loadCart();
-            }
-
             if (hasConflicts) {
                 NotificationComponent.show({
                     type: 'warning',
-                    message: 'Некоторые изменения не удалось применить. Корзина обновлена.',
+                    message: 'Некоторые изменения не удалось применить.',
                     duration: 5000,
                 });
             }
@@ -61,31 +78,6 @@ class SyncManager {
             console.error('Sync failed:', error);
         } finally {
             this.isSyncing = false;
-        }
-    }
-
-    private async executeOperation(
-        op: SyncOperation,
-    ): Promise<'success' | 'conflict' | 'network_error'> {
-        try {
-            let result;
-
-            switch (op.type) {
-                case 'ADD_TO_CART':
-                    result = await cartService.addToCart(op.payload.product_id);
-                    break;
-                case 'REMOVE_FROM_CART':
-                    result = await cartService.removeFromCart(op.payload.product_id);
-                    break;
-                default:
-                    return 'conflict';
-            }
-
-            if (result.success) return 'success';
-            if (result.status === 0) return 'network_error';
-            return 'conflict';
-        } catch {
-            return 'network_error';
         }
     }
 }
