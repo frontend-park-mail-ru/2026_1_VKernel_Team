@@ -185,31 +185,30 @@ export const ProfileController = {
     }
   },
 
+
   async handleAvatarUpload(file: File): Promise<void> {
     const previewUrl = URL.createObjectURL(file);
-    const avatarImages = document.querySelectorAll('.avatar-img');
-    avatarImages.forEach(img => {
+    const allAvatars = document.querySelectorAll('.avatar-img, .header .avatar');
+    
+    allAvatars.forEach(img => {
       (img as HTMLImageElement).src = previewUrl;
     });
-
     uiActions.showLoading(true);
     try {
       const res = await ProfileService.uploadAvatar(file);
-      
-      // ИСПРАВЛЕННАЯ ПРОВЕРКА: Проверяем, вернул ли сервер поле avatar_path
       if (res && res.avatar_path) {
         store.setState({ 
-            // Обновляем ссылку в сторе прямо из res.avatar_path
             user: { ...store.user, avatar_path: res.avatar_path } as UserProfile 
         });
+        
         uiActions.showSuccess('Фото профиля обновлено');
       }
     } catch (err) {
-      uiActions.showError('Не удалось загрузить фото');
+      uiActions.showError('Не удалось сохранить фото на сервере');
       this.refreshUI(); 
     } finally {
       uiActions.showLoading(false);
-      URL.revokeObjectURL(previewUrl); 
+      URL.revokeObjectURL(previewUrl);
     }
   },
 

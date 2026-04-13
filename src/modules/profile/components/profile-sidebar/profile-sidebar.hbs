@@ -11,7 +11,6 @@
         class="profile-nav-item {{#eq ../currentTab tab}}active{{/eq}}" 
         data-tab="{{tab}}"
       >
-        <span class="nav-icon">{{iconForTab tab}}</span>
         <span class="nav-label">{{labelForTab tab}}</span>
         
         {{#if (gt (lookup ../user (concat tab '_count')) 0)}}
@@ -23,7 +22,6 @@
     <div class="nav-divider"></div>
     
     <button class="profile-nav-item logout-item" data-action="logout">
-      <span class="nav-icon">🚪</span>
       <span class="nav-label">Выйти</span>
     </button>
   </nav>

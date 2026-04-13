@@ -27,9 +27,6 @@ import { CONFIG } from '@/core/config';
 import * as HandlebarsFull from 'handlebars';
 import * as HandlebarsRuntime from 'handlebars/dist/handlebars.runtime.js';
 
-// ============================================================================
-// === УНИВЕРСАЛЬНАЯ РЕГИСТРАЦИЯ ХЕЛПЕРОВ (Защита от багов Webpack) ===
-// ============================================================================
 const registerHelpers = (Hbs: any) => {
     // Если хелперы тут уже есть или это не объект Handlebars — пропускаем
     if (!Hbs || !Hbs.registerHelper || Hbs.helpers?.avatarUrl) return;
@@ -67,13 +64,7 @@ const registerHelpers = (Hbs: any) => {
     Hbs.registerHelper('concat', function (...args: any[]) { return args.slice(0, -1).join(''); });
     Hbs.registerHelper('array', function (...args: any[]) { return args.slice(0, -1); });
 
-    Hbs.registerHelper('iconForTab', function (tab: string) {
-        const icons: Record<string, string> = {
-            info: '👤', ads: '📦', favorites: '❤️', cart: '🛒',
-            messages: '✉️', purchases: '🛍️', wallet: '💳', settings: '⚙️'
-        };
-        return icons[tab] || '📁';
-    });
+
 
     Hbs.registerHelper('labelForTab', function (tab: string) {
         const labels: Record<string, string> = {
