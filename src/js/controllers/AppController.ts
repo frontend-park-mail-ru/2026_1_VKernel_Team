@@ -2,12 +2,17 @@
  * Главный контроллер приложения
  * Управляет роутингом, инициализацией и глобальными обработчиками
  */
+import adDetailTpl from '@modules/announcements/ad-detail/templates/ad-detail.hbs';
 import mainPageTpl from '@templates/main-page.hbs';
 import loginFormsTpl from '@templates/login-forms.hbs';
 import registerFormTpl from '@templates/register-form.hbs';
 import userProfileTpl from '@modules/profile/pages/profile/profile.hbs';
 import authLinksTpl from '@templates/auth-links.hbs';
 import notFoundTpl from '@templates/not-found.hbs';
+
+import { PlaceAnAdController } from '@modules/announcements/place-an-ad';
+import { AdPreviewController } from '@modules/announcements/ad-preview';
+import { AdDetailController } from '@modules/announcements/ad-detail';
 
 import { AuthController } from '@/controllers/AuthController';
 import { AdsController } from '@/controllers/AdsController';
@@ -28,7 +33,6 @@ import * as HandlebarsFull from 'handlebars';
 import * as HandlebarsRuntime from 'handlebars/dist/handlebars.runtime.js';
 
 const registerHelpers = (Hbs: any) => {
-    // Если хелперы тут уже есть или это не объект Handlebars — пропускаем
     if (!Hbs || !Hbs.registerHelper || Hbs.helpers?.avatarUrl) return;
 
     Hbs.registerHelper('formatPrice', (price: number) => {
@@ -40,31 +44,28 @@ const registerHelpers = (Hbs: any) => {
     });
 
     Hbs.registerHelper('avatarUrl', function (avatar: any, avatarPath: any) {
-    const DEFAULT_AVATAR = '/images/logo/avatar.jpeg';
-    
-    // Защита от объектов Handlebars: берем только реальные строки
-    let source = typeof avatar === 'string' ? avatar : 
-                (typeof avatarPath === 'string' ? avatarPath : '');
-                
-    if (!source) return DEFAULT_AVATAR;
+        const DEFAULT_AVATAR = '/images/logo/avatar.jpeg';
+        
+        let source = typeof avatar === 'string' ? avatar : 
+                    (typeof avatarPath === 'string' ? avatarPath : '');
+                    
+        if (!source) return DEFAULT_AVATAR;
 
-    const trimmed = source.trim();
-    if (!trimmed) return DEFAULT_AVATAR;
+        const trimmed = source.trim();
+        if (!trimmed) return DEFAULT_AVATAR;
 
-    if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
-        return trimmed;
-    }
+        if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
+            return trimmed;
+        }
 
-    const normalized = trimmed.startsWith('/') ? trimmed : `/${trimmed}`;
-    return `${CONFIG.API.BASE_URL}${normalized}`;
-});
+        const normalized = trimmed.startsWith('/') ? trimmed : `/${trimmed}`;
+        return `${CONFIG.API.BASE_URL}${normalized}`;
+    });
 
     Hbs.registerHelper('eq', function (a: any, b: any) { return a === b; });
     Hbs.registerHelper('gt', function (a: any, b: any) { return a > b; });
     Hbs.registerHelper('concat', function (...args: any[]) { return args.slice(0, -1).join(''); });
     Hbs.registerHelper('array', function (...args: any[]) { return args.slice(0, -1); });
-
-
 
     Hbs.registerHelper('labelForTab', function (tab: string) {
         const labels: Record<string, string> = {
@@ -80,17 +81,16 @@ const registerHelpers = (Hbs: any) => {
     });
 };
 
-// Регистрируем везде, чтобы шаблонизатор 100% нашел их!
 registerHelpers(HandlebarsFull);
 registerHelpers(HandlebarsRuntime);
-// Если Handlebars загружен через <script> глобально
+
 if (typeof window !== 'undefined' && (window as any).Handlebars) {
     registerHelpers((window as any).Handlebars);
 }
 
-
 export const AppController = {
     _lastPage: '',
+    _currentFeature: '',
     templates: {} as Record<TemplateName, HandlebarsTemplateFunction>,
 
     UI_CONSTANTS: {
@@ -106,7 +106,6 @@ export const AppController = {
         loadSellerPageTemplates();
         loadCartTemplates();
 
-        // Прокидываем шаблоны в дочерние контроллеры
         AuthController.templates = {
             'login-forms': this.templates['login-forms'],
             'register-form': this.templates['register-form'],
@@ -121,7 +120,6 @@ export const AppController = {
         this.setupGlobalHandlers();
         this.setupStoreSubscription();
 
-        // Проверяем авторизацию перед первым роутингом
         await this.checkAuth().catch(() => {});
 
         this.router();
@@ -135,6 +133,7 @@ export const AppController = {
         this.templates['auth-links'] = authLinksTpl;
         this.templates['not-found'] = notFoundTpl;
         this.templates['user-profile'] = userProfileTpl;
+        this.templates['ad-detail'] = adDetailTpl;
     },
 
     async checkAuth(): Promise<void> {
@@ -159,7 +158,32 @@ export const AppController = {
 
     router(): void {
         const path = window.location.pathname;
+        const adMatch = path.match(/^\/ad\/(\d+)$/);
+        
+        // Логика новых фич из main
+        if (path === '/place-ad') {
+            if (this._currentFeature === 'place-ad') PlaceAnAdController.cleanup();
+            this._currentFeature = 'place-ad';
+            PlaceAnAdController.render();
+            return;
+        }
 
+        if (path === '/ad-preview') {
+            if (this._currentFeature === 'ad-preview') AdPreviewController.cleanup();
+            this._currentFeature = 'ad-preview';
+            AdPreviewController.render();
+            return;
+        }
+
+        if (adMatch) {
+            const adId = adMatch[1];
+            if (this._currentFeature === 'ad-detail') AdDetailController.cleanup();
+            this._currentFeature = 'ad-detail';
+            AdDetailController.render(adId);
+            return;
+        }
+
+        // Защита маршрутов
         if (!store.isAuthenticated && (path === '/profile' || path === '/cart')) {
             this.navigateTo('/login');
             return;
