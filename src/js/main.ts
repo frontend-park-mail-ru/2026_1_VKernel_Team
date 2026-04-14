@@ -3,8 +3,6 @@
  * @module main
  */
 
-
-
 // === Side-effect модули (инициализация) ===
 import '@/utils/storage';
 import '@/validators/authValidator';

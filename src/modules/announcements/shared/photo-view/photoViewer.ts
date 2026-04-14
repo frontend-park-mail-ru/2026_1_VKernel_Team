@@ -8,7 +8,7 @@ export class PhotoViewer {
     private static photos: string[] = [];
     private static currentIndex: number = 0;
     private static isZoomed: boolean = false;
-    
+
     /**
      * Инициализация просмотрщика
      */
@@ -17,11 +17,11 @@ export class PhotoViewer {
         if (!this.overlay) {
             this.createViewer();
         }
-        
+
         // Навешиваем глобальные обработчики
         this.attachGlobalHandlers();
     }
-    
+
     /**
      * Создает DOM элементы просмотрщика
      */
@@ -47,31 +47,31 @@ export class PhotoViewer {
                 </div>
             </div>
         `;
-        
+
         document.body.insertAdjacentHTML('beforeend', viewerHTML);
         this.overlay = document.getElementById('photoViewerOverlay');
         this.imageElement = document.getElementById('photoViewerImage') as HTMLImageElement;
     }
-    
+
     /**
      * Глобальные обработчики
      */
     private static attachGlobalHandlers(): void {
         if (!this.overlay) return;
-        
+
         // Закрытие по крестику
         const closeBtn = document.getElementById('photoViewerClose');
         if (closeBtn) {
             closeBtn.addEventListener('click', () => this.close());
         }
-        
+
         // Закрытие по клику на фон
         this.overlay.addEventListener('click', (e) => {
             if (e.target === this.overlay) {
                 this.close();
             }
         });
-        
+
         // Закрытие по Escape
         document.addEventListener('keydown', (e) => {
             if (this.overlay?.classList.contains('active')) {
@@ -84,20 +84,20 @@ export class PhotoViewer {
                 }
             }
         });
-        
+
         // Навигация
         const prevBtn = document.getElementById('photoViewerPrev');
         const nextBtn = document.getElementById('photoViewerNext');
-        
+
         if (prevBtn) prevBtn.addEventListener('click', () => this.prev());
         if (nextBtn) nextBtn.addEventListener('click', () => this.next());
-        
+
         // Зум по клику на фото
         if (this.imageElement) {
             this.imageElement.addEventListener('click', () => this.toggleZoom());
         }
     }
-    
+
     /**
      * Открыть просмотрщик
      */
@@ -105,25 +105,25 @@ export class PhotoViewer {
         if (!this.overlay || !this.imageElement) {
             this.init();
         }
-        
+
         if (!photos || photos.length === 0) return;
-        
+
         this.photos = photos;
         this.currentIndex = Math.max(0, Math.min(startIndex, photos.length - 1));
         this.isZoomed = false;
-        
+
         // Показываем первое фото
         this.updateImage();
         this.updateThumbnails();
         this.updateCounter();
-        
+
         // Показываем оверлей
         this.overlay?.classList.add('active');
-        
+
         // Блокируем скролл body
         document.body.style.overflow = 'hidden';
     }
-    
+
     /**
      * Закрыть просмотрщик
      */
@@ -135,7 +135,7 @@ export class PhotoViewer {
             this.imageElement.classList.remove('zoomed');
         }
     }
-    
+
     /**
      * Следующее фото
      */
@@ -148,7 +148,7 @@ export class PhotoViewer {
             this.resetZoom();
         }
     }
-    
+
     /**
      * Предыдущее фото
      */
@@ -161,7 +161,7 @@ export class PhotoViewer {
             this.resetZoom();
         }
     }
-    
+
     /**
      * Переключить зум
      */
@@ -174,7 +174,7 @@ export class PhotoViewer {
             this.imageElement.classList.remove('zoomed');
         }
     }
-    
+
     /**
      * Сбросить зум
      */
@@ -184,7 +184,7 @@ export class PhotoViewer {
             this.imageElement.classList.remove('zoomed');
         }
     }
-    
+
     /**
      * Обновить основное фото
      */
@@ -193,34 +193,38 @@ export class PhotoViewer {
         this.imageElement.src = this.photos[this.currentIndex];
         this.imageElement.alt = `Фото ${this.currentIndex + 1}`;
     }
-    
+
     /**
      * Обновить счетчик
      */
     private static updateCounter(): void {
         const currentSpan = document.getElementById('currentIndex');
         const totalSpan = document.getElementById('totalCount');
-        
+
         if (currentSpan) currentSpan.textContent = String(this.currentIndex + 1);
         if (totalSpan) totalSpan.textContent = String(this.photos.length);
     }
-    
+
     /**
      * Обновить миниатюры
      */
     private static updateThumbnails(): void {
         const container = document.getElementById('photoViewerThumbnails');
         if (!container) return;
-        
-        container.innerHTML = this.photos.map((photo, index) => `
+
+        container.innerHTML = this.photos
+            .map(
+                (photo, index) => `
             <img 
                 src="${photo}" 
                 alt="Миниатюра ${index + 1}"
                 class="photo-viewer-thumbnail ${index === this.currentIndex ? 'active' : ''}"
                 data-index="${index}"
             >
-        `).join('');
-        
+        `,
+            )
+            .join('');
+
         // Добавляем обработчики на миниатюры
         container.querySelectorAll('.photo-viewer-thumbnail').forEach((thumb) => {
             thumb.addEventListener('click', (e) => {
@@ -235,14 +239,14 @@ export class PhotoViewer {
             });
         });
     }
-    
+
     /**
      * Обновить активную миниатюру
      */
     private static updateActiveThumbnail(): void {
         const container = document.getElementById('photoViewerThumbnails');
         if (!container) return;
-        
+
         const thumbnails = container.querySelectorAll('.photo-viewer-thumbnail');
         thumbnails.forEach((thumb, index) => {
             if (index === this.currentIndex) {

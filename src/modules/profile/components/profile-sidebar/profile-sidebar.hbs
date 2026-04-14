@@ -1,0 +1,27 @@
+<aside class="profile-sidebar">
+  
+  <div class="profile-sidebar__avatar-section">
+    {{> profile/components/profile-avatar/profile-avatar }}
+  </div>
+
+  <nav class="profile-nav">
+    {{#each (array 'info' 'ads' 'favorites' 'cart' 'messages' 'purchases' 'wallet' 'settings') as |tab|}}
+      <button 
+        class="profile-nav-item {{#eq ../currentTab tab}}active{{/eq}}" 
+        data-tab="{{tab}}"
+      >
+        <span class="nav-label">{{labelForTab tab}}</span>
+        
+        {{#if (gt (lookup ../user (concat tab '_count')) 0)}}
+          <span class="nav-badge">{{lookup ../user (concat tab '_count')}}</span>
+        {{/if}}
+      </button>
+    {{/each}}
+    
+    <div class="nav-divider"></div>
+    
+    <button class="profile-nav-item logout-item" data-action="logout">
+      <span class="nav-label">Выйти</span>
+    </button>
+  </nav>
+</aside>

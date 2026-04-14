@@ -16,23 +16,11 @@ export function loadTemplates(): void {
         compiledTemplate = Handlebars.compile(template);
 
         Handlebars.registerPartial('header', HeaderComponent.getTemplate());
-        Handlebars.registerPartial(
-            'search-section',
-            SearchSectionComponent.getTemplate(),
-        );
+        Handlebars.registerPartial('search-section', SearchSectionComponent.getTemplate());
 
-        Handlebars.registerPartial(
-            'seller-info-card',
-            SellerInfoCardComponent.getTemplate(),
-        );
-        Handlebars.registerPartial(
-            'seller-ad-card',
-            SellerAdCardComponent.getTemplate(),
-        );
-        Handlebars.registerPartial(
-            'seller-tabs',
-            SellerTabsComponent.getTemplate(),
-        );
+        Handlebars.registerPartial('seller-info-card', SellerInfoCardComponent.getTemplate());
+        Handlebars.registerPartial('seller-ad-card', SellerAdCardComponent.getTemplate());
+        Handlebars.registerPartial('seller-tabs', SellerTabsComponent.getTemplate());
     } catch (error) {
         console.error('Failed to load seller-page templates:', error);
     }

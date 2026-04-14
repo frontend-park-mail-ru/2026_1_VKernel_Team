@@ -28,15 +28,11 @@ interface SellerAdsResponse {
 
 const sellerService = {
     async getProfile(sellerId: number | string) {
-        return apiClient.get<SellerProfile>(
-            API_ENDPOINTS.USERS.GET_BY_ID(sellerId),
-        );
+        return apiClient.get<SellerProfile>(API_ENDPOINTS.USERS.GET_BY_ID(sellerId));
     },
 
     async getAds(sellerId: number | string) {
-        const result = await apiClient.get<SellerAdsResponse>(
-            SELLER_API_ENDPOINTS.ADS(sellerId),
-        );
+        const result = await apiClient.get<SellerAdsResponse>(SELLER_API_ENDPOINTS.ADS(sellerId));
 
         if (!result.success) {
             return {
@@ -56,9 +52,7 @@ const sellerService = {
         if (!imagePath) return DEFAULT_AD_IMAGE;
         if (imagePath.startsWith('http')) return imagePath;
 
-        const normalized = imagePath.startsWith('/')
-            ? imagePath
-            : `/${imagePath}`;
+        const normalized = imagePath.startsWith('/') ? imagePath : `/${imagePath}`;
         return `${STATIC_BACKEND}${normalized}`;
     },
 
@@ -66,16 +60,12 @@ const sellerService = {
         if (!avatarPath) return DEFAULT_AVATAR;
         if (avatarPath.startsWith('http')) return avatarPath;
 
-        const normalized = avatarPath.startsWith('/')
-            ? avatarPath
-            : `/${avatarPath}`;
+        const normalized = avatarPath.startsWith('/') ? avatarPath : `/${avatarPath}`;
         return `${STATIC_BACKEND}${normalized}`;
     },
 
     formatPrice(price: number): string {
-        return price === 0
-            ? 'Бесплатно'
-            : `${price.toLocaleString('ru-RU')} \u20BD`;
+        return price === 0 ? 'Бесплатно' : `${price.toLocaleString('ru-RU')} \u20BD`;
     },
 
     getReviewSuffix(count: number): string {
@@ -95,8 +85,7 @@ const sellerService = {
         const rating = profile.rating ?? 0;
         const fullStars = Math.round(rating);
         const displayStars = Math.min(fullStars, 5);
-        const ratingStars =
-            '&#9733;'.repeat(displayStars) + '&#9734;'.repeat(5 - displayStars);
+        const ratingStars = '&#9733;'.repeat(displayStars) + '&#9734;'.repeat(5 - displayStars);
 
         const reviewCount = profile.reviews_count ?? 0;
         const reviewSuffix = this.getReviewSuffix(reviewCount);
@@ -137,9 +126,7 @@ const sellerService = {
             image: imageUrl,
             views: ad.views_count || 0,
             location: ad.location || 'Москва',
-            createdDate: ad.created_at
-                ? new Date(ad.created_at).toLocaleDateString('ru-RU')
-                : '',
+            createdDate: ad.created_at ? new Date(ad.created_at).toLocaleDateString('ru-RU') : '',
         };
     },
 };

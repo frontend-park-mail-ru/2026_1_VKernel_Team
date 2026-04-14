@@ -35,9 +35,8 @@
             <div class="header-right">                
                 {{#if isAuthenticated}}
                     <button class="btn place-ad-btn" data-nav="/place-ad">Разместить объявление</button>
-                <!--Нужна проверка в будущем на загрузку своей аватарки пользователем-->
-                    <a href="">
-                        <img src="/images/logo/avatar.jpeg" alt="Аватар" class="avatar">
+                    <a href="/profile" class="profile-icon" data-nav="/profile" style="text-decoration: none;">
+                        <img src="{{avatarUrl user.avatar user.avatar_path}}" alt="Аватар" class="avatar">
                     </a>
                     <button class="btn btn-danger logout-btn" data-action="logout">
                         Выйти
@@ -160,7 +159,7 @@
                         <div class="location-details">
                             <div class="location-address">{{location}}</div>
                             <div class="seller-name">Продавец: {{sellerName}}</div>
-                            <div class="seller-since">На сайте с: {{sellerSince}}</div>
+                            <div class="seller-since">Зарегистрирован: {{sellerSince}}</div>
                         </div>
                     </div>
                 </div>
@@ -182,41 +181,33 @@
                             <span class="heart-icon">♡</span>
                         </button>
                     </div>
-                    <!-- ЦЕНА -->
-                    {{!-- <div class="price-block">
-                        <div class="current-price">{{formattedPrice}}</div>
-                        {{#if oldPrice}}
-                            <div class="old-price">{{oldPrice}} ₽</div>
-                        {{/if}}
-                    </div> --}}
 
                     <!-- КНОПКИ ДЕЙСТВИЙ -->
                     <div class="action-buttons">
-                        {{!-- <button class="action-btn favorite-btn" data-action="add-to-favorites">
-                            <span class="heart-icon">♡</span> В избранное
-                        </button> --}}
                         <button class="action-btn cart-btn" data-action="add-to-cart">
-                            {{!-- <span class="cart-icon">🛒</span> В корзину --}}
                             Добавить в корзину
                         </button>
                         <button class="action-btn buy-btn" data-action="buy-now">
-                            {{!-- <span class="buy-icon">💳</span> Купить --}}
                             Купить сейчас
                         </button>
                     </div>
 
                     <!-- ПРОДАВЕЦ (кликабельный блок) -->
-                    <div class="seller-card" data-action="go-to-seller" data-seller-id="{{sellerId}}">
-                        <div class="seller-avatar">
+                    <div class="seller-card">
+                        <div class="seller-avatar" data-action="go-to-seller" data-seller-id="{{sellerId}}" data-is-owner="{{isOwner}}">
                             <img src="{{sellerAvatar}}" alt="{{sellerName}}">
                         </div>
                         <div class="seller-info">
-                            <div class="seller-name">{{sellerName}}</div>
+                            <div class="seller-name" data-action="go-to-seller" data-seller-id="{{sellerId}}" data-is-owner="{{isOwner}}">
+                                {{sellerName}}
+                            </div>
                             <div class="seller-rating">
                                 <span class="stars">{{{sellerStars}}}</span>
                                 <span class="rating-value">{{sellerRating}}</span>
                             </div>
-                            <button class="all-reviews-btn" data-action="all-reviews">Все отзывы →</button>
+                            <button class="all-reviews-btn" data-action="all-reviews" data-seller-id="{{sellerId}}">
+                                Все отзывы →
+                            </button>
                         </div>
                     </div>
                 </div>
