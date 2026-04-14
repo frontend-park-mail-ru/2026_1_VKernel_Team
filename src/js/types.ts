@@ -32,7 +32,7 @@ export interface Ad {
     updated_at?: string;
     location?: string;
     status?: 'active' | 'draft' | 'reserved' | 'sold' | 'archived';
-    
+
     category_characteristics: ProductCharacteristic[];
     custom_characteristics: ProductCustomCharacteristic[];
     seller_id?: number;
@@ -157,7 +157,7 @@ export interface CategoryCharacteristic {
     id: number;
     category_id: number;
     name: string;
-    allowed_values: string[] | null; 
+    allowed_values: string[] | null;
     sort_order: number;
 }
 

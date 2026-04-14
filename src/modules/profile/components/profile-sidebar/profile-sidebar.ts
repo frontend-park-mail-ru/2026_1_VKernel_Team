@@ -16,7 +16,7 @@ export const ProfileSidebar = {
         sidebar.addEventListener('click', (e) => {
             const target = e.target as HTMLElement;
             const tabBtn = target.closest('.profile-nav-item[data-tab]');
-            
+
             if (tabBtn) {
                 const tab = (tabBtn as HTMLElement).dataset.tab;
                 // Вместо ProfileController.switchTab кидаем событие
@@ -28,5 +28,5 @@ export const ProfileSidebar = {
                 eventBus.emit('profile:logout');
             }
         });
-    }
+    },
 };

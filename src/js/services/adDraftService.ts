@@ -6,8 +6,8 @@ interface DraftData {
         price: number;
         description: string;
         location: string;
-        category_characteristics: Array<{category_characteristic_id: number, value: string}>;
-        custom_characteristics: Array<{name: string, value: string}>;
+        category_characteristics: Array<{ category_characteristic_id: number; value: string }>;
+        custom_characteristics: Array<{ name: string; value: string }>;
     };
     photoCount: number;
     timestamp: number;
@@ -15,7 +15,7 @@ interface DraftData {
 export class AdDraftService {
     private static draftId: string | null = null;
     private static filesMap: Map<string, File[]> = new Map();
-    
+
     private static generateId(): string {
         return 'draft_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
     }
@@ -24,10 +24,10 @@ export class AdDraftService {
         if (this.draftId) {
             this.filesMap.delete(this.draftId);
         }
-        
+
         this.draftId = this.generateId();
         this.filesMap.set(this.draftId, photoFiles);
-        
+
         const draftData = {
             id: this.draftId,
             formData: {
@@ -40,31 +40,31 @@ export class AdDraftService {
                 custom_characteristics: formData.custom_characteristics || [],
             },
             photoCount: photoFiles.length,
-            timestamp: Date.now()
+            timestamp: Date.now(),
         };
-        
+
         sessionStorage.setItem('adDraft', JSON.stringify(draftData));
         return this.draftId;
     }
-    
+
     static get(): { formData: any; photoFiles: File[] } | null {
         const draftJson = sessionStorage.getItem('adDraft');
         if (!draftJson) return null;
-        
+
         try {
             const draft = JSON.parse(draftJson);
             const photoFiles = this.filesMap.get(draft.id) || [];
-            
+
             return {
                 formData: draft.formData,
-                photoFiles: photoFiles
+                photoFiles: photoFiles,
             };
         } catch (e) {
             console.error('Error loading draft:', e);
             return null;
         }
     }
-    
+
     static clear(): void {
         if (this.draftId) {
             this.filesMap.delete(this.draftId);
@@ -72,7 +72,7 @@ export class AdDraftService {
         }
         sessionStorage.removeItem('adDraft');
     }
-    
+
     static hasDraft(): boolean {
         return sessionStorage.getItem('adDraft') !== null;
     }

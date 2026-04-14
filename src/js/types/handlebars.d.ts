@@ -12,4 +12,4 @@ declare module '*.hbs' {
 declare module 'handlebars/dist/handlebars.runtime.js' {
     import Handlebars from 'handlebars';
     export default Handlebars;
-}   
+}

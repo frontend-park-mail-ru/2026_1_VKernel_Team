@@ -1,4 +1,4 @@
-import  '@modules/profile/components/profile-avatar/style.css';
+import '@modules/profile/components/profile-avatar/style.css';
 import template from '@modules/profile/components/profile-avatar/profile-avatar.hbs?raw';
 import { ProfileService } from '@modules/profile/service';
 import { store } from '@/core/store';
@@ -12,14 +12,16 @@ export const ProfileAvatar = {
     },
 
     init(): void {
-        const avatarInput = document.querySelector('.avatar-wrapper input[type="file"]') as HTMLInputElement;
+        const avatarInput = document.querySelector(
+            '.avatar-wrapper input[type="file"]',
+        ) as HTMLInputElement;
         if (!avatarInput) return;
 
         avatarInput.addEventListener('change', async (e) => {
             const target = e.target as HTMLInputElement;
             if (target.files?.length) {
                 await this.handleUpload(target.files[0]);
-                target.value = ''; 
+                target.value = '';
             }
         });
     },
@@ -27,7 +29,7 @@ export const ProfileAvatar = {
     async handleUpload(file: File): Promise<void> {
         const previewUrl = URL.createObjectURL(file);
         const allAvatars = document.querySelectorAll('.avatar-img, .header .avatar');
-        allAvatars.forEach(img => (img as HTMLImageElement).src = previewUrl);
+        allAvatars.forEach((img) => ((img as HTMLImageElement).src = previewUrl));
 
         uiActions.showLoading(true);
         try {
@@ -42,5 +44,5 @@ export const ProfileAvatar = {
             uiActions.showLoading(false);
             URL.revokeObjectURL(previewUrl);
         }
-    }
+    },
 };

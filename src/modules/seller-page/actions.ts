@@ -23,15 +23,12 @@ export const sellerPageActions = {
 
             const profile = sellerService.formatProfile(profileRes.data);
 
-            const adsRes = await sellerService
-                .getAds(sellerId)
-                .catch(() => ({
-                    success: false as const,
-                    data: [] as SellerAd[],
-                }));
+            const adsRes = await sellerService.getAds(sellerId).catch(() => ({
+                success: false as const,
+                data: [] as SellerAd[],
+            }));
 
-            const allAds =
-                adsRes.success && Array.isArray(adsRes.data) ? adsRes.data : [];
+            const allAds = adsRes.success && Array.isArray(adsRes.data) ? adsRes.data : [];
 
             const activeAds = allAds
                 .filter((ad: SellerAd) => {

@@ -20,7 +20,7 @@ import { SellerPageController } from '@modules/seller-page/controller';
 import { loadTemplates as loadSellerPageTemplates } from '@modules/seller-page/pages/seller-page/seller-page';
 import { CartController } from '@modules/cart/controller';
 import { loadTemplates as loadCartTemplates } from '@modules/cart/pages/cart/cart';
-import { ProfileController } from '@modules/profile/controller'; 
+import { ProfileController } from '@modules/profile/controller';
 
 import { store } from '@/core/store';
 import { uiActions } from '@/actions/uiActions';
@@ -45,10 +45,10 @@ const registerHelpers = (Hbs: any) => {
 
     Hbs.registerHelper('avatarUrl', function (avatar: any, avatarPath: any) {
         const DEFAULT_AVATAR = '/images/logo/avatar.jpeg';
-        
-        let source = typeof avatar === 'string' ? avatar : 
-                    (typeof avatarPath === 'string' ? avatarPath : '');
-                    
+
+        const source =
+            typeof avatar === 'string' ? avatar : typeof avatarPath === 'string' ? avatarPath : '';
+
         if (!source) return DEFAULT_AVATAR;
 
         const trimmed = source.trim();
@@ -62,15 +62,29 @@ const registerHelpers = (Hbs: any) => {
         return `${CONFIG.API.BASE_URL}${normalized}`;
     });
 
-    Hbs.registerHelper('eq', function (a: any, b: any) { return a === b; });
-    Hbs.registerHelper('gt', function (a: any, b: any) { return a > b; });
-    Hbs.registerHelper('concat', function (...args: any[]) { return args.slice(0, -1).join(''); });
-    Hbs.registerHelper('array', function (...args: any[]) { return args.slice(0, -1); });
+    Hbs.registerHelper('eq', function (a: any, b: any) {
+        return a === b;
+    });
+    Hbs.registerHelper('gt', function (a: any, b: any) {
+        return a > b;
+    });
+    Hbs.registerHelper('concat', function (...args: any[]) {
+        return args.slice(0, -1).join('');
+    });
+    Hbs.registerHelper('array', function (...args: any[]) {
+        return args.slice(0, -1);
+    });
 
     Hbs.registerHelper('labelForTab', function (tab: string) {
         const labels: Record<string, string> = {
-            info: 'Личные данные', ads: 'Мои объявления', favorites: 'Избранное', cart: 'Корзина',
-            messages: 'Сообщения', purchases: 'Мои покупки', wallet: 'Кошелёк', settings: 'Настройки'
+            info: 'Личные данные',
+            ads: 'Мои объявления',
+            favorites: 'Избранное',
+            cart: 'Корзина',
+            messages: 'Сообщения',
+            purchases: 'Мои покупки',
+            wallet: 'Кошелёк',
+            settings: 'Настройки',
         };
         return labels[tab] || tab;
     });
@@ -159,7 +173,7 @@ export const AppController = {
     router(): void {
         const path = window.location.pathname;
         const adMatch = path.match(/^\/ad\/(\d+)$/);
-        
+
         // Логика новых фич из main
         if (path === '/place-ad') {
             if (this._currentFeature === 'place-ad') PlaceAnAdController.cleanup();

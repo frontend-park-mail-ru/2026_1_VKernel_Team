@@ -1,5 +1,5 @@
-import '@modules/profile/components/prages/profile/profile.css';
-import template from '@modules/profile/components/prages/profile/profile.hbs?raw';
+import '@modules/profile/pages/profile/profile.css';
+import template from '@modules/profile/pages/profile/profile.hbs?raw';
 import { HeaderComponent } from '@modules/common/components/header/header';
 import { SearchSectionComponent } from '@modules/common/components/search-section/search-section';
 import { ProfileAvatar } from '@modules/profile/components/profile-avatar/profile-avatar';
@@ -26,7 +26,6 @@ export function loadTemplates(): void {
         Handlebars.registerPartial('profile-avatar', ProfileAvatar.getTemplate());
         Handlebars.registerPartial('profile-sidebar', ProfileSidebar.getTemplate());
         Handlebars.registerPartial('profile-content', ProfileContent.getTemplate());
-        
     } catch (error) {
         console.error('Failed to load profile templates:', error);
     }

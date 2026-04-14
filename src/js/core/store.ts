@@ -40,12 +40,24 @@ class Store {
         return this.eventBus.on('stateChanged', callback);
     }
 
-    get isAuthenticated(): boolean { return this.state.isAuthenticated; }
-    get user(): User | null { return this.state.user; }
-    get ads(): any[] { return this.state.ads; }
-    get currentPage(): string { return this.state.currentPage; }
-    get error(): string | null { return this.state.error; }
-    get isLoading(): boolean { return this.state.isLoading; } // Добавлено
+    get isAuthenticated(): boolean {
+        return this.state.isAuthenticated;
+    }
+    get user(): User | null {
+        return this.state.user;
+    }
+    get ads(): any[] {
+        return this.state.ads;
+    }
+    get currentPage(): string {
+        return this.state.currentPage;
+    }
+    get error(): string | null {
+        return this.state.error;
+    }
+    get isLoading(): boolean {
+        return this.state.isLoading;
+    } // Добавлено
 }
 
 export const store = new Store();

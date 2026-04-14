@@ -20,5 +20,5 @@ export const ProfileContent = {
                 EditNameModal.open();
             }
         });
-    }
+    },
 };
