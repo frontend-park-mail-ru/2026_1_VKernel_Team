@@ -6,14 +6,18 @@ import type { HandlebarsTemplateFunction } from '@/types';
 import type { ProfileTab, UserProfile } from '@modules/profile/types';
 import '@modules/profile/pages/profile/profile.css';
 import profileContentTpl from '@modules/profile/components/profile-content/profile-content.hbs';
+import { ProfileAdCard } from '@modules/profile/components/profile-ad-card/profile-ad-card'; 
+import profileAdCardTpl from '@modules/profile/components/profile-ad-card/profile-ad-card.hbs';
 import profileSidebarTpl from '@modules/profile/components/profile-sidebar/profile-sidebar.hbs';
 import { ProfileAvatar } from '@modules/profile/components/profile-avatar/profile-avatar';
 import { ProfileSidebar } from '@modules/profile/components/profile-sidebar/profile-sidebar';
 import { ProfileContent } from '@modules/profile/components/profile-content/profile-content';
 import { EditNameModal } from '@modules/profile/components/edit-name-modal/edit-name-modal';
 
+
 export const ProfileController = {
     currentTab: 'info' as ProfileTab,
+    cachedAds: [] as any[], // Хранилище для объявлений
     templates: {} as Record<string, HandlebarsTemplateFunction>,
     mainTemplate: null as any,
     isInitialized: false,
@@ -45,7 +49,6 @@ export const ProfileController = {
             isAuthenticated: store.isAuthenticated,
         });
 
-        // Рендерим модалку в скрытом виде (один раз при загрузке макета)
         const modalContainer = document.createElement('div');
         modalContainer.id = 'modal-root';
         modalContainer.innerHTML = EditNameModal.getTemplate()({ user });
@@ -71,14 +74,25 @@ export const ProfileController = {
         this.attachEventListeners();
     },
 
-    rerenderTab(user: UserProfile): void {
+rerenderTab(user: UserProfile): void {
         const contentEl = document.getElementById('tabContent');
         if (contentEl) {
+            // 1. Рендерим общий контент вкладки (он создаст пустую <div class="profile-ads-grid">)
             contentEl.innerHTML = profileContentTpl({
                 currentTab: this.currentTab,
                 user,
+                ads: this.cachedAds, // Передаем, чтобы шаблон знал длину (показывать ли пустой стейт)
                 isAuthenticated: store.isAuthenticated,
             });
+
+            // 2. Если мы на вкладке объявлений и массив не пустой — рендерим карточки
+            if (this.currentTab === 'ads' && this.cachedAds.length > 0) {
+                const gridEl = document.querySelector('.profile-ads-grid');
+                if (gridEl) {
+                    // Проходимся по массиву, генерируем HTML каждой карточки и склеиваем в одну строку
+                    gridEl.innerHTML = this.cachedAds.map(ad => profileAdCardTpl(ad)).join('');
+                }
+            }
         }
     },
 
@@ -93,16 +107,27 @@ export const ProfileController = {
         }
     },
 
-    switchTab(tab: ProfileTab): void {
+    async switchTab(tab: ProfileTab): Promise<void> {
         this.currentTab = tab;
-        this.renderAll();
-    },
+        
+        if (tab === 'ads' && store.user?.id) {
+            uiActions.showLoading(true);
+            try {
+                const res = await ProfileService.getUserAds(store.user.id);
+                if (res.success && res.data) {
+                    // Превращаем объект бэкенда в нормальный массив
+                    const rawData = res.data as any;
+                    this.cachedAds = Array.isArray(rawData) ? rawData : Object.values(rawData).flat();
+                }
+            } catch (err) {
+                console.error('Ошибка загрузки объявлений:', err);
+                this.cachedAds = [];
+            } finally {
+                uiActions.showLoading(false);
+            }
+        }
 
-    attachEventListeners(): void {
-        if (ProfileAvatar?.init) ProfileAvatar.init();
-        if (ProfileSidebar?.init) ProfileSidebar.init();
-        if (ProfileContent?.init) ProfileContent.init();
-        if (EditNameModal?.init) EditNameModal.init(); // Привязываем события модалки
+        this.renderAll();
     },
 
     async loadProfileData(): Promise<void> {
@@ -110,6 +135,16 @@ export const ProfileController = {
             const res = await ProfileService.getProfile();
             if (res.success && res.data) {
                 store.setState({ user: res.data });
+                
+                if (this.currentTab === 'ads' && res.data.id) {
+                    const adsRes = await ProfileService.getUserAds(res.data.id);
+                    if (adsRes.success && adsRes.data) {
+                        // Та же логика выпрямления массива
+                        const rawData = adsRes.data as any;
+                        this.cachedAds = Array.isArray(rawData) ? rawData : Object.values(rawData).flat();
+                    }
+                }
+                
                 this.renderAll();
             }
         } catch (err) {
@@ -117,11 +152,19 @@ export const ProfileController = {
         }
     },
 
+    attachEventListeners(): void {
+        if (ProfileAvatar?.init) ProfileAvatar.init();
+        if (ProfileSidebar?.init) ProfileSidebar.init();
+        if (ProfileContent?.init) ProfileContent.init();
+        if (EditNameModal?.init) EditNameModal.init();
+        if (ProfileAdCard?.init) ProfileAdCard.init();
+    },
+
     async handleLogout(): Promise<void> {
         try {
             await ProfileService.logout();
             store.setState({ isAuthenticated: false, user: null });
-            uiActions.navigateTo('/login');
+            uiActions.navigateTo('/'); 
         } catch (err) {
             uiActions.showError('Ошибка при выходе');
         }

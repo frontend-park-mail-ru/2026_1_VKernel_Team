@@ -35,8 +35,15 @@
     </div>
   {{/if}}
 
-  {{#if (eq currentTab 'ads')}}
+{{#if (eq currentTab 'ads')}}
     <h2 class="section-title">Мои объявления</h2>
-    <p class="empty-state">Список ваших объявлений пуст.</p>
+    
+    {{#if ads.length}}
+      {{!-- Оставляем пустой контейнер. Карточки сюда вставит ProfileController.ts --}}
+      <div class="profile-ads-grid"></div>
+    {{else}}
+      <p class="empty-state">Список ваших объявлений пуст.</p>
+    {{/if}}
+
   {{/if}}
 </div>

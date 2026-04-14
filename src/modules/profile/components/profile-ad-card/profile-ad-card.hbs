@@ -1,0 +1,15 @@
+{{!-- src/modules/profile/components/profile-ad-card/profile-ad-card.hbs --}}
+<div class="profile-item-card" data-ad-id="{{id}}">
+  <div class="profile-item-image-wrapper">
+    <img src="{{#if photos.[0]}}{{photos.[0]}}{{else}}/images/default-ad.jpg{{/if}}" alt="Фото объявления" class="profile-item-image">
+  </div>
+  
+  <div class="profile-item-content">
+    <h4 class="profile-item-title">{{title}}</h4>
+    <p class="profile-item-price">{{price}} ₽</p>
+    
+    {{#if status}}
+      <span class="profile-item-status status-{{status}}">{{status}}</span>
+    {{/if}}
+  </div>
+</div>

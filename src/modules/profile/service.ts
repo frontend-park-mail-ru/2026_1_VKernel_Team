@@ -11,12 +11,22 @@ export const ProfileService = {
         return apiClient.patch<User>(PROFILE_CONFIG.API.UPDATE_PROFILE, { name: newName });
     },
 
+    async getUserAds(userId: number | string) {
+        return apiClient.get<any[]>(API_ENDPOINTS.USERS.GET_ADS(userId));
+    },
+
     async uploadAvatar(file: File) {
         const formData = new FormData();
         formData.append('avatar', file);
 
         try {
             const response = await apiClient.post<User>(PROFILE_CONFIG.API.UPLOAD_AVATAR, formData);
+            
+            // Проверяем success
+            if (!response.success) {
+                throw new Error(response.error || 'Не удалось загрузить аватарку');
+            }
+            
             return response.data;
         } catch (error) {
             console.error('Ошибка в ProfileService.uploadAvatar:', error);
