@@ -1,5 +1,5 @@
 import '@modules/profile/components/profile-sidebar/style.css';
-import template from './profile-sidebar.hbs?raw';
+import template from '@modules/profile/components/profile-sidebar/profile-sidebar.hbs?raw';
 import { eventBus } from '@/core/eventBus'; // Импортируем шину событий
 
 declare const Handlebars: any;

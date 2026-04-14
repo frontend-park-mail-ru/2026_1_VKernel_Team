@@ -1,6 +1,6 @@
 import '@modules/profile/components/profile-content/style.css';
-import template from './profile-content.hbs?raw';
-import { EditNameModal } from '../edit-name-modal/edit-name-modal';
+import template from '@modules/profile/components/profile-content/profile-content.hbs?raw';
+import { EditNameModal } from '@modules/profile/components/edit-name-modal/edit-name-modal';
 
 declare const Handlebars: any;
 

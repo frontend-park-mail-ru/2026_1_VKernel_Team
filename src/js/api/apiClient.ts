@@ -37,10 +37,7 @@ export const API_ENDPOINTS = {
     REMOVE: (id: number | string) => `/favorites/${id}`,
     CHECK: (id: number | string) => `/favorites/${id}/check`,
   },
-  PROFILE: {
-    UPDATE: '/profile/update',
-    AVATAR: '/profile/avatar',
-  },
+  
 };
 
 const getCookie = (name: string): string | null => {
@@ -141,10 +138,6 @@ export class ApiClient {
             headers,
             credentials: 'include',
         };
-
-        // =========================================================
-        // ГЛАВНОЕ ИСПРАВЛЕНИЕ: Логика обработки тела запроса
-        // =========================================================
         if (body) {
             if (body instanceof FormData) {
                 // Если передали файл: отдаем FormData как есть, без stringify
@@ -184,8 +177,6 @@ export class ApiClient {
                 const text = await response.text();
                 data = { message: text };
             }
-
-            // Если бэкенд возвращает токен внутри тела JSON
             if (response.ok && endpoint === API_ENDPOINTS.AUTH.LOGIN) {
                 const possibleToken = data?.token || data?.access_token || data?.data?.token || data?.data?.access_token;
                 if (possibleToken) {

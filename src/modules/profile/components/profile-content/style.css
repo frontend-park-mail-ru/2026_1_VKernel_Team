@@ -37,43 +37,6 @@
     text-decoration: underline;
 }
 
-/* Модальное окно */
-.modal-overlay {
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0,0,0,0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-}
-
-.modal-content {
-    background: white;
-    padding: 30px;
-    border-radius: 16px;
-    width: 400px;
-    max-width: 90%;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-}
-
-.modal-input {
-    width: 100%;
-    padding: 12px;
-    margin: 20px 0;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    font-size: 16px;
-    box-sizing: border-box;
-}
-
-.modal-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 15px;
-}
-
-
 .password-input-container {
     position: relative;
     display: flex;

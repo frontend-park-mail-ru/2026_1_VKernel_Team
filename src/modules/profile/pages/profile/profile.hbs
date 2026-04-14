@@ -1,17 +1,14 @@
 <div class="page-container">
-  {{!-- Используй полный путь от папки src/modules --}}
   {{> common/components/header/header }}
   {{> common/components/search-section/search-section }}
 
   <main class="profile-layout">
     <div id="sidebarContainer">
-        {{!-- Полный путь к сайдбару --}}
         {{> profile/components/profile-sidebar/profile-sidebar }}
     </div>
 
     <section class="profile-layout__content">
       <div id="tabContent">
-        {{!-- Полный путь к контенту --}}
         {{> profile/components/profile-content/profile-content }}
       </div>
     </section>

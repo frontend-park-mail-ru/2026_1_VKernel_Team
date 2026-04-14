@@ -1,6 +1,6 @@
 import  '@modules/profile/components/profile-avatar/style.css';
-import template from './profile-avatar.hbs?raw';
-import { ProfileService } from '../../service';
+import template from '@modules/profile/components/profile-avatar/profile-avatar.hbs?raw';
+import { ProfileService } from '@modules/profile/service';
 import { store } from '@/core/store';
 import { uiActions } from '@/actions/uiActions';
 

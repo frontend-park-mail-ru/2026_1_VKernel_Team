@@ -1,6 +1,6 @@
 import { API_ENDPOINTS, apiClient } from '@/api/apiClient';
-import { PROFILE_CONFIG } from './config';
-import type { User, ApiResponse } from '@/types';
+import { PROFILE_CONFIG } from '@modules/profile/config';
+import type { User } from '@/types';
 
 export const ProfileService = {
   async getProfile() {

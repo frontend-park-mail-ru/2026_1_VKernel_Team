@@ -1,5 +1,6 @@
-import template from './edit-name-modal.hbs?raw';
-import { ProfileService } from '../../service';
+import template from '@modules/profile/components/edit-name-modal/edit-name-modal.hbs?raw';
+import  '@modules/profile/components/edit-name-modal/style.css';
+import { ProfileService } from '@modules/profile/service';
 import { store } from '@/core/store';
 import { uiActions } from '@/actions/uiActions';
 import { eventBus } from '@/core/eventBus';
@@ -54,7 +55,6 @@ export const EditNameModal = {
                 store.setState({ user: { ...store.user, name: res.data.name } });
                 uiActions.showSuccess('Имя обновлено');
                 this.close();
-                // Просим контроллер обновить все части страницы, где есть имя
                 eventBus.emit('profile:update-ui');
             }
         } catch (err) {

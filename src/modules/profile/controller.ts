@@ -1,20 +1,16 @@
 import { store } from '@/core/store';
 import { uiActions } from '@/actions/uiActions';
-import { ProfileService } from './service';
+import { ProfileService } from '@modules/profile/service';
 import { eventBus } from '@/core/eventBus'; 
 import type { HandlebarsTemplateFunction } from '@/types'; 
-import type { ProfileTab, UserProfile } from './types'; 
-
-// Твои импорты стилей (без изменений)
-import './pages/profile/profile.css'; 
-import profileContentTpl from './components/profile-content/profile-content.hbs';
-import profileSidebarTpl from './components/profile-sidebar/profile-sidebar.hbs';
-
-// Импорты компонентов
-import { ProfileAvatar } from './components/profile-avatar/profile-avatar';
-import { ProfileSidebar } from './components/profile-sidebar/profile-sidebar';
-import { ProfileContent } from './components/profile-content/profile-content';
-import { EditNameModal } from './components/edit-name-modal/edit-name-modal'; // Новый компонент
+import type { ProfileTab, UserProfile } from '@modules/profile/types'; 
+import '@modules/profile/pages/profile/profile.css'; 
+import profileContentTpl from '@modules/profile/components/profile-content/profile-content.hbs';
+import profileSidebarTpl from '@modules/profile/components/profile-sidebar/profile-sidebar.hbs';
+import { ProfileAvatar } from '@modules/profile/components/profile-avatar/profile-avatar';
+import { ProfileSidebar } from '@modules/profile/components/profile-sidebar/profile-sidebar';
+import { ProfileContent } from '@modules/profile/components/profile-content/profile-content';
+import { EditNameModal } from '@modules/profile/components/edit-name-modal/edit-name-modal'; 
 
 export const ProfileController = {
   currentTab: 'info' as ProfileTab,
