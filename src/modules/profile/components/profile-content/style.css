@@ -82,3 +82,23 @@
     align-items: flex-start;
     flex-wrap: wrap;
 }
+
+.rec-card-edit {
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.rec-card-edit:hover {
+    background: #e8f5e9;
+    transform: scale(1.1);
+}

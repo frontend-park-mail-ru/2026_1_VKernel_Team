@@ -12,6 +12,9 @@ import { ProfileSidebar } from '@modules/profile/components/profile-sidebar/prof
 import { ProfileContent } from '@modules/profile/components/profile-content/profile-content';
 import { EditNameModal } from '@modules/profile/components/edit-name-modal/edit-name-modal';
 
+import { apiClient, API_ENDPOINTS } from '@/api/apiClient';
+import type { SellerAd } from '@modules/seller-page/types';
+
 export const ProfileController = {
     currentTab: 'info' as ProfileTab,
     templates: {} as Record<string, HandlebarsTemplateFunction>,
@@ -26,6 +29,28 @@ export const ProfileController = {
         this.isInitialized = true;
     },
 
+    userAds: [] as any[],  // Поле для хранения объявлений
+
+    async loadUserAds(): Promise<void> {
+        // Проверяем, что id существует и это число
+        const userId = store.user?.id;
+        if (!userId || typeof userId !== 'number') return;
+        
+        try {
+            const result = await apiClient.get<{ ads: SellerAd[] }>(`/users/${userId}/ads`);
+            if (result.success && result.data?.ads) {
+                const { sellerService } = await import('@modules/seller-page/service');
+                this.userAds = result.data.ads.map((ad: SellerAd) => 
+                    sellerService.formatAdCard(ad)
+                );
+                this.rerenderTab(store.user as UserProfile);
+            }
+        } catch (error) {
+            console.error('Failed to load user ads:', error);
+            this.userAds = [];
+        }
+    },
+
     async showProfile(): Promise<void> {
         this.initEvents();
 
@@ -33,6 +58,9 @@ export const ProfileController = {
             uiActions.navigateTo('/login');
             return;
         }
+
+        // Загружаем объявления пользователя
+        await this.loadUserAds();
 
         const app = document.getElementById('app');
         const template = this.mainTemplate || this.templates['profile-page'];
@@ -45,7 +73,7 @@ export const ProfileController = {
             isAuthenticated: store.isAuthenticated,
         });
 
-        // Рендерим модалку в скрытом виде (один раз при загрузке макета)
+        // Рендерим модалку
         const modalContainer = document.createElement('div');
         modalContainer.id = 'modal-root';
         modalContainer.innerHTML = EditNameModal.getTemplate()({ user });
@@ -77,6 +105,7 @@ export const ProfileController = {
             contentEl.innerHTML = profileContentTpl({
                 currentTab: this.currentTab,
                 user,
+                userAds: this.userAds,
                 isAuthenticated: store.isAuthenticated,
             });
         }
@@ -103,6 +132,25 @@ export const ProfileController = {
         if (ProfileSidebar?.init) ProfileSidebar.init();
         if (ProfileContent?.init) ProfileContent.init();
         if (EditNameModal?.init) EditNameModal.init(); // Привязываем события модалки
+
+        // Добавьте обработчик для карточек объявлений
+        const contentEl = document.getElementById('tabContent');
+        if (contentEl) {
+            contentEl.addEventListener('click', (e) => {
+                const card = (e.target as HTMLElement).closest('.rec-card');
+                if (!card) return;
+                
+                const target = e.target as HTMLElement;
+                if (target.closest('.rec-card-fav') || target.closest('.rec-card-cart')) {
+                    return;
+                }
+                
+                const adId = card.getAttribute('data-id');
+                if (adId) {
+                    uiActions.navigateTo(`/ad/${adId}`);
+                }
+            });
+        }
     },
 
     async loadProfileData(): Promise<void> {

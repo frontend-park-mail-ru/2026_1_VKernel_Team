@@ -36,7 +36,39 @@
   {{/if}}
 
   {{#if (eq currentTab 'ads')}}
-    <h2 class="section-title">Мои объявления</h2>
-    <p class="empty-state">Список ваших объявлений пуст.</p>
+      <h2 class="section-title">Мои объявления</h2>
+      {{#if userAds.length}}
+          <div class="recommendations-row">
+              {{#each userAds}}
+                  <div class="rec-card" data-id="{{id}}">
+                      <div class="rec-card-image-container">
+                          <img src="{{image}}" alt="{{title}}" class="rec-card-image">
+                          <button class="rec-card-fav">♡</button>
+                      </div>
+                      <div class="rec-card-content">
+                          <span class="rec-card-title">{{title}}</span>
+                          <div class="rec-card-footer">
+                              <div class="rec-card-footer-info">
+                                  <span class="rec-card-price">{{formattedPrice}}</span>
+                                  <span class="rec-card-location">
+                                      <span class="location-icon">📍</span>
+                                      {{location}}
+                                  </span>
+                              </div>
+                              <div class="rec-card-footer-actions">
+                                <button class="rec-card-edit" data-edit-id="{{id}}" title="Редактировать">
+                                  ✏️
+                                </button>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+              {{/each}}
+          </div>
+      {{else}}
+          <p class="seller-ads-empty">У вас пока нет объявлений. 
+              <a href="#" data-nav="/place-ad">Создать объявление</a>
+          </p>
+      {{/if}}
   {{/if}}
 </div>
