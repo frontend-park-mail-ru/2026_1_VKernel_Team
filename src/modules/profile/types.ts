@@ -1,4 +1,4 @@
-// src/modules/profile/types.ts
+
 
 /** Вкладки профиля (должны совпадать с data-tab в шаблоне) */
 export type ProfileTab =

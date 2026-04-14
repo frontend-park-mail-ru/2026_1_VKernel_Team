@@ -16,7 +16,6 @@ export const ProfileService = {
     formData.append('avatar', file); 
 
     try {
-      // УБРАЛИ headers. Браузер сам поставит правильный multipart/form-data + boundary!
       const response = await apiClient.post<User>(PROFILE_CONFIG.API.UPLOAD_AVATAR, formData);
       return response.data; 
     } catch (error) {

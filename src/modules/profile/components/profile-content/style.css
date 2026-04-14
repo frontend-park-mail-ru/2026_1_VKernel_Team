@@ -1,0 +1,123 @@
+.section-title {
+    font-size: 28px;
+    margin-bottom: 30px;
+    color: #333;
+}
+
+/* Карточка личных данных */
+.profile-card {
+    display: flex;
+    gap: 40px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+}
+
+/* Детали профиля */
+.profile-details {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    min-width: 300px; /* Чтобы текст не сжимался слишком сильно */
+}
+
+.detail-row {
+    display: flex;
+    align-items: center;
+    font-size: 18px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.detail-label {
+    width: 180px;
+    color: #888;
+}
+
+.detail-value {
+    font-weight: 500;
+    color: #333;
+    flex: 1;
+}
+
+.btn-edit {
+    background: transparent;
+    border: none;
+    color: #1892E5;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.btn-edit:hover {
+    text-decoration: underline;
+}
+
+/* === ВОЗВРАЩЕННЫЕ СТИЛИ МОДАЛКИ === */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: white;
+    padding: 30px;
+    border-radius: 16px;
+    width: 400px;
+    max-width: 90%;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+.modal-input {
+    width: 100%;
+    padding: 12px;
+    margin: 20px 0;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+}
+/* ================================== */
+
+.password-input-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.password-toggle {
+    position: absolute;
+    right: 10px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+}
+
+.eye-icon {
+    width: 20px;
+    height: 20px;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+}
+
+.eye-icon:hover {
+    opacity: 1;
+}
+
+.profile-input:disabled {
+    background-color: #f9f9f9;
+    color: #999;
+    cursor: not-allowed;
+}

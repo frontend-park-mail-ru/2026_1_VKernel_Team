@@ -7,7 +7,6 @@ export const uiActions = {
 
   showError: (message: string) => {
     store.setState({ error: message });
-    // Показать тост/алерт
     const toast = document.createElement('div');
     toast.className = 'toast toast-error';
     toast.textContent = message;
@@ -26,7 +25,6 @@ export const uiActions = {
   navigateTo: (path: string) => {
     store.setState({ currentPage: path });
     window.history.pushState({}, '', path);
-    // Триггерим роутер
     window.dispatchEvent(new PopStateEvent('popstate'));
   }
 };

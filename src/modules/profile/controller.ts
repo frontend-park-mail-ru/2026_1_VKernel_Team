@@ -4,20 +4,18 @@ import { ProfileService } from './service';
 import type { HandlebarsTemplateFunction } from '@/types'; 
 import type { ProfileTab, UserProfile } from './types'; 
 
-// Импорт стилей
-import './pages/profile/profile.css';
-// Импорт шаблонов
 import profileContentTpl from './components/profile-content/profile-content.hbs';
 import profileSidebarTpl from './components/profile-sidebar/profile-sidebar.hbs';
 
+// Импорт контроллеров компонентов
+import { ProfileAvatar } from './components/profile-avatar/profile-avatar';
+import { ProfileSidebar } from './components/profile-sidebar/profile-sidebar';
+import { ProfileContent } from './components/profile-content/profile-content';
+
 export const ProfileController = {
   currentTab: 'info' as ProfileTab,
-  _isEventsAttached: false,
   templates: {} as Record<string, HandlebarsTemplateFunction>,
 
-  /**
-   * Главный метод инициализации страницы профиля.
-   */
   async showProfile(): Promise<void> {
     if (!store.isAuthenticated) {
       uiActions.navigateTo('/login');
@@ -28,112 +26,27 @@ export const ProfileController = {
     const template = this.templates['profile-page'];
     if (!app || !template) return;
 
-    // Сначала берем данные из стора (быстрая отрисовка)
+    // Рендерим основной макет
     const user = store.user || { name: 'Пользователь', avatar_path: '' };
-
-    // Отрисовка основного каркаса страницы
     app.innerHTML = template({
       user: user,
       currentTab: this.currentTab,
       isAuthenticated: store.isAuthenticated
     });
 
-    this.attachEventListeners();
-    this.refreshUI();
+    this.renderAll();
     await this.loadProfileData();
   },
 
-  /**
-   * Навешивание обработчиков событий
-   */
-  attachEventListeners(): void {
-    if (this._isEventsAttached) return; 
-    this._isEventsAttached = true;
-
-    document.addEventListener('click', (e) => {
-      const target = e.target as HTMLElement;
-
-    // Логика переключения видимости пароля
-    const toggleBtn = target.closest('[data-action="toggle-password"]');
-    if (toggleBtn) {
-        const input = document.getElementById('profile-password') as HTMLInputElement;
-        const icon = document.getElementById('eye-icon') as HTMLImageElement;
-
-        if (input.type === 'password') {
-            input.type = 'text';
-            icon.src = '/images/icons/Eye-off.jpeg'; // Иконка закрытого глаза 
-            icon.alt = 'Скрыть';
-        } else {
-            input.type = 'password';
-            icon.src = '/images/icons/views.jpeg'; // Иконка открытого глаза 
-            icon.alt = 'Показать';
-        }
-    }
-      const tabBtn = target.closest('.profile-nav-item[data-tab]');
-      if (tabBtn) {
-        e.preventDefault();
-        this.currentTab = (tabBtn as HTMLElement).dataset.tab as ProfileTab;
-        this.refreshUI();
-      }
-
-      // 3. Модалка имени
-      if (target.closest('[data-action="open-edit-name"]')) {
-         const modal = document.getElementById('editNameModal');
-         if (modal) modal.style.display = 'flex';
-      }
-      if (target.closest('[data-action="close-modal"]')) {
-         const modal = document.getElementById('editNameModal');
-         if (modal) modal.style.display = 'none';
-      }
-      if (target.closest('[data-action="save-name"]')) {
-         this.saveName();
-      }
-
-      // 4. Выход
-      if (target.closest('[data-action="logout"]')) {
-         e.preventDefault();
-         this.handleLogout();
-      }
-    });
-
-    // Обработка загрузки файла
-    document.addEventListener('change', async (e) => {
-      const target = e.target as HTMLInputElement;
-      
-      if (target.type === 'file' && target.closest('.avatar-wrapper') && target.files?.length) {
-        const file = target.files[0];
-        
-        // Очищаем value инпута, чтобы можно было загрузить этот же файл повторно
-        target.value = ''; 
-        
-        await this.handleAvatarUpload(file);
-      }
-    });
+  renderAll(): void {
+    this.refreshUI();
+    this.attachEventListeners();
   },
 
-  /**
-   * Загрузка данных профиля с API
-   */
-  async loadProfileData(): Promise<void> {
-    try {
-      const res = await ProfileService.getProfile();
-      if (res.success && res.data) {
-        store.setState({ user: res.data });
-        this.refreshUI();
-      }
-    } catch (err) {
-      console.error('Не удалось загрузить данные профиля:', err);
-    }
-  },
-
-  /**
-   * Обновление всех динамических зон на странице
-   */
   refreshUI(): void {
     const user = {
         name: 'Пользователь',
         avatar_path: '',
-        messages_count: 0,
         ...(store.user || {}),
     } as UserProfile; 
     
@@ -143,72 +56,47 @@ export const ProfileController = {
 
   rerenderTab(user: UserProfile): void {
     const contentEl = document.getElementById('tabContent');
-    if (!contentEl) return;
-    
-    contentEl.innerHTML = profileContentTpl({
-      currentTab: this.currentTab,
-      user: user,
-      isAuthenticated: store.isAuthenticated
-    });
+    if (contentEl) {
+        contentEl.innerHTML = profileContentTpl({
+            currentTab: this.currentTab,
+            user,
+            isAuthenticated: store.isAuthenticated
+        });
+    }
   },
 
   rerenderSidebar(user: UserProfile): void {
     const sidebarEl = document.querySelector('.profile-layout__sidebar');
-    if (!sidebarEl) return;
-    
-    sidebarEl.innerHTML = profileSidebarTpl({
-      currentTab: this.currentTab,
-      user: user,
-      isAuthenticated: store.isAuthenticated
-    });
-  },
-
-  async saveName(): Promise<void> {
-    const input = document.getElementById('editNameInput') as HTMLInputElement;
-    const newName = input?.value.trim();
-    if (!newName || newName.length < 2) return;
-
-    uiActions.showLoading(true);
-    try {
-      const res = await ProfileService.updateName(newName);
-      if (res.success) {
-        store.setState({ user: { ...store.user, name: newName } as UserProfile });
-        const modal = document.getElementById('editNameModal');
-        if (modal) modal.style.display = 'none';
-        uiActions.showSuccess('Имя успешно изменено');
-        this.refreshUI();
-      }
-    } catch (err) {
-      uiActions.showError('Ошибка при сохранении имени');
-    } finally {
-      uiActions.showLoading(false);
+    if (sidebarEl) {
+        sidebarEl.innerHTML = profileSidebarTpl({
+            currentTab: this.currentTab,
+            user,
+            isAuthenticated: store.isAuthenticated
+        });
     }
   },
 
+  switchTab(tab: ProfileTab): void {
+    this.currentTab = tab;
+    this.renderAll();
+  },
 
-  async handleAvatarUpload(file: File): Promise<void> {
-    const previewUrl = URL.createObjectURL(file);
-    const allAvatars = document.querySelectorAll('.avatar-img, .header .avatar');
-    
-    allAvatars.forEach(img => {
-      (img as HTMLImageElement).src = previewUrl;
-    });
-    uiActions.showLoading(true);
+  attachEventListeners(): void {
+    // Инициализация логики подобъектов
+    ProfileAvatar.init();
+    ProfileSidebar.init();
+    ProfileContent.init();
+  },
+
+  async loadProfileData(): Promise<void> {
     try {
-      const res = await ProfileService.uploadAvatar(file);
-      if (res && res.avatar_path) {
-        store.setState({ 
-            user: { ...store.user, avatar_path: res.avatar_path } as UserProfile 
-        });
-        
-        uiActions.showSuccess('Фото профиля обновлено');
+      const res = await ProfileService.getProfile();
+      if (res.success && res.data) {
+        store.setState({ user: res.data });
+        this.refreshUI();
       }
     } catch (err) {
-      uiActions.showError('Не удалось сохранить фото на сервере');
-      this.refreshUI(); 
-    } finally {
-      uiActions.showLoading(false);
-      URL.revokeObjectURL(previewUrl);
+      console.error('Ошибка загрузки профиля:', err);
     }
   },
 
