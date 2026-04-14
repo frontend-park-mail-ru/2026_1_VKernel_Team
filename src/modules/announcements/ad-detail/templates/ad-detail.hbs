@@ -23,7 +23,7 @@
                     </a>
                 </div>
                 <div class="nav-icon">
-                    <a href="#" class="nav-link">
+                    <a href="#" class="nav-link cart-active" data-nav="/cart">
                         <span class="icon">🛒</span>
                         <span class="nav-text">Корзина</span>
                     </a>
@@ -166,9 +166,64 @@
                 </div>
             </div>
             
-            <!-- Правая колонка с рекламой (3/12) -->
-            <div class="ad-column">
-                Рекламное место
+            <!-- Правая колонка (3/12) -->
+            <div class="ad-right">
+                <!-- Карточка действий (оформление заказа) -->
+                <div class="action-card">
+                    <!-- ЦЕНА + ИЗБРАННОЕ (в одной строке) -->
+                    <div class="price-row">
+                        <div class="price-block">
+                            <div class="current-price">{{formattedPrice}}</div>
+                            {{#if oldPrice}}
+                                <div class="old-price">{{oldPrice}} ₽</div>
+                            {{/if}}
+                        </div>
+                        <button class="favorite-circle-btn" data-action="add-to-favorites" title="В избранное">
+                            <span class="heart-icon">♡</span>
+                        </button>
+                    </div>
+                    <!-- ЦЕНА -->
+                    {{!-- <div class="price-block">
+                        <div class="current-price">{{formattedPrice}}</div>
+                        {{#if oldPrice}}
+                            <div class="old-price">{{oldPrice}} ₽</div>
+                        {{/if}}
+                    </div> --}}
+
+                    <!-- КНОПКИ ДЕЙСТВИЙ -->
+                    <div class="action-buttons">
+                        {{!-- <button class="action-btn favorite-btn" data-action="add-to-favorites">
+                            <span class="heart-icon">♡</span> В избранное
+                        </button> --}}
+                        <button class="action-btn cart-btn" data-action="add-to-cart">
+                            {{!-- <span class="cart-icon">🛒</span> В корзину --}}
+                            Добавить в корзину
+                        </button>
+                        <button class="action-btn buy-btn" data-action="buy-now">
+                            {{!-- <span class="buy-icon">💳</span> Купить --}}
+                            Купить сейчас
+                        </button>
+                    </div>
+
+                    <!-- ПРОДАВЕЦ (кликабельный блок) -->
+                    <div class="seller-card" data-action="go-to-seller" data-seller-id="{{sellerId}}">
+                        <div class="seller-avatar">
+                            <img src="{{sellerAvatar}}" alt="{{sellerName}}">
+                        </div>
+                        <div class="seller-info">
+                            <div class="seller-name">{{sellerName}}</div>
+                            <div class="seller-rating">
+                                <span class="stars">{{{sellerStars}}}</span>
+                                <span class="rating-value">{{sellerRating}}</span>
+                            </div>
+                            <button class="all-reviews-btn" data-action="all-reviews">Все отзывы →</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ad-column">
+                    Рекламное место
+                </div>
             </div>
         </div>
     </main>

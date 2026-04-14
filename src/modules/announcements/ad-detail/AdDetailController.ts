@@ -7,23 +7,68 @@ import { adsService } from '@/services/adsServices';
 import { store } from '@/core/store';
 import { AppController } from '@/controllers/AppController';
 import { PhotoViewer } from '@modules/announcements/shared/photo-view/photoViewer';
+import { sellerService } from '@modules/seller-page/service';
+import { uiActions } from '@/actions/uiActions';
+import { cartService } from '@modules/cart/service';
+import { cartActions } from '@modules/cart/actions';
+import { cartStore } from '@modules/cart/store';
 import type { Ad } from '@/types';
 
 export class AdDetailController {
     private static currentPhotoIndex: number = 0;
     private static allPhotosArray: string[] = [];
     private static _handlers: Map<string, EventListener> = new Map();
+    private static adId: string = '';
+
+    // static async render(adId: string): Promise<void> {
+        
+    //     const app = document.getElementById('app');
+    //     if (!app) return;
+        
+    //     document.body.classList.remove('auth-page');
+        
+    //     AppController.showLoading(true);
+        
+    //     try {
+    //         const response = await fetch('/src/modules/announcements/ad-detail/templates/ad-detail.hbs');
+    //         if (!response.ok) {
+    //             throw new Error(`Failed to load template: ${response.status}`);
+    //         }
+    //         const templateSource = await response.text();
+    //         const template = Handlebars.compile(templateSource);
+            
+    //         const result = await adsService.getAdById(adId);
+            
+    //         if (!result.success || !result.data) {
+    //             console.error('No data in response:', result);
+    //             await this.showNotFound();
+    //             return;
+    //         }
+            
+    //         const ad = result.data;
+    //         const adData = this.prepareAdData(ad);
+            
+    //         app.innerHTML = template(adData);
+    //         this.attachEventListeners();
+            
+    //     } catch (error) {
+    //         console.error('Error loading ad:', error);
+    //         await this.showNotFound();
+    //     } finally {
+    //         AppController.showLoading(false);
+    //     }
+    // }
 
     static async render(adId: string): Promise<void> {
-        
+        this.adId = adId;
         const app = document.getElementById('app');
         if (!app) return;
         
         document.body.classList.remove('auth-page');
-        
         AppController.showLoading(true);
         
         try {
+            // Загружаем шаблон
             const response = await fetch('/src/modules/announcements/ad-detail/templates/ad-detail.hbs');
             if (!response.ok) {
                 throw new Error(`Failed to load template: ${response.status}`);
@@ -31,19 +76,21 @@ export class AdDetailController {
             const templateSource = await response.text();
             const template = Handlebars.compile(templateSource);
             
+            // Получаем объявление
             const result = await adsService.getAdById(adId);
             
             if (!result.success || !result.data) {
-                console.error('No data in response:', result);
                 await this.showNotFound();
                 return;
             }
             
-            const ad = result.data;
-            const adData = this.prepareAdData(ad);
+            // prepareAdData теперь async!
+            const adData = await this.prepareAdData(result.data);
             
             app.innerHTML = template(adData);
             this.attachEventListeners();
+
+            setTimeout(async () => {await this.updateCartButtonState(parseInt(adId));}, 100);
             
         } catch (error) {
             console.error('Error loading ad:', error);
@@ -67,7 +114,7 @@ export class AdDetailController {
         }
     }
 
-    private static prepareAdData(ad: Ad): any {
+    private static async prepareAdData(ad: Ad): Promise<any> {
         let mainPhoto = '/images/default-ad.jpg';
         let allPhotos: string[] = [];
         
@@ -91,7 +138,7 @@ export class AdDetailController {
             : '';
         
         const isDescriptionLong = ad.description && ad.description.length > 300;
-        const adAny = ad as any;
+        //const adAny = ad as any;
         
         const attributes: Array<{name: string, value: string}> = [];
         
@@ -114,6 +161,29 @@ export class AdDetailController {
                 });
             }
         }
+
+        // Получаем данные продавца через sellerService
+        let sellerData = null;
+        const adAny = ad as any;
+        const sellerId = adAny.seller_id;
+        
+        if (sellerId) {
+            try {
+                const result = await sellerService.getProfile(sellerId);
+                if (result.success && result.data) {
+                    sellerData = sellerService.formatProfile(result.data);
+                }
+            } catch (error) {
+                console.error('Failed to load seller data:', error);
+            }
+        }
+        
+        // Формируем звезды рейтинга
+        const rating = sellerData?.rating || adAny.seller_rating || 0;
+        const fullStars = Math.floor(rating);
+        const hasHalfStar = rating % 1 >= 0.5;
+        const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+        const sellerStars = '★'.repeat(fullStars) + (hasHalfStar ? '½' : '') + '☆'.repeat(emptyStars);
         
         return {
             id: ad.id,
@@ -132,11 +202,18 @@ export class AdDetailController {
             isDescriptionLong: isDescriptionLong,
             isAuthenticated: store.isAuthenticated,
             isOwner: store.user?.id === adAny.seller_id,
-            sellerName: adAny.seller_name || 'Продавец',
+            //sellerName: adAny.seller_name || 'Продавец',
             sellerSince: adAny.seller_created_at 
                 ? new Date(adAny.seller_created_at).toLocaleDateString('ru-RU', { month: 'long', year: 'numeric' })
                 : 'неизвестно',
             attributes: attributes,
+
+            // Для правого блока
+            sellerId: sellerId,
+            sellerName: sellerData?.name || adAny.seller_name || 'Продавец',
+            sellerAvatar: sellerData?.avatarUrl || '/images/logo/avatar.jpeg',  // заглушка
+            sellerRating: rating,
+            sellerStars: sellerStars,
         };
     }
     
@@ -180,9 +257,13 @@ export class AdDetailController {
         return attributes;
     }
     
+
     private static attachEventListeners(): void {
         this.currentPhotoIndex = 0;
         this.allPhotosArray = [];
+        
+        // Сохраняем adId в локальную переменную для использования в обработчиках
+        const adId = this.adId;
         
         const backBtns = document.querySelectorAll('[data-action="back"]');
         for (let i = 0; i < backBtns.length; i++) {
@@ -260,7 +341,6 @@ export class AdDetailController {
             this._handlers.set('toggle-description', handler);
         }
 
-        // Обработчик для открытия просмотрщика фото
         const mainPhoto = document.getElementById('mainPhoto');
         if (mainPhoto) {
             const handler = (e: Event) => {
@@ -273,7 +353,166 @@ export class AdDetailController {
             mainPhoto.addEventListener('click', handler);
             this._handlers.set('openPhotoViewer', handler);
         }
+
+        // ===== КНОПКА "В КОРЗИНУ" (с обновлением состояния) =====
+        const cartBtn = document.querySelector('[data-action="add-to-cart"]');
+        if (cartBtn) {
+            if (this._handlers.has('addToCart')) {
+                cartBtn.removeEventListener('click', this._handlers.get('addToCart')!);
+            }
+            
+            const handler = async (e: Event) => {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                console.log('🛒 Add to cart clicked, adId:', adId);
+                
+                if (!store.isAuthenticated) {
+                    AppController.navigateTo('/login');
+                    return;
+                }
+                
+                if (!adId) {
+                    uiActions.showError('Ошибка: идентификатор товара не найден');
+                    return;
+                }
+                
+                const btn = cartBtn as HTMLButtonElement;
+                const originalText = btn.innerHTML;
+                
+                btn.innerHTML = '⏳ ...';
+                btn.disabled = true;
+                
+                try {
+                    const { cartService } = await import('@modules/cart/service');
+                    const result = await cartService.addToCart(Number(adId));
+                    
+                    if (result.success) {
+                        console.log('Successfully added to cart');
+                        uiActions.showSuccess('Товар добавлен в корзину');
+                        btn.innerHTML = '✓ В корзине';
+                        btn.classList.add('in-cart');
+                    } else {
+                        const errorMsg = result.error || '';
+                        if (errorMsg.includes('already in cart') || errorMsg.includes('already exists')) {
+                            console.log('Product already in cart');
+                            uiActions.showSuccess('Товар уже в корзине');
+                            btn.innerHTML = '✓ В корзине';
+                            btn.classList.add('in-cart');
+                        } else {
+                            console.error('Failed to add to cart:', errorMsg);
+                            uiActions.showError(errorMsg || 'Не удалось добавить товар');
+                            btn.innerHTML = originalText;
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error adding to cart:', error);
+                    uiActions.showError('Не удалось добавить товар в корзину');
+                    btn.innerHTML = originalText;
+                } finally {
+                    btn.disabled = false;
+                }
+            };
+            
+            cartBtn.addEventListener('click', handler);
+            this._handlers.set('addToCart', handler);
+        }
+
+        // ===== КНОПКА "КУПИТЬ СЕЙЧАС" (исправленная) =====
+        const buyBtn = document.querySelector('[data-action="buy-now"]');
+        if (buyBtn) {
+            if (this._handlers.has('buyNow')) {
+                buyBtn.removeEventListener('click', this._handlers.get('buyNow')!);
+            }
+            
+            const handler = async (e: Event) => {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                console.log('💳 Buy now clicked, adId:', adId);
+                
+                if (!store.isAuthenticated) {
+                    AppController.navigateTo('/login');
+                    return;
+                }
+                
+                if (!adId) {
+                    uiActions.showError('Ошибка: идентификатор товара не найден');
+                    return;
+                }
+                
+                // Показываем лоадер
+                AppController.showLoading(true);
+                
+                try {
+                    const { cartService } = await import('@modules/cart/service');
+                    const result = await cartService.addToCart(Number(adId));
+                    
+                    console.log('Add to cart result:', result);
+                    
+                    // ВСЕГДА закрываем лоадер перед навигацией
+                    AppController.showLoading(false);
+                    
+                    if (result.success) {
+                        console.log('Success, navigating to /cart');
+                        AppController.navigateTo('/cart');
+                    } else {
+                        const errorMsg = result.error || '';
+                        // Если товар уже в корзине или другая ошибка - всё равно идем в корзину
+                        console.log('Error but navigating to /cart anyway:', errorMsg);
+                        AppController.navigateTo('/cart');
+                    }
+                } catch (error) {
+                    console.error('Error in buy now:', error);
+                    // ОБЯЗАТЕЛЬНО закрываем лоадер при ошибке
+                    AppController.showLoading(false);
+                    uiActions.showError('Не удалось добавить товар в корзину');
+                }
+            };
+            
+            buyBtn.addEventListener('click', handler);
+            this._handlers.set('buyNow', handler);
+        }
     }
+
+    /**
+     * Проверяет, находится ли товар в корзине
+     */
+    private static async checkIfInCart(productId: number): Promise<boolean> {
+        try {
+            const { cartService } = await import('@modules/cart/service');
+            const result = await cartService.getCart();
+            
+            if (result.success && result.data?.items) {
+                return result.data.items.some((item: any) => item.product_id === productId);
+            }
+            return false;
+        } catch (error) {
+            console.error('Error checking cart:', error);
+            return false;
+        }
+    }
+
+    /**
+     * Обновляет состояние кнопки "В корзину" в зависимости от того, есть ли товар в корзине
+     */
+    private static async updateCartButtonState(productId: number): Promise<void> {
+        const cartBtn = document.querySelector('[data-action="add-to-cart"]') as HTMLButtonElement;
+        if (!cartBtn) return;
+        
+        const isInCart = await this.checkIfInCart(productId);
+        
+        if (isInCart) {
+            cartBtn.innerHTML = '✓ В корзине';
+            cartBtn.classList.add('in-cart');
+            cartBtn.disabled = false;
+        } else {
+            cartBtn.innerHTML = 'Добавить в корзину';
+            cartBtn.classList.remove('in-cart');
+            cartBtn.disabled = false;
+        }
+    }
+
     
     private static navigateGallery(direction: number): void {
         if (this.allPhotosArray.length === 0) {
