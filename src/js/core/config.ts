@@ -23,11 +23,9 @@ const _isLocal =
 
 const CONFIG = {
     API: {
-        // Всегда используем HTTPS + продакшен-домен
         BASE_URL: 'http://clover-go.ru:8000',
-
-        // API_URL: локально проксируем через Node.js, на проде — напрямую
-        API_URL: _isLocal ? '/api/v1' : 'http://clover-go.ru:8000/api/v1',
+        // Если локально - шлем на прокси, чтобы браузер не блокировал куки!
+        API_URL: _isLocal ? '/api/v1' : 'http://clover-go.ru:8000/api/v1', 
     },
     APP: {
         NAME: 'Клевер',

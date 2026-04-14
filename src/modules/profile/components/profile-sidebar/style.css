@@ -1,0 +1,70 @@
+
+/* Сайдбар (Левое меню) */
+.profile-sidebar {
+    width: 280px;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    padding: 20px;
+    flex-shrink: 0;
+    height: fit-content;
+    margin: 150px auto 40px auto;
+}
+
+.profile-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.profile-nav-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    border: none;
+    background: transparent;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 16px;
+    color: #333;
+    transition: all 0.2s ease;
+}
+
+.profile-nav-item:hover {
+    background: #f5f5f5;
+}
+
+.profile-nav-item.active {
+    background: #E9FCF3;
+    color: #2bde8c;
+    font-weight: 500;
+}
+
+.nav-icon {
+    margin-right: 12px;
+    font-size: 20px;
+}
+
+.nav-badge {
+    margin-left: auto;
+    background: #1892E5;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.nav-divider {
+    height: 1px;
+    background: #eee;
+    margin: 10px 0;
+}
+
+.logout-item {
+    color: #ff4d4f;
+}
+
+.logout-item:hover {
+    background: #fff1f0;
+}

@@ -10,33 +10,34 @@ import type { ApiResponse } from '@/types';
 const API_URL = CONFIG.API.API_URL;
 
 export const API_ENDPOINTS = {
-    AUTH: {
-        REGISTER: '/auth/register',
-        LOGIN: '/auth/login',
-        LOGOUT: '/auth/logout',
-        REFRESH: '/auth/refresh',
-    },
-    ADS: {
-        GET_ALL: '/ads',
-        GET_BY_ID: (id: number | string) => `/ads/${id}`,
-        CREATE: '/ads',
-        UPDATE: (id: number | string) => `/ads/${id}`,
-        DELETE: (id: number | string) => `/ads/${id}`,
-        SEARCH: '/ads/search',
-    },
-    USERS: {
-        PROFILE: '/profile',
-        GET_BY_ID: (id: number | string) => `/users/${id}`,
-    },
-    CATEGORIES: {
-        GET_ALL: '/categories',
-    },
-    FAVORITES: {
-        GET_ALL: '/favorites',
-        ADD: (id: number | string) => `/favorites/${id}`,
-        REMOVE: (id: number | string) => `/favorites/${id}`,
-        CHECK: (id: number | string) => `/favorites/${id}/check`,
-    },
+  AUTH: {
+    REGISTER: '/auth/register',
+    LOGIN: '/auth/login',
+    LOGOUT: '/auth/logout',
+    REFRESH: '/auth/refresh',
+  },
+  ADS: {
+    GET_ALL: '/ads',
+    GET_BY_ID: (id: number | string) => `/ads/${id}`,
+    CREATE: '/ads',
+    UPDATE: (id: number | string) => `/ads/${id}`,
+    DELETE: (id: number | string) => `/ads/${id}`,
+  },
+  USERS: {
+    PROFILE: '/profile',
+    GET_BY_ID: (id: number | string) => `/users/${id}`,
+    GET_ADS: (id: number | string) => `/users/${id}/ads`, 
+  },
+  CATEGORIES: {
+    GET_ALL: '/categories',
+  },
+  FAVORITES: {
+    GET_ALL: '/profile/favorites',
+    ADD: (id: number | string) => `/favorites/${id}`,
+    REMOVE: (id: number | string) => `/favorites/${id}`,
+    CHECK: (id: number | string) => `/favorites/${id}/check`,
+  },
+  
 };
 
 const getCookie = (name: string): string | null => {
@@ -70,6 +71,10 @@ export class ApiClient {
                 });
         }
         return this._refreshPromise!;
+    }
+
+    getApiUrl(): string {
+        return API_URL;
     }
 
     /**
@@ -107,12 +112,14 @@ export class ApiClient {
         body: any = null,
         customHeaders: Record<string, string> = {},
     ): Promise<ApiResponse<T>> {
+        // Улучшенное логирование, чтобы в консоли было видно, когда летит FormData
+        console.log(`API Request: ${method} ${API_URL}${endpoint}`, body instanceof FormData ? '[FormData File]' : body); 
+        
         const headers: Record<string, string> = {
-            'Content-Type': 'application/json',
             ...customHeaders,
         };
 
-        // Токен авторизации
+        // Подставляем токен из LocalStorage, если он есть
         const token = storage.getToken();
         if (token) {
             headers['Authorization'] = `Bearer ${token}`;
@@ -131,13 +138,30 @@ export class ApiClient {
             headers,
             credentials: 'include',
         };
-
         if (body) {
-            config.body = JSON.stringify(body);
+            if (body instanceof FormData) {
+                // Если передали файл: отдаем FormData как есть, без stringify
+                config.body = body;
+                // Удаляем Content-Type, чтобы браузер сам сгенерировал multipart/form-data и boundary
+                delete (config.headers as Record<string, string>)['Content-Type'];
+            } else {
+                // Если передали обычный объект: ставим JSON
+                if (!headers['Content-Type']) {
+                    headers['Content-Type'] = 'application/json';
+                }
+                config.body = JSON.stringify(body);
+            }
         }
 
         try {
             let response = await fetch(`${API_URL}${endpoint}`, config);
+
+            // Пытаемся поймать токен из заголовков ответа
+            const authHeader = response.headers.get('Authorization') || response.headers.get('X-Token');
+            if (authHeader) {
+                const extractedToken = authHeader.replace('Bearer ', '');
+                storage.setToken(extractedToken);
+            }
 
             response = await this._handleUnauthorizedResponse(response, endpoint, config);
 
@@ -152,6 +176,12 @@ export class ApiClient {
             } else {
                 const text = await response.text();
                 data = { message: text };
+            }
+            if (response.ok && endpoint === API_ENDPOINTS.AUTH.LOGIN) {
+                const possibleToken = data?.token || data?.access_token || data?.data?.token || data?.data?.access_token;
+                if (possibleToken) {
+                    storage.setToken(possibleToken);
+                }
             }
 
             if (response.ok) {
@@ -198,6 +228,14 @@ export class ApiClient {
         headers: Record<string, string> = {},
     ): Promise<ApiResponse<T>> {
         return this.request<T>(endpoint, 'DELETE', null, headers);
+    }
+
+    patch<T = any>(
+        endpoint: string,
+        body: any,
+        headers: Record<string, string> = {},
+    ): Promise<ApiResponse<T>> {
+        return this.request<T>(endpoint, 'PATCH', body, headers);
     }
 }
 

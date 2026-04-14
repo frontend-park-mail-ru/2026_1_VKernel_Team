@@ -1,0 +1,84 @@
+.profile-details {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.detail-row {
+    display: flex;
+    align-items: center;
+    font-size: 18px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.detail-label {
+    width: 180px;
+    color: #888;
+}
+
+.detail-value {
+    font-weight: 500;
+    color: #333;
+    flex: 1;
+}
+
+.btn-edit {
+    background: transparent;
+    border: none;
+    color: #1892E5;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.btn-edit:hover {
+    text-decoration: underline;
+}
+
+.password-input-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.password-toggle {
+    position: absolute;
+    right: 10px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+}
+
+.eye-icon {
+    width: 20px;
+    height: 20px;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+}
+
+.eye-icon:hover {
+    opacity: 1;
+}
+
+.profile-input:disabled {
+    background-color: #f9f9f9;
+    color: #999;
+    cursor: not-allowed;
+}
+
+.section-title {
+    font-size: 28px;
+    margin-bottom: 30px;
+    color: #333;
+}
+
+/* Карточка личных данных */
+.profile-card {
+    display: flex;
+    gap: 40px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+}

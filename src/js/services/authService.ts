@@ -3,6 +3,7 @@
  * @module authService
  */
 import { API_ENDPOINTS, apiClient } from '@/api/apiClient';
+import { storage } from '@/utils/storage';
 
 const HTTP_STATUS = {
     UNAUTHORIZED: 401,
@@ -64,6 +65,12 @@ const authService = {
         });
 
         if (result.success) {
+            // ИСПРАВЛЕНИЕ: Сохраняем токен, если бэкенд сразу авторизует после регистрации
+            const token = result.data?.token || result.data?.access_token;
+            if (token) {
+                storage.setToken(token);
+            }
+
             return {
                 success: true,
                 data: result.data,
@@ -113,6 +120,12 @@ const authService = {
         });
 
         if (result.success) {
+            // ИСПРАВЛЕНИЕ: Сохраняем токен в localStorage
+            const token = result.data?.token || result.data?.access_token;
+            if (token) {
+                storage.setToken(token);
+            }
+
             return {
                 success: true,
                 data: result.data,
@@ -144,6 +157,8 @@ const authService = {
 
     async logout(): Promise<void> {
         await apiClient.post(API_ENDPOINTS.AUTH.LOGOUT, {});
+        // ИСПРАВЛЕНИЕ: Удаляем токен из хранилища при выходе
+        storage.removeToken();
     },
 
     async check(): Promise<{ isAuthenticated: boolean; user: any }> {
