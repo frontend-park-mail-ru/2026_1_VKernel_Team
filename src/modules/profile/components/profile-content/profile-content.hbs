@@ -33,18 +33,6 @@
         </div>
       </div>
     </div>
-
-    {{!-- Модалка --}}
-    <div id="editNameModal" class="modal-overlay">
-        <div class="modal-content">
-            <h3>Изменить имя</h3>
-            <input type="text" id="editNameInput" value="{{user.name}}" class="modal-input">
-            <div class="modal-actions">
-                <button class="btn btn-secondary" data-action="close-modal">Отмена</button>
-                <button class="btn btn-primary" data-action="save-name">Сохранить</button>
-            </div>
-        </div>
-    </div>
   {{/if}}
 
   {{#if (eq currentTab 'ads')}}

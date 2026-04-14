@@ -5,15 +5,16 @@ import { eventBus } from '@/core/eventBus';
 import type { HandlebarsTemplateFunction } from '@/types'; 
 import type { ProfileTab, UserProfile } from './types'; 
 
-// Твои импорты стилей (не меняем)
+// Твои импорты стилей (без изменений)
 import './pages/profile/profile.css'; 
 import profileContentTpl from './components/profile-content/profile-content.hbs';
 import profileSidebarTpl from './components/profile-sidebar/profile-sidebar.hbs';
 
-// ИСПРАВЛЕНО: Импортируем логику из TS, а не из CSS
+// Импорты компонентов
 import { ProfileAvatar } from './components/profile-avatar/profile-avatar';
 import { ProfileSidebar } from './components/profile-sidebar/profile-sidebar';
 import { ProfileContent } from './components/profile-content/profile-content';
+import { EditNameModal } from './components/edit-name-modal/edit-name-modal'; // Новый компонент
 
 export const ProfileController = {
   currentTab: 'info' as ProfileTab,
@@ -23,17 +24,14 @@ export const ProfileController = {
 
   initEvents(): void {
     if (this.isInitialized) return;
-    
-    // Подписываемся на события компонентов
     eventBus.on('profile:switch-tab', (tab: ProfileTab) => this.switchTab(tab));
     eventBus.on('profile:logout', () => this.handleLogout());
     eventBus.on('profile:update-ui', () => this.refreshUI());
-
     this.isInitialized = true;
   },
 
   async showProfile(): Promise<void> {
-    this.initEvents(); // Настраиваем связи
+    this.initEvents();
 
     if (!store.isAuthenticated) {
       uiActions.navigateTo('/login');
@@ -51,6 +49,12 @@ export const ProfileController = {
       isAuthenticated: store.isAuthenticated
     });
 
+    // Рендерим модалку в скрытом виде (один раз при загрузке макета)
+    const modalContainer = document.createElement('div');
+    modalContainer.id = 'modal-root';
+    modalContainer.innerHTML = EditNameModal.getTemplate()({ user });
+    app.appendChild(modalContainer);
+
     this.renderAll();
     await this.loadProfileData();
   },
@@ -64,7 +68,6 @@ export const ProfileController = {
     const user = { name: 'Пользователь', avatar_path: '', ...(store.user || {}) } as UserProfile; 
     this.rerenderTab(user);
     this.rerenderSidebar(user);
-    // После перерисовки innerHTML события нужно привязать заново!
     this.attachEventListeners();
   },
 
@@ -96,10 +99,10 @@ export const ProfileController = {
   },
 
   attachEventListeners(): void {
-    // Проверка на undefined защищает от ошибок при загрузке
     if (ProfileAvatar?.init) ProfileAvatar.init();
     if (ProfileSidebar?.init) ProfileSidebar.init();
     if (ProfileContent?.init) ProfileContent.init();
+    if (EditNameModal?.init) EditNameModal.init(); // Привязываем события модалки
   },
 
   async loadProfileData(): Promise<void> {
