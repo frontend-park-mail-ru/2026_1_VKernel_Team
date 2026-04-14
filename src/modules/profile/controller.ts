@@ -1,13 +1,16 @@
 import { store } from '@/core/store';
 import { uiActions } from '@/actions/uiActions';
 import { ProfileService } from './service';
+import { eventBus } from '@/core/eventBus'; 
 import type { HandlebarsTemplateFunction } from '@/types'; 
 import type { ProfileTab, UserProfile } from './types'; 
 
+// Твои импорты стилей (не меняем)
+import './pages/profile/profile.css'; 
 import profileContentTpl from './components/profile-content/profile-content.hbs';
 import profileSidebarTpl from './components/profile-sidebar/profile-sidebar.hbs';
 
-// Импорт контроллеров компонентов
+// ИСПРАВЛЕНО: Импортируем логику из TS, а не из CSS
 import { ProfileAvatar } from './components/profile-avatar/profile-avatar';
 import { ProfileSidebar } from './components/profile-sidebar/profile-sidebar';
 import { ProfileContent } from './components/profile-content/profile-content';
@@ -15,18 +18,32 @@ import { ProfileContent } from './components/profile-content/profile-content';
 export const ProfileController = {
   currentTab: 'info' as ProfileTab,
   templates: {} as Record<string, HandlebarsTemplateFunction>,
+  mainTemplate: null as any, 
+  isInitialized: false,
+
+  initEvents(): void {
+    if (this.isInitialized) return;
+    
+    // Подписываемся на события компонентов
+    eventBus.on('profile:switch-tab', (tab: ProfileTab) => this.switchTab(tab));
+    eventBus.on('profile:logout', () => this.handleLogout());
+    eventBus.on('profile:update-ui', () => this.refreshUI());
+
+    this.isInitialized = true;
+  },
 
   async showProfile(): Promise<void> {
+    this.initEvents(); // Настраиваем связи
+
     if (!store.isAuthenticated) {
       uiActions.navigateTo('/login');
       return;
     }
 
     const app = document.getElementById('app');
-    const template = this.templates['profile-page'];
+    const template = this.mainTemplate || this.templates['profile-page'];
     if (!app || !template) return;
 
-    // Рендерим основной макет
     const user = store.user || { name: 'Пользователь', avatar_path: '' };
     app.innerHTML = template({
       user: user,
@@ -44,14 +61,11 @@ export const ProfileController = {
   },
 
   refreshUI(): void {
-    const user = {
-        name: 'Пользователь',
-        avatar_path: '',
-        ...(store.user || {}),
-    } as UserProfile; 
-    
+    const user = { name: 'Пользователь', avatar_path: '', ...(store.user || {}) } as UserProfile; 
     this.rerenderTab(user);
     this.rerenderSidebar(user);
+    // После перерисовки innerHTML события нужно привязать заново!
+    this.attachEventListeners();
   },
 
   rerenderTab(user: UserProfile): void {
@@ -66,7 +80,7 @@ export const ProfileController = {
   },
 
   rerenderSidebar(user: UserProfile): void {
-    const sidebarEl = document.querySelector('.profile-layout__sidebar');
+    const sidebarEl = document.querySelector('#sidebarContainer'); 
     if (sidebarEl) {
         sidebarEl.innerHTML = profileSidebarTpl({
             currentTab: this.currentTab,
@@ -82,10 +96,10 @@ export const ProfileController = {
   },
 
   attachEventListeners(): void {
-    // Инициализация логики подобъектов
-    ProfileAvatar.init();
-    ProfileSidebar.init();
-    ProfileContent.init();
+    // Проверка на undefined защищает от ошибок при загрузке
+    if (ProfileAvatar?.init) ProfileAvatar.init();
+    if (ProfileSidebar?.init) ProfileSidebar.init();
+    if (ProfileContent?.init) ProfileContent.init();
   },
 
   async loadProfileData(): Promise<void> {
@@ -93,7 +107,7 @@ export const ProfileController = {
       const res = await ProfileService.getProfile();
       if (res.success && res.data) {
         store.setState({ user: res.data });
-        this.refreshUI();
+        this.renderAll();
       }
     } catch (err) {
       console.error('Ошибка загрузки профиля:', err);

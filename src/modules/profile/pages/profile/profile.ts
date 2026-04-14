@@ -2,9 +2,9 @@ import './profile.css';
 import template from './profile.hbs?raw';
 import { HeaderComponent } from '@modules/common/components/header/header';
 import { SearchSectionComponent } from '@modules/common/components/search-section/search-section';
-import { ProfileAvatar } from '../../components/profile-avatar/profile-avatar';
-import { ProfileSidebar } from '../../components/profile-sidebar/profile-sidebar';
-import { ProfileContent } from '../../components/profile-content/profile-content';
+import { ProfileAvatar } from '@modules/profile/components/profile-avatar/profile-avatar';
+import { ProfileSidebar } from '@modules/profile/components/profile-sidebar/profile-sidebar';
+import { ProfileContent } from '@modules/profile/components/profile-content/profile-content';
 import type { HandlebarsTemplateFunction } from '@/types';
 
 declare const Handlebars: any;

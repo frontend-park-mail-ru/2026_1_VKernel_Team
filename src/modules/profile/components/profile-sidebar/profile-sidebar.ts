@@ -1,6 +1,6 @@
-import './style.css'; // Стили сайдбара
+import '@modules/profile/components/profile-sidebar/style.css';
 import template from './profile-sidebar.hbs?raw';
-import { ProfileController } from '../../controller';
+import { eventBus } from '@/core/eventBus'; // Импортируем шину событий
 
 declare const Handlebars: any;
 
@@ -16,12 +16,16 @@ export const ProfileSidebar = {
         sidebar.addEventListener('click', (e) => {
             const target = e.target as HTMLElement;
             const tabBtn = target.closest('.profile-nav-item[data-tab]');
+            
             if (tabBtn) {
                 const tab = (tabBtn as HTMLElement).dataset.tab;
-                ProfileController.switchTab(tab as any);
+                // Вместо ProfileController.switchTab кидаем событие
+                eventBus.emit('profile:switch-tab', tab);
             }
+
             if (target.closest('[data-action="logout"]')) {
-                ProfileController.handleLogout();
+                // Вместо ProfileController.handleLogout кидаем событие
+                eventBus.emit('profile:logout');
             }
         });
     }

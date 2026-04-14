@@ -1,24 +1,8 @@
-.section-title {
-    font-size: 28px;
-    margin-bottom: 30px;
-    color: #333;
-}
-
-/* Карточка личных данных */
-.profile-card {
-    display: flex;
-    gap: 40px;
-    align-items: flex-start;
-    flex-wrap: wrap;
-}
-
-/* Детали профиля */
 .profile-details {
     flex: 1;
     display: flex;
     flex-direction: column;
     gap: 20px;
-    min-width: 300px; /* Чтобы текст не сжимался слишком сильно */
 }
 
 .detail-row {
@@ -53,7 +37,7 @@
     text-decoration: underline;
 }
 
-/* === ВОЗВРАЩЕННЫЕ СТИЛИ МОДАЛКИ === */
+/* Модальное окно */
 .modal-overlay {
     position: fixed;
     top: 0; left: 0; right: 0; bottom: 0;
@@ -88,7 +72,7 @@
     justify-content: flex-end;
     gap: 15px;
 }
-/* ================================== */
+
 
 .password-input-container {
     position: relative;
@@ -120,4 +104,18 @@
     background-color: #f9f9f9;
     color: #999;
     cursor: not-allowed;
+}
+
+.section-title {
+    font-size: 28px;
+    margin-bottom: 30px;
+    color: #333;
+}
+
+/* Карточка личных данных */
+.profile-card {
+    display: flex;
+    gap: 40px;
+    align-items: flex-start;
+    flex-wrap: wrap;
 }

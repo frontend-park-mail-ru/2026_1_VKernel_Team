@@ -3,7 +3,7 @@
     <h2 class="section-title">Личные данные</h2>
 
     <div class="profile-card">
-      {{!-- Аватарка стоит прямо в карточке, как в старом коде --}}
+      {{!-- Аватарка --}}
       {{> profile/components/profile-avatar/profile-avatar user=user }}
       
       <div class="profile-details">
@@ -35,7 +35,7 @@
     </div>
 
     {{!-- Модалка --}}
-    <div id="editNameModal" class="modal-overlay" style="display: none;">
+    <div id="editNameModal" class="modal-overlay">
         <div class="modal-content">
             <h3>Изменить имя</h3>
             <input type="text" id="editNameInput" value="{{user.name}}" class="modal-input">

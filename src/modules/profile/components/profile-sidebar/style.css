@@ -1,13 +1,14 @@
+
 /* Сайдбар (Левое меню) */
 .profile-sidebar {
-    width: 280px; 
-    flex-shrink: 0; /* Чтобы меню не сжималось при узком экране */
+    width: 280px;
     background: #fff;
     border-radius: 16px;
     box-shadow: 0 4px 15px rgba(0,0,0,0.05);
     padding: 20px;
+    flex-shrink: 0;
     height: fit-content;
-    margin: 0; 
+    margin: 150px auto 40px auto;
 }
 
 .profile-nav {

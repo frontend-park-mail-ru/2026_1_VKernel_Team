@@ -1,4 +1,4 @@
-import './style.css'; // Тот самый CSS для аватарки
+import  '@modules/profile/components/profile-avatar/style.css';
 import template from './profile-avatar.hbs?raw';
 import { ProfileService } from '../../service';
 import { store } from '@/core/store';

@@ -1,12 +1,12 @@
-/* Макет профиля */
 .profile-layout {
     display: flex;
     gap: 30px;
     max-width: 1200px;
-    margin: 150px auto 40px auto; /* Единый отступ сверху для всего профиля */
+    margin: 40px auto;
     padding: 0 20px;
-    align-items: flex-start; /* Сайдбар не растягивается по высоте контента */
+    align-items: stretch;
     min-height: 70vh;
+    flex-direction: row;
 }
 
 /* Основной контент (Правая часть) */
@@ -19,5 +19,5 @@
     height: auto;
     min-height: 500px;
     overflow: visible;
-    margin: 0; 
+    margin: 150px auto 40px auto;
 }
