@@ -20,6 +20,7 @@ import { SellerPageController } from '@modules/seller-page/controller';
 import { loadTemplates as loadSellerPageTemplates } from '@modules/seller-page/pages/seller-page/seller-page';
 import { CartController } from '@modules/cart/controller';
 import { loadTemplates as loadCartTemplates } from '@modules/cart/pages/cart/cart';
+import { loadTemplates as loadProfileTemplates } from '@modules/profile/pages/profile/profile';
 import { ProfileController } from '@modules/profile/controller';
 
 import { store } from '@/core/store';
@@ -28,7 +29,6 @@ import type { HandlebarsTemplateFunction, TemplateName, UIConstants } from '@/ty
 import { authActions } from '@/actions/authActions';
 import { CONFIG } from '@/core/config';
 
-// === УЛЬТИМАТИВНЫЙ ИМПОРТ: Берем все возможные версии Handlebars ===
 import * as HandlebarsFull from 'handlebars';
 import * as HandlebarsRuntime from 'handlebars/dist/handlebars.runtime.js';
 
@@ -95,13 +95,6 @@ const registerHelpers = (Hbs: any) => {
     });
 };
 
-registerHelpers(HandlebarsFull);
-registerHelpers(HandlebarsRuntime);
-
-if (typeof window !== 'undefined' && (window as any).Handlebars) {
-    registerHelpers((window as any).Handlebars);
-}
-
 export const AppController = {
     _lastPage: '',
     _currentFeature: '',
@@ -116,9 +109,16 @@ export const AppController = {
     } as UIConstants,
 
     async init(): Promise<void> {
+        registerHelpers(HandlebarsFull);
+        registerHelpers(HandlebarsRuntime);
+        if (typeof window !== 'undefined' && (window as any).Handlebars) {
+            registerHelpers((window as any).Handlebars);
+        }
+
         await this.loadTemplates();
         loadSellerPageTemplates();
         loadCartTemplates();
+        loadProfileTemplates();
 
         AuthController.templates = {
             'login-forms': this.templates['login-forms'],
@@ -163,6 +163,7 @@ export const AppController = {
     onStateChange(state: any): void {
         if (state.error) {
             uiActions.showError(state.error);
+            uiActions.clearError();
         }
         if (state.currentPage && state.currentPage !== this._lastPage) {
             this._lastPage = state.currentPage;

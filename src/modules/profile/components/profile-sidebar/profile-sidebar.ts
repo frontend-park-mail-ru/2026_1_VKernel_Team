@@ -1,15 +1,13 @@
 import '@modules/profile/components/profile-sidebar/style.css';
-import template from '@modules/profile/components/profile-sidebar/profile-sidebar.hbs?raw';
+import template from '@modules/profile/components/profile-sidebar/profile-sidebar.hbs';
 import { eventBus } from '@/core/eventBus';
 import { EditNameModal } from '@modules/profile/components/edit-name-modal/edit-name-modal';
-
-declare const Handlebars: any;
 
 export const ProfileSidebar = {
     _boundElement: null as HTMLElement | null,
 
     getTemplate() {
-        return Handlebars.compile(template);
+        return template;
     },
 
     init(): void {

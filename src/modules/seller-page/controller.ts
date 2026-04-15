@@ -69,23 +69,5 @@ export const SellerPageController = {
                 });
             });
         });
-            
-        document.querySelectorAll('.rec-card').forEach((card) => {
-            card.addEventListener('click', (e) => {
-                const target = e.target as HTMLElement;
-                if (target.closest('.rec-card-fav') || target.closest('.rec-card-cart')) {
-                    return;
-                }
-
-                // Получаем ID объявления из data-id атрибута
-                const adId = (card as HTMLElement).dataset.id;
-                if (adId) {
-                    // Используем navigateTo из AppController
-                    import('@/controllers/AppController').then(({ AppController }) => {
-                        AppController.navigateTo(`/ad/${adId}`);
-                    });
-                }
-            });
-        });
     },
 };

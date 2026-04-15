@@ -1,5 +1,5 @@
 import '@modules/profile/pages/profile/profile.css';
-import template from '@modules/profile/pages/profile/profile.hbs?raw';
+import template from '@modules/profile/pages/profile/profile.hbs';
 import { HeaderComponent } from '@modules/common/components/header/header';
 import { SearchSectionComponent } from '@modules/common/components/search-section/search-section';
 import { ProfileAvatar } from '@modules/profile/components/profile-avatar/profile-avatar';
@@ -16,7 +16,7 @@ let compiledTemplate: HandlebarsTemplateFunction | null = null;
  */
 export function loadTemplates(): void {
     try {
-        compiledTemplate = Handlebars.compile(template);
+        compiledTemplate = template;
 
         // Общие компоненты
         Handlebars.registerPartial('header', HeaderComponent.getTemplate());

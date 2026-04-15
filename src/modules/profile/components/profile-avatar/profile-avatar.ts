@@ -1,14 +1,12 @@
 import '@modules/profile/components/profile-avatar/style.css';
-import template from '@modules/profile/components/profile-avatar/profile-avatar.hbs?raw';
+import template from '@modules/profile/components/profile-avatar/profile-avatar.hbs';
 import { ProfileService } from '@modules/profile/service';
 import { store } from '@/core/store';
 import { uiActions } from '@/actions/uiActions';
 
-declare const Handlebars: any;
-
 export const ProfileAvatar = {
     getTemplate() {
-        return Handlebars.compile(template);
+        return template;
     },
 
     init(): void {
@@ -35,7 +33,7 @@ export const ProfileAvatar = {
         try {
             const res = await ProfileService.uploadAvatar(file);
             if (res && res.avatar_path) {
-                store.setState({ user: { ...store.user, avatar_path: res.avatar_path } });
+                store.setState({ user: { ...(store.user ?? {}), avatar_path: res.avatar_path } });
                 uiActions.showSuccess('Аватар обновлен');
             }
         } catch (err) {

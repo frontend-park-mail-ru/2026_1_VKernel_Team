@@ -116,8 +116,6 @@ export interface UIConstants {
     LOADER_HTML: string;
 }
 
-export type ProfileTab = 'info' | 'ads' | 'favorites' | 'cart' | 'settings';
-
 // Типы для создания/редактирования объявлений (из main)
 export interface DraftCategoryCharacteristic {
     category_characteristic_id: number;

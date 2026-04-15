@@ -1,12 +1,10 @@
 import '@modules/profile/components/profile-content/style.css';
-import template from '@modules/profile/components/profile-content/profile-content.hbs?raw';
+import template from '@modules/profile/components/profile-content/profile-content.hbs';
 import { CloseAdModal } from '@modules/profile/components/close-ad-modal/close-ad-modal';
-
-declare const Handlebars: any;
 
 export const ProfileContent = {
     getTemplate() {
-        return Handlebars.compile(template);
+        return template;
     },
 
     init(): void {

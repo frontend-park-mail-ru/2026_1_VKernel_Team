@@ -4,6 +4,7 @@
  */
 
 import Handlebars from 'handlebars';
+import placeAnAdTpl from './templates/place-an-ad.hbs';
 import { store } from '@/core/store';
 import { uiActions } from '@/actions/uiActions';
 import { AppController } from '@/controllers/AppController';
@@ -87,14 +88,7 @@ export class PlaceAnAdController {
 
             const categories = await categoryService.getAllCategories();
 
-            const response = await fetch(
-                '/src/modules/announcements/place-an-ad/templates/place-an-ad.hbs',
-            );
-            if (!response.ok) {
-                throw new Error(`Failed to load template: ${response.status}`);
-            }
-            const templateSource = await response.text();
-            const template = Handlebars.compile(templateSource);
+            const template = placeAnAdTpl;
 
             const isEditing = !!editingId;
 
@@ -103,11 +97,11 @@ export class PlaceAnAdController {
                 user: store.user,
                 categories: categories,
                 isEditing,
-                avatarUrl: store.user?.avatar_path
-                    ? store.user.avatar_path.startsWith('http')
-                        ? store.user.avatar_path
-                        : `http://clover-go.ru:8000/${store.user.avatar_path}`
-                    : '/images/logo/avatar.jpeg',
+                avatarUrl: (() => {
+                    const src = store.user?.avatar_path;
+                    if (!src) return '/images/logo/avatar.jpeg';
+                    return src.startsWith('http') ? src : `${CONFIG.API.BASE_URL}/${src}`;
+                })(),
             };
 
             // Восстанавливаем editingAdId (мог быть сброшен cleanup)

@@ -13,28 +13,75 @@ import { ProfileContent } from '@modules/profile/components/profile-content/prof
 import { EditNameModal } from '@modules/profile/components/edit-name-modal/edit-name-modal';
 import { CloseAdModal } from '@modules/profile/components/close-ad-modal/close-ad-modal';
 
-import { apiClient } from '@/api/apiClient';
-import type { SellerAd } from '@modules/seller-page/types';
+import { apiClient, API_ENDPOINTS } from '@/api/apiClient';
+import { CONFIG } from '@/core/config';
+
+const DEFAULT_AD_IMAGE = '/images/default-ad.jpg';
+
+interface UserAd {
+    id: number;
+    title: string;
+    price: number;
+    photos?: string[];
+    views_count?: number;
+    created_at?: string;
+    location?: string;
+    status?: string;
+    [key: string]: unknown;
+}
+
+function formatAdImageUrl(imagePath: string): string {
+    if (!imagePath) return DEFAULT_AD_IMAGE;
+    if (imagePath.startsWith('http')) return imagePath;
+    const normalized = imagePath.startsWith('/') ? imagePath : `/${imagePath}`;
+    return `${CONFIG.API.BASE_URL}${normalized}`;
+}
+
+function formatAdCard(ad: UserAd) {
+    const imageUrl =
+        ad.photos && ad.photos.length > 0 && ad.photos[0]?.trim()
+            ? formatAdImageUrl(ad.photos[0].trim())
+            : DEFAULT_AD_IMAGE;
+
+    const formattedPrice = ad.price === 0 ? 'Бесплатно' : `${ad.price.toLocaleString('ru-RU')} ₽`;
+
+    return {
+        ...ad,
+        formattedPrice,
+        image: imageUrl,
+        views: ad.views_count || 0,
+        location: ad.location || 'Москва',
+        createdDate: ad.created_at ? new Date(ad.created_at).toLocaleDateString('ru-RU') : '',
+    };
+}
 
 export const ProfileController = {
     currentTab: 'ads' as ProfileTab,
     templates: {} as Record<string, HandlebarsTemplateFunction>,
-    mainTemplate: null as any,
     isInitialized: false,
+    _unsubscribers: [] as Array<() => void>,
 
     initEvents(): void {
         if (this.isInitialized) return;
-        eventBus.on('profile:switch-tab', (tab: ProfileTab) => this.switchTab(tab));
-        eventBus.on('profile:logout', () => this.handleLogout());
-        eventBus.on('profile:update-ui', () => this.refreshUI());
-        eventBus.on('profile:ad-closed', (closedAdId: number | string) => {
-            this.userAds = this.userAds.map((ad) =>
-                String(ad.id) === String(closedAdId) ? { ...ad, status: 'archived' } : ad,
-            );
-            this.rerenderTab(store.user as UserProfile);
-            ProfileContent.init();
-        });
+        this._unsubscribers.push(
+            eventBus.on('profile:switch-tab', (tab: ProfileTab) => this.switchTab(tab)),
+            eventBus.on('profile:logout', () => this.handleLogout()),
+            eventBus.on('profile:update-ui', () => this.refreshUI()),
+            eventBus.on('profile:ad-closed', (closedAdId: number | string) => {
+                this.userAds = this.userAds.map((ad) =>
+                    String(ad.id) === String(closedAdId) ? { ...ad, status: 'archived' } : ad,
+                );
+                this.rerenderTab(store.user as UserProfile);
+                ProfileContent.init();
+            }),
+        );
         this.isInitialized = true;
+    },
+
+    cleanup(): void {
+        this._unsubscribers.forEach((unsub) => unsub());
+        this._unsubscribers = [];
+        this.isInitialized = false;
     },
 
     userAds: [] as any[],
@@ -44,12 +91,11 @@ export const ProfileController = {
         if (!userId || typeof userId !== 'number') return;
 
         try {
-            const result = await apiClient.get<{ ads: SellerAd[] }>(`/users/${userId}/ads`);
+            const result = await apiClient.get<{ ads: UserAd[] }>(
+                API_ENDPOINTS.USERS.GET_ADS(userId),
+            );
             if (result.success && result.data?.ads) {
-                const { sellerService } = await import('@modules/seller-page/service');
-                this.userAds = result.data.ads.map((ad: SellerAd) =>
-                    sellerService.formatAdCard(ad),
-                );
+                this.userAds = result.data.ads.map((ad: UserAd) => formatAdCard(ad));
                 this.rerenderTab(store.user as UserProfile);
             }
         } catch (error) {
@@ -59,6 +105,7 @@ export const ProfileController = {
     },
 
     async showProfile(): Promise<void> {
+        this.cleanup();
         this.initEvents();
 
         if (!store.isAuthenticated) {
@@ -69,7 +116,7 @@ export const ProfileController = {
         await this.loadUserAds();
 
         const app = document.getElementById('app');
-        const template = this.mainTemplate || this.templates['profile-page'];
+        const template = this.templates['profile-page'];
         if (!app || !template) return;
 
         const user = store.user || { name: 'Пользователь', avatar_path: '' };
@@ -164,7 +211,7 @@ export const ProfileController = {
             await ProfileService.logout();
             store.setState({ isAuthenticated: false, user: null });
             window.history.pushState({}, '', '/login');
-            window.dispatchEvent(new PopStateEvent('popstate'));
+            uiActions.navigateTo('/login');
         } catch (err) {
             uiActions.showError('Ошибка при выходе');
         }

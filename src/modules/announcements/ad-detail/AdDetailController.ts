@@ -3,6 +3,7 @@
  */
 
 import Handlebars from 'handlebars';
+import adDetailTpl from './templates/ad-detail.hbs';
 import { CONFIG } from '@/core/config';
 import { adsService } from '@/services/adsServices';
 import { store } from '@/core/store';
@@ -10,9 +11,6 @@ import { AppController } from '@/controllers/AppController';
 import { PhotoViewer } from '@modules/announcements/shared/photo-view/photoViewer';
 import { sellerService } from '@modules/seller-page/service';
 import { uiActions } from '@/actions/uiActions';
-import { cartService } from '@modules/cart/service';
-import { cartActions } from '@modules/cart/actions';
-import { cartStore } from '@modules/cart/store';
 import type { Ad } from '@/types';
 
 export class AdDetailController {
@@ -30,14 +28,6 @@ export class AdDetailController {
         AppController.showLoading(true);
 
         try {
-            // Загружаем шаблон
-            const response = await fetch('/src/modules/announcements/ad-detail/templates/ad-detail.hbs');
-            if (!response.ok) {
-                throw new Error(`Failed to load template: ${response.status}`);
-            }
-            const templateSource = await response.text();
-            const template = Handlebars.compile(templateSource);
-            
             // Получаем объявление
             const result = await adsService.getAdById(adId);
 
@@ -45,15 +35,13 @@ export class AdDetailController {
                 await this.showNotFound();
                 return;
             }
-            
+
             // prepareAdData теперь async!
             const adData = await this.prepareAdData(result.data);
-            
-            app.innerHTML = template(adData);
-            this.attachEventListeners();
 
-            setTimeout(async () => {await this.updateCartButtonState(parseInt(adId));}, 100);
-            
+            app.innerHTML = adDetailTpl(adData);
+            this.attachEventListeners();
+            await this.updateCartButtonState(parseInt(adId));
         } catch (error) {
             console.error('Error loading ad:', error);
             await this.showNotFound();
@@ -83,7 +71,7 @@ export class AdDetailController {
         if (ad.photos && ad.photos.length > 0) {
             allPhotos = ad.photos.map((photo: string) => {
                 if (photo.startsWith('/')) {
-                    return `http://clover-go.ru:8000${photo}`;
+                    return `${CONFIG.API.BASE_URL}${photo}`;
                 }
                 return photo;
             });
@@ -99,10 +87,9 @@ export class AdDetailController {
             : '';
 
         const isDescriptionLong = ad.description && ad.description.length > 300;
-        //const adAny = ad as any;
-        
-        const attributes: Array<{name: string, value: string}> = [];
-        
+
+        const attributes: Array<{ name: string; value: string }> = [];
+
         //  Категорийные характеристики
         if (ad.category_characteristics && ad.category_characteristics.length > 0) {
             for (const char of ad.category_characteristics) {
@@ -127,7 +114,7 @@ export class AdDetailController {
         let sellerData = null;
         const adAny = ad as any;
         const sellerId = adAny.seller_id;
-        
+
         if (sellerId) {
             try {
                 const result = await sellerService.getProfile(sellerId);
@@ -138,14 +125,15 @@ export class AdDetailController {
                 console.error('Failed to load seller data:', error);
             }
         }
-        
+
         // Формируем звезды рейтинга
         const rating = sellerData?.rating || adAny.seller_rating || 0;
         const fullStars = Math.floor(rating);
         const hasHalfStar = rating % 1 >= 0.5;
         const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
-        const sellerStars = '★'.repeat(fullStars) + (hasHalfStar ? '½' : '') + '☆'.repeat(emptyStars);
-        
+        const sellerStars =
+            '★'.repeat(fullStars) + (hasHalfStar ? '½' : '') + '☆'.repeat(emptyStars);
+
         return {
             id: ad.id,
             title: ad.title || 'Без названия',
@@ -169,17 +157,16 @@ export class AdDetailController {
             // Для правого блока
             sellerId: sellerId,
             sellerName: sellerData?.name || adAny.seller_name || 'Продавец',
-            sellerAvatar: sellerData?.avatarUrl || '/images/logo/avatar.jpeg',  // заглушка
+            sellerAvatar: sellerData?.avatarUrl || '/images/logo/avatar.jpeg', // заглушка
             sellerRating: rating,
             sellerStars: sellerStars,
             user: store.user,
 
-            // В конце return объекта добавьте:
-            avatarUrl: store.user?.avatar || store.user?.avatar_path 
-                ? (store.user.avatar_path?.startsWith('http') 
-                    ? store.user.avatar_path 
-                    : `${CONFIG.API.BASE_URL}/${store.user.avatar_path || store.user.avatar}`)
-                : '/images/logo/avatar.jpeg',
+            avatarUrl: (() => {
+                const src = store.user?.avatar_path || store.user?.avatar;
+                if (!src) return '/images/logo/avatar.jpeg';
+                return src.startsWith('http') ? src : `${CONFIG.API.BASE_URL}/${src}`;
+            })(),
         };
     }
 
@@ -194,43 +181,13 @@ export class AdDetailController {
         return statusMap[status || 'active'] || 'Активно';
     }
 
-    private static extractAttributes(ad: Ad): Array<{ name: string; value: string }> {
-        const attributes = [];
-        const adAny = ad as any;
-
-        if (adAny.category_id) {
-            attributes.push({ name: 'Категория', value: String(adAny.category_id) });
-        }
-        if (ad.price !== undefined) {
-            attributes.push({ name: 'Цена', value: ad.price.toLocaleString('ru-RU') + ' ₽' });
-        }
-        if (ad.location) {
-            attributes.push({ name: 'Локация', value: ad.location });
-        }
-        if (adAny.condition) {
-            attributes.push({ name: 'Состояние', value: adAny.condition });
-        }
-
-        if (attributes.length < 4) {
-            if (!attributes.find((a) => a.name === 'Состояние')) {
-                attributes.push({ name: 'Состояние', value: 'Отличное' });
-            }
-            if (!attributes.find((a) => a.name === 'Год выпуска')) {
-                attributes.push({ name: 'Год выпуска', value: '2024' });
-            }
-        }
-
-        return attributes;
-    }
-    
-
     private static attachEventListeners(): void {
         this.currentPhotoIndex = 0;
         this.allPhotosArray = [];
-        
+
         // Сохраняем adId в локальную переменную для использования в обработчиках
         const adId = this.adId;
-        
+
         const backBtns = document.querySelectorAll('[data-action="back"]');
         for (let i = 0; i < backBtns.length; i++) {
             const btn = backBtns[i];
@@ -329,38 +286,41 @@ export class AdDetailController {
             if (this._handlers.has('addToCart')) {
                 cartBtn.removeEventListener('click', this._handlers.get('addToCart')!);
             }
-            
+
             const handler = async (e: Event) => {
                 e.preventDefault();
                 e.stopPropagation();
-                
+
                 if (!store.isAuthenticated) {
                     AppController.navigateTo('/login');
                     return;
                 }
-                
+
                 if (!adId) {
                     uiActions.showError('Ошибка: идентификатор товара не найден');
                     return;
                 }
-                
+
                 const btn = cartBtn as HTMLButtonElement;
                 const originalText = btn.innerHTML;
-                
+
                 btn.innerHTML = '⏳ ...';
                 btn.disabled = true;
-                
+
                 try {
                     const { cartService } = await import('@modules/cart/service');
                     const result = await cartService.addToCart(Number(adId));
-                    
+
                     if (result.success) {
                         uiActions.showSuccess('Товар добавлен в корзину');
                         btn.innerHTML = '✓ В корзине';
                         btn.classList.add('in-cart');
                     } else {
                         const errorMsg = result.error || '';
-                        if (errorMsg.includes('already in cart') || errorMsg.includes('already exists')) {
+                        if (
+                            errorMsg.includes('already in cart') ||
+                            errorMsg.includes('already exists')
+                        ) {
                             uiActions.showSuccess('Товар уже в корзине');
                             btn.innerHTML = '✓ В корзине';
                             btn.classList.add('in-cart');
@@ -378,7 +338,7 @@ export class AdDetailController {
                     btn.disabled = false;
                 }
             };
-            
+
             cartBtn.addEventListener('click', handler);
             this._handlers.set('addToCart', handler);
         }
@@ -389,35 +349,34 @@ export class AdDetailController {
             if (this._handlers.has('buyNow')) {
                 buyBtn.removeEventListener('click', this._handlers.get('buyNow')!);
             }
-            
+
             const handler = async (e: Event) => {
                 e.preventDefault();
                 e.stopPropagation();
-                
+
                 if (!store.isAuthenticated) {
                     AppController.navigateTo('/login');
                     return;
                 }
-                
+
                 if (!adId) {
                     uiActions.showError('Ошибка: идентификатор товара не найден');
                     return;
                 }
-                
+
                 // Показываем лоадер
                 AppController.showLoading(true);
-                
+
                 try {
                     const { cartService } = await import('@modules/cart/service');
                     const result = await cartService.addToCart(Number(adId));
-                    
+
                     // ВСЕГДА закрываем лоадер перед навигацией
                     AppController.showLoading(false);
-                    
+
                     if (result.success) {
                         AppController.navigateTo('/cart');
                     } else {
-                        const errorMsg = result.error || '';
                         // Если товар уже в корзине или другая ошибка - всё равно идем в корзину
                         AppController.navigateTo('/cart');
                     }
@@ -428,7 +387,7 @@ export class AdDetailController {
                     uiActions.showError('Не удалось добавить товар в корзину');
                 }
             };
-            
+
             buyBtn.addEventListener('click', handler);
             this._handlers.set('buyNow', handler);
         }
@@ -441,7 +400,7 @@ export class AdDetailController {
                 e.stopPropagation();
                 const sellerId = (element as HTMLElement).dataset.sellerId;
                 const isOwner = (element as HTMLElement).dataset.isOwner === 'true';
-                
+
                 if (sellerId) {
                     if (isOwner) {
                         // Если это своё объявление - идём в личный профиль
@@ -465,7 +424,7 @@ export class AdDetailController {
         try {
             const { cartService } = await import('@modules/cart/service');
             const result = await cartService.getCart();
-            
+
             if (result.success && result.data?.items) {
                 return result.data.items.some((item: any) => item.product_id === productId);
             }
@@ -482,9 +441,9 @@ export class AdDetailController {
     private static async updateCartButtonState(productId: number): Promise<void> {
         const cartBtn = document.querySelector('[data-action="add-to-cart"]') as HTMLButtonElement;
         if (!cartBtn) return;
-        
+
         const isInCart = await this.checkIfInCart(productId);
-        
+
         if (isInCart) {
             cartBtn.innerHTML = '✓ В корзине';
             cartBtn.classList.add('in-cart');
@@ -496,7 +455,6 @@ export class AdDetailController {
         }
     }
 
-    
     private static navigateGallery(direction: number): void {
         if (this.allPhotosArray.length === 0) {
             const thumbnails = document.querySelectorAll('[data-thumbnail]');

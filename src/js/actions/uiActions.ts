@@ -12,10 +12,18 @@ export const uiActions = {
         if (loader) loader.style.display = show ? 'flex' : 'none';
     },
     showError(message: string): void {
-        console.error('UI Error:', message);
+        const toast = document.createElement('div');
+        toast.className = 'toast toast-error';
+        toast.textContent = message;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
     },
     showSuccess(message: string): void {
-        console.log('UI Success:', message);
+        const toast = document.createElement('div');
+        toast.className = 'toast toast-success';
+        toast.textContent = message;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
     },
     clearError(): void {
         if (store.getState().error !== null) {

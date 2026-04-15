@@ -1,18 +1,16 @@
-import template from '@modules/profile/components/close-ad-modal/close-ad-modal.hbs?raw';
+import template from '@modules/profile/components/close-ad-modal/close-ad-modal.hbs';
 import '@modules/common/components/modal/modal.css';
 import '@modules/profile/components/close-ad-modal/style.css';
 import { adsService } from '@/services/adsServices';
 import { uiActions } from '@/actions/uiActions';
 import { eventBus } from '@/core/eventBus';
 
-declare const Handlebars: any;
-
 export const CloseAdModal = {
     _pendingAdId: null as number | string | null,
     _boundElement: null as HTMLElement | null,
 
     getTemplate() {
-        return Handlebars.compile(template);
+        return template;
     },
 
     init(): void {
