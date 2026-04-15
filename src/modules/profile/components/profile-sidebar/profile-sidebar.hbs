@@ -1,27 +1,44 @@
-<aside class="profile-sidebar">
-  
-  <div class="profile-sidebar__avatar-section">
-    {{> profile/components/profile-avatar/profile-avatar }}
-  </div>
+<div class="profile-info-card">
+    {{> profile/components/profile-avatar/profile-avatar user=user }}
 
-  <nav class="profile-nav">
-    {{#each (array 'info' 'ads' 'favorites' 'cart' 'messages' 'purchases' 'wallet' 'settings') as |tab|}}
-      <button 
-        class="profile-nav-item {{#eq ../currentTab tab}}active{{/eq}}" 
-        data-tab="{{tab}}"
-      >
-        <span class="nav-label">{{labelForTab tab}}</span>
-        
-        {{#if (gt (lookup ../user (concat tab '_count')) 0)}}
-          <span class="nav-badge">{{lookup ../user (concat tab '_count')}}</span>
+    <div class="profile-info-card__name-row">
+        <h2 class="profile-info-card__name">{{user.name}}</h2>
+        <button class="profile-info-card__edit-btn" data-action="open-edit-name" title="Изменить имя">✎</button>
+    </div>
+
+    {{#if user.email}}
+        <p class="profile-info-card__email">{{user.email}}</p>
+    {{/if}}
+
+    <div class="profile-info-card__rating">
+        <span class="profile-info-card__rating-star">★</span>
+        <span class="profile-info-card__rating-value">{{#if user.rating}}{{user.rating}}{{else}}0{{/if}}</span>
+    </div>
+
+    <div class="profile-info-card__meta">
+        <p class="profile-info-card__meta-item">На Клевере с {{formatDate user.created_at}}</p>
+        {{#if totalAdsCount}}
+            <p class="profile-info-card__meta-item">Объявлений: <strong>{{totalAdsCount}}</strong></p>
         {{/if}}
-      </button>
+    </div>
+</div>
+
+<nav class="profile-nav">
+    {{#each (array 'ads' 'favorites' 'cart' 'messages' 'purchases' 'wallet' 'settings') as |tab|}}
+        <button
+            class="profile-nav-item {{#eq ../currentTab tab}}active{{/eq}}"
+            data-tab="{{tab}}"
+        >
+            <span class="nav-label">{{labelForTab tab}}</span>
+            {{#if (gt (lookup ../user (concat tab '_count')) 0)}}
+                <span class="nav-badge">{{lookup ../user (concat tab '_count')}}</span>
+            {{/if}}
+        </button>
     {{/each}}
-    
+
     <div class="nav-divider"></div>
-    
+
     <button class="profile-nav-item logout-item" data-action="logout">
-      <span class="nav-label">Выйти</span>
+        <span class="nav-label">Выйти</span>
     </button>
-  </nav>
-</aside>
+</nav>

@@ -1,84 +1,111 @@
-.profile-details {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
-
-.detail-row {
-    display: flex;
-    align-items: center;
-    font-size: 18px;
-    padding-bottom: 15px;
-    border-bottom: 1px solid #f0f0f0;
-}
-
-.detail-label {
-    width: 180px;
-    color: #888;
-}
-
-.detail-value {
-    font-weight: 500;
+.profile-section-title {
+    font-size: 24px;
+    font-weight: 600;
     color: #333;
-    flex: 1;
+    margin-bottom: 16px;
 }
 
-.btn-edit {
-    background: transparent;
-    border: none;
-    color: #1892E5;
-    cursor: pointer;
+.profile-section-placeholder {
     font-size: 16px;
+    color: #999;
+    text-align: center;
+    padding: 60px 0;
+}
+
+/* === Вкладки Активные / Архивные === */
+.profile-ad-tabs {
+    display: flex;
+    gap: 0;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #e9ecef;
+}
+
+.profile-ad-tab {
+    padding: 10px 20px;
+    background: none;
+    border: none;
+    font-size: 15px;
+    font-weight: 500;
+    color: #666;
+    cursor: pointer;
+    position: relative;
+    transition: color 0.2s;
+}
+
+.profile-ad-tab:hover {
+    color: #333;
+}
+
+.profile-ad-tab--active {
+    color: #2bde8c;
+    font-weight: 600;
+}
+
+.profile-ad-tab--active::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: #2bde8c;
+}
+
+/* === Карточки === */
+.profile-ads-empty {
+    font-size: 16px;
+    color: #999;
+    text-align: center;
+    padding: 40px 0;
+}
+
+.profile-ads-empty a {
+    color: #2bde8c;
+    text-decoration: none;
     font-weight: 500;
 }
 
-.btn-edit:hover {
+.profile-ads-empty a:hover {
     text-decoration: underline;
 }
 
-.password-input-container {
-    position: relative;
-    display: flex;
-    align-items: center;
+.rec-card--archived {
+    opacity: 0.6;
 }
 
-.password-toggle {
-    position: absolute;
-    right: 10px;
+.rec-card--archived .rec-card-image {
+    filter: grayscale(30%);
+}
+
+.rec-card-edit,
+.rec-card-close {
     background: none;
     border: none;
+    font-size: 18px;
     cursor: pointer;
-    padding: 5px;
-}
-
-.eye-icon {
-    width: 20px;
-    height: 20px;
-    opacity: 0.6;
-    transition: opacity 0.2s;
-}
-
-.eye-icon:hover {
-    opacity: 1;
-}
-
-.profile-input:disabled {
-    background-color: #f9f9f9;
-    color: #999;
-    cursor: not-allowed;
-}
-
-.section-title {
-    font-size: 28px;
-    margin-bottom: 30px;
-    color: #333;
-}
-
-/* Карточка личных данных */
-.profile-card {
+    padding: 4px;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
     display: flex;
-    gap: 40px;
-    align-items: flex-start;
-    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.rec-card-edit:hover {
+    background: #e8f5e9;
+    transform: scale(1.1);
+}
+
+.rec-card-close {
+    color: #888;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.rec-card-close:hover {
+    background: #fff0f0;
+    color: #ee5253;
+    transform: scale(1.1);
 }

@@ -304,6 +304,259 @@
     color: #2bde8c;
 }
 
+    /* Контейнер для правой колонки */
+    .ad-right {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        position: sticky;
+        top: 110px;
+    }
+
+    /* Карточка действий */
+    .action-card {
+        background: white;
+        border-radius: 16px;
+        padding: 20px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        border: 1px solid #e9ecef;
+    }
+
+    /* Ценовой блок */
+    /* .price-block {
+        margin-bottom: 20px;
+        padding-bottom: 16px;
+        border-bottom: 1px solid #eee;
+    } */
+
+    .current-price {
+        font-size: 24px;
+        font-weight: 700;
+        color: #333;
+    }
+
+    .old-price {
+        font-size: 16px;
+        color: #999;
+        text-decoration: line-through;
+        margin-left: 12px;
+    }
+
+    /* Кнопки действий */
+    .action-buttons {
+        display: flex;
+        flex-direction: column;
+        /* gap: 12px;
+        margin-bottom: 24px; */
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+
+    .action-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        /* padding: 14px 16px; */
+        border-radius: 12px;
+        /* font-size: 16px; */
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s;
+        border: none;
+
+        padding: 12px 16px;
+        font-size: 14px;
+    }
+
+/* НОВЫЙ БЛОК: строка цена + избранное */
+.price-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #eee;
+}
+
+.price-block {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+/* НОВАЯ КРУГЛАЯ КНОПКА ИЗБРАННОГО */
+.favorite-circle-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #f5f5f5;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    flex-shrink: 0;
+}
+
+.favorite-circle-btn .heart-icon {
+    font-size: 25px;
+    color: #666;
+    transition: all 0.2s;
+}
+
+.favorite-circle-btn:hover {
+    background: #fff0f0;
+    transform: scale(1.05);
+}
+
+.favorite-circle-btn:hover .heart-icon {
+    color: #ff4757;
+}
+
+    /* .favorite-btn {
+        background: #f5f5f5;
+        color: #333;
+    }
+    .favorite-btn:hover {
+        background: #fff0f0;
+        color: #ff4757;
+    }
+    .heart-icon {
+        font-size: 18px;
+    } */
+
+    .cart-btn {
+        background: #2bde8c;
+        color: white;
+    }
+    .cart-btn:hover {
+        background: #24b875;
+        transform: translateY(-1px);
+    }
+
+    .buy-btn {
+        background: #ff6b6b;
+        color: white;
+    }
+    .buy-btn:hover {
+        background: #ee5253;
+        transform: translateY(-1px);
+    }
+
+    /* ========== БЛОК ПРОДАВЦА ========== */
+
+    .ad-detail-page .seller-card {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px;
+        background: #f8f9fa;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .ad-detail-page .seller-card:hover {
+        background: #e9ecef;
+    }
+
+    /* АВАТАР */
+    .ad-detail-page .seller-avatar {
+        width: 48px;
+        height: 48px;
+        flex-shrink: 0;
+        border-radius: 50%;
+        overflow: hidden;
+        background: #dee2e6;
+    }
+
+    .ad-detail-page .seller-avatar img {
+        width: 48px;
+        height: 48px;
+        object-fit: cover;
+        display: block;
+    }
+
+    /* ИНФОРМАЦИЯ О ПРОДАВЦЕ */
+    .ad-detail-page .seller-info {
+        flex: 1;
+        min-width: 0;
+    }
+
+    /* ИМЯ */
+    .ad-detail-page  .seller-name {
+        font-weight: 600;
+        font-size: 16px;
+        color: #333;
+        margin-bottom: 4px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        text-align: left;
+    }
+
+    /* РЕЙТИНГ */
+    .ad-detail-page  .seller-rating {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-bottom: 4px;
+        flex-wrap: wrap;
+    }
+
+    /* ЗВЕЗДЫ */
+    .ad-detail-page .stars {
+        color: #f5c518;
+        font-size: 14px;
+        letter-spacing: 1px;
+        white-space: nowrap;
+    }
+
+    /* ЦИФРА РЕЙТИНГА */
+    .ad-detail-page .rating-value {
+        font-size: 14px;
+        font-weight: 600;
+        color: #333;
+    }
+
+    /* КНОПКА "ВСЕ ОТЗЫВЫ" */
+    .ad-detail-page .all-reviews-btn {
+        background: none;
+        border: none;
+        color: #2bde8c;
+        font-size: 12px;
+        cursor: pointer;
+        padding: 0;
+        display: inline-block;
+    }
+
+    .ad-detail-page .all-reviews-btn:hover {
+        text-decoration: underline;
+    }
+
+
+
+
+.action-btn.cart-btn.in-cart {
+    background: #00a650;
+    cursor: default;
+    opacity: 0.8;
+}
+
+.action-btn.cart-btn.in-cart:hover {
+    transform: none;
+}
+
+
+
+
+
+
+
+
 @media (max-width: 768px) {
     .ad-detail-page .ad-gallery-container {
         flex-direction: column;

@@ -22,7 +22,7 @@
                     </a>
                 </div>
                 <div class="nav-icon">
-                    <a href="#" class="nav-link">
+                    <a href="#" class="nav-link cart-active" data-nav="/cart">
                         <span class="icon">🛒</span>
                         <span class="nav-text">Корзина</span>
                     </a>
@@ -31,13 +31,11 @@
             
             <div class="header-right">                
                 {{#if isAuthenticated}}
-                    <button class="btn place-ad-btn" data-nav="/place-ad">Разместить объявление</button>
-                    <a href="/profile" data-nav="/profile">
-                        <img src="/images/logo/avatar.jpeg" alt="Аватар" class="avatar">
+                    <a href="/profile" class="profile-icon" data-nav="/profile" style="text-decoration: none;">
+                        <img src="{{avatarUrl user.avatar user.avatar_path}}" alt="Аватар" class="avatar">
                     </a>
                     <button class="btn btn-danger logout-btn" data-action="logout">Выйти</button>
                 {{else}}
-                    <button class="btn place-ad-btn" data-nav="/login">Разместить объявление</button>
                     <p>
                         <a href="#" class="nav-login" data-nav="/login">Войти</a>
                     </p>
@@ -76,7 +74,7 @@
             <div class="main-column">
                 <div class="page-header">
                     <button class="back-btn" data-action="back">← Назад</button>
-                    <h1>Разместить объявление</h1>
+                    <h1>{{#if isEditing}}Редактировать объявление{{else}}Разместить объявление{{/if}}</h1>
                 </div>
 
                 <form id="placeAdForm" class="place-ad-form" enctype="multipart/form-data">
@@ -212,9 +210,13 @@
 
                     <!-- Кнопки формы -->
                     <div class="form-actions">
-                        <button type="button" class="btn-cancel" data-action="back">Отмена</button>
-                        <button type="button" class="btn-draft" id="saveDraftBtn">Сохранить в черновик</button>
-                        <button type="button" class="btn-preview" id="previewBtn">Посмотреть результат</button>
+                        <button type="button" class="btn-cancel" data-action="cancel-ad">Отмена</button>
+                        {{#if isEditing}}
+                            <button type="button" class="btn-preview" id="saveEditBtn">Сохранить изменения</button>
+                        {{else}}
+                            <button type="button" class="btn-draft" id="saveDraftBtn">Сохранить в черновик</button>
+                            <button type="button" class="btn-preview" id="previewBtn">Посмотреть результат</button>
+                        {{/if}}
                     </div>
                 </form>
             </div>

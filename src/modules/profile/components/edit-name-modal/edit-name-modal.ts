@@ -1,20 +1,22 @@
-import template from '@modules/profile/components/edit-name-modal/edit-name-modal.hbs?raw';
+import template from '@modules/profile/components/edit-name-modal/edit-name-modal.hbs';
+import '@modules/common/components/modal/modal.css';
 import '@modules/profile/components/edit-name-modal/style.css';
 import { ProfileService } from '@modules/profile/service';
 import { store } from '@/core/store';
 import { uiActions } from '@/actions/uiActions';
 import { eventBus } from '@/core/eventBus';
 
-declare const Handlebars: any;
-
 export const EditNameModal = {
+    _boundElement: null as HTMLElement | null,
+
     getTemplate() {
-        return Handlebars.compile(template);
+        return template;
     },
 
     init(): void {
         const modal = document.getElementById('editNameModal');
-        if (!modal) return;
+        if (!modal || modal === this._boundElement) return;
+        this._boundElement = modal;
 
         modal.addEventListener('click', (e) => {
             const target = e.target as HTMLElement;
@@ -52,7 +54,7 @@ export const EditNameModal = {
         try {
             const res = await ProfileService.updateName(newName);
             if (res.success && res.data) {
-                store.setState({ user: { ...store.user, name: res.data.name } });
+                store.setState({ user: { ...(store.user ?? {}), name: res.data.name } });
                 uiActions.showSuccess('Имя обновлено');
                 this.close();
                 eventBus.emit('profile:update-ui');

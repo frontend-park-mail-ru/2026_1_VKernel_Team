@@ -1,42 +1,107 @@
 <div class="profile-tab-content">
-  {{#if (eq currentTab 'info')}}
-    <h2 class="section-title">Личные данные</h2>
 
-    <div class="profile-card">
-      {{!-- Аватарка --}}
-      {{> profile/components/profile-avatar/profile-avatar user=user }}
-      
-      <div class="profile-details">
-        {{!-- Имя --}}
-        <div class="detail-row">
-          <span class="detail-label">Имя:</span>
-          <span class="detail-value">{{user.name}}</span>
-          <button class="btn-edit" data-action="open-edit-name">Изменить</button>
-        </div>
+  {{#if (eq currentTab 'ads')}}
+    <h2 class="profile-section-title">Мои объявления</h2>
 
-        {{!-- Email --}}
-        <div class="detail-row">
-          <span class="detail-label">Email:</span>
-          <span class="detail-value">{{user.email}}</span>
-        </div>
+    <div class="profile-ad-tabs">
+        <button class="profile-ad-tab profile-ad-tab--active" data-profile-ad-tab="active">
+            Активные ({{activeAdsCount}})
+        </button>
+        <button class="profile-ad-tab" data-profile-ad-tab="archived">
+            Архивные ({{archivedAdsCount}})
+        </button>
+    </div>
 
-        {{!-- Рейтинг --}}
-        <div class="detail-row">
-          <span class="detail-label">Рейтинг:</span>
-          <span class="detail-value">{{#if user.rating}}{{user.rating}}{{else}}0{{/if}}</span>
-        </div>
-        
-        {{!-- Дата регистрации --}}
-        <div class="detail-row">
-          <span class="detail-label">На Клевере с:</span>
-          <span class="detail-value">{{formatDate user.created_at}}</span>
-        </div>
-      </div>
+    <div data-profile-ad-content="active">
+        {{#if activeAds.length}}
+            <div class="recommendations-row">
+                {{#each activeAds}}
+                    <div class="rec-card" data-id="{{id}}">
+                        <div class="rec-card-image-container">
+                            <img src="{{image}}" alt="{{title}}" class="rec-card-image">
+                            <button class="rec-card-fav">♡</button>
+                        </div>
+                        <div class="rec-card-content">
+                            <span class="rec-card-title">{{title}}</span>
+                            <div class="rec-card-footer">
+                                <div class="rec-card-footer-info">
+                                    <span class="rec-card-price">{{formattedPrice}}</span>
+                                    <span class="rec-card-location">
+                                        <span class="location-icon">📍</span>
+                                        {{location}}
+                                    </span>
+                                </div>
+                                <div class="rec-card-footer-actions">
+                                    <button class="rec-card-edit" data-edit-id="{{id}}" title="Редактировать">
+                                        ✏️
+                                    </button>
+                                    <button class="rec-card-close" data-close-id="{{id}}" data-close-title="{{title}}" title="Закрыть объявление">
+                                        ✕
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {{/each}}
+            </div>
+        {{else}}
+            <p class="profile-ads-empty">У вас нет активных объявлений.
+                <a href="#" data-nav="/place-ad">Создать объявление</a>
+            </p>
+        {{/if}}
+    </div>
+
+    <div data-profile-ad-content="archived" style="display: none;">
+        {{#if archivedAds.length}}
+            <div class="recommendations-row">
+                {{#each archivedAds}}
+                    <div class="rec-card rec-card--archived" data-id="{{id}}">
+                        <div class="rec-card-image-container">
+                            <img src="{{image}}" alt="{{title}}" class="rec-card-image">
+                        </div>
+                        <div class="rec-card-content">
+                            <span class="rec-card-title">{{title}}</span>
+                            <div class="rec-card-footer">
+                                <div class="rec-card-footer-info">
+                                    <span class="rec-card-price">{{formattedPrice}}</span>
+                                    <span class="rec-card-location">
+                                        <span class="location-icon">📍</span>
+                                        {{location}}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {{/each}}
+            </div>
+        {{else}}
+            <p class="profile-ads-empty">Нет архивных объявлений</p>
+        {{/if}}
     </div>
   {{/if}}
 
-  {{#if (eq currentTab 'ads')}}
-    <h2 class="section-title">Мои объявления</h2>
-    <p class="empty-state">Список ваших объявлений пуст.</p>
+  {{#if (eq currentTab 'favorites')}}
+    <p class="profile-section-placeholder">Избранное — в разработке</p>
   {{/if}}
+
+  {{#if (eq currentTab 'cart')}}
+    <p class="profile-section-placeholder">Корзина — в разработке</p>
+  {{/if}}
+
+  {{#if (eq currentTab 'messages')}}
+    <p class="profile-section-placeholder">Сообщения — в разработке</p>
+  {{/if}}
+
+  {{#if (eq currentTab 'purchases')}}
+    <p class="profile-section-placeholder">Покупки — в разработке</p>
+  {{/if}}
+
+  {{#if (eq currentTab 'wallet')}}
+    <p class="profile-section-placeholder">Кошелёк — в разработке</p>
+  {{/if}}
+
+  {{#if (eq currentTab 'settings')}}
+    <p class="profile-section-placeholder">Настройки — в разработке</p>
+  {{/if}}
+
 </div>
