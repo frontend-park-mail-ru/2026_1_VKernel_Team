@@ -5,7 +5,7 @@
  */
 import { apiClient, API_ENDPOINTS } from '@/api/apiClient';
 import { CONFIG } from '@/core/config';
-import type { Ad } from '@/types';
+import type { Ad, ApiResponse } from '@/types';
 
 /**
  * Объект с методами для работы с объявлениями
@@ -23,6 +23,13 @@ const adsService = {
      */
     async getAdById(id: number | string) {
         return apiClient.get(API_ENDPOINTS.ADS.GET_BY_ID(id));
+    },
+
+    /**
+     * Обновляет объявление по ID
+     */
+    async updateAd(id: number | string, formData: FormData): Promise<ApiResponse> {
+        return apiClient.put(API_ENDPOINTS.ADS.UPDATE(id), formData);
     },
 
     /**

@@ -189,6 +189,14 @@ export const AppController = {
             return;
         }
 
+        const editAdMatch = path.match(/^\/edit-ad\/(\d+)$/);
+        if (editAdMatch) {
+            if (this._currentFeature === 'place-ad') PlaceAnAdController.cleanup();
+            this._currentFeature = 'place-ad';
+            PlaceAnAdController.render(editAdMatch[1]);
+            return;
+        }
+
         if (adMatch) {
             const adId = adMatch[1];
             if (this._currentFeature === 'ad-detail') AdDetailController.cleanup();

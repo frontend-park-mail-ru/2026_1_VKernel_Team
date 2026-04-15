@@ -74,7 +74,7 @@
             <div class="main-column">
                 <div class="page-header">
                     <button class="back-btn" data-action="back">← Назад</button>
-                    <h1>Разместить объявление</h1>
+                    <h1>{{#if isEditing}}Редактировать объявление{{else}}Разместить объявление{{/if}}</h1>
                 </div>
 
                 <form id="placeAdForm" class="place-ad-form" enctype="multipart/form-data">
@@ -211,8 +211,12 @@
                     <!-- Кнопки формы -->
                     <div class="form-actions">
                         <button type="button" class="btn-cancel" data-action="cancel-ad">Отмена</button>
-                        <button type="button" class="btn-draft" id="saveDraftBtn">Сохранить в черновик</button>
-                        <button type="button" class="btn-preview" id="previewBtn">Посмотреть результат</button>
+                        {{#if isEditing}}
+                            <button type="button" class="btn-preview" id="saveEditBtn">Сохранить изменения</button>
+                        {{else}}
+                            <button type="button" class="btn-draft" id="saveDraftBtn">Сохранить в черновик</button>
+                            <button type="button" class="btn-preview" id="previewBtn">Посмотреть результат</button>
+                        {{/if}}
                     </div>
                 </form>
             </div>
