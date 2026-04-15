@@ -11,12 +11,13 @@ import { ProfileAvatar } from '@modules/profile/components/profile-avatar/profil
 import { ProfileSidebar } from '@modules/profile/components/profile-sidebar/profile-sidebar';
 import { ProfileContent } from '@modules/profile/components/profile-content/profile-content';
 import { EditNameModal } from '@modules/profile/components/edit-name-modal/edit-name-modal';
+import { CloseAdModal } from '@modules/profile/components/close-ad-modal/close-ad-modal';
 
-import { apiClient, API_ENDPOINTS } from '@/api/apiClient';
+import { apiClient } from '@/api/apiClient';
 import type { SellerAd } from '@modules/seller-page/types';
 
 export const ProfileController = {
-    currentTab: 'info' as ProfileTab,
+    currentTab: 'ads' as ProfileTab,
     templates: {} as Record<string, HandlebarsTemplateFunction>,
     mainTemplate: null as any,
     isInitialized: false,
@@ -26,22 +27,28 @@ export const ProfileController = {
         eventBus.on('profile:switch-tab', (tab: ProfileTab) => this.switchTab(tab));
         eventBus.on('profile:logout', () => this.handleLogout());
         eventBus.on('profile:update-ui', () => this.refreshUI());
+        eventBus.on('profile:ad-closed', (closedAdId: number | string) => {
+            this.userAds = this.userAds.map((ad) =>
+                String(ad.id) === String(closedAdId) ? { ...ad, status: 'archived' } : ad,
+            );
+            this.rerenderTab(store.user as UserProfile);
+            ProfileContent.init();
+        });
         this.isInitialized = true;
     },
 
-    userAds: [] as any[],  // Поле для хранения объявлений
+    userAds: [] as any[],
 
     async loadUserAds(): Promise<void> {
-        // Проверяем, что id существует и это число
         const userId = store.user?.id;
         if (!userId || typeof userId !== 'number') return;
-        
+
         try {
             const result = await apiClient.get<{ ads: SellerAd[] }>(`/users/${userId}/ads`);
             if (result.success && result.data?.ads) {
                 const { sellerService } = await import('@modules/seller-page/service');
-                this.userAds = result.data.ads.map((ad: SellerAd) => 
-                    sellerService.formatAdCard(ad)
+                this.userAds = result.data.ads.map((ad: SellerAd) =>
+                    sellerService.formatAdCard(ad),
                 );
                 this.rerenderTab(store.user as UserProfile);
             }
@@ -59,7 +66,6 @@ export const ProfileController = {
             return;
         }
 
-        // Загружаем объявления пользователя
         await this.loadUserAds();
 
         const app = document.getElementById('app');
@@ -73,10 +79,10 @@ export const ProfileController = {
             isAuthenticated: store.isAuthenticated,
         });
 
-        // Рендерим модалку
         const modalContainer = document.createElement('div');
         modalContainer.id = 'modal-root';
-        modalContainer.innerHTML = EditNameModal.getTemplate()({ user });
+        modalContainer.innerHTML =
+            EditNameModal.getTemplate()({ user }) + CloseAdModal.getTemplate()({});
         app.appendChild(modalContainer);
 
         this.renderAll();
@@ -85,7 +91,6 @@ export const ProfileController = {
 
     renderAll(): void {
         this.refreshUI();
-        this.attachEventListeners();
     },
 
     refreshUI(): void {
@@ -101,25 +106,32 @@ export const ProfileController = {
 
     rerenderTab(user: UserProfile): void {
         const contentEl = document.getElementById('tabContent');
-        if (contentEl) {
-            contentEl.innerHTML = profileContentTpl({
-                currentTab: this.currentTab,
-                user,
-                userAds: this.userAds,
-                isAuthenticated: store.isAuthenticated,
-            });
-        }
+        if (!contentEl) return;
+
+        const activeAds = this.userAds.filter((ad) => ad.status !== 'archived');
+        const archivedAds = this.userAds.filter((ad) => ad.status === 'archived');
+
+        contentEl.innerHTML = profileContentTpl({
+            currentTab: this.currentTab,
+            user,
+            activeAds,
+            archivedAds,
+            activeAdsCount: activeAds.length,
+            archivedAdsCount: archivedAds.length,
+            isAuthenticated: store.isAuthenticated,
+        });
     },
 
     rerenderSidebar(user: UserProfile): void {
         const sidebarEl = document.querySelector('#sidebarContainer');
-        if (sidebarEl) {
-            sidebarEl.innerHTML = profileSidebarTpl({
-                currentTab: this.currentTab,
-                user,
-                isAuthenticated: store.isAuthenticated,
-            });
-        }
+        if (!sidebarEl) return;
+
+        sidebarEl.innerHTML = profileSidebarTpl({
+            currentTab: this.currentTab,
+            user,
+            totalAdsCount: this.userAds.length,
+            isAuthenticated: store.isAuthenticated,
+        });
     },
 
     switchTab(tab: ProfileTab): void {
@@ -131,26 +143,8 @@ export const ProfileController = {
         if (ProfileAvatar?.init) ProfileAvatar.init();
         if (ProfileSidebar?.init) ProfileSidebar.init();
         if (ProfileContent?.init) ProfileContent.init();
-        if (EditNameModal?.init) EditNameModal.init(); // Привязываем события модалки
-
-        // Добавьте обработчик для карточек объявлений
-        const contentEl = document.getElementById('tabContent');
-        if (contentEl) {
-            contentEl.addEventListener('click', (e) => {
-                const card = (e.target as HTMLElement).closest('.rec-card');
-                if (!card) return;
-                
-                const target = e.target as HTMLElement;
-                if (target.closest('.rec-card-fav') || target.closest('.rec-card-cart')) {
-                    return;
-                }
-                
-                const adId = card.getAttribute('data-id');
-                if (adId) {
-                    uiActions.navigateTo(`/ad/${adId}`);
-                }
-            });
-        }
+        if (EditNameModal?.init) EditNameModal.init();
+        if (CloseAdModal?.init) CloseAdModal.init();
     },
 
     async loadProfileData(): Promise<void> {
@@ -169,7 +163,8 @@ export const ProfileController = {
         try {
             await ProfileService.logout();
             store.setState({ isAuthenticated: false, user: null });
-            uiActions.navigateTo('/login');
+            window.history.pushState({}, '', '/login');
+            window.dispatchEvent(new PopStateEvent('popstate'));
         } catch (err) {
             uiActions.showError('Ошибка при выходе');
         }

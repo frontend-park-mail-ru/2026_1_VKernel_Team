@@ -87,7 +87,7 @@ export const AuthController = {
     async handleLogout(): Promise<void> {
         await authActions.logout();
         localStorage.removeItem('authToken');
-        AppController.navigateTo('/');
+        AppController.router();
     },
 
     initPasswordToggles(): void {

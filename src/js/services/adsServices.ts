@@ -33,6 +33,13 @@ const adsService = {
     },
 
     /**
+     * Закрывает (архивирует) объявление по ID
+     */
+    async closeAd(id: number | string): Promise<ApiResponse> {
+        return apiClient.post(API_ENDPOINTS.ADS.CLOSE(Number(id)), null);
+    },
+
+    /**
      * Форматирует объявление для отображения на карточке
      */
     formatAdCard(ad: Ad) {
