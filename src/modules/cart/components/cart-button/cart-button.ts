@@ -3,6 +3,7 @@ import { cartActions } from '@modules/cart/actions';
 import { cartService } from '@modules/cart/service';
 import { cartStore } from '@modules/cart/store';
 import { store } from '@core/store';
+import { uiActions } from '@/actions/uiActions';
 import type { CartItem } from '@modules/cart/types';
 import template from '@modules/cart/components/cart-button/cart-button.hbs?raw';
 
@@ -60,11 +61,16 @@ export const CartButtonComponent = {
                         if (errorMsg.includes('already in cart')) {
                             button.classList.add('in-cart');
                             button.title = 'В корзине';
+                        } else if (errorMsg.includes('own') || errorMsg.includes('seller')) {
+                            uiActions.showWarning('Нельзя добавить в корзину собственный товар');
+                        } else {
+                            uiActions.showError(errorMsg || 'Не удалось добавить товар в корзину');
                         }
                     }
                 }
             } catch (error) {
                 console.error('Error handling cart button click:', error);
+                uiActions.showError('Не удалось добавить товар в корзину');
             } finally {
                 button.classList.remove('loading');
             }

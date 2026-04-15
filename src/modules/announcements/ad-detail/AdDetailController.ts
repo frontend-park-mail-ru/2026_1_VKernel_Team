@@ -18,6 +18,7 @@ export class AdDetailController {
     private static allPhotosArray: string[] = [];
     private static _handlers: Map<string, EventListener> = new Map();
     private static adId: string = '';
+    private static isOwner: boolean = false;
 
     static async render(adId: string): Promise<void> {
         this.adId = adId;
@@ -38,6 +39,7 @@ export class AdDetailController {
 
             // prepareAdData теперь async!
             const adData = await this.prepareAdData(result.data);
+            this.isOwner = adData.isOwner ?? false;
 
             app.innerHTML = adDetailTpl(adData);
             this.attachEventListeners();
@@ -296,6 +298,11 @@ export class AdDetailController {
                     return;
                 }
 
+                if (this.isOwner) {
+                    uiActions.showWarning('Нельзя добавить собственный товар в корзину');
+                    return;
+                }
+
                 if (!adId) {
                     uiActions.showError('Ошибка: идентификатор товара не найден');
                     return;
@@ -356,6 +363,11 @@ export class AdDetailController {
 
                 if (!store.isAuthenticated) {
                     AppController.navigateTo('/login');
+                    return;
+                }
+
+                if (this.isOwner) {
+                    uiActions.showWarning('Нельзя купить собственный товар');
                     return;
                 }
 

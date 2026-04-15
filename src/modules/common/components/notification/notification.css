@@ -1,0 +1,159 @@
+/* ========== КОНТЕЙНЕР УВЕДОМЛЕНИЙ ========== */
+#notification-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 10000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 360px;
+    width: calc(100vw - 40px);
+    pointer-events: none;
+}
+
+/* ========== БАЗОВОЕ УВЕДОМЛЕНИЕ ========== */
+.notification {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 16px 18px;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    background: #ffffff;
+    border-left: 4px solid transparent;
+    pointer-events: all;
+    animation: notificationSlideIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+/* ========== ЦВЕТА ПО ТИПУ ========== */
+.notification-error   { border-left-color: #ee5253; }
+.notification-success { border-left-color: #2bde8c; }
+.notification-warning { border-left-color: #f0a500; }
+.notification-info    { border-left-color: #2bc0de; }
+
+/* ========== ИКОНКА ========== */
+.notification-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    flex-shrink: 0;
+    color: #ffffff;
+    margin-top: 1px;
+}
+
+.notification-error   .notification-icon { background: #ee5253; }
+.notification-success .notification-icon { background: #2bde8c; }
+.notification-warning .notification-icon { background: #f0a500; }
+.notification-info    .notification-icon { background: #2bc0de; }
+
+/* ========== ТЕКСТ ========== */
+.notification-body {
+    flex: 1;
+    min-width: 0;
+}
+
+.notification-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 3px;
+    letter-spacing: 0.2px;
+}
+
+.notification-message {
+    font-size: 14px;
+    color: #555;
+    line-height: 1.45;
+    word-break: break-word;
+}
+
+/* ========== КНОПКА ЗАКРЫТИЯ ========== */
+.notification-close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #bbb;
+    font-size: 20px;
+    line-height: 1;
+    padding: 0 0 0 4px;
+    flex-shrink: 0;
+    transition: color 0.2s;
+    margin-top: -2px;
+}
+
+.notification-close:hover {
+    color: #555;
+}
+
+/* ========== ПРОГРЕСС-БАР ========== */
+.notification-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    width: 100%;
+    transform-origin: left center;
+    animation: notificationProgress linear forwards;
+}
+
+.notification-error   .notification-progress { background: #ee5253; opacity: 0.35; }
+.notification-success .notification-progress { background: #2bde8c; opacity: 0.45; }
+.notification-warning .notification-progress { background: #f0a500; opacity: 0.4; }
+.notification-info    .notification-progress { background: #2bc0de; opacity: 0.4; }
+
+/* ========== АНИМАЦИИ ========== */
+.notification-exit {
+    animation: notificationSlideOut 0.25s ease forwards;
+}
+
+@keyframes notificationSlideIn {
+    from {
+        transform: translateX(110%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes notificationSlideOut {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+        max-height: 200px;
+        margin-bottom: 0;
+    }
+    to {
+        transform: translateX(110%);
+        opacity: 0;
+        max-height: 0;
+        margin-bottom: -10px;
+        padding-top: 0;
+        padding-bottom: 0;
+    }
+}
+
+@keyframes notificationProgress {
+    from { transform: scaleX(1); }
+    to   { transform: scaleX(0); }
+}
+
+/* ========== АДАПТИВ ========== */
+@media (max-width: 480px) {
+    #notification-container {
+        top: 10px;
+        right: 10px;
+        left: 10px;
+        width: auto;
+        max-width: none;
+    }
+}

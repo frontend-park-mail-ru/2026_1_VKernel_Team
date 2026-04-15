@@ -1,4 +1,5 @@
 import { store } from '@/core/store';
+import { notifications } from '@modules/common/components/notification/notification';
 
 export const uiActions = {
     navigateTo(path: string): void {
@@ -12,18 +13,16 @@ export const uiActions = {
         if (loader) loader.style.display = show ? 'flex' : 'none';
     },
     showError(message: string): void {
-        const toast = document.createElement('div');
-        toast.className = 'toast toast-error';
-        toast.textContent = message;
-        document.body.appendChild(toast);
-        setTimeout(() => toast.remove(), 3000);
+        notifications.error(message);
     },
     showSuccess(message: string): void {
-        const toast = document.createElement('div');
-        toast.className = 'toast toast-success';
-        toast.textContent = message;
-        document.body.appendChild(toast);
-        setTimeout(() => toast.remove(), 3000);
+        notifications.success(message);
+    },
+    showWarning(message: string): void {
+        notifications.warning(message);
+    },
+    showInfo(message: string): void {
+        notifications.info(message);
     },
     clearError(): void {
         if (store.getState().error !== null) {
