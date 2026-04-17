@@ -23,7 +23,7 @@
                     </a>
                 </div>
                 <div class="nav-icon">
-                    <a href="#" class="nav-link">
+                    <a href="#" class="nav-link cart-active" data-nav="/cart">
                         <span class="icon">🛒</span>
                         <span class="nav-text">Корзина</span>
                     </a>
@@ -34,16 +34,13 @@
             <!-- Правая часть -->
             <div class="header-right">                
                 {{#if isAuthenticated}}
-                    <button class="btn place-ad-btn" data-nav="/place-ad">Разместить объявление</button>
-                <!--Нужна проверка в будущем на загрузку своей аватарки пользователем-->
-                    <a href="">
-                        <img src="/images/logo/avatar.jpeg" alt="Аватар" class="avatar">
+                    <a href="/profile" class="profile-icon" data-nav="/profile" style="text-decoration: none;">
+                        <img src="{{avatarUrl user.avatar user.avatar_path}}" alt="Аватар" class="avatar">
                     </a>
                     <button class="btn btn-danger logout-btn" data-action="logout">
                         Выйти
                     </button>
                 {{else}}
-                    <button class="btn place-ad-btn" data-nav="/login">Разместить объявление</button>
                     <p>
                         <a href="#" class="nav-login" data-nav="/login">Войти</a>
                     </p>
@@ -155,11 +152,10 @@
                 <div class="ad-location-section">
                     <h2 class="section-title">Местоположение</h2>
                     <div class="location-info">
-                        {{!-- <span class="location-icon">📍</span> --}}
                         <div class="location-details">
                             <div class="location-address">{{location}}</div>
                             <div class="seller-name">Продавец: {{sellerName}}</div>
-                            <div class="seller-since">На сайте с: {{sellerSince}}</div>
+                            <div class="seller-since">Зарегистрирован: {{sellerSince}}</div>
                         </div>
                     </div>
                 </div>

@@ -6,20 +6,23 @@ import adDetailTpl from '@modules/announcements/ad-detail/templates/ad-detail.hb
 import mainPageTpl from '@templates/main-page.hbs';
 import loginFormsTpl from '@templates/login-forms.hbs';
 import registerFormTpl from '@templates/register-form.hbs';
-import userProfileTpl from '@templates/user-profile.hbs';
+import userProfileTpl from '@modules/profile/pages/profile/profile.hbs';
 import authLinksTpl from '@templates/auth-links.hbs';
 import notFoundTpl from '@templates/not-found.hbs';
 
 import { PlaceAnAdController } from '@modules/announcements/place-an-ad';
 import { AdPreviewController } from '@modules/announcements/ad-preview';
 import { AdDetailController } from '@modules/announcements/ad-detail';
+
 import { AuthController } from '@/controllers/AuthController';
 import { AdsController } from '@/controllers/AdsController';
-import { ProfileController } from '@/controllers/ProfileController';
 import { SellerPageController } from '@modules/seller-page/controller';
 import { loadTemplates as loadSellerPageTemplates } from '@modules/seller-page/pages/seller-page/seller-page';
 import { CartController } from '@modules/cart/controller';
 import { loadTemplates as loadCartTemplates } from '@modules/cart/pages/cart/cart';
+import { loadTemplates as loadProfileTemplates } from '@modules/profile/pages/profile/profile';
+import { ProfileController } from '@modules/profile/controller';
+
 import { store } from '@/core/store';
 import { uiActions } from '@/actions/uiActions';
 import type { HandlebarsTemplateFunction, TemplateName, UIConstants } from '@/types';
@@ -27,7 +30,71 @@ import { authActions } from '@/actions/authActions';
 import { CONFIG } from '@/core/config';
 import { initOfflineIndicator } from '@modules/common/offline/offline-indicator';
 
-declare const Handlebars: any;
+import * as HandlebarsFull from 'handlebars';
+import * as HandlebarsRuntime from 'handlebars/dist/handlebars.runtime.js';
+
+const registerHelpers = (Hbs: any) => {
+    if (!Hbs || !Hbs.registerHelper || Hbs.helpers?.avatarUrl) return;
+
+    Hbs.registerHelper('formatPrice', (price: number) => {
+        return price === 0 ? 'Бесплатно' : `${price} ₽`;
+    });
+
+    Hbs.registerHelper('ifAuthenticated', function (this: any, options: any) {
+        return store.isAuthenticated ? options.fn(this) : options.inverse(this);
+    });
+
+    Hbs.registerHelper('avatarUrl', function (avatar: any, avatarPath: any) {
+        const DEFAULT_AVATAR = '/images/logo/avatar.jpeg';
+
+        const source =
+            typeof avatar === 'string' ? avatar : typeof avatarPath === 'string' ? avatarPath : '';
+
+        if (!source) return DEFAULT_AVATAR;
+
+        const trimmed = source.trim();
+        if (!trimmed) return DEFAULT_AVATAR;
+
+        if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
+            return trimmed;
+        }
+
+        const normalized = trimmed.startsWith('/') ? trimmed : `/${trimmed}`;
+        return `${CONFIG.API.BASE_URL}${normalized}`;
+    });
+
+    Hbs.registerHelper('eq', function (a: any, b: any) {
+        return a === b;
+    });
+    Hbs.registerHelper('gt', function (a: any, b: any) {
+        return a > b;
+    });
+    Hbs.registerHelper('concat', function (...args: any[]) {
+        return args.slice(0, -1).join('');
+    });
+    Hbs.registerHelper('array', function (...args: any[]) {
+        return args.slice(0, -1);
+    });
+
+    Hbs.registerHelper('labelForTab', function (tab: string) {
+        const labels: Record<string, string> = {
+            info: 'Личные данные',
+            ads: 'Мои объявления',
+            favorites: 'Избранное',
+            cart: 'Корзина',
+            messages: 'Сообщения',
+            purchases: 'Мои покупки',
+            wallet: 'Кошелёк',
+            settings: 'Настройки',
+        };
+        return labels[tab] || tab;
+    });
+
+    Hbs.registerHelper('formatDate', function (dateString: string) {
+        if (!dateString) return '—';
+        return new Date(dateString).toLocaleDateString('ru-RU');
+    });
+};
 
 export const AppController = {
     _lastPage: '',
@@ -42,13 +109,18 @@ export const AppController = {
         LOADER_HTML: '<div class="spinner"></div>',
     } as UIConstants,
 
-    currentPhotoIndex: 0,
-    allPhotosArray: [] as string[],
-
     async init(): Promise<void> {
+        registerHelpers(HandlebarsFull);
+        registerHelpers(HandlebarsRuntime);
+        if (typeof window !== 'undefined' && (window as any).Handlebars) {
+            registerHelpers((window as any).Handlebars);
+        }
+
         await this.loadTemplates();
         loadSellerPageTemplates();
         loadCartTemplates();
+        loadProfileTemplates();
+
         AuthController.templates = {
             'login-forms': this.templates['login-forms'],
             'register-form': this.templates['register-form'],
@@ -57,7 +129,7 @@ export const AppController = {
             'main-page': this.templates['main-page'],
         };
         ProfileController.templates = {
-            'user-profile': this.templates['user-profile'],
+            'profile-page': this.templates['user-profile'],
         };
 
         this.setupGlobalHandlers();
@@ -76,43 +148,10 @@ export const AppController = {
         this.templates['main-page'] = mainPageTpl;
         this.templates['login-forms'] = loginFormsTpl;
         this.templates['register-form'] = registerFormTpl;
-        this.templates['user-profile'] = userProfileTpl;
         this.templates['auth-links'] = authLinksTpl;
         this.templates['not-found'] = notFoundTpl;
+        this.templates['user-profile'] = userProfileTpl;
         this.templates['ad-detail'] = adDetailTpl;
-
-        // Регистрация хелперов остаётся (они нужны для рендера)
-        this.registerHandlebarsHelpers();
-    },
-
-    registerHandlebarsHelpers(): void {
-        Handlebars.registerHelper('formatPrice', (price: number) => {
-            return price === 0 ? 'Бесплатно' : `${price} ₽`;
-        });
-
-        Handlebars.registerHelper('ifAuthenticated', function (this: any, options: any) {
-            return store.isAuthenticated ? options.fn(this) : options.inverse(this);
-        });
-
-        Handlebars.registerHelper('avatarUrl', (avatar: string, avatarPath: string) => {
-            const DEFAULT_AVATAR = '/images/logo/avatar.jpeg';
-            const source = avatar || avatarPath || '';
-            if (!source) {
-                return DEFAULT_AVATAR;
-            }
-
-            const trimmed = source.trim();
-            if (!trimmed) {
-                return DEFAULT_AVATAR;
-            }
-
-            if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
-                return trimmed;
-            }
-
-            const normalized = trimmed.startsWith('/') ? trimmed : `/${trimmed}`;
-            return `${CONFIG.API.BASE_URL}${normalized}`;
-        });
     },
 
     async checkAuth(): Promise<void> {
@@ -128,8 +167,9 @@ export const AppController = {
     onStateChange(state: any): void {
         if (state.error) {
             uiActions.showError(state.error);
+            uiActions.clearError();
         }
-        if (state.currentPage !== this._lastPage) {
+        if (state.currentPage && state.currentPage !== this._lastPage) {
             this._lastPage = state.currentPage;
             this.router();
         }
@@ -139,27 +179,31 @@ export const AppController = {
         const path = window.location.pathname;
         const adMatch = path.match(/^\/ad\/(\d+)$/);
 
+        // Логика новых фич из main
         if (path === '/place-ad') {
-            if (this._currentFeature === 'place-ad') {
-                PlaceAnAdController.cleanup();
-            }
+            if (this._currentFeature === 'place-ad') PlaceAnAdController.cleanup();
             this._currentFeature = 'place-ad';
             PlaceAnAdController.render();
             return;
         }
 
         if (path === '/ad-preview') {
-            if (this._currentFeature === 'ad-preview') {
-                AdPreviewController.cleanup();
-            }
+            if (this._currentFeature === 'ad-preview') AdPreviewController.cleanup();
             this._currentFeature = 'ad-preview';
             AdPreviewController.render();
             return;
         }
 
+        const editAdMatch = path.match(/^\/edit-ad\/(\d+)$/);
+        if (editAdMatch) {
+            if (this._currentFeature === 'place-ad') PlaceAnAdController.cleanup();
+            this._currentFeature = 'place-ad';
+            PlaceAnAdController.render(editAdMatch[1]);
+            return;
+        }
+
         if (adMatch) {
             const adId = adMatch[1];
-
             if (this._currentFeature === 'ad-detail') {
                 AdDetailController.cleanup();
             }
@@ -168,10 +212,9 @@ export const AppController = {
             return;
         }
 
+        // Защита маршрутов
         if (!store.isAuthenticated && (path === '/profile' || path === '/cart')) {
-            window.history.pushState({}, '', '/login');
-            uiActions.navigateTo('/login');
-            AuthController.showLogin();
+            this.navigateTo('/login');
             return;
         }
 
@@ -204,6 +247,7 @@ export const AppController = {
     },
 
     navigateTo(path: string): void {
+        if (window.location.pathname === path) return;
         window.history.pushState({}, '', path);
         uiActions.navigateTo(path);
         this.router();
@@ -212,7 +256,7 @@ export const AppController = {
     renderNotFound(): void {
         const app = document.getElementById('app');
         if (!app || !this.templates['not-found']) return;
-        app.innerHTML = this.templates['not-found']();
+        app.innerHTML = this.templates['not-found']({});
     },
 
     setupGlobalHandlers(): void {
@@ -241,12 +285,10 @@ export const AppController = {
 
     showLoading(show: boolean): void {
         let loader = document.getElementById('global-loader');
-
         if (!show) {
             loader?.remove();
             return;
         }
-
         if (!loader) {
             loader = document.createElement('div');
             loader.id = 'global-loader';

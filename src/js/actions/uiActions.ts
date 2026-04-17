@@ -1,8 +1,3 @@
-/**
- * UI действия
- * Управление интерфейсом: навигация, лоадеры, уведомления
- */
-
 import { store } from '@/core/store';
 
 export const uiActions = {
@@ -11,19 +6,28 @@ export const uiActions = {
             store.setState({ currentPage: path });
         }
     },
-
-    showError(message: string): void {
-        console.error('UI Error:', message);
-        // TODO: Добавить систему toast-уведомлений без store
+    showLoading(show: boolean): void {
+        store.setState({ isLoading: show });
+        const loader = document.getElementById('global-loader');
+        if (loader) loader.style.display = show ? 'flex' : 'none';
     },
-
+    showError(message: string): void {
+        const toast = document.createElement('div');
+        toast.className = 'toast toast-error';
+        toast.textContent = message;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+    },
+    showSuccess(message: string): void {
+        const toast = document.createElement('div');
+        toast.className = 'toast toast-success';
+        toast.textContent = message;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+    },
     clearError(): void {
         if (store.getState().error !== null) {
             store.setState({ error: null });
         }
-    },
-
-    showSuccess(message: string): void {
-        console.log('UI Success:', message);
     },
 };

@@ -18,27 +18,31 @@ export default (env, argv) => {
             publicPath: '/',
         },
         devtool: isDevelopment ? 'source-map' : false,
+        devServer: {
+            port: 8080,
+            historyApiFallback: true,
+            static: {
+                directory: path.resolve(__dirname, 'public'),
+            },
+            proxy: [
+                {
+                    context: ['/api'],
+                    target: 'http://clover-go.ru:8000',
+                    changeOrigin: true,
+                },
+            ],
+        },
+
         module: {
             rules: [
-                {
-                    test: /\.tsx?$/,
-                    use: 'ts-loader',
-                    exclude: /node_modules/,
-                },
-                {
-                    test: /\.css$/i,
-                    use: ['style-loader', 'css-loader'],
-                },
+                { test: /\.tsx?$/, use: 'ts-loader', exclude: /node_modules/ },
+                { test: /\.css$/i, use: ['style-loader', 'css-loader'] },
                 {
                     test: /\.(png|jpe?g|gif|svg|webp)$/i,
                     type: 'asset/resource',
                     generator: { filename: 'images/[hash][ext][query]' },
                 },
-                {
-                    test: /\.hbs$/i,
-                    resourceQuery: /raw/,
-                    type: 'asset/source',
-                },
+                { test: /\.hbs$/i, resourceQuery: /raw/, type: 'asset/source' },
                 {
                     test: /\.hbs$/i,
                     resourceQuery: { not: [/raw/] },
@@ -47,9 +51,28 @@ export default (env, argv) => {
                         precompile: true,
                         esModule: true,
                         runtime: 'handlebars/dist/handlebars.runtime.js',
-                        knownHelpers: ['if', 'unless', 'each', 'with', 'log', 'formatPrice'],
+                        knownHelpers: [
+                            'if',
+                            'unless',
+                            'each',
+                            'with',
+                            'log',
+                            'lookup',
+                            'formatPrice',
+                            'formatDate',
+                            'eq',
+                            'gt',
+                            'concat',
+                            'array',
+                            'iconForTab',
+                            'labelForTab',
+                            'ifAuthenticated',
+                            'avatarUrl',
+                        ],
                         partialDirs: [
-                            path.resolve(__dirname, 'src/modules/cart/components/cart-button'),
+                            path.resolve(__dirname, 'src'),
+                            path.resolve(__dirname, 'src/modules'),
+                            path.resolve(__dirname, 'src/templates'),
                         ],
                     },
                 },

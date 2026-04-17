@@ -1,0 +1,18 @@
+<div class="main-container">
+    {{> common/components/header/header }}
+    {{> common/components/search-section/search-section }}
+
+    <main class="main-content">
+        <div class="profile-page-layout">
+            <aside id="sidebarContainer">
+                {{> profile/components/profile-sidebar/profile-sidebar }}
+            </aside>
+
+            <section class="profile-content-section">
+                <div id="tabContent">
+                    {{> profile/components/profile-content/profile-content }}
+                </div>
+            </section>
+        </div>
+    </main>
+</div>
