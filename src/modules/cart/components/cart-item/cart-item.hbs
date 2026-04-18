@@ -1,9 +1,9 @@
 <div class="cart-item" data-product-id="{{product_id}}">
-    <div class="cart-item-image">
+    <a href="/ad/{{product_id}}" class="cart-item-image" data-nav="/ad/{{product_id}}">
         <img src="{{imageUrl}}" alt="{{title}}">
-    </div>
+    </a>
     <div class="cart-item-info">
-        <span class="cart-item-title">{{title}}</span>
+        <a href="/ad/{{product_id}}" class="cart-item-title" data-nav="/ad/{{product_id}}">{{title}}</a>
         <span class="cart-item-price">{{formattedPrice}}</span>
     </div>
     <div class="cart-item-delivery">

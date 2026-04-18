@@ -107,7 +107,9 @@
                                         </span>
                                     </div>
                                     <div class="rec-card-footer-actions">
-                                        {{> cart/components/cart-button/cart-button productId=id}}
+                                        {{#unless isOwn}}
+                                            {{> cart/components/cart-button/cart-button productId=id}}
+                                        {{/unless}}
                                     </div>
                                 </div>
                             </div>

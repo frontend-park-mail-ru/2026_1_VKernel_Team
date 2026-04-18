@@ -15,10 +15,16 @@
 }
 
 .cart-item-image {
+    display: block;
     width: 120px;
     height: 90px;
     border-radius: 8px;
     overflow: hidden;
+    transition: opacity 0.2s;
+}
+
+.cart-item-image:hover {
+    opacity: 0.8;
 }
 
 .cart-item-image img {
@@ -33,11 +39,17 @@
     gap: 8px;
 }
 
-.cart-item-title {
+a.cart-item-title {
     font-size: 15px;
     font-weight: 500;
     color: #333;
     line-height: 1.4;
+    text-decoration: none;
+    display: block;
+}
+
+a.cart-item-title:hover {
+    color: #2bde8c;
 }
 
 .cart-item-price {

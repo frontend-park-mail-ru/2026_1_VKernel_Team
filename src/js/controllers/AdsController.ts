@@ -71,9 +71,10 @@ export const AdsController = {
             ...ad,
             formattedPrice: ad.price === 0 ? 'Бесплатно' : ad.price.toLocaleString('ru-RU') + ' ₽',
             mainPhoto: imageUrl,
-            image: imageUrl, // Для совместимости с шаблоном {{image}}
+            image: imageUrl,
             views: ad.views_count || 0,
             createdDate: ad.created_at ? new Date(ad.created_at).toLocaleDateString('ru-RU') : '',
+            isOwn: store.isAuthenticated && store.user?.id === ad.seller_id,
         };
     },
 

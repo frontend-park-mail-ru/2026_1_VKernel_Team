@@ -131,6 +131,7 @@
                     </div>
 
                     <!-- КНОПКИ ДЕЙСТВИЙ -->
+                    {{#unless isOwner}}
                     <div class="action-buttons">
                         <button class="action-btn cart-btn" data-action="add-to-cart">
                             Добавить в корзину
@@ -139,6 +140,7 @@
                             Купить сейчас
                         </button>
                     </div>
+                    {{/unless}}
 
                     <!-- ПРОДАВЕЦ (кликабельный блок) -->
                     <div class="seller-card">
