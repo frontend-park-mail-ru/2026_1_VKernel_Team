@@ -229,7 +229,6 @@ export class AdDetailController {
 
     private static attachEventListeners(): void {
         this.currentPhotoIndex = 0;
-        this.allPhotosArray = [];
 
         // Сохраняем adId в локальную переменную для использования в обработчиках
         const adId = this.adId;
