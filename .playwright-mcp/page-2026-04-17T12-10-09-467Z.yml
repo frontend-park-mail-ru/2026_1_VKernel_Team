@@ -1,0 +1,77 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - generic [ref=e5]:
+      - generic [ref=e6]:
+        - link "💼 Для бизнеса" [ref=e8] [cursor=pointer]:
+          - /url: "#"
+          - generic [ref=e9]: 💼
+          - generic [ref=e10]: Для бизнеса
+        - link "✉️ Сообщения" [ref=e12] [cursor=pointer]:
+          - /url: "#"
+          - generic [ref=e13]: ✉️
+          - generic [ref=e14]: Сообщения
+        - link "♡ Избранное" [ref=e16] [cursor=pointer]:
+          - /url: "#"
+          - generic [ref=e17]: ♡
+          - generic [ref=e18]: Избранное
+        - link "🛒 Корзина" [ref=e20] [cursor=pointer]:
+          - /url: "#"
+          - generic [ref=e21]: 🛒
+          - generic [ref=e22]: Корзина
+      - generic [ref=e23]:
+        - button "Разместить объявление" [ref=e24] [cursor=pointer]
+        - link "Аватар" [ref=e25] [cursor=pointer]:
+          - /url: ""
+          - img "Аватар" [ref=e26]
+        - button "Выйти" [ref=e27] [cursor=pointer]
+    - generic [ref=e29]:
+      - img "Логотип" [ref=e31] [cursor=pointer]
+      - generic [ref=e32]:
+        - textbox "Поиск объявлений..." [ref=e33]
+        - button "Найти" [ref=e34] [cursor=pointer]
+      - generic [ref=e35] [cursor=pointer]:
+        - generic [ref=e36]: 📍
+        - generic [ref=e37]: Москва
+    - main [ref=e38]:
+      - generic [ref=e39]:
+        - complementary [ref=e40]:
+          - generic [ref=e41]:
+            - generic [ref=e42] [cursor=pointer]:
+              - img "Аватар" [ref=e43]
+              - generic "Сменить фото":
+                - img
+            - generic [ref=e44]:
+              - heading "Тестовый Пользователь" [level=2] [ref=e45]
+              - button "✎" [ref=e46] [cursor=pointer]
+            - paragraph [ref=e47]: test@mail.ru
+            - generic [ref=e48]:
+              - generic [ref=e49]: ★
+              - generic [ref=e50]: "0"
+            - paragraph [ref=e52]: На Клевере с —
+          - navigation [ref=e53]:
+            - button "Мои объявления" [ref=e54] [cursor=pointer]:
+              - generic [ref=e55]: Мои объявления
+            - button "Избранное" [ref=e56] [cursor=pointer]:
+              - generic [ref=e57]: Избранное
+            - button "Корзина" [ref=e58] [cursor=pointer]:
+              - generic [ref=e59]: Корзина
+            - button "Сообщения" [ref=e60] [cursor=pointer]:
+              - generic [ref=e61]: Сообщения
+            - button "Мои покупки" [ref=e62] [cursor=pointer]:
+              - generic [ref=e63]: Мои покупки
+            - button "Кошелёк" [ref=e64] [cursor=pointer]:
+              - generic [ref=e65]: Кошелёк
+            - button "Настройки" [ref=e66] [cursor=pointer]:
+              - generic [ref=e67]: Настройки
+            - button "Выйти" [ref=e69] [cursor=pointer]:
+              - generic [ref=e70]: Выйти
+        - generic [ref=e73]:
+          - heading "Мои объявления" [level=2] [ref=e74]
+          - generic [ref=e75]:
+            - button "Активные (0)" [ref=e76] [cursor=pointer]
+            - button "Архивные (0)" [ref=e77] [cursor=pointer]
+          - paragraph [ref=e79]:
+            - text: У вас нет активных объявлений.
+            - link "Создать объявление" [ref=e80] [cursor=pointer]:
+              - /url: "#"
+  - generic [ref=e81]: Нет подключения к интернету

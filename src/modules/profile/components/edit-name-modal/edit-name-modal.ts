@@ -5,6 +5,8 @@ import { ProfileService } from '@modules/profile/service';
 import { store } from '@/core/store';
 import { uiActions } from '@/actions/uiActions';
 import { eventBus } from '@/core/eventBus';
+import { networkStatus } from '@modules/common/offline/network/networkStatus';
+import { syncQueue } from '@modules/common/offline/sync/syncQueue';
 
 export const EditNameModal = {
     _boundElement: null as HTMLElement | null,
@@ -20,11 +22,9 @@ export const EditNameModal = {
 
         modal.addEventListener('click', (e) => {
             const target = e.target as HTMLElement;
-            // Закрытие модалки
             if (target.closest('[data-action="close-modal"]')) {
                 this.close();
             }
-            // Сохранение данных
             if (target.closest('[data-action="save-name"]')) {
                 this.handleSave();
             }
@@ -50,6 +50,20 @@ export const EditNameModal = {
             return;
         }
 
+        if (!networkStatus.isOnline) {
+            // Offline: сохраняем локально и ставим в очередь
+            store.setState({ user: { ...(store.user ?? {}), name: newName } });
+            await syncQueue.add({
+                type: 'UPDATE_NAME',
+                payload: { name: newName },
+                timestamp: Date.now(),
+            });
+            uiActions.showSuccess('Имя сохранено, обновится при подключении');
+            this.close();
+            eventBus.emit('profile:update-ui');
+            return;
+        }
+
         uiActions.showLoading(true);
         try {
             const res = await ProfileService.updateName(newName);
@@ -59,8 +73,17 @@ export const EditNameModal = {
                 this.close();
                 eventBus.emit('profile:update-ui');
             }
-        } catch (err) {
-            uiActions.showError('Ошибка сохранения');
+        } catch {
+            // Если запрос упал — сохраняем для синхронизации
+            store.setState({ user: { ...(store.user ?? {}), name: newName } });
+            await syncQueue.add({
+                type: 'UPDATE_NAME',
+                payload: { name: newName },
+                timestamp: Date.now(),
+            });
+            uiActions.showSuccess('Имя сохранено, обновится при подключении');
+            this.close();
+            eventBus.emit('profile:update-ui');
         } finally {
             uiActions.showLoading(false);
         }

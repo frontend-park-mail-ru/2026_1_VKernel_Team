@@ -148,10 +148,11 @@ export class AdPreviewController {
                       year: 'numeric',
                   })
                 : 'сегодня',
-            avatarUrl: store.user?.avatar_path 
-                ? (store.user.avatar_path.startsWith('http') 
-                    ? store.user.avatar_path 
-                    : `${CONFIG.API.BASE_URL}/${store.user.avatar_path}`)
+            avatarUrl: store.user?.avatar_path
+                ? store.user.avatar_path.startsWith('http') ||
+                  store.user.avatar_path.startsWith('data:')
+                    ? store.user.avatar_path
+                    : `${CONFIG.API.BASE_URL}/${store.user.avatar_path}`
                 : '/images/logo/avatar.jpeg',
         };
     }

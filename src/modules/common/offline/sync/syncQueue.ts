@@ -1,6 +1,11 @@
 import { cloverDB } from '@modules/common/offline/db/indexedDB';
 
-export type SyncOperationType = 'ADD_TO_CART' | 'REMOVE_FROM_CART' | 'CREATE_AD';
+export type SyncOperationType =
+    | 'ADD_TO_CART'
+    | 'REMOVE_FROM_CART'
+    | 'CREATE_AD'
+    | 'UPLOAD_AVATAR'
+    | 'UPDATE_NAME';
 
 export interface SyncOperation {
     id?: number;

@@ -1,11 +1,13 @@
 import { EventBus } from '@/core/eventBus';
 
 const PING_INTERVAL = 5000;
+const ONLINE_GRACE_MS = 3000;
 
 class NetworkStatus {
     private _isOnline: boolean;
     private eventBus: EventBus;
     private pingTimer: ReturnType<typeof setInterval> | null = null;
+    private _graceUntil: number = 0;
 
     constructor() {
         this._isOnline = navigator.onLine;
@@ -13,6 +15,7 @@ class NetworkStatus {
 
         window.addEventListener('online', () => this.setOnline());
         window.addEventListener('offline', () => {
+            this._graceUntil = 0;
             this._isOnline = false;
             this.eventBus.emit('change', false);
             this.startPing();
@@ -25,6 +28,9 @@ class NetworkStatus {
 
     setOffline(): void {
         if (!this._isOnline) return;
+        // Не сбрасываем статус сразу после восстановления —
+        // даём время синк-запросам завершиться
+        if (Date.now() < this._graceUntil) return;
         this._isOnline = false;
         this.eventBus.emit('change', false);
         this.startPing();
@@ -33,6 +39,7 @@ class NetworkStatus {
     setOnline(): void {
         if (this._isOnline) return;
         this._isOnline = true;
+        this._graceUntil = Date.now() + ONLINE_GRACE_MS;
         this.stopPing();
         this.eventBus.emit('change', true);
     }

@@ -23,13 +23,7 @@ export const CartController = {
         }
     },
 
-    renderFromState(): void {
-        const app = document.getElementById('app');
-        const template = getTemplate();
-        if (!app || !template) return;
-
-        document.body.classList.remove('auth-page');
-
+    buildTemplateData() {
         const cartState = cartStore.getState();
         const items = cartState.items;
         const totalPrice = cartState.total;
@@ -45,15 +39,39 @@ export const CartController = {
             })),
         }));
 
-        app.innerHTML = template({
+        return {
             isAuthenticated: store.isAuthenticated,
             user: store.user,
             isEmpty: items.length === 0,
             sellerGroups: formattedGroups,
             itemCount: items.length,
             totalFormatted: cartService.formatPrice(totalPrice),
-        });
+        };
+    },
 
+    renderFromState(): void {
+        const app = document.getElementById('app');
+        const template = getTemplate();
+        if (!app || !template) return;
+
+        document.body.classList.remove('auth-page');
+
+        const data = this.buildTemplateData();
+
+        // Если корзина уже отрисована — обновляем только контент, не трогая header
+        const existingCartPage = app.querySelector('.cart-page');
+        if (existingCartPage) {
+            const tmp = document.createElement('div');
+            tmp.innerHTML = template(data);
+            const newCartPage = tmp.querySelector('.cart-page');
+            if (newCartPage) {
+                existingCartPage.replaceWith(newCartPage);
+                this.attachEventListeners();
+                return;
+            }
+        }
+
+        app.innerHTML = template(data);
         this.attachEventListeners();
     },
 

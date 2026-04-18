@@ -33,6 +33,12 @@ class Store {
 
     setState(newState: Partial<AppState>): void {
         this.state = { ...this.state, ...newState };
+
+        // Персистим user в localStorage при изменении auth-данных
+        if ('user' in newState || 'isAuthenticated' in newState) {
+            storage.setUser(this.state.user);
+        }
+
         this.eventBus.emit('stateChanged', this.state);
     }
 

@@ -7,7 +7,6 @@
 import { adsActions } from '@/actions/adsActions';
 import { eventBus } from '@/core/eventBus';
 import { store } from '@/core/store';
-import { CONFIG } from '@/core/config';
 import type { Ad, HandlebarsTemplateFunction } from '@/types';
 
 declare const Handlebars: any;
@@ -20,31 +19,29 @@ export const AdsController = {
     },
 
     async renderMain(): Promise<void> {
-        await adsActions.loadAds();
-
         const app = document.getElementById('app');
         const template = this.templates['main-page'];
         if (!app || !template) return;
 
+        // Пробуем показать кэшированные данные сразу, пока грузятся свежие
+        const cachedAds = store.ads;
+        if (cachedAds.length > 0) {
+            this.renderAdsList(app, template, cachedAds);
+        }
+
+        await adsActions.loadAds();
+
         const ads = store.ads;
+        this.renderAdsList(app, template, ads);
+    },
+
+    renderAdsList(app: HTMLElement, template: HandlebarsTemplateFunction, ads: Ad[]): void {
         const formattedAds = ads.map((ad: Ad) => this.formatAdCard(ad));
         document.body.classList.remove('auth-page');
 
-        const user = store.user;
-        let avatarImageUrl = '/images/logo/avatar.jpeg';
-        if (user) {
-            const src = (user.avatar || user.avatar_path || '').trim();
-            if (src) {
-                avatarImageUrl = src.startsWith('http')
-                    ? src
-                    : `${CONFIG.API.BASE_URL}${src.startsWith('/') ? src : `/${src}`}`;
-            }
-        }
-
         app.innerHTML = template({
             isAuthenticated: store.isAuthenticated,
-            user,
-            avatarImageUrl,
+            user: store.user,
             recommendations: formattedAds,
         });
 

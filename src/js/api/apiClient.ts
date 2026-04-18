@@ -5,6 +5,7 @@
 
 import { CONFIG } from '@/core/config';
 import { storage } from '@/utils/storage';
+import { networkStatus } from '@modules/common/offline/network/networkStatus';
 import type { ApiResponse } from '@/types';
 
 const API_URL = CONFIG.API.API_URL;
@@ -205,7 +206,13 @@ export class ApiClient {
             }
 
             if (response.ok) {
+                networkStatus.setOnline();
                 return { success: true, data: data as T };
+            }
+
+            // 502/503/504 от прокси = бэкенд недоступен → трактуем как офлайн
+            if (response.status === 502 || response.status === 503 || response.status === 504) {
+                networkStatus.setOffline();
             }
 
             return {
@@ -216,6 +223,8 @@ export class ApiClient {
             };
         } catch (error) {
             clearTimeout(timeoutId);
+            // fetch выбросил исключение — сеть недоступна
+            networkStatus.setOffline();
             return {
                 success: false,
                 error: 'Не удалось соединиться с сервером',

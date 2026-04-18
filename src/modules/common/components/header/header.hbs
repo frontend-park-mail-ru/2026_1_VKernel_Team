@@ -29,7 +29,7 @@
         <div class="header-right">
             {{#if isAuthenticated}}
                 <button class="btn place-ad-btn" data-nav="/place-ad">Разместить объявление</button>
-                <a href="">
+                <a href="/profile" data-nav="/profile">
                     <img src="{{avatarUrl user.avatar user.avatar_path}}" alt="Аватар" class="avatar">
                 </a>
                 <button class="btn btn-danger logout-btn" data-action="logout">

@@ -88,7 +88,8 @@ export class PlaceAnAdController {
                 avatarUrl: (() => {
                     const src = store.user?.avatar_path;
                     if (!src) return '/images/logo/avatar.jpeg';
-                    return src.startsWith('http') ? src : `${CONFIG.API.BASE_URL}/${src}`;
+                    if (src.startsWith('http') || src.startsWith('data:')) return src;
+                    return `${CONFIG.API.BASE_URL}/${src}`;
                 })(),
             };
 

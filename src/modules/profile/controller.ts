@@ -113,12 +113,11 @@ export const ProfileController = {
             return;
         }
 
-        await this.loadUserAds();
-
         const app = document.getElementById('app');
         const template = this.templates['profile-page'];
         if (!app || !template) return;
 
+        // Рендерим профиль из кэшированных данных (localStorage) сразу
         const user = store.user || { name: 'Пользователь', avatar_path: '' };
         app.innerHTML = template({
             user: user,
@@ -133,7 +132,10 @@ export const ProfileController = {
         app.appendChild(modalContainer);
 
         this.renderAll();
-        await this.loadProfileData();
+
+        // Подгружаем свежие данные с сервера (не блокируя рендер)
+        this.loadUserAds();
+        this.loadProfileData();
     },
 
     renderAll(): void {

@@ -161,8 +161,15 @@ const authService = {
         storage.removeToken();
     },
 
-    async check(): Promise<{ isAuthenticated: boolean; user: any }> {
+    async check(): Promise<{ isAuthenticated: boolean; user: any; networkError?: boolean }> {
         const result = await apiClient.get(API_ENDPOINTS.USERS.PROFILE);
+
+        // Сетевая ошибка или серверная ошибка (502 от прокси, 5xx) —
+        // не можем определить авторизацию, сохраняем текущее состояние
+        if (result.status === 0 || (result.status && result.status >= 500)) {
+            return { isAuthenticated: false, user: null, networkError: true };
+        }
+
         return {
             isAuthenticated: result.success,
             user: result.success ? result.data : null,
