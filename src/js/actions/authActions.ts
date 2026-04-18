@@ -93,10 +93,22 @@ export const authActions = {
 
     async checkAuth(): Promise<void> {
         const result = await authService.check();
+
+        // При сетевой ошибке — доверяем localStorage, не трогаем state
+        if (result.networkError) {
+            return;
+        }
+
         if (result.isAuthenticated && result.user) {
             store.setState({
                 isAuthenticated: true,
                 user: result.user,
+            });
+        } else {
+            // Сервер ответил, но не авторизован — сбрасываем
+            store.setState({
+                isAuthenticated: false,
+                user: null,
             });
         }
     },

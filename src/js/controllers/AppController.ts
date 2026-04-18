@@ -13,6 +13,7 @@ import notFoundTpl from '@templates/not-found.hbs';
 import { PlaceAnAdController } from '@modules/announcements/place-an-ad';
 import { AdPreviewController } from '@modules/announcements/ad-preview';
 import { AdDetailController } from '@modules/announcements/ad-detail';
+import headerTemplate from '@modules/common/components/header/header.hbs?raw';
 
 import { AuthController } from '@/controllers/AuthController';
 import { AdsController } from '@/controllers/AdsController';
@@ -28,6 +29,7 @@ import { uiActions } from '@/actions/uiActions';
 import type { HandlebarsTemplateFunction, TemplateName, UIConstants } from '@/types';
 import { authActions } from '@/actions/authActions';
 import { CONFIG } from '@/core/config';
+import { initOfflineIndicator } from '@modules/common/offline/offline-indicator';
 
 import * as HandlebarsFull from 'handlebars';
 import * as HandlebarsRuntime from 'handlebars/dist/handlebars.runtime.js';
@@ -54,7 +56,11 @@ const registerHelpers = (Hbs: any) => {
         const trimmed = source.trim();
         if (!trimmed) return DEFAULT_AVATAR;
 
-        if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
+        if (
+            trimmed.startsWith('http://') ||
+            trimmed.startsWith('https://') ||
+            trimmed.startsWith('data:')
+        ) {
             return trimmed;
         }
 
@@ -98,6 +104,9 @@ const registerHelpers = (Hbs: any) => {
 export const AppController = {
     _lastPage: '',
     _currentFeature: '',
+    _lastAuthState: null as boolean | null,
+    _lastAvatarPath: null as string | null,
+    _headerCompiled: null as HandlebarsTemplateFunction | null,
     templates: {} as Record<TemplateName, HandlebarsTemplateFunction>,
 
     UI_CONSTANTS: {
@@ -136,11 +145,15 @@ export const AppController = {
 
         await this.checkAuth().catch(() => {});
 
+        this.renderHeader();
         this.router();
         window.addEventListener('popstate', () => this.router());
+
+        initOfflineIndicator();
     },
 
     async loadTemplates(): Promise<void> {
+        // Шаблоны уже прекомпилированы лоадером, просто присваиваем их
         this.templates['main-page'] = mainPageTpl;
         this.templates['login-forms'] = loginFormsTpl;
         this.templates['register-form'] = registerFormTpl;
@@ -165,13 +178,49 @@ export const AppController = {
             uiActions.showError(state.error);
             uiActions.clearError();
         }
+        // Обновляем header при изменении auth-состояния или аватара
+        const currentAvatar = state.user?.avatar_path || null;
+        if (
+            this._lastAuthState !== state.isAuthenticated ||
+            this._lastAvatarPath !== currentAvatar
+        ) {
+            this._lastAuthState = state.isAuthenticated;
+            this._lastAvatarPath = currentAvatar;
+            this.renderHeader();
+        }
         if (state.currentPage && state.currentPage !== this._lastPage) {
             this._lastPage = state.currentPage;
             this.router();
         }
     },
 
+    renderHeader(): void {
+        const container = document.getElementById('app-header');
+        if (!container) return;
+
+        const path = window.location.pathname;
+        const isAuthPage = path === '/login' || path === '/register';
+
+        if (isAuthPage) {
+            container.style.display = 'none';
+            return;
+        }
+        container.style.display = '';
+
+        const Hbs = (window as any).Handlebars || HandlebarsFull;
+        if (!this._headerCompiled) {
+            this._headerCompiled = Hbs.compile(headerTemplate);
+        }
+
+        const user = store.user;
+        container.innerHTML = this._headerCompiled!({
+            isAuthenticated: store.isAuthenticated,
+            user,
+        });
+    },
+
     router(): void {
+        this.renderHeader();
         const path = window.location.pathname;
         const adMatch = path.match(/^\/ad\/(\d+)$/);
 
@@ -200,7 +249,9 @@ export const AppController = {
 
         if (adMatch) {
             const adId = adMatch[1];
-            if (this._currentFeature === 'ad-detail') AdDetailController.cleanup();
+            if (this._currentFeature === 'ad-detail') {
+                AdDetailController.cleanup();
+            }
             this._currentFeature = 'ad-detail';
             AdDetailController.render(adId);
             return;

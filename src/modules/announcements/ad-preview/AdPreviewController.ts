@@ -11,6 +11,9 @@ import { categoryService } from '@/services/categoryService';
 import { AppController } from '@/controllers/AppController';
 import { uiActions } from '@/actions/uiActions';
 import { AdDraftService } from '@/services/adDraftService';
+import { networkStatus } from '@modules/common/offline/network/networkStatus';
+import { syncQueue } from '@modules/common/offline/sync/syncQueue';
+import { NotificationComponent } from '@modules/common/notifications/notification';
 
 const getCookie = (name: string): string | null => {
     const value = `; ${document.cookie}`;
@@ -29,7 +32,7 @@ export class AdPreviewController {
         const app = document.getElementById('app');
         if (!app) return;
 
-        this.draftData = AdDraftService.get();
+        this.draftData = await AdDraftService.get();
         if (!this.draftData) {
             uiActions.showError('Нет данных для предпросмотра');
             AppController.navigateTo('/place-ad');
@@ -145,10 +148,11 @@ export class AdPreviewController {
                       year: 'numeric',
                   })
                 : 'сегодня',
-            avatarUrl: store.user?.avatar_path 
-                ? (store.user.avatar_path.startsWith('http') 
-                    ? store.user.avatar_path 
-                    : `${CONFIG.API.BASE_URL}/${store.user.avatar_path}`)
+            avatarUrl: store.user?.avatar_path
+                ? store.user.avatar_path.startsWith('http') ||
+                  store.user.avatar_path.startsWith('data:')
+                    ? store.user.avatar_path
+                    : `${CONFIG.API.BASE_URL}/${store.user.avatar_path}`
                 : '/images/logo/avatar.jpeg',
         };
     }
@@ -306,8 +310,6 @@ export class AdPreviewController {
             }
 
             const formData = new FormData();
-
-            // Формируем данные согласно API
             const adData: CreateAdData = {
                 category_id: this.draftData.formData.category_id,
                 title: this.draftData.formData.title,
@@ -318,6 +320,12 @@ export class AdPreviewController {
                 category_characteristics: this.draftData.formData.category_characteristics || [],
                 custom_characteristics: this.draftData.formData.custom_characteristics || [],
             };
+
+            // Оффлайн-путь
+            if (!networkStatus.isOnline) {
+                await this.saveForOfflinePublish(adData, this.draftData.photoFiles);
+                return;
+            }
 
             formData.append('data', JSON.stringify(adData));
 
@@ -341,8 +349,11 @@ export class AdPreviewController {
             const result = await response.json();
 
             if (response.ok) {
-                uiActions.showSuccess('Объявление успешно опубликовано!');
-                AdDraftService.clear();
+                NotificationComponent.show({
+                    type: 'success',
+                    message: 'Объявление успешно опубликовано!',
+                });
+                await AdDraftService.clear();
 
                 const adId = result.ad_id || result.data?.id;
                 AppController.navigateTo(`/ad/${adId}`);
@@ -350,13 +361,48 @@ export class AdPreviewController {
                 console.error('Publish error:', result);
                 const errorMessage =
                     result.error || result.message || 'Ошибка при публикации объявления';
-                uiActions.showError(errorMessage);
+                NotificationComponent.show({ type: 'error', message: errorMessage });
             }
         } catch (error) {
             console.error('Error publishing ad:', error);
-            uiActions.showError('Не удалось опубликовать объявление');
+
+            // Фолбек на оффлайн при сетевой ошибке
+            if (this.draftData) {
+                await this.saveForOfflinePublish(
+                    this.draftData.formData,
+                    this.draftData.photoFiles,
+                );
+            } else {
+                NotificationComponent.show({
+                    type: 'error',
+                    message: 'Не удалось опубликовать объявление',
+                });
+            }
         } finally {
             AppController.showLoading(false);
+        }
+    }
+
+    private static async saveForOfflinePublish(formData: any, photoFiles: File[]): Promise<void> {
+        try {
+            const draftId = await AdDraftService.save(formData, photoFiles);
+            await syncQueue.add({
+                type: 'CREATE_AD',
+                payload: { draft_id: draftId },
+                timestamp: Date.now(),
+            });
+            networkStatus.setOffline();
+            NotificationComponent.show({
+                type: 'info',
+                message: 'Объявление будет опубликовано при подключении к интернету',
+                duration: 5000,
+            });
+            AppController.navigateTo('/');
+        } catch {
+            NotificationComponent.show({
+                type: 'error',
+                message: 'Не удалось сохранить объявление',
+            });
         }
     }
 

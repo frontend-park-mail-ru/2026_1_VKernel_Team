@@ -1,6 +1,6 @@
 /**
- * Контроллер страницы создания объявления
- * Полностью переработан для поддержки характеристик согласно бэкенду
+ * Контроллер страницы создания и редактирования объявления
+ * Реализована поддержка оффлайн-сохранения (IndexedDB) и режима редактирования
  */
 
 import Handlebars from 'handlebars';
@@ -10,6 +10,9 @@ import { uiActions } from '@/actions/uiActions';
 import { AppController } from '@/controllers/AppController';
 import { AdDraftService } from '@/services/adDraftService';
 import { categoryService } from '@/services/categoryService';
+import { networkStatus } from '@modules/common/offline/network/networkStatus';
+import { syncQueue } from '@modules/common/offline/sync/syncQueue';
+import { NotificationComponent } from '@modules/common/notifications/notification';
 import { adsService } from '@/services/adsServices';
 import { apiClient, API_ENDPOINTS } from '@/api/apiClient';
 import { CONFIG } from '@/core/config';
@@ -19,8 +22,6 @@ import type {
     CharacteristicInput,
     CustomCharacteristicInput,
     CreateAdData,
-    ValidationErrors,
-    ApiError,
 } from '@/types';
 
 interface DynamicAttribute {
@@ -36,7 +37,7 @@ export class PlaceAnAdController {
     // Динамические характеристики (custom_characteristics)
     private static dynamicAttributes: DynamicAttribute[] = [];
 
-    // Категорийные характеристики (хранят DOM элементы и их значения)
+    // Категорийные характеристики
     private static categoryCharacteristicsDefs: CategoryCharacteristic[] = [];
     private static categoryCharacteristicsValues: Map<number, string> = new Map();
 
@@ -53,17 +54,10 @@ export class PlaceAnAdController {
     private static isRestoring: boolean = false;
 
     static async render(adId?: string): Promise<void> {
-        // Защита от повторного рендера
-        if (this.isRendering) {
-            return;
-        }
-
+        if (this.isRendering) return;
         this.isRendering = true;
 
-        // Сохраняем adId в локальную переменную, т.к. cleanup из повторного
-        // вызова router() может сбросить this.editingAdId во время await
         const editingId = adId || null;
-
         const app = document.getElementById('app');
         if (!app) {
             this.isRendering = false;
@@ -80,16 +74,10 @@ export class PlaceAnAdController {
                 return;
             }
 
-            // Очищаем данные перед рендером
             this.clearAllData();
-
-            // Режим редактирования
             this.editingAdId = editingId;
 
             const categories = await categoryService.getAllCategories();
-
-            const template = placeAnAdTpl;
-
             const isEditing = !!editingId;
 
             const templateData = {
@@ -100,22 +88,17 @@ export class PlaceAnAdController {
                 avatarUrl: (() => {
                     const src = store.user?.avatar_path;
                     if (!src) return '/images/logo/avatar.jpeg';
-                    return src.startsWith('http') ? src : `${CONFIG.API.BASE_URL}/${src}`;
+                    if (src.startsWith('http') || src.startsWith('data:')) return src;
+                    return `${CONFIG.API.BASE_URL}/${src}`;
                 })(),
             };
 
-            // Восстанавливаем editingAdId (мог быть сброшен cleanup)
-            this.editingAdId = editingId;
-
-            app.innerHTML = template(templateData);
-
+            app.innerHTML = placeAnAdTpl(templateData);
             this.attachEventListeners();
 
             if (editingId) {
-                // Режим редактирования: загружаем данные объявления
                 await this.loadAdForEditing(editingId);
             } else {
-                // Режим создания: восстанавливаем черновик
                 await this.restoreDraft();
             }
         } catch (error) {
@@ -150,7 +133,6 @@ export class PlaceAnAdController {
 
             const ad = result.data;
 
-            // Заполняем поля формы
             const titleInput = document.getElementById('title') as HTMLInputElement;
             const categorySelect = document.getElementById('category') as HTMLSelectElement;
             const priceInput = document.getElementById('price') as HTMLInputElement;
@@ -164,12 +146,10 @@ export class PlaceAnAdController {
             if (descriptionTextarea) descriptionTextarea.value = ad.description || '';
             if (locationInput) locationInput.value = ad.location || '';
 
-            // Устанавливаем категорию и загружаем характеристики
             if (ad.category_id && categorySelect) {
                 categorySelect.value = String(ad.category_id);
                 await this.loadCategoryCharacteristics(ad.category_id);
 
-                // Заполняем значения категорийных характеристик
                 if (ad.category_characteristics && ad.category_characteristics.length > 0) {
                     for (const char of ad.category_characteristics) {
                         const charId = char.category_characteristic_id || char.id;
@@ -181,7 +161,6 @@ export class PlaceAnAdController {
                 }
             }
 
-            // Заполняем кастомные характеристики
             if (ad.custom_characteristics && ad.custom_characteristics.length > 0) {
                 this.dynamicAttributes = ad.custom_characteristics.map((c: any) => ({
                     name: c.name,
@@ -190,7 +169,6 @@ export class PlaceAnAdController {
                 this.renderDynamicAttributes();
             }
 
-            // Загружаем существующие фото
             if (ad.photos && ad.photos.length > 0) {
                 this.existingPhotos = ad.photos.map((photo: string) =>
                     photo.startsWith('http') ? photo : `${CONFIG.API.BASE_URL}${photo}`,
@@ -201,35 +179,16 @@ export class PlaceAnAdController {
         } catch (error) {
             console.error('Error loading ad for editing:', error);
             uiActions.showError('Ошибка загрузки объявления');
-            AppController.navigateTo('/profile');
         }
     }
 
     private static async restoreDraft(): Promise<void> {
-        // Защита от двойного вызова
-        if (this.isRestoring) {
-            return;
-        }
-
+        if (this.isRestoring) return;
         this.isRestoring = true;
 
         try {
-            const draft = AdDraftService.get();
+            const draft = await AdDraftService.get();
             if (!draft) return;
-
-            // Жёсткая очистка всех данных
-            this.photoFiles = [];
-            this.photoPreviews = [];
-            this.dynamicAttributes = [];
-            this.categoryCharacteristicsDefs = [];
-            this.categoryCharacteristicsValues.clear();
-
-            // Очищаем DOM сетку фото
-            const grid = document.getElementById('photosGrid');
-            if (grid) {
-                const existingCards = grid.querySelectorAll('.photo-card');
-                existingCards.forEach((card) => card.remove());
-            }
 
             const titleInput = document.getElementById('title') as HTMLInputElement;
             const categorySelect = document.getElementById('category') as HTMLSelectElement;
@@ -273,7 +232,6 @@ export class PlaceAnAdController {
             }
 
             if (draft.photoFiles.length > 0) {
-                // Создаём превью для всех фото
                 for (const file of draft.photoFiles) {
                     const preview = await new Promise<string>((resolve) => {
                         const reader = new FileReader();
@@ -283,9 +241,11 @@ export class PlaceAnAdController {
                     this.photoPreviews.push(preview);
                 }
                 this.photoFiles = [...draft.photoFiles];
-
                 this.renderPhotosGrid();
-                uiActions.showSuccess(`Восстановлен черновик: ${draft.formData.title}`);
+                NotificationComponent.show({
+                    type: 'success',
+                    message: `Восстановлен черновик: ${draft.formData.title}`,
+                });
             }
         } finally {
             this.isRestoring = false;
@@ -307,7 +267,6 @@ export class PlaceAnAdController {
             this.renderCategoryCharacteristicsForm();
         } catch (error) {
             console.error('Error loading category characteristics:', error);
-            uiActions.showError('Не удалось загрузить характеристики категории');
         }
     }
 
@@ -385,17 +344,14 @@ export class PlaceAnAdController {
         const addBtn = document.getElementById('addPhotoBtn');
         if (!addBtn) return;
 
-        // Удаляем все существующие карточки
         const existingCards = grid.querySelectorAll('.photo-card');
         existingCards.forEach((card) => card.remove());
 
-        // Все превью: существующие фото (URL) + новые файлы
         const allPreviews = [
             ...this.existingPhotos,
             ...this.photoPreviews.slice(this.existingPhotos.length),
         ];
 
-        // Создаем карточки заново
         allPreviews.forEach((preview, index) => {
             const photoCard = document.createElement('div');
             photoCard.className = 'photo-card';
@@ -451,26 +407,16 @@ export class PlaceAnAdController {
         for (let i = 0; i < files.length; i++) {
             const file = files[i];
 
-            if (!this.ALLOWED_TYPES.includes(file.type)) {
-                uiActions.showError(
-                    `Файл "${file.name}" не поддерживается. Используйте JPEG, PNG или WEBP`,
-                );
-                continue;
-            }
-
-            if (file.size > this.MAX_PHOTO_SIZE) {
-                uiActions.showError(`Файл "${file.name}" превышает 5MB`);
+            if (!this.ALLOWED_TYPES.includes(file.type) || file.size > this.MAX_PHOTO_SIZE) {
+                uiActions.showError(`Файл "${file.name}" не подходит по типу или размеру`);
                 continue;
             }
 
             filesToAdd.push(file);
-
             const reader = new FileReader();
             reader.onload = (e) => {
-                const previewUrl = e.target?.result as string;
-                previewsToAdd.push(previewUrl);
+                previewsToAdd.push(e.target?.result as string);
                 processedCount++;
-
                 if (processedCount === filesToAdd.length) {
                     this.photoFiles.push(...filesToAdd);
                     this.photoPreviews.push(...previewsToAdd);
@@ -480,7 +426,6 @@ export class PlaceAnAdController {
             };
             reader.readAsDataURL(file);
         }
-
         input.value = '';
     }
 
@@ -489,33 +434,22 @@ export class PlaceAnAdController {
         if (index < 0 || index >= totalPhotos) return;
 
         if (index < this.existingPhotos.length) {
-            // Удаляем существующее фото (URL)
             this.existingPhotos.splice(index, 1);
             this.photoPreviews.splice(index, 1);
         } else {
-            // Удаляем новое фото (File)
             const fileIndex = index - this.existingPhotos.length;
             this.photoFiles.splice(fileIndex, 1);
             this.photoPreviews.splice(index, 1);
         }
 
         this.renderPhotosGrid();
-
-        if (!this.editingAdId) {
-            this.autoSaveDraft();
-        }
-
-        const remaining = this.existingPhotos.length + this.photoFiles.length;
-        if (remaining === 0) {
-            uiActions.showSuccess('Все фото удалены');
-        } else {
-            uiActions.showSuccess('Фото удалено');
-        }
+        if (!this.editingAdId) this.autoSaveDraft();
+        uiActions.showSuccess('Фото удалено');
     }
 
     private static addDynamicAttribute(): void {
         if (this.dynamicAttributes.length >= this.MAX_CUSTOM_CHARS) {
-            uiActions.showError(`Максимум ${this.MAX_CUSTOM_CHARS} пользовательских характеристик`);
+            uiActions.showError(`Максимум ${this.MAX_CUSTOM_CHARS} характеристик`);
             return;
         }
         this.dynamicAttributes.push({ name: '', value: '' });
@@ -554,88 +488,64 @@ export class PlaceAnAdController {
             .map(
                 (attr, index) => `
             <div class="dynamic-attribute" data-attr-index="${index}">
-                <input
-                    type="text"
-                    class="form-input attr-name"
-                    placeholder="Название (например, Цвет)"
-                    value="${this.escapeHtml(attr.name)}"
-                    data-attr-name="${index}"
-                    maxlength="100"
-                >
-                <input
-                    type="text"
-                    class="form-input attr-value"
-                    placeholder="Значение (например, Черный)"
-                    value="${this.escapeHtml(attr.value)}"
-                    data-attr-value="${index}"
-                    maxlength="500"
-                >
+                <input type="text" class="form-input attr-name" placeholder="Название" value="${this.escapeHtml(attr.name)}" data-attr-name="${index}">
+                <input type="text" class="form-input attr-value" placeholder="Значение" value="${this.escapeHtml(attr.value)}" data-attr-value="${index}">
                 <button type="button" class="remove-attr-btn" data-index="${index}">✕</button>
-            </div>
-        `,
+            </div>`,
             )
             .join('');
 
-        document.querySelectorAll('[data-attr-name]').forEach((input) => {
-            const el = input as HTMLInputElement;
-            const index = parseInt(el.dataset.attrName!);
-            const handler = (e: Event) => {
-                this.updateDynamicAttribute(index, 'name', (e.target as HTMLInputElement).value);
-            };
-            el.removeEventListener('input', handler);
-            el.addEventListener('input', handler);
+        container.querySelectorAll('[data-attr-name]').forEach((el) => {
+            el.addEventListener('input', (e) =>
+                this.updateDynamicAttribute(
+                    parseInt((el as HTMLElement).dataset.attrName!),
+                    'name',
+                    (e.target as HTMLInputElement).value,
+                ),
+            );
         });
-
-        document.querySelectorAll('[data-attr-value]').forEach((input) => {
-            const el = input as HTMLInputElement;
-            const index = parseInt(el.dataset.attrValue!);
-            const handler = (e: Event) => {
-                this.updateDynamicAttribute(index, 'value', (e.target as HTMLInputElement).value);
-            };
-            el.removeEventListener('input', handler);
-            el.addEventListener('input', handler);
+        container.querySelectorAll('[data-attr-value]').forEach((el) => {
+            el.addEventListener('input', (e) =>
+                this.updateDynamicAttribute(
+                    parseInt((el as HTMLElement).dataset.attrValue!),
+                    'value',
+                    (e.target as HTMLInputElement).value,
+                ),
+            );
+        });
+        container.querySelectorAll('.remove-attr-btn').forEach((el) => {
+            el.addEventListener('click', () =>
+                this.removeDynamicAttribute(parseInt((el as HTMLElement).dataset.index!)),
+            );
         });
     }
 
     private static autoSaveDraft(): void {
-        // Не сохраняем черновик в режиме редактирования
         if (this.editingAdId) return;
-
         const formData = this.collectFormData();
-
-        if (!formData.title && !formData.description && this.photoFiles.length === 0) {
-            return;
-        }
-
+        if (!formData.title && !formData.description && this.photoFiles.length === 0) return;
         AdDraftService.save(formData, this.photoFiles);
     }
 
     private static collectFormData(): CreateAdData {
-        const titleInput = document.getElementById('title') as HTMLInputElement;
         const categorySelect = document.getElementById('category') as HTMLSelectElement;
+        const titleInput = document.getElementById('title') as HTMLInputElement;
         const priceInput = document.getElementById('price') as HTMLInputElement;
         const descriptionTextarea = document.getElementById('description') as HTMLTextAreaElement;
         const locationInput = document.getElementById('location') as HTMLInputElement;
 
         const categoryCharacteristics: CharacteristicInput[] = [];
         for (const [charId, value] of this.categoryCharacteristicsValues) {
-            if (value && value.trim()) {
+            if (value?.trim())
                 categoryCharacteristics.push({
                     category_characteristic_id: charId,
                     value: value.trim(),
                 });
-            }
         }
 
-        const customCharacteristics: CustomCharacteristicInput[] = [];
-        for (const attr of this.dynamicAttributes) {
-            if (attr.name.trim() && attr.value.trim()) {
-                customCharacteristics.push({
-                    name: attr.name.trim(),
-                    value: attr.value.trim(),
-                });
-            }
-        }
+        const customCharacteristics: CustomCharacteristicInput[] = this.dynamicAttributes
+            .filter((attr) => attr.name.trim() && attr.value.trim())
+            .map((attr) => ({ name: attr.name.trim(), value: attr.value.trim() }));
 
         return {
             category_id: parseInt(categorySelect?.value || '0'),
@@ -651,151 +561,130 @@ export class PlaceAnAdController {
         };
     }
 
-    private static validateForm(data: CreateAdData, mode: 'publish' | 'draft'): boolean {
-        if (mode === 'publish') {
-            if (!data.title) {
-                uiActions.showError('Введите название объявления');
-                return false;
-            }
-
-            if (data.title.length < 5) {
-                uiActions.showError('Название должно быть не менее 5 символов');
-                return false;
-            }
-
-            if (data.title.length > 150) {
-                uiActions.showError('Название не должно превышать 150 символов');
-                return false;
-            }
-
-            if (!data.category_id || data.category_id === 0) {
-                uiActions.showError('Выберите категорию');
-                return false;
-            }
-
-            if (isNaN(data.price) || data.price < 0) {
-                uiActions.showError('Цена не может быть отрицательной');
-                return false;
-            }
-
-            if (data.description && data.description.length > 5000) {
-                uiActions.showError('Описание не должно превышать 5000 символов');
-                return false;
-            }
-
-            if (!data.location) {
-                uiActions.showError('Укажите местоположение');
-                return false;
-            }
-
-            if (this.photoFiles.length === 0 && this.existingPhotos.length === 0) {
-                uiActions.showError('Добавьте хотя бы одно фото');
-                return false;
-            }
-        } else {
-            if (!data.title) {
-                uiActions.showError('Введите название объявления');
-                return false;
-            }
-        }
-
-        return true;
-    }
-
     private static async handleSubmit(mode: 'publish' | 'draft'): Promise<void> {
         AppController.showLoading(true);
-
         try {
             const formData = this.collectFormData();
+            if (mode === 'draft') formData.status = 'draft';
 
-            if (!this.validateForm(formData, mode)) {
-                AppController.showLoading(false);
+            if (!networkStatus.isOnline) {
+                await this.saveForOfflinePublish(formData);
                 return;
-            }
-
-            if (mode === 'draft') {
-                formData.status = 'draft';
             }
 
             const multipartFormData = new FormData();
             multipartFormData.append('data', JSON.stringify(formData));
-
-            // Добавляем новые фото-файлы
-            this.photoFiles.forEach((file) => {
-                multipartFormData.append('photos', file);
-            });
-
-            // В режиме редактирования передаём список существующих фото, которые нужно сохранить
+            this.photoFiles.forEach((file) => multipartFormData.append('photos', file));
             if (this.editingAdId && this.existingPhotos.length > 0) {
                 multipartFormData.append('existing_photos', JSON.stringify(this.existingPhotos));
             }
 
-            const isEditing = !!this.editingAdId;
-
-            const result = isEditing
-                ? await apiClient.put(
-                      API_ENDPOINTS.ADS.UPDATE(this.editingAdId!),
-                      multipartFormData,
-                  )
+            const result = this.editingAdId
+                ? await apiClient.put(API_ENDPOINTS.ADS.UPDATE(this.editingAdId), multipartFormData)
                 : await apiClient.post(API_ENDPOINTS.ADS.CREATE, multipartFormData);
 
             if (result.success) {
-                if (isEditing) {
-                    const editedId = this.editingAdId;
-                    this.clearAllData();
-                    uiActions.showSuccess('Объявление успешно обновлено!');
-                    AppController.navigateTo(`/ad/${editedId}`);
-                } else {
-                    const responseData = result.data;
-                    const adId = responseData?.ad_id || responseData?.id;
-                    AdDraftService.clear();
-                    this.clearAllData();
-
-                    if (mode === 'publish') {
-                        uiActions.showSuccess('Объявление успешно опубликовано!');
-                        AppController.navigateTo(adId ? `/ad/${adId}` : '/');
-                    } else {
-                        uiActions.showSuccess('Объявление сохранено в черновики');
-                        AppController.navigateTo('/profile');
-                    }
-                }
+                const adId = result.data?.ad_id || result.data?.id || this.editingAdId;
+                if (!this.editingAdId) AdDraftService.clear();
+                this.clearAllData();
+                NotificationComponent.show({ type: 'success', message: 'Успешно сохранено!' });
+                AppController.navigateTo(adId ? `/ad/${adId}` : '/profile');
             } else {
-                uiActions.showError(result.error || 'Ошибка при сохранении объявления');
+                NotificationComponent.show({
+                    type: 'error',
+                    message: result.error || 'Ошибка сохранения',
+                });
             }
-        } catch (error: any) {
-            console.error('Error submitting ad:', error);
-            console.error('Error details:', error?.message, error?.stack);
-            uiActions.showError(error?.message || 'Не удалось соединиться с сервером');
+        } catch (error) {
+            console.error('Submit error:', error);
+            await this.saveForOfflinePublish(this.collectFormData());
         } finally {
             AppController.showLoading(false);
+        }
+    }
+
+    private static async saveForOfflinePublish(formData: CreateAdData): Promise<void> {
+        try {
+            const draftId = await AdDraftService.save(formData, this.photoFiles);
+            await syncQueue.add({
+                type: 'CREATE_AD',
+                payload: { draft_id: draftId },
+                timestamp: Date.now(),
+            });
+            networkStatus.setOffline();
+            NotificationComponent.show({
+                type: 'info',
+                message: 'Будет опубликовано при подключении к сети',
+                duration: 5000,
+            });
+            AppController.navigateTo('/');
+        } catch (error) {
+            NotificationComponent.show({ type: 'error', message: 'Не удалось сохранить оффлайн' });
         }
     }
 
     private static async handlePreview(): Promise<void> {
         AppController.showLoading(true);
-
         try {
             const formData = this.collectFormData();
-
-            if (!formData.title) {
-                uiActions.showError('Введите название объявления');
-                return;
-            }
-
-            if (!formData.category_id || formData.category_id === 0) {
-                uiActions.showError('Выберите категорию');
-                return;
-            }
-
-            this.autoSaveDraft();
-
+            await AdDraftService.save(formData, this.photoFiles);
             AppController.navigateTo('/ad-preview');
         } catch (error) {
-            console.error('Error creating preview:', error);
             uiActions.showError('Не удалось создать предпросмотр');
         } finally {
             AppController.showLoading(false);
         }
+    }
+
+    private static attachEventListeners(): void {
+        const categorySelect = document.getElementById('category') as HTMLSelectElement;
+        categorySelect?.addEventListener('change', async () => {
+            await this.loadCategoryCharacteristics(parseInt(categorySelect.value));
+            this.autoSaveDraft();
+        });
+
+        ['title', 'price', 'description', 'location'].forEach((id) => {
+            document.getElementById(id)?.addEventListener('input', () => this.autoSaveDraft());
+        });
+
+        document
+            .getElementById('saveDraftBtn')
+            ?.addEventListener('click', () => this.handleSubmit('draft'));
+        document
+            .getElementById('previewBtn')
+            ?.addEventListener('click', () => this.handlePreview());
+        document
+            .getElementById('saveEditBtn')
+            ?.addEventListener('click', () => this.handleSubmit('publish'));
+        document
+            .getElementById('addPhotoBtn')
+            ?.addEventListener('click', () =>
+                (document.getElementById('photosInput') as HTMLInputElement)?.click(),
+            );
+        document
+            .getElementById('photosInput')
+            ?.addEventListener('change', (e) =>
+                this.handlePhotoUpload(e.target as HTMLInputElement),
+            );
+        document
+            .getElementById('addAttributeBtn')
+            ?.addEventListener('click', () => this.addDynamicAttribute());
+
+        document.querySelectorAll('[data-action="back"]').forEach((btn) =>
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                if (this.editingAdId) {
+                    AppController.navigateTo(`/ad/${this.editingAdId}`);
+                } else {
+                    AppController.navigateTo('/');
+                }
+            }),
+        );
+    }
+
+    static cleanup(): void {
+        if (this.isRendering) return;
+        this.clearAllData();
     }
 
     private static escapeHtml(str: string): string {
@@ -809,226 +698,6 @@ export class PlaceAnAdController {
 
     private static async showNotFound(): Promise<void> {
         const app = document.getElementById('app');
-        if (!app) return;
-
-        try {
-            const response = await fetch('/templates/not-found.hbs');
-            const templateSource = await response.text();
-            const template = Handlebars.compile(templateSource);
-            app.innerHTML = template({});
-        } catch (error) {
-            app.innerHTML = '<h1>404 - Страница не найдена</h1>';
-        }
-    }
-
-    private static attachEventListeners(): void {
-        // Обработчик выбора категории
-        const categorySelect = document.getElementById('category') as HTMLSelectElement;
-        if (categorySelect) {
-            const handler = async () => {
-                const categoryId = parseInt(categorySelect.value);
-                await this.loadCategoryCharacteristics(categoryId);
-                this.autoSaveDraft();
-            };
-            categorySelect.addEventListener('change', handler);
-            this._handlers.set('categoryChange', handler);
-        }
-
-        // Обработчики полей ввода
-        const titleInput = document.getElementById('title') as HTMLInputElement;
-        if (titleInput) {
-            const handler = () => this.autoSaveDraft();
-            titleInput.addEventListener('input', handler);
-            this._handlers.set('titleInput', handler);
-        }
-
-        const priceInput = document.getElementById('price') as HTMLInputElement;
-        if (priceInput) {
-            const handler = () => this.autoSaveDraft();
-            priceInput.addEventListener('input', handler);
-            this._handlers.set('priceInput', handler);
-        }
-
-        const descriptionTextarea = document.getElementById('description') as HTMLTextAreaElement;
-        if (descriptionTextarea) {
-            const handler = () => this.autoSaveDraft();
-            descriptionTextarea.addEventListener('input', handler);
-            this._handlers.set('description', handler);
-        }
-
-        const locationInput = document.getElementById('location') as HTMLInputElement;
-        if (locationInput) {
-            const handler = () => this.autoSaveDraft();
-            locationInput.addEventListener('input', handler);
-            this._handlers.set('location', handler);
-        }
-
-        // Кнопки "Назад" и "Логотип"
-        const backBtns = document.querySelectorAll('[data-action="back"]');
-        for (let i = 0; i < backBtns.length; i++) {
-            const btn = backBtns[i];
-            const handler = (e: Event) => {
-                e.preventDefault();
-                if (this.editingAdId) {
-                    const editedId = this.editingAdId;
-                    this.clearAllData();
-                    AppController.navigateTo(`/ad/${editedId}`);
-                } else {
-                    this.autoSaveDraft();
-                    AppController.navigateTo('/');
-                }
-            };
-            btn.addEventListener('click', handler);
-            this._handlers.set(`back-${i}`, handler);
-        }
-
-        // Кнопка "Отмена"
-        const cancelBtn = document.querySelector('[data-action="cancel-ad"]');
-        if (cancelBtn) {
-            const handler = (e: Event) => {
-                e.preventDefault();
-                if (this.editingAdId) {
-                    const editedId = this.editingAdId;
-                    this.clearAllData();
-                    AppController.navigateTo(`/ad/${editedId}`);
-                } else {
-                    if (
-                        confirm(
-                            'Вы уверены, что хотите отменить создание объявления? Все введенные данные будут потеряны.',
-                        )
-                    ) {
-                        AdDraftService.clear();
-                        this.clearAllData();
-                        AppController.navigateTo('/');
-                    }
-                }
-            };
-            cancelBtn.addEventListener('click', handler);
-            this._handlers.set('cancel-ad', handler);
-        }
-
-        // Кнопка сохранения черновика
-        const draftBtn = document.getElementById('saveDraftBtn');
-        if (draftBtn) {
-            const handler = () => {
-                this.handleSubmit('draft');
-            };
-            draftBtn.addEventListener('click', handler);
-            this._handlers.set('saveDraft', handler);
-        }
-
-        // Кнопка предпросмотра
-        const previewBtn = document.getElementById('previewBtn');
-        if (previewBtn) {
-            const handler = async () => {
-                await this.handlePreview();
-            };
-            previewBtn.addEventListener('click', handler);
-            this._handlers.set('preview', handler);
-        }
-
-        // Кнопка "Сохранить изменения" (режим редактирования)
-        const saveEditBtn = document.getElementById('saveEditBtn');
-        if (saveEditBtn) {
-            const handler = () => {
-                this.handleSubmit('publish');
-            };
-            saveEditBtn.addEventListener('click', handler);
-            this._handlers.set('saveEdit', handler);
-        }
-
-        // Загрузка фото
-        const addPhotoBtn = document.getElementById('addPhotoBtn');
-        const photosInput = document.getElementById('photosInput') as HTMLInputElement;
-
-        if (addPhotoBtn && photosInput) {
-            const clickHandler = () => {
-                photosInput.click();
-            };
-            addPhotoBtn.addEventListener('click', clickHandler);
-            this._handlers.set('addPhotoBtn', clickHandler);
-
-            const changeHandler = () => {
-                this.handlePhotoUpload(photosInput);
-            };
-            photosInput.addEventListener('change', changeHandler);
-            this._handlers.set('photosInput', changeHandler);
-        }
-
-        // Добавление пользовательской характеристики
-        const addAttrBtn = document.getElementById('addAttributeBtn');
-        if (addAttrBtn) {
-            const handler = () => {
-                this.addDynamicAttribute();
-            };
-            addAttrBtn.addEventListener('click', handler);
-            this._handlers.set('addAttribute', handler);
-        }
-
-        // Удаление пользовательской характеристики
-        const dynamicContainer = document.getElementById('dynamicAttributesContainer');
-        if (dynamicContainer) {
-            const handler = (e: Event) => {
-                const target = e.target as HTMLElement;
-                if (target.classList.contains('remove-attr-btn')) {
-                    const index = target.dataset.index;
-                    if (index !== undefined) {
-                        this.removeDynamicAttribute(parseInt(index));
-                    }
-                }
-            };
-            dynamicContainer.addEventListener('click', handler);
-            this._handlers.set('removeAttribute', handler);
-        }
-    }
-
-    static cleanup(): void {
-        // Не очищаем данные если идёт рендеринг (cleanup может быть вызван
-        // повторным router() во время async render)
-        if (this.isRendering) return;
-
-        this._handlers.forEach((handler, key) => {
-            let element: Element | null = null;
-
-            if (key === 'categoryChange') {
-                element = document.getElementById('category');
-            } else if (key === 'titleInput') {
-                element = document.getElementById('title');
-            } else if (key === 'priceInput') {
-                element = document.getElementById('price');
-            } else if (key === 'description') {
-                element = document.getElementById('description');
-            } else if (key === 'location') {
-                element = document.getElementById('location');
-            } else if (key === 'saveDraft') {
-                element = document.getElementById('saveDraftBtn');
-            } else if (key === 'preview') {
-                element = document.getElementById('previewBtn');
-            } else if (key === 'saveEdit') {
-                element = document.getElementById('saveEditBtn');
-            } else if (key === 'addPhotoBtn') {
-                element = document.getElementById('addPhotoBtn');
-            } else if (key === 'photosInput') {
-                element = document.getElementById('photosInput');
-            } else if (key === 'addAttribute') {
-                element = document.getElementById('addAttributeBtn');
-            } else if (key === 'removeAttribute') {
-                element = document.getElementById('dynamicAttributesContainer');
-            } else if (key === 'cancel-ad') {
-                element = document.querySelector('[data-action="cancel-ad"]');
-            } else if (key.startsWith('back-')) {
-                const btns = document.querySelectorAll('[data-action="back"]');
-                element = btns[parseInt(key.split('-')[1])] || null;
-            }
-
-            if (element) {
-                element.removeEventListener('click', handler);
-                element.removeEventListener('change', handler);
-                element.removeEventListener('input', handler);
-            }
-        });
-
-        this._handlers.clear();
-        this.clearAllData();
+        if (app) app.innerHTML = '<h1>404 - Страница не найдена</h1>';
     }
 }
