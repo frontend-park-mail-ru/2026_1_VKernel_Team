@@ -4,12 +4,19 @@
 
 export interface User {
     id?: number;
-    user_id?: number;
+    user_id?: number; // Для совместимости с разными ответами API
     email?: string;
     name?: string;
     avatar?: string;
     avatar_path?: string;
+    rating?: number;
+    ads_count?: number;
+    favorites_count?: number;
+    cart_count?: number;
+    unread_messages_count?: number;
+    reviews_count?: number;
     created_at?: string;
+    updated_at?: string;
 }
 
 export interface Ad {
@@ -25,7 +32,7 @@ export interface Ad {
     updated_at?: string;
     location?: string;
     status?: 'active' | 'draft' | 'reserved' | 'sold' | 'archived';
-    
+
     category_characteristics: ProductCharacteristic[];
     custom_characteristics: ProductCustomCharacteristic[];
     seller_id?: number;
@@ -85,7 +92,19 @@ export type TemplateName =
     | 'not-found'
     | 'ad-detail'
     | 'before-publication'
-    | 'place-an-ad';
+    | 'place-an-ad'
+    | 'profile-sidebar'
+    | 'profile-content'
+    | 'profile-modal-edit-name'
+    | 'profile-avatar'
+    | 'profile-actions'
+    | 'profile-ads-grid'
+    | 'profile-ads-tabs'
+    | 'profile-empty-state'
+    | 'profile-item-card'
+    | 'profile-stats'
+    | 'profile-tab-btn'
+    | 'profile-user-info';
 
 export type HandlebarsTemplateFunction = (context?: any) => string;
 
@@ -97,6 +116,7 @@ export interface UIConstants {
     LOADER_HTML: string;
 }
 
+// Типы для создания/редактирования объявлений (из main)
 export interface DraftCategoryCharacteristic {
     category_characteristic_id: number;
     value: string;
@@ -135,7 +155,7 @@ export interface CategoryCharacteristic {
     id: number;
     category_id: number;
     name: string;
-    allowed_values: string[] | null; // null = свободный ввод, массив = enum (dropdown)
+    allowed_values: string[] | null;
     sort_order: number;
 }
 

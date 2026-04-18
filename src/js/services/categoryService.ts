@@ -9,40 +9,82 @@ const API_ENDPOINTS = {
     CATEGORIES: {
         GET_ALL: '/categories',
         GET_CHARACTERISTICS: (id: number) => `/categories/${id}/characteristics`,
-    }
+    },
 };
+
+const CATEGORIES_CACHE_KEY = 'clover_categories';
+const CHARS_CACHE_PREFIX = 'clover_cat_chars_';
 
 export const categoryService = {
     /**
-     * Получение всех категорий
+     * Получение всех категорий (с кэшированием в localStorage)
      */
     async getAllCategories(): Promise<Category[]> {
-        const result = await apiClient.get<Category[]>(API_ENDPOINTS.CATEGORIES.GET_ALL);
-        
-        if (result.success && result.data) {
-            return result.data;
+        try {
+            const result = await apiClient.get<Category[]>(API_ENDPOINTS.CATEGORIES.GET_ALL);
+
+            if (result.success && result.data) {
+                try {
+                    localStorage.setItem(CATEGORIES_CACHE_KEY, JSON.stringify(result.data));
+                } catch {
+                    /* quota exceeded */
+                }
+                return result.data;
+            }
+        } catch {
+            // network error
         }
-        
-        console.warn('Failed to load categories from API, using fallback');
+
+        // Фолбек: сначала из localStorage, потом hardcoded
+        const cached = this.getCachedCategories();
+        if (cached) return cached;
+
         return this.getFallbackCategories();
     },
-    
+
     /**
-     * Получение характеристик категории
+     * Получение характеристик категории (с кэшированием)
      */
     async getCategoryCharacteristics(categoryId: number): Promise<CategoryCharacteristic[]> {
-        const result = await apiClient.get<CategoryCharacteristic[]>(
-            API_ENDPOINTS.CATEGORIES.GET_CHARACTERISTICS(categoryId)
-        );
-        
-        if (result.success && result.data) {
-            // Сортируем по sort_order
-            return result.data.sort((a, b) => a.sort_order - b.sort_order);
+        try {
+            const result = await apiClient.get<CategoryCharacteristic[]>(
+                API_ENDPOINTS.CATEGORIES.GET_CHARACTERISTICS(categoryId),
+            );
+
+            if (result.success && result.data) {
+                const sorted = result.data.sort((a, b) => a.sort_order - b.sort_order);
+                try {
+                    localStorage.setItem(CHARS_CACHE_PREFIX + categoryId, JSON.stringify(sorted));
+                } catch {
+                    /* quota exceeded */
+                }
+                return sorted;
+            }
+        } catch {
+            // network error
         }
-        
+
+        // Фолбек из localStorage
+        try {
+            const cached = localStorage.getItem(CHARS_CACHE_PREFIX + categoryId);
+            if (cached) return JSON.parse(cached);
+        } catch {
+            /* parse error */
+        }
+
         return [];
     },
-    
+
+    getCachedCategories(): Category[] | null {
+        try {
+            const cached = localStorage.getItem(CATEGORIES_CACHE_KEY);
+            if (cached) return JSON.parse(cached);
+        } catch {
+            /* parse error */
+        }
+        return null;
+    },
+
     /**
      * Фолбэк-категории (на случай, если API еще не готов)
      */
@@ -64,10 +106,13 @@ export const categoryService = {
             { id: 14, name: 'Книги' },
             { id: 15, name: 'Красота и здоровье' },
             { id: 16, name: 'Животные' },
-            { id: 17, name: 'Сад и огород' },
-            { id: 18, name: 'Автозапчасти' },
+            { id: 17, name: 'Для дома и дачи' },
+            { id: 18, name: 'Запчасти' },
             { id: 19, name: 'Спорт' },
             { id: 20, name: 'Канцелярия' },
+            { id: 21, name: 'Авто' },
+            { id: 22, name: 'Работа' },
+            { id: 23, name: 'Товары для детей' },
         ];
-    }
+    },
 };

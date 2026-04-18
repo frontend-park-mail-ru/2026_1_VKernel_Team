@@ -1,0 +1,23 @@
+.profile-page-layout {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 24px;
+    max-width: 1200px;
+    margin: 24px auto 40px;
+    padding: 0 20px;
+    align-items: start;
+}
+
+.profile-content-section {
+    background: #fff;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    min-height: 500px;
+}
+
+@media (max-width: 900px) {
+    .profile-page-layout {
+        grid-template-columns: 1fr;
+    }
+}

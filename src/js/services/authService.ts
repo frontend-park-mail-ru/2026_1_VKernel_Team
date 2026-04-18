@@ -3,6 +3,7 @@
  * @module authService
  */
 import { API_ENDPOINTS, apiClient } from '@/api/apiClient';
+import { storage } from '@/utils/storage';
 
 const HTTP_STATUS = {
     UNAUTHORIZED: 401,
@@ -64,6 +65,12 @@ const authService = {
         });
 
         if (result.success) {
+            // ИСПРАВЛЕНИЕ: Сохраняем токен, если бэкенд сразу авторизует после регистрации
+            const token = result.data?.token || result.data?.access_token;
+            if (token) {
+                storage.setToken(token);
+            }
+
             return {
                 success: true,
                 data: result.data,
@@ -113,6 +120,12 @@ const authService = {
         });
 
         if (result.success) {
+            // ИСПРАВЛЕНИЕ: Сохраняем токен в localStorage
+            const token = result.data?.token || result.data?.access_token;
+            if (token) {
+                storage.setToken(token);
+            }
+
             return {
                 success: true,
                 data: result.data,
@@ -144,10 +157,19 @@ const authService = {
 
     async logout(): Promise<void> {
         await apiClient.post(API_ENDPOINTS.AUTH.LOGOUT, {});
+        // ИСПРАВЛЕНИЕ: Удаляем токен из хранилища при выходе
+        storage.removeToken();
     },
 
-    async check(): Promise<{ isAuthenticated: boolean; user: any }> {
+    async check(): Promise<{ isAuthenticated: boolean; user: any; networkError?: boolean }> {
         const result = await apiClient.get(API_ENDPOINTS.USERS.PROFILE);
+
+        // Сетевая ошибка или серверная ошибка (502 от прокси, 5xx) —
+        // не можем определить авторизацию, сохраняем текущее состояние
+        if (result.status === 0 || (result.status && result.status >= 500)) {
+            return { isAuthenticated: false, user: null, networkError: true };
+        }
+
         return {
             isAuthenticated: result.success,
             user: result.success ? result.data : null,

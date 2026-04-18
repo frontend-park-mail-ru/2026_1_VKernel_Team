@@ -1,57 +1,4 @@
 <div class="main-container ad-detail-page">
-    <!-- НАВБАР -->
-    <header class="header">
-        <div class="header-content">
-            <!-- Левая часть с иконками -->
-            <div class="header-left">
-                <div class="nav-icon">
-                    <a href="#" class="nav-link">
-                        <span class="icon">💼</span>
-                        <span class="nav-text">Для бизнеса</span>
-                    </a>
-                </div>
-                <div class="nav-icon">
-                    <a href="#" class="nav-link">
-                        <span class="icon">✉️</span>
-                        <span class="nav-text">Сообщения</span>
-                    </a>
-                </div>
-                <div class="nav-icon">
-                    <a href="#" class="nav-link">
-                        <span class="icon favorites">♡</span>
-                        <span class="nav-text">Избранное</span>
-                    </a>
-                </div>
-                <div class="nav-icon">
-                    <a href="#" class="nav-link">
-                        <span class="icon">🛒</span>
-                        <span class="nav-text">Корзина</span>
-                    </a>
-                </div>
-
-            </div>
-            
-            <!-- Правая часть -->
-            <div class="header-right">                
-                {{#if isAuthenticated}}
-                    <button class="btn place-ad-btn" data-nav="/place-ad">Разместить объявление</button>
-                <!--Нужна проверка в будущем на загрузку своей аватарки пользователем-->
-                    <a href="">
-                        <img src="/images/logo/avatar.jpeg" alt="Аватар" class="avatar">
-                    </a>
-                    <button class="btn btn-danger logout-btn" data-action="logout">
-                        Выйти
-                    </button>
-                {{else}}
-                    <button class="btn place-ad-btn" data-nav="/login">Разместить объявление</button>
-                    <p>
-                        <a href="#" class="nav-login" data-nav="/login">Войти</a>
-                    </p>
-                {{/if}}
-            </div>
-        </div>
-    </header>
-
     <!-- ОСНОВНОЙ КОНТЕНТ -->
     <main class="main-content">
         <!-- Поисковый блок -->
@@ -160,15 +107,62 @@
                         <div class="location-details">
                             <div class="location-address">{{location}}</div>
                             <div class="seller-name">Продавец: {{sellerName}}</div>
-                            <div class="seller-since">На сайте с: {{sellerSince}}</div>
+                            <div class="seller-since">Зарегистрирован: {{sellerSince}}</div>
                         </div>
                     </div>
                 </div>
             </div>
             
-            <!-- Правая колонка с рекламой (3/12) -->
-            <div class="ad-column">
-                Рекламное место
+            <!-- Правая колонка (3/12) -->
+            <div class="ad-right">
+                <!-- Карточка действий (оформление заказа) -->
+                <div class="action-card">
+                    <!-- ЦЕНА + ИЗБРАННОЕ (в одной строке) -->
+                    <div class="price-row">
+                        <div class="price-block">
+                            <div class="current-price">{{formattedPrice}}</div>
+                            {{#if oldPrice}}
+                                <div class="old-price">{{oldPrice}} ₽</div>
+                            {{/if}}
+                        </div>
+                        <button class="favorite-circle-btn" data-action="add-to-favorites" title="В избранное">
+                            <span class="heart-icon">♡</span>
+                        </button>
+                    </div>
+
+                    <!-- КНОПКИ ДЕЙСТВИЙ -->
+                    <div class="action-buttons">
+                        <button class="action-btn cart-btn" data-action="add-to-cart">
+                            Добавить в корзину
+                        </button>
+                        <button class="action-btn buy-btn" data-action="buy-now">
+                            Купить сейчас
+                        </button>
+                    </div>
+
+                    <!-- ПРОДАВЕЦ (кликабельный блок) -->
+                    <div class="seller-card">
+                        <div class="seller-avatar" data-action="go-to-seller" data-seller-id="{{sellerId}}" data-is-owner="{{isOwner}}">
+                            <img src="{{sellerAvatar}}" alt="{{sellerName}}">
+                        </div>
+                        <div class="seller-info">
+                            <div class="seller-name" data-action="go-to-seller" data-seller-id="{{sellerId}}" data-is-owner="{{isOwner}}">
+                                {{sellerName}}
+                            </div>
+                            <div class="seller-rating">
+                                <span class="stars">{{{sellerStars}}}</span>
+                                <span class="rating-value">{{sellerRating}}</span>
+                            </div>
+                            <button class="all-reviews-btn" data-action="all-reviews" data-seller-id="{{sellerId}}">
+                                Все отзывы →
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ad-column">
+                    Рекламное место
+                </div>
             </div>
         </div>
     </main>

@@ -1,6 +1,5 @@
 import '@modules/cart/components/cart-button/styles.css';
 import { cartActions } from '@modules/cart/actions';
-import { cartService } from '@modules/cart/service';
 import { cartStore } from '@modules/cart/store';
 import { store } from '@core/store';
 import type { CartItem } from '@modules/cart/types';
@@ -49,18 +48,12 @@ export const CartButtonComponent = {
                         button.title = 'В корзине';
                     }
                 } else {
-                    const result = await cartService.addToCart(productId);
-                    if (result.success) {
+                    const product = this.extractProductFromDOM(button, productId);
+                    const added = await cartActions.addToCart(productId, product);
+                    if (added) {
                         button.classList.add('in-cart');
                         button.title = 'В корзине';
-                        await cartActions.loadCart();
                         this.updateButtonState(button, productId);
-                    } else {
-                        const errorMsg = result.error || '';
-                        if (errorMsg.includes('already in cart')) {
-                            button.classList.add('in-cart');
-                            button.title = 'В корзине';
-                        }
                     }
                 }
             } catch (error) {
@@ -71,6 +64,29 @@ export const CartButtonComponent = {
         });
 
         this.updateButtonState(button, Number(button.dataset.cartAdd));
+    },
+
+    extractProductFromDOM(button: HTMLElement, productId: number): CartItem | undefined {
+        const card = button.closest('.rec-card') as HTMLElement | null;
+        if (!card) return undefined;
+
+        const title = card.querySelector('.rec-card-title')?.textContent?.trim() || '';
+        const priceText = card.querySelector('.rec-card-price')?.textContent?.trim() || '';
+        const price = priceText.toLowerCase().includes('бесплатно')
+            ? 0
+            : parseInt(priceText.replace(/\D/g, ''), 10) || 0;
+        const image = card.querySelector('.rec-card-image')?.getAttribute('src') || '';
+        const location = card.querySelector('.rec-card-location')?.textContent?.trim() || '';
+
+        return {
+            product_id: productId,
+            title,
+            price,
+            image_path: image,
+            seller_id: 0,
+            seller_name: 'Продавец неизвестен',
+            location,
+        };
     },
 
     updateButtonState(button: HTMLElement, productId: number): void {

@@ -7,18 +7,23 @@ import { cartActions } from '@modules/cart/actions';
 import { cartService } from '@modules/cart/service';
 import { cartStore } from '@modules/cart/store';
 import { store } from '@/core/store';
+import { networkStatus } from '@modules/common/offline/network/networkStatus';
 import { getTemplate } from '@modules/cart/pages/cart/cart';
 
 export const CartController = {
     async renderCart(): Promise<void> {
-        await cartActions.loadCart();
+        // Сначала показываем кешированные данные
+        await cartActions.loadFromCache();
+        this.renderFromState();
 
-        const app = document.getElementById('app');
-        const template = getTemplate();
-        if (!app || !template) return;
+        // Потом обновляем с сервера (не блокируя UI)
+        if (networkStatus.isOnline) {
+            await cartActions.loadCart();
+            this.renderFromState();
+        }
+    },
 
-        document.body.classList.remove('auth-page');
-
+    buildTemplateData() {
         const cartState = cartStore.getState();
         const items = cartState.items;
         const totalPrice = cartState.total;
@@ -34,15 +39,39 @@ export const CartController = {
             })),
         }));
 
-        app.innerHTML = template({
+        return {
             isAuthenticated: store.isAuthenticated,
             user: store.user,
             isEmpty: items.length === 0,
             sellerGroups: formattedGroups,
             itemCount: items.length,
             totalFormatted: cartService.formatPrice(totalPrice),
-        });
+        };
+    },
 
+    renderFromState(): void {
+        const app = document.getElementById('app');
+        const template = getTemplate();
+        if (!app || !template) return;
+
+        document.body.classList.remove('auth-page');
+
+        const data = this.buildTemplateData();
+
+        // Если корзина уже отрисована — обновляем только контент, не трогая header
+        const existingCartPage = app.querySelector('.cart-page');
+        if (existingCartPage) {
+            const tmp = document.createElement('div');
+            tmp.innerHTML = template(data);
+            const newCartPage = tmp.querySelector('.cart-page');
+            if (newCartPage) {
+                existingCartPage.replaceWith(newCartPage);
+                this.attachEventListeners();
+                return;
+            }
+        }
+
+        app.innerHTML = template(data);
         this.attachEventListeners();
     },
 
@@ -56,7 +85,7 @@ export const CartController = {
                 if (productId) {
                     const success = await cartActions.removeFromCart(productId);
                     if (success) {
-                        this.renderCart();
+                        this.renderFromState();
                     }
                 }
             });
@@ -87,7 +116,7 @@ export const CartController = {
             checkoutBtn.addEventListener('click', async () => {
                 const success = await cartActions.checkout();
                 if (success) {
-                    this.renderCart();
+                    this.renderFromState();
                 }
             });
         }

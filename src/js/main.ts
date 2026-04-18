@@ -3,8 +3,6 @@
  * @module main
  */
 
-
-
 // === Side-effect модули (инициализация) ===
 import '@/utils/storage';
 import '@/validators/authValidator';
@@ -13,10 +11,49 @@ import '@/services/adsServices';
 import '@modules/cart/init';
 import '@/api/apiClient';
 
+// === Offline infrastructure ===
+import { registerServiceWorker } from '@modules/common/offline/service-worker/sw-register';
+import { cloverDB } from '@modules/common/offline/db/indexedDB';
+import { syncManager } from '@modules/common/offline/sync/syncManager';
+import { registerCartSyncHandlers } from '@modules/cart/sync-handler';
+import { registerAdSyncHandler } from '@modules/announcements/sync-handler';
+import { registerAvatarSyncHandler, getCachedAvatarDataUrl } from '@modules/profile/sync-handler';
+
 // === Точка входа: AppController вместо устаревшего App ===
 import { AppController } from '@/controllers/AppController';
+import { store } from '@/core/store';
+
+// === Регистрация Service Worker ===
+registerServiceWorker();
 
 // === Инициализация ===
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+    try {
+        await cloverDB.open('clover-db', 4, [
+            { name: 'cart', keyPath: 'product_id' },
+            { name: 'syncQueue', keyPath: 'id', autoIncrement: true, recreate: true },
+            { name: 'adDrafts', keyPath: 'id' },
+            { name: 'ads', keyPath: 'id' },
+            { name: 'adsList', keyPath: 'id' },
+            { name: 'userProfile', keyPath: 'id' },
+            { name: 'avatarQueue', keyPath: 'id', autoIncrement: true },
+        ]);
+    } catch (error) {
+        console.error('IndexedDB initialization failed:', error);
+    }
+
+    registerCartSyncHandlers();
+    registerAdSyncHandler();
+    registerAvatarSyncHandler();
+
+    // Восстанавливаем аватар из IndexedDB (если был сохранён offline)
+    const cachedAvatar = await getCachedAvatarDataUrl();
+    if (cachedAvatar && store.user && !store.user.avatar_path) {
+        store.setState({
+            user: { ...store.user, avatar: cachedAvatar, avatar_path: cachedAvatar },
+        });
+    }
+
+    syncManager.init();
     AppController.init();
 });

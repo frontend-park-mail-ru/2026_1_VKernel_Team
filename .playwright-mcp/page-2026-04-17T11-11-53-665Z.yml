@@ -1,0 +1,105 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e269]:
+    - banner [ref=e270]:
+      - generic [ref=e271]:
+        - generic [ref=e272]:
+          - link "💼 Для бизнеса" [ref=e274] [cursor=pointer]:
+            - /url: "#"
+            - generic [ref=e275]: 💼
+            - generic [ref=e276]: Для бизнеса
+          - link "✉️ Сообщения" [ref=e278] [cursor=pointer]:
+            - /url: "#"
+            - generic [ref=e279]: ✉️
+            - generic [ref=e280]: Сообщения
+          - link "♡ Избранное" [ref=e282] [cursor=pointer]:
+            - /url: "#"
+            - generic [ref=e283]: ♡
+            - generic [ref=e284]: Избранное
+          - link "🛒 Корзина" [ref=e286] [cursor=pointer]:
+            - /url: "#"
+            - generic [ref=e287]: 🛒
+            - generic [ref=e288]: Корзина
+        - generic [ref=e289]:
+          - button "Разместить объявление" [ref=e290] [cursor=pointer]
+          - paragraph [ref=e291]:
+            - link "Войти" [ref=e292] [cursor=pointer]:
+              - /url: "#"
+    - main [ref=e293]:
+      - generic [ref=e295]:
+        - generic [ref=e296]:
+          - link "Логотип":
+            - /url: /
+            - img "Логотип" [ref=e297] [cursor=pointer]
+        - button "Все категории →" [ref=e298] [cursor=pointer]
+        - generic [ref=e299]:
+          - textbox "Поиск объявлений..." [ref=e300]
+          - button "Найти" [ref=e301] [cursor=pointer]
+      - generic [ref=e302]:
+        - generic [ref=e303]:
+          - generic [ref=e304]:
+            - button "← Назад" [ref=e305] [cursor=pointer]
+            - heading "MacBook Pro M2 Pro" [level=1] [ref=e306]
+          - generic [ref=e308]:
+            - generic [ref=e309]:
+              - img "MacBook Pro M2 Pro" [ref=e310] [cursor=pointer]
+              - button "‹" [ref=e311] [cursor=pointer]
+              - button "›" [ref=e312] [cursor=pointer]
+            - generic [ref=e313]:
+              - img "Фото" [ref=e315] [cursor=pointer]
+              - img "Фото" [ref=e317] [cursor=pointer]
+              - img "Фото" [ref=e319] [cursor=pointer]
+          - generic [ref=e320]:
+            - heading "Описание" [level=2] [ref=e321]
+            - paragraph [ref=e323]: Отличный компьютер для учебы и работы
+          - generic [ref=e324]:
+            - heading "Характеристики" [level=2] [ref=e325]
+            - generic [ref=e326]:
+              - generic [ref=e327]:
+                - generic [ref=e328]: "Бренд:"
+                - generic [ref=e329]: Apple
+              - generic [ref=e330]:
+                - generic [ref=e331]: "Модель:"
+                - generic [ref=e332]: MacBook Pro 16 M2 Pro
+              - generic [ref=e333]:
+                - generic [ref=e334]: "Состояние:"
+                - generic [ref=e335]: новый
+              - generic [ref=e336]:
+                - generic [ref=e337]: "Цвет:"
+                - generic [ref=e338]: чёрный
+              - generic [ref=e339]:
+                - generic [ref=e340]: "Память:"
+                - generic [ref=e341]: 512 ГБ
+              - generic [ref=e342]:
+                - generic [ref=e343]: "Гарантия:"
+                - generic [ref=e344]: нет
+              - generic [ref=e345]:
+                - generic [ref=e346]: "Комплектация:"
+                - generic [ref=e347]: полная
+              - generic [ref=e348]:
+                - generic [ref=e349]: "Яркость экрана:"
+                - generic [ref=e350]: 1000 нит
+          - generic [ref=e351]:
+            - heading "Местоположение" [level=2] [ref=e352]
+            - generic [ref=e354]:
+              - generic [ref=e355]: Москва, район Кунцево
+              - generic [ref=e356]: "Продавец: Николай"
+              - generic [ref=e357]: "Зарегистрирован: Invalid Date"
+        - generic [ref=e358]:
+          - generic [ref=e359]:
+            - generic [ref=e360]:
+              - generic [ref=e362]: 200 000 ₽
+              - button "♡" [ref=e363] [cursor=pointer]:
+                - generic [ref=e364]: ♡
+            - generic [ref=e365]:
+              - button "Добавить в корзину" [ref=e366] [cursor=pointer]
+              - button "Купить сейчас" [ref=e367] [cursor=pointer]
+            - generic [ref=e368] [cursor=pointer]:
+              - img "Николай" [ref=e370]
+              - generic [ref=e371]:
+                - generic [ref=e372]: Николай
+                - generic [ref=e373]:
+                  - generic [ref=e374]: ☆☆☆☆☆
+                  - generic [ref=e375]: "0"
+                - button "Все отзывы →" [ref=e376]
+          - generic [ref=e377]: Рекламное место
+  - generic [ref=e268]: Нет подключения к интернету

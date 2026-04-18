@@ -40,7 +40,16 @@ export class Storage {
 
     setUser(user: User | null): void {
         if (user) {
-            this.setItem(KEYS.USER, user);
+            // Не сохраняем dataUrl аватара в localStorage — он слишком большой.
+            // Аватар хранится в IndexedDB (userProfile store).
+            const cleaned = { ...user };
+            if (cleaned.avatar && cleaned.avatar.startsWith('data:')) {
+                cleaned.avatar = '';
+            }
+            if (cleaned.avatar_path && cleaned.avatar_path.startsWith('data:')) {
+                cleaned.avatar_path = '';
+            }
+            this.setItem(KEYS.USER, cleaned);
         } else {
             this.removeItem(KEYS.USER);
         }

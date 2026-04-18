@@ -15,7 +15,7 @@ restart: pull clean build
 # 1. Затягиваем свежий код из GitHub
 pull:
 	@echo "📥 Pulling latest changes from git..."
-	git pull origin main
+	git pull
 
 # 2. Очистка порта и старых процессов
 clean:

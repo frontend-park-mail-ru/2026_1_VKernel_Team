@@ -5,6 +5,7 @@
 
 import { CONFIG } from '@/core/config';
 import { storage } from '@/utils/storage';
+import { networkStatus } from '@modules/common/offline/network/networkStatus';
 import type { ApiResponse } from '@/types';
 
 const API_URL = CONFIG.API.API_URL;
@@ -22,17 +23,18 @@ export const API_ENDPOINTS = {
         CREATE: '/ads',
         UPDATE: (id: number | string) => `/ads/${id}`,
         DELETE: (id: number | string) => `/ads/${id}`,
-        SEARCH: '/ads/search',
+        CLOSE: (id: number | string) => `/ads/${id}/close`,
     },
     USERS: {
         PROFILE: '/profile',
         GET_BY_ID: (id: number | string) => `/users/${id}`,
+        GET_ADS: (id: number | string) => `/users/${id}/ads`,
     },
     CATEGORIES: {
         GET_ALL: '/categories',
     },
     FAVORITES: {
-        GET_ALL: '/favorites',
+        GET_ALL: '/profile/favorites',
         ADD: (id: number | string) => `/favorites/${id}`,
         REMOVE: (id: number | string) => `/favorites/${id}`,
         CHECK: (id: number | string) => `/favorites/${id}/check`,
@@ -72,6 +74,10 @@ export class ApiClient {
         return this._refreshPromise!;
     }
 
+    getApiUrl(): string {
+        return API_URL;
+    }
+
     /**
      * Обрабатывает 401 ошибку и повторяет запрос после рефреша
      */
@@ -94,8 +100,15 @@ export class ApiClient {
             return response;
         }
 
-        // Токен обновлен, повторяем исходный запрос
-        return fetch(`${API_URL}${endpoint}`, config);
+        // Токен обновлен, повторяем исходный запрос с новым AbortController
+        const retryController = new AbortController();
+        const retryTimeout = setTimeout(() => retryController.abort(), 2000);
+        const retryConfig = { ...config, signal: retryController.signal };
+        try {
+            return await fetch(`${API_URL}${endpoint}`, retryConfig);
+        } finally {
+            clearTimeout(retryTimeout);
+        }
     }
 
     /**
@@ -107,12 +120,17 @@ export class ApiClient {
         body: any = null,
         customHeaders: Record<string, string> = {},
     ): Promise<ApiResponse<T>> {
+        // Улучшенное логирование, чтобы в консоли было видно, когда летит FormData
+        console.log(
+            `API Request: ${method} ${API_URL}${endpoint}`,
+            body instanceof FormData ? '[FormData File]' : body,
+        );
+
         const headers: Record<string, string> = {
-            'Content-Type': 'application/json',
             ...customHeaders,
         };
 
-        // Токен авторизации
+        // Подставляем токен из LocalStorage, если он есть
         const token = storage.getToken();
         if (token) {
             headers['Authorization'] = `Bearer ${token}`;
@@ -131,15 +149,38 @@ export class ApiClient {
             headers,
             credentials: 'include',
         };
-
         if (body) {
-            config.body = JSON.stringify(body);
+            if (body instanceof FormData) {
+                // Если передали файл: отдаем FormData как есть, без stringify
+                config.body = body;
+                // Удаляем Content-Type, чтобы браузер сам сгенерировал multipart/form-data и boundary
+                delete (config.headers as Record<string, string>)['Content-Type'];
+            } else {
+                // Если передали обычный объект: ставим JSON
+                if (!headers['Content-Type']) {
+                    headers['Content-Type'] = 'application/json';
+                }
+                config.body = JSON.stringify(body);
+            }
         }
+
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 2000);
+        config.signal = controller.signal;
 
         try {
             let response = await fetch(`${API_URL}${endpoint}`, config);
 
+            // Пытаемся поймать токен из заголовков ответа
+            const authHeader =
+                response.headers.get('Authorization') || response.headers.get('X-Token');
+            if (authHeader) {
+                const extractedToken = authHeader.replace('Bearer ', '');
+                storage.setToken(extractedToken);
+            }
+
             response = await this._handleUnauthorizedResponse(response, endpoint, config);
+            clearTimeout(timeoutId);
 
             let data: any;
             const contentType = response.headers.get('content-type');
@@ -153,9 +194,25 @@ export class ApiClient {
                 const text = await response.text();
                 data = { message: text };
             }
+            if (response.ok && endpoint === API_ENDPOINTS.AUTH.LOGIN) {
+                const possibleToken =
+                    data?.token ||
+                    data?.access_token ||
+                    data?.data?.token ||
+                    data?.data?.access_token;
+                if (possibleToken) {
+                    storage.setToken(possibleToken);
+                }
+            }
 
             if (response.ok) {
+                networkStatus.setOnline();
                 return { success: true, data: data as T };
+            }
+
+            // 502/503/504 от прокси = бэкенд недоступен → трактуем как офлайн
+            if (response.status === 502 || response.status === 503 || response.status === 504) {
+                networkStatus.setOffline();
             }
 
             return {
@@ -165,6 +222,9 @@ export class ApiClient {
                 status: response.status,
             };
         } catch (error) {
+            clearTimeout(timeoutId);
+            // fetch выбросил исключение — сеть недоступна
+            networkStatus.setOffline();
             return {
                 success: false,
                 error: 'Не удалось соединиться с сервером',
@@ -198,6 +258,14 @@ export class ApiClient {
         headers: Record<string, string> = {},
     ): Promise<ApiResponse<T>> {
         return this.request<T>(endpoint, 'DELETE', null, headers);
+    }
+
+    patch<T = any>(
+        endpoint: string,
+        body: any,
+        headers: Record<string, string> = {},
+    ): Promise<ApiResponse<T>> {
+        return this.request<T>(endpoint, 'PATCH', body, headers);
     }
 }
 
