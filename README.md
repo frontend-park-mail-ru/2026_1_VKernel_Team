@@ -18,7 +18,7 @@
 
 ## Граф зависимостей
 
-![Alt text](graphs/dependency-graph.svg)
+![Alt text](graphs/collapse-4.svg)
 
 Обновить граф:
 
