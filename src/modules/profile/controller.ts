@@ -15,6 +15,9 @@ import { CloseAdModal } from '@modules/profile/components/close-ad-modal/close-a
 
 import { apiClient, API_ENDPOINTS } from '@/api/apiClient';
 import { CONFIG } from '@/core/config';
+import { purchasesStore } from '@modules/profile/purchases-store';
+import { cartService } from '@modules/cart/service';
+import type { PurchaseItem } from '@modules/profile/purchases-store';
 
 const DEFAULT_AD_IMAGE = '/images/default-ad.jpg';
 
@@ -85,6 +88,7 @@ export const ProfileController = {
     },
 
     userAds: [] as any[],
+    userPurchases: [] as PurchaseItem[],
 
     async loadUserAds(): Promise<void> {
         const userId = store.user?.id;
@@ -97,11 +101,19 @@ export const ProfileController = {
             if (result.success && result.data?.ads) {
                 this.userAds = result.data.ads.map((ad: UserAd) => formatAdCard(ad));
                 this.rerenderTab(store.user as UserProfile);
+                this.attachEventListeners();
             }
         } catch (error) {
             console.error('Failed to load user ads:', error);
             this.userAds = [];
         }
+    },
+
+    async loadUserPurchases(): Promise<void> {
+        await purchasesStore.loadFromCache();
+        this.userPurchases = purchasesStore.getState().items;
+        this.rerenderTab(store.user as UserProfile);
+        this.attachEventListeners();
     },
 
     async showProfile(): Promise<void> {
@@ -153,6 +165,16 @@ export const ProfileController = {
         this.attachEventListeners();
     },
 
+    formatPurchases(items: PurchaseItem[]) {
+        return items.map((item) => ({
+            ...item,
+            imageUrl: cartService.getImageUrl(item.image_path),
+            formattedPrice: cartService.formatPrice(item.price),
+            location: item.location || 'Не указано',
+            purchasedDate: new Date(item.purchased_at).toLocaleDateString('ru-RU'),
+        }));
+    },
+
     rerenderTab(user: UserProfile): void {
         const contentEl = document.getElementById('tabContent');
         if (!contentEl) return;
@@ -167,6 +189,7 @@ export const ProfileController = {
             archivedAds,
             activeAdsCount: activeAds.length,
             archivedAdsCount: archivedAds.length,
+            purchases: this.formatPurchases(this.userPurchases),
             isAuthenticated: store.isAuthenticated,
         });
     },
@@ -185,6 +208,9 @@ export const ProfileController = {
 
     switchTab(tab: ProfileTab): void {
         this.currentTab = tab;
+        if (tab === 'purchases') {
+            this.loadUserPurchases();
+        }
         this.renderAll();
     },
 
