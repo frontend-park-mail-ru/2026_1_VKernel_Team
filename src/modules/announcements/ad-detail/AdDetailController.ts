@@ -194,13 +194,14 @@ export class AdDetailController {
                 const userId = store.user?.id || store.user?.user_id;
                 return !!(userId && Number(userId) === Number(adAny.seller_id));
             })(),
-            sellerSince:
-                sellerData?.registrationDate || adAny.seller_created_at
-                    ? new Date(adAny.seller_created_at).toLocaleDateString('ru-RU', {
-                          month: 'long',
-                          year: 'numeric',
-                      })
-                    : 'неизвестно',
+            sellerSince: sellerData?.registrationDate
+                ? sellerData.registrationDate
+                : adAny.seller_created_at
+                  ? new Date(adAny.seller_created_at).toLocaleDateString('ru-RU', {
+                        month: 'long',
+                        year: 'numeric',
+                    })
+                  : 'неизвестно',
             attributes: attributes,
 
             // Для правого блока

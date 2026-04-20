@@ -97,7 +97,9 @@ const registerHelpers = (Hbs: any) => {
 
     Hbs.registerHelper('formatDate', function (dateString: string) {
         if (!dateString) return '—';
-        return new Date(dateString).toLocaleDateString('ru-RU');
+        const date = new Date(dateString);
+        if (isNaN(date.getTime())) return '—';
+        return date.toLocaleDateString('ru-RU');
     });
 };
 
