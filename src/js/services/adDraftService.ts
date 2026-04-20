@@ -21,12 +21,33 @@ interface AdDraftRecord {
 
 export class AdDraftService {
     private static currentDraftId: string | null = null;
+    private static saving: Promise<string> | null = null;
 
     private static generateId(): string {
         return 'draft_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
     }
 
     static async save(formData: any, photoFiles: File[]): Promise<string> {
+        if (this.saving) {
+            await this.saving.catch(() => {});
+        }
+        const promise = this.doSave(formData, photoFiles);
+        this.saving = promise;
+        try {
+            return await promise;
+        } finally {
+            if (this.saving === promise) this.saving = null;
+        }
+    }
+
+    private static async doSave(formData: any, photoFiles: File[]): Promise<string> {
+        if (this.currentDraftId) {
+            try {
+                await cloverDB.delete(STORE_NAME, this.currentDraftId);
+            } catch {
+                // ignore delete errors for stale drafts
+            }
+        }
         const id = this.generateId();
         this.currentDraftId = id;
 
@@ -75,6 +96,8 @@ export class AdDraftService {
     }
 
     private static recordToResult(record: AdDraftRecord): { formData: any; photoFiles: File[] } {
+        this.currentDraftId = record.id;
+
         const photoFiles = record.photos.map(
             (blob, i) =>
                 new File([blob], record.photoNames[i] || `photo_${i}.jpg`, {
@@ -89,11 +112,17 @@ export class AdDraftService {
     }
 
     static async clear(draftId?: string): Promise<void> {
-        const id = draftId || this.currentDraftId;
-        if (id) {
-            await cloverDB.delete(STORE_NAME, id);
+        if (this.saving) {
+            await this.saving.catch(() => {});
         }
         this.currentDraftId = null;
+
+        const all = await cloverDB.getAll<AdDraftRecord>(STORE_NAME);
+        for (const record of all) {
+            if (!draftId || record.id === draftId) {
+                await cloverDB.delete(STORE_NAME, record.id);
+            }
+        }
     }
 
     static async hasDraft(): Promise<boolean> {

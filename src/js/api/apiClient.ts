@@ -165,7 +165,8 @@ export class ApiClient {
         }
 
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 2000);
+        const timeoutMs = body instanceof FormData ? 30000 : 2000;
+        const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
         config.signal = controller.signal;
 
         try {

@@ -189,7 +189,10 @@ export class AdDetailController {
             hasMultiplePhotos: allPhotos.length > 1,
             isDescriptionLong: isDescriptionLong,
             isAuthenticated: store.isAuthenticated,
-            isOwner: store.user?.id === adAny.seller_id,
+            isOwner: (() => {
+                const userId = store.user?.id || store.user?.user_id;
+                return !!(userId && Number(userId) === Number(adAny.seller_id));
+            })(),
             sellerSince:
                 sellerData?.registrationDate || adAny.seller_created_at
                     ? new Date(adAny.seller_created_at).toLocaleDateString('ru-RU', {
@@ -421,6 +424,17 @@ export class AdDetailController {
 
             buyBtn.addEventListener('click', handler);
             this._handlers.set('buyNow', handler);
+        }
+
+        // ===== КНОПКА "РЕДАКТИРОВАТЬ" (для владельца) =====
+        const editBtn = document.querySelector('[data-action="edit-ad"]');
+        if (editBtn) {
+            const handler = (e: Event) => {
+                e.preventDefault();
+                AppController.navigateTo(`/edit-ad/${adId}`);
+            };
+            editBtn.addEventListener('click', handler);
+            this._handlers.set('editAd', handler);
         }
 
         // ===== ПЕРЕХОД НА СТРАНИЦУ ПРОДАВЦА (по клику на аватар или имя) =====

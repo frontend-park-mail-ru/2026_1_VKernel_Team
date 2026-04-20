@@ -1,3 +1,6 @@
+/* ========== СТРАНИЦА СОЗДАНИЯ ОБЪЯВЛЕНИЯ ========== */
+
+/* Кнопка категорий */
 .place-ad-page .btn-categories {
     background: #E9FCF3;
     border: 1px solid #e9ecef;
@@ -39,6 +42,8 @@
     transform: translateX(0);
 }
 
+/* ========== ЗАГОЛОВОК СТРАНИЦЫ ========== */
+
 .place-ad-page .page-header {
     display: flex;
     align-items: center;
@@ -61,7 +66,7 @@
     font-size: 16px;
     color: #6c757d;
     cursor: pointer;
-    padding: 11px 16px 5px 16px;
+    padding: 8px 16px;
     border-radius: 8px;
     transition: all 0.3s;
     display: flex;
@@ -74,16 +79,18 @@
     color: #2bde8c;
 }
 
+/* ========== ФОРМА ========== */
+
 .place-ad-page .place-ad-form {
     display: flex;
     flex-direction: column;
     gap: 28px;
 }
 
+/* Секции формы */
 .place-ad-page .form-section {
     display: flex;
     flex-direction: column;
-
 }
 
 .place-ad-page .section-label {
@@ -93,6 +100,7 @@
     display: flex;
     align-items: center;
     gap: 8px;
+    margin-bottom: 8px;
 }
 
 .place-ad-page .optional-badge {
@@ -104,15 +112,31 @@
     border-radius: 12px;
 }
 
+/* ========== ПОЛЯ ВВОДА ========== */
+
 .place-ad-page .form-input,
 .place-ad-page .form-select {
+    width: 100%;
     padding: 12px 16px;
     border: 2px solid #e0e0e0;
     border-radius: 12px;
     font-size: 16px;
-    transition: all 0.3s;
+    transition: border-color 0.2s, box-shadow 0.2s;
     font-family: inherit;
     background: white;
+    color: #333;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    box-sizing: border-box;
+}
+
+.place-ad-page .form-select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%236c757d' d='M1.41 0L6 4.58 10.59 0 12 1.41l-6 6-6-6z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+    padding-right: 40px;
+    cursor: pointer;
 }
 
 .place-ad-page .form-textarea {
@@ -120,7 +144,7 @@
     border: 2px solid #e0e0e0;
     border-radius: 12px;
     font-size: 16px;
-    transition: all 0.3s;
+    transition: border-color 0.2s, box-shadow 0.2s;
     font-family: inherit;
     background: white;
     resize: none;
@@ -143,12 +167,18 @@
     background: #fff5f5;
 }
 
+.place-ad-page .photos-grid.error .photo-add-btn {
+    border-color: #ff6b6b;
+    background: #fff5f5;
+}
+
 .place-ad-page .input-hint {
     font-size: 12px;
     color: #6c757d;
     margin-top: 4px;
 }
 
+/* Поле цены */
 .place-ad-page .price-input-wrapper {
     position: relative;
     display: flex;
@@ -166,196 +196,16 @@
     font-size: 18px;
     font-weight: 500;
     color: #6c757d;
+    pointer-events: none;
 }
 
-/* Фото */
-.place-ad-page .photo-upload-area {
-    border: 2px dashed #dee2e6;
-    border-radius: 16px;
-    padding: 24px;
-    text-align: center;
-    transition: all 0.3s;
-    background: #fafbfc;
-    cursor: pointer;
-}
+/* ========== КАРТОЧКИ БЛОКОВ ========== */
 
-.place-ad-page .photo-upload-area:hover {
-    border-color: #2bde8c;
-    background: #f8fff9;
-}
-
-.place-ad-page .photo-upload-area input[type="file"] {
-    display: none;
-}
-
-.place-ad-page .upload-placeholder {
-    cursor: pointer;
-}
-
-.place-ad-page .upload-icon {
-    font-size: 48px;
-    margin-bottom: 12px;
-}
-
-.place-ad-page .upload-text {
-    font-size: 16px;
-    font-weight: 500;
-    color: #333;
-    margin-bottom: 8px;
-}
-
-.place-ad-page .upload-hint {
-    font-size: 13px;
-    color: #6c757d;
-}
-
-.place-ad-page .photo-preview-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-    margin-top: 20px;
-}
-
-.place-ad-page .photo-preview {
-    position: relative;
-    width: 100px;
-    height: 100px;
-    border-radius: 12px;
-    overflow: hidden;
-    border: 2px solid #e9ecef;
-    background: #f8f9fa;
-}
-
-.place-ad-page .photo-preview img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.place-ad-page .remove-photo {
-    position: absolute;
-    top: -8px;
-    right: -8px;
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    background: #ff6b6b;
-    color: white;
-    border: none;
-    cursor: pointer;
-    font-size: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s;
-    z-index: 10;
-}
-
-.place-ad-page .remove-photo:hover {
-    background: #ee5253;
-    transform: scale(1.1);
-}
-
-/* Кнопки */
-.place-ad-page .form-actions {
-    display: flex;
-    gap: 16px;
-    justify-content: flex-end;
-    margin-top: 10px;
-    padding-top: 24px;
-    border-top: 1px solid #e9ecef;
-}
-
-.place-ad-page .btn-cancel {
-    padding: 12px 28px;
-    background: #f8f9fa;
-    border: 2px solid #e0e0e0;
-    border-radius: 10px;
-    font-size: 16px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.3s;
-    color: #495057;
-}
-
-.place-ad-page .btn-cancel:hover {
-    background: #e9ecef;
-    border-color: #ced4da;
-}
-
-.place-ad-page .btn-submit {
-    padding: 12px 36px;
-    background: linear-gradient(135deg, #2bde8c, #2bc0de);
-    color: white;
-    border: none;
-    border-radius: 10px;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s;
-}
-
-.place-ad-page .btn-submit:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(43, 222, 140, 0.3);
-}
-
-.place-ad-page .ad-column {
-    min-height: 100px;
-    max-height: 500px;
-} 
-
-
-/* Правая колонка */
-.place-ad-page .tips-section {
-    background: #f8fff9;
-    border-radius: 16px;
-    padding: 20px;
-    border: 1px solid #e0f0e5;
-    min-height: 100px;
-    max-height: 500px;
-}
-
-.place-ad-page .tips-section:last-child {
-    margin-bottom: 0;
-}
-
-.place-ad-page .tips-section h3 {
-    font-size: 16px;
-    color: #2bde8c;
-    margin-bottom: 15px;
-    font-weight: 600;
-}
-
-.place-ad-page .tips-section ul {
-    margin: 0;
-    padding-left: 20px;
-}
-
-.place-ad-page .tips-section li {
-    margin-bottom: 10px;
-    color: #495057;
-    line-height: 1.5;
-    font-size: 14px;
-}
-
-.place-ad-page .field-error {
-    color: #ee5253;
-    font-size: 13px;
-    margin-top: 4px;
-    font-weight: 500;
-    animation: fadeInError 0.2s ease;
-}
-
-/* ========== НОВЫЕ СТИЛИ ДЛЯ ФОРМЫ ========== */
-
-/* Карточки блоков */
 .place-ad-page .form-card {
     background: white;
     border-radius: 16px;
     border: 1px solid #e9ecef;
     overflow: hidden;
-    margin-bottom: 24px;
 }
 
 .place-ad-page .form-card-title {
@@ -375,7 +225,8 @@
     gap: 20px;
 }
 
-/* Радио-группа для типа объявления */
+/* ========== РАДИО-ГРУППА ========== */
+
 .place-ad-page .radio-group {
     display: flex;
     flex-wrap: wrap;
@@ -399,14 +250,186 @@
     accent-color: #2bde8c;
 }
 
-.place-ad-page .radio-label span {
-    cursor: pointer;
+/* ========== ФОТОГРАФИИ ========== */
+
+.place-ad-page .photos-section {
+    width: 100%;
 }
 
-/* Кнопка добавления характеристики */
+.place-ad-page .photos-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+/* Карточка фото */
+.place-ad-page .photo-card {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    background: #f5f5f5;
+    border: 2px solid #e9ecef;
+    border-radius: 12px;
+    transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+}
+
+.place-ad-page .photo-card:hover {
+    border-color: #2bde8c;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.place-ad-page .photo-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    border-radius: 10px;
+}
+
+/* Кнопка удаления фото */
+.place-ad-page .photo-remove-btn {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    width: 24px;
+    height: 24px;
+    background: #ff4d4d;
+    color: white;
+    border: 2px solid #fff;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 10;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    line-height: 1;
+}
+
+.place-ad-page .photo-remove-btn::before {
+    content: '×';
+    font-size: 18px;
+    font-weight: bold;
+    margin-top: -1px;
+}
+
+.place-ad-page .photo-remove-btn:hover {
+    background: #ee5253;
+    transform: scale(1.1);
+}
+
+/* Бейдж обложки */
+.place-ad-page .photo-cover-badge {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(43, 222, 140, 0.95);
+    color: white;
+    font-size: 11px;
+    text-align: center;
+    padding: 5px 0;
+    font-weight: 600;
+    border-radius: 0 0 10px 10px;
+    pointer-events: none;
+}
+
+/* Кнопка добавления фото */
+.place-ad-page .photo-add-btn {
+    width: 120px;
+    height: 120px;
+    border-radius: 12px;
+    border: 2px dashed #dee2e6;
+    background: #fafbfc;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s, transform 0.2s;
+    gap: 8px;
+}
+
+.place-ad-page .photo-add-btn:hover {
+    border-color: #2bde8c;
+    background: #E9FCF3;
+    transform: translateY(-2px);
+}
+
+.place-ad-page .add-photo-icon {
+    font-size: 32px;
+    font-weight: 300;
+    color: #adb5bd;
+    transition: color 0.2s;
+}
+
+.place-ad-page .photo-add-btn:hover .add-photo-icon {
+    color: #2bde8c;
+}
+
+.place-ad-page .add-photo-text {
+    font-size: 12px;
+    color: #6c757d;
+    transition: color 0.2s;
+}
+
+.place-ad-page .photo-add-btn:hover .add-photo-text {
+    color: #2bde8c;
+}
+
+/* Подсказка фото */
+.place-ad-page .photos-hint {
+    font-size: 13px;
+    color: #6c757d;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+}
+
+/* ========== ХАРАКТЕРИСТИКИ КАТЕГОРИИ ========== */
+
+.place-ad-page #categoryCharacteristicsContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.place-ad-page #categoryCharacteristicsContainer .form-section {
+    display: flex;
+    flex-direction: column;
+}
+
+.place-ad-page #categoryCharacteristicsContainer .section-label {
+    margin-bottom: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #495057;
+    text-transform: none;
+    letter-spacing: 0;
+}
+
+.place-ad-page .no-characteristics {
+    color: #6c757d;
+    font-size: 14px;
+    font-style: italic;
+}
+
+/* ========== ДИНАМИЧЕСКИЕ ХАРАКТЕРИСТИКИ ========== */
+
+.place-ad-page #dynamicAttributesContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
 .place-ad-page .btn-add-attribute {
     display: inline-flex;
     align-items: center;
+    align-self: flex-start;
     gap: 8px;
     background: none;
     border: 1px dashed #2bde8c;
@@ -416,7 +439,7 @@
     font-weight: 500;
     color: #2bde8c;
     cursor: pointer;
-    transition: all 0.3s;
+    transition: background 0.2s, border-style 0.2s;
     margin-top: 16px;
 }
 
@@ -430,7 +453,6 @@
     font-weight: 600;
 }
 
-/* Динамические характеристики */
 .place-ad-page .dynamic-attribute {
     display: flex;
     gap: 16px;
@@ -454,7 +476,7 @@
     cursor: pointer;
     padding: 10px 12px;
     border-radius: 8px;
-    transition: all 0.2s;
+    transition: background 0.2s, color 0.2s;
     line-height: 1;
 }
 
@@ -463,66 +485,156 @@
     color: #ee5253;
 }
 
-/* Фото секция */
-.place-ad-page .photos-section {
-    margin-bottom: 24px;
+/* ========== КНОПКИ ФОРМЫ ========== */
+
+.place-ad-page .form-actions {
+    display: flex;
+    gap: 16px;
+    justify-content: flex-end;
+    margin-top: 10px;
+    padding-top: 24px;
+    border-top: 1px solid #e9ecef;
 }
+
+.place-ad-page .btn-cancel {
+    padding: 12px 28px;
+    background: #f8f9fa;
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
+    color: #495057;
+}
+
+.place-ad-page .btn-cancel:hover {
+    background: #e9ecef;
+    border-color: #ced4da;
+}
+
+.place-ad-page .btn-clear-draft {
+    padding: 12px 28px;
+    background: #f8f9fa;
+    border: 2px solid #ff6b6b;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+    color: #ee5253;
+}
+
+.place-ad-page .btn-clear-draft:hover {
+    background: #fff5f5;
+    transform: translateY(-2px);
+}
+
+.place-ad-page .btn-draft {
+    padding: 12px 28px;
+    background: #f8f9fa;
+    border: 2px solid #ffc107;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+    color: #856404;
+}
+
+.place-ad-page .btn-draft:hover {
+    background: #fff3cd;
+    transform: translateY(-2px);
+}
+
+.place-ad-page .btn-preview {
+    padding: 12px 28px;
+    background: linear-gradient(135deg, #4a90e2, #357abd);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.place-ad-page .btn-preview:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(74, 144, 226, 0.3);
+}
+
+.place-ad-page .btn-submit {
+    padding: 12px 36px;
+    background: linear-gradient(135deg, #2bde8c, #2bc0de);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.place-ad-page .btn-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(43, 222, 140, 0.3);
+}
+
+/* ========== ПРАВАЯ КОЛОНКА (ПОДСКАЗКИ) ========== */
 
 .place-ad-page .ad-column {
     position: sticky;
     top: 170px;
     align-self: flex-start;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+    min-height: auto;
 }
 
-
-/* Адаптив */
-@media (max-width: 768px) {
-    .place-ad-page .form-card-content {
-        padding: 16px;
-        gap: 10px;
-    }
-    
-    .place-ad-page .form-card-title {
-        padding: 14px 20px;
-        font-size: 16px;
-    }
-    
-    .place-ad-page .radio-group {
-        gap: 16px;
-        flex-direction: column;
-    }
-    
-    .place-ad-page .dynamic-attribute {
-        flex-direction: column;
-        gap: 10px;
-    }
-    
-    .place-ad-page .dynamic-attribute .remove-attr-btn {
-        align-self: flex-end;
-    }
+.place-ad-page .tips-section {
+    background: #f8fff9;
+    border-radius: 16px;
+    padding: 20px;
+    border: 1px solid #e0f0e5;
 }
 
-/* Адаптив */
-@media (max-width: 768px) {
-    .place-ad-page .page-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
-    }
-    
-    .place-ad-page .page-header h1 {
-        font-size: 22px;
-    }
-    
-    .place-ad-page .form-actions {
-        flex-direction: column;
-    }
-    
-    .place-ad-page .btn-cancel,
-    .place-ad-page .btn-submit {
-        width: 100%;
-        text-align: center;
-    }
+.place-ad-page .tips-section h3 {
+    font-size: 16px;
+    color: #2bde8c;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+.place-ad-page .tips-section ul {
+    margin: 0;
+    padding-left: 20px;
+}
+
+.place-ad-page .tips-section li {
+    margin-bottom: 10px;
+    color: #495057;
+    line-height: 1.5;
+    font-size: 14px;
+}
+
+.place-ad-page .tips-section li:last-child {
+    margin-bottom: 0;
+}
+
+/* ========== ОШИБКИ ВАЛИДАЦИИ ========== */
+
+.place-ad-page .field-error {
+    color: #ee5253;
+    font-size: 13px;
+    margin-top: 4px;
+    font-weight: 500;
+    animation: fadeInError 0.2s ease;
 }
 
 @keyframes fadeInError {
@@ -536,232 +648,129 @@
     }
 }
 
-/* ========== НОВЫЙ БЛОК ФОТОГРАФИЙ ========== */
+/* ========== МОДАЛКА ОТМЕНЫ ========== */
 
-.place-ad-page .photos-section {
-    width: 100%;
+.place-ad-page .cancel-ad-modal__description {
+    color: #495057;
+    font-size: 15px;
+    margin: 12px 0 20px;
+    line-height: 1.5;
 }
 
-.place-ad-page .photos-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 16px;
-    margin-bottom: 16px;
-}
-
-/* Карточка фото */
-
-.place-ad-page .photo-card:hover {
-    border-color: #2bde8c;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-}
-
-/* 1. Убираем обрезку у карточки */
-.place-ad-page .photo-card {
-    position: relative;
-    width: 120px;
-    height: 120px;
-    background: #f5f5f5;
-    border: 2px solid #e9ecef;
-    border-radius: 12px;
-    /* overflow: hidden;  <-- УДАЛИТЕ ИЛИ ЗАКОММЕНТИРУЙТЕ ЭТО */
-    transition: all 0.3s;
-    z-index: 1; /* Чтобы карточки не перекрывали друг друга кнопками */
-}
-
-.place-ad-page .photo-card:hover {
-    border-color: #2bde8c;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-}
-
-/* 2. Переносим скругление углов на саму картинку */
-.place-ad-page .photo-card img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-    border-radius: 10px; /* Должно быть чуть меньше, чем border-radius карточки */
-}
-
-/* 3. Кнопка теперь будет видна полностью за пределами фото */
-.place-ad-page .photo-remove-btn {
-    position: absolute;
-    top: -10px;
-    right: -10px;
-    width: 24px;
-    height: 24px;
-    background: #ff4d4d;
-    color: white;
-    border: 2px solid #fff;
-    border-radius: 50%;
-    cursor: pointer;
-    z-index: 30;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-
-    /* Центровка */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0;
-    margin: 0;
-    line-height: 1;
-}
-
-
-/* Используйте символ "×" (multiplication sign) вместо буквы "х", он ровнее */
-.place-ad-page .photo-remove-btn::before {
-    content: '×'; 
-    font-size: 18px;
-    font-weight: bold;
-    /* Небольшой сдвиг вверх, если шрифт "тянет" символ вниз */
-    margin-top: -1px; 
-}
-.place-ad-page .photo-remove-btn:hover {
-    background: #ee5253;
-    transform: scale(1.1);
-}
-
-/* Индикатор главного фото (обложка) */
-.place-ad-page .photo-cover-badge {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: rgba(43, 222, 140, 0.95);
-    color: white;
-    font-size: 11px;
-    text-align: center;
-    padding: 5px 0;
-    font-weight: 600;
-    /* Скругляем только нижние углы, чтобы они совпали с карточкой */
-    border-radius: 0 0 10px 10px; 
-    pointer-events: none; /* Чтобы бейдж не мешал кликам */
-}
-
-/* Кнопка добавления фото */
-.place-ad-page .photo-add-btn {
-    width: 120px;
-    height: 120px;
-    border-radius: 12px;
-    border: 2px dashed #dee2e6;
-    background: #fafbfc;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.3s;
-    gap: 8px;
-}
-
-.place-ad-page .photo-add-btn:hover {
-    border-color: #2bde8c;
-    background: #E9FCF3;
-    transform: translateY(-2px);
-}
-
-.place-ad-page .add-photo-icon {
-    font-size: 32px;
-    font-weight: 300;
-    color: #adb5bd;
-}
-
-.place-ad-page .photo-add-btn:hover .add-photo-icon {
-    color: #2bde8c;
-}
-
-.place-ad-page .add-photo-text {
-    font-size: 12px;
-    color: #6c757d;
-}
-
-.place-ad-page .photo-add-btn:hover .add-photo-text {
-    color: #2bde8c;
-}
-
-/* Подсказка */
-.place-ad-page .photos-hint {
-    font-size: 13px;
-    color: #6c757d;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    margin-top: 8px;
-}
-
-/* Новые кнопки */
-.place-ad-page .btn-draft {
-    padding: 12px 28px;
-    background: #f8f9fa;
-    border: 2px solid #ffc107;
+.place-ad-page .modal-overlay .btn {
+    padding: 10px 24px;
     border-radius: 10px;
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 500;
     cursor: pointer;
-    transition: all 0.3s;
-    color: #856404;
+    transition: background 0.2s, transform 0.2s;
 }
 
-.place-ad-page .btn-draft:hover {
-    background: #fff3cd;
-    border-color: #ffc107;
-    transform: translateY(-2px);
+.place-ad-page .modal-overlay .btn-secondary {
+    background: #f8f9fa;
+    border: 2px solid #e0e0e0;
+    color: #495057;
 }
 
-.place-ad-page .btn-preview {
-    padding: 12px 28px;
-    background: linear-gradient(135deg, #4a90e2, #357abd);
+.place-ad-page .modal-overlay .btn-secondary:hover {
+    background: #e9ecef;
+}
+
+.place-ad-page .modal-overlay .btn-danger {
+    background: #ff6b6b;
+    border: 2px solid #ff6b6b;
     color: white;
-    border: none;
-    border-radius: 10px;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s;
 }
 
-.place-ad-page .btn-preview:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(74, 144, 226, 0.3);
+.place-ad-page .modal-overlay .btn-danger:hover {
+    background: #ee5253;
+    border-color: #ee5253;
 }
+
+/* ========== АДАПТИВ ========== */
 
 @media (max-width: 768px) {
-    .place-ad-page .form-actions {
-        flex-wrap: wrap;
+    /* Заголовок */
+    .place-ad-page .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
     }
-    
-    .place-ad-page .btn-cancel,
-    .place-ad-page .btn-draft,
-    .place-ad-page .btn-preview,
-    .place-ad-page .btn-submit {
-        width: calc(50% - 8px);
-        text-align: center;
-    }
-}
 
-/* Адаптив */
-@media (max-width: 768px) {
+    .place-ad-page .page-header h1 {
+        font-size: 22px;
+    }
+
+    /* Карточки формы */
+    .place-ad-page .form-card-content {
+        padding: 16px;
+        gap: 10px;
+    }
+
+    .place-ad-page .form-card-title {
+        padding: 14px 20px;
+        font-size: 16px;
+    }
+
+    /* Радио */
+    .place-ad-page .radio-group {
+        gap: 16px;
+        flex-direction: column;
+    }
+
+    /* Характеристики */
+    .place-ad-page .dynamic-attribute {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .place-ad-page .dynamic-attribute .remove-attr-btn {
+        align-self: flex-end;
+    }
+
+    /* Фото */
     .place-ad-page .photo-card,
     .place-ad-page .photo-add-btn {
         width: 90px;
         height: 90px;
     }
-    
+
     .place-ad-page .photo-remove-btn {
         width: 22px;
         height: 22px;
-        font-size: 14px;
         top: -6px;
         right: -6px;
     }
-    
+
+    .place-ad-page .photo-remove-btn::before {
+        font-size: 14px;
+    }
+
     .place-ad-page .add-photo-icon {
         font-size: 24px;
     }
-    
+
     .place-ad-page .add-photo-text {
         font-size: 10px;
+    }
+
+    /* Кнопки */
+    .place-ad-page .form-actions {
+        flex-direction: column;
+    }
+
+    .place-ad-page .btn-cancel,
+    .place-ad-page .btn-clear-draft,
+    .place-ad-page .btn-draft,
+    .place-ad-page .btn-preview,
+    .place-ad-page .btn-submit {
+        width: 100%;
+        text-align: center;
+    }
+
+    /* Основная кнопка первой на мобилке */
+    .place-ad-page .btn-preview,
+    .place-ad-page .btn-submit {
+        order: -1;
     }
 }
