@@ -109,6 +109,11 @@
     display: flex;
     align-items: center;
     gap: 2px;
+    min-width: 0;
+    overflow: hidden;
+}
+
+.rec-card-location-text {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;

@@ -52,7 +52,34 @@
   {{/if}}
 
   {{#if (eq currentTab 'purchases')}}
-    <p class="profile-section-placeholder">Покупки — в разработке</p>
+    <h2 class="profile-section-title">Мои покупки</h2>
+
+    {{#if purchases.length}}
+        <div class="recommendations-row">
+            {{#each purchases}}
+                <div class="rec-card rec-card--purchase" data-id="{{this.product_id}}">
+                    <div class="rec-card-image-container">
+                        <img src="{{this.imageUrl}}" alt="{{this.title}}" class="rec-card-image">
+                    </div>
+                    <div class="rec-card-content">
+                        <span class="rec-card-title">{{this.title}}</span>
+                        <div class="rec-card-footer">
+                            <div class="rec-card-footer-info">
+                                <span class="rec-card-price">{{this.formattedPrice}}</span>
+                                <span class="rec-card-location">
+                                    <span class="location-icon">📍</span>
+                                    <span class="rec-card-location-text">{{this.location}}</span>
+                                </span>
+                            </div>
+                        </div>
+                        <span class="rec-card-date">Куплено: {{this.purchasedDate}}</span>
+                    </div>
+                </div>
+            {{/each}}
+        </div>
+    {{else}}
+        <p class="profile-ads-empty">У вас пока нет покупок</p>
+    {{/if}}
   {{/if}}
 
   {{#if (eq currentTab 'wallet')}}

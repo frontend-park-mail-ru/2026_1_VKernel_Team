@@ -8,6 +8,7 @@ import { networkStatus } from '@modules/common/offline/network/networkStatus';
 import { syncQueue } from '@modules/common/offline/sync/syncQueue';
 import { NotificationComponent } from '@modules/common/notifications/notification';
 import { adsService } from '@/services/adsServices';
+import { purchasesStore } from '@modules/profile/purchases-store';
 import type { CartItem } from '@modules/cart/types';
 
 function isNetworkError(result: { success: boolean; status?: number }): boolean {
@@ -171,6 +172,8 @@ export const cartActions = {
             }
 
             if (result.success) {
+                const purchasedItems = cartStore.getState().items;
+                await purchasesStore.addPurchases(purchasedItems);
                 cartStore.setState({ items: [], total: 0 });
                 return true;
             }

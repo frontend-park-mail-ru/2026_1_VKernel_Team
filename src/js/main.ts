@@ -29,7 +29,7 @@ registerServiceWorker();
 // === Инициализация ===
 document.addEventListener('DOMContentLoaded', async () => {
     try {
-        await cloverDB.open('clover-db', 4, [
+        await cloverDB.open('clover-db', 5, [
             { name: 'cart', keyPath: 'product_id' },
             { name: 'syncQueue', keyPath: 'id', autoIncrement: true, recreate: true },
             { name: 'adDrafts', keyPath: 'id' },
@@ -37,6 +37,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             { name: 'adsList', keyPath: 'id' },
             { name: 'userProfile', keyPath: 'id' },
             { name: 'avatarQueue', keyPath: 'id', autoIncrement: true },
+            { name: 'purchases', keyPath: 'product_id' },
         ]);
     } catch (error) {
         console.error('IndexedDB initialization failed:', error);
