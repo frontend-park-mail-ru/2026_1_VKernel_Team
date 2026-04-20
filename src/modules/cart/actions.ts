@@ -7,6 +7,7 @@ import { cartStore } from '@modules/cart/store';
 import { networkStatus } from '@modules/common/offline/network/networkStatus';
 import { syncQueue } from '@modules/common/offline/sync/syncQueue';
 import { NotificationComponent } from '@modules/common/notifications/notification';
+import { adsService } from '@/services/adsServices';
 import type { CartItem } from '@modules/cart/types';
 
 function isNetworkError(result: { success: boolean; status?: number }): boolean {
@@ -37,9 +38,10 @@ export const cartActions = {
             }
 
             if (result.success && result.data) {
-                // network ok
+                const items = result.data.items || [];
+                const fixedItems = await this.fixItemImages(items);
                 cartStore.setState({
-                    items: result.data.items || [],
+                    items: fixedItems,
                     total: result.data.total_price || 0,
                     isLoading: false,
                 });
@@ -123,6 +125,26 @@ export const cartActions = {
 
         enqueue('REMOVE_FROM_CART', productId);
         return true;
+    },
+
+    async fixItemImages(items: CartItem[]): Promise<CartItem[]> {
+        const results = await Promise.all(
+            items.map(async (item) => {
+                try {
+                    const result = await adsService.getAdById(item.product_id);
+                    if (result.success && result.data?.photos?.length) {
+                        const firstPhoto = result.data.photos[0]?.trim();
+                        if (firstPhoto) {
+                            return { ...item, image_path: firstPhoto };
+                        }
+                    }
+                } catch {
+                    // fallback to original image_path
+                }
+                return item;
+            }),
+        );
+        return results;
     },
 
     async checkout(): Promise<boolean> {

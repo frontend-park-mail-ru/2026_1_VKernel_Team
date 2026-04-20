@@ -57,21 +57,18 @@ export const CartController = {
         document.body.classList.remove('auth-page');
 
         const data = this.buildTemplateData();
+        const tmp = document.createElement('div');
+        tmp.innerHTML = template(data);
+        const newCartPage = tmp.querySelector('.cart-page');
+        if (!newCartPage) return;
 
-        // Если корзина уже отрисована — обновляем только контент, не трогая header
         const existingCartPage = app.querySelector('.cart-page');
         if (existingCartPage) {
-            const tmp = document.createElement('div');
-            tmp.innerHTML = template(data);
-            const newCartPage = tmp.querySelector('.cart-page');
-            if (newCartPage) {
-                existingCartPage.replaceWith(newCartPage);
-                this.attachEventListeners();
-                return;
-            }
+            existingCartPage.replaceWith(newCartPage);
+        } else {
+            app.innerHTML = tmp.innerHTML;
         }
 
-        app.innerHTML = template(data);
         this.attachEventListeners();
     },
 
