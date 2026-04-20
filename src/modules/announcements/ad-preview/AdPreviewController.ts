@@ -2,8 +2,8 @@
  * Контроллер просмотра созданного объявления
  */
 
-import Handlebars from 'handlebars';
 import { CONFIG } from '@/core/config';
+import previewTpl from './templates/before-publication.hbs';
 import { PhotoViewer } from '@modules/announcements/shared/photo-view/photoViewer';
 import type { CreateAdData, CategoryCharacteristic } from '@/types';
 import { store } from '@/core/store';
@@ -11,16 +11,10 @@ import { categoryService } from '@/services/categoryService';
 import { AppController } from '@/controllers/AppController';
 import { uiActions } from '@/actions/uiActions';
 import { AdDraftService } from '@/services/adDraftService';
+import { apiClient, API_ENDPOINTS } from '@/api/apiClient';
 import { networkStatus } from '@modules/common/offline/network/networkStatus';
 import { syncQueue } from '@modules/common/offline/sync/syncQueue';
 import { NotificationComponent } from '@modules/common/notifications/notification';
-
-const getCookie = (name: string): string | null => {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop()?.split(';').shift() || null;
-    return null;
-};
 
 export class AdPreviewController {
     private static _handlers: Map<string, EventListener> = new Map();
@@ -54,19 +48,10 @@ export class AdPreviewController {
         AppController.showLoading(true);
 
         try {
-            const response = await fetch(
-                '/src/modules/announcements/ad-preview/templates/before-publication.hbs',
-            );
-            if (!response.ok) {
-                throw new Error(`Failed to load template: ${response.status}`);
-            }
-            const templateSource = await response.text();
-            const template = Handlebars.compile(templateSource);
-
             const photoPreviews = await this.createPhotoPreviews(this.draftData.photoFiles);
             const templateData = this.preparePreviewData(this.draftData.formData, photoPreviews);
 
-            app.innerHTML = template(templateData);
+            app.innerHTML = previewTpl(templateData);
             this.attachEventListeners();
         } catch (error) {
             console.error('Error loading preview page:', error);
@@ -309,7 +294,6 @@ export class AdPreviewController {
                 return;
             }
 
-            const formData = new FormData();
             const adData: CreateAdData = {
                 category_id: this.draftData.formData.category_id,
                 title: this.draftData.formData.title,
@@ -321,56 +305,40 @@ export class AdPreviewController {
                 custom_characteristics: this.draftData.formData.custom_characteristics || [],
             };
 
-            // Оффлайн-путь
             if (!networkStatus.isOnline) {
                 await this.saveForOfflinePublish(adData, this.draftData.photoFiles);
                 return;
             }
 
+            const formData = new FormData();
             formData.append('data', JSON.stringify(adData));
-
             this.draftData.photoFiles.forEach((file: File) => {
                 formData.append('photos', file);
             });
 
-            const token = localStorage.getItem('token');
-            const csrfToken = getCookie('csrf_token');
+            const result = await apiClient.post(API_ENDPOINTS.ADS.CREATE, formData);
 
-            const headers: HeadersInit = {};
-            if (token) headers['Authorization'] = `Bearer ${token}`;
-            if (csrfToken) headers['X-CSRF-Token'] = csrfToken;
-
-            const response = await fetch('/api/v1/ads', {
-                method: 'POST',
-                headers: headers,
-                body: formData,
-            });
-
-            const result = await response.json();
-
-            if (response.ok) {
+            if (result.success) {
                 NotificationComponent.show({
                     type: 'success',
                     message: 'Объявление успешно опубликовано!',
                 });
                 await AdDraftService.clear();
 
-                const adId = result.ad_id || result.data?.id;
-                AppController.navigateTo(`/ad/${adId}`);
+                const adId = result.data?.ad_id || result.data?.id;
+                AppController.navigateTo(adId ? `/ad/${adId}` : '/profile');
             } else {
-                console.error('Publish error:', result);
-                const errorMessage =
-                    result.error || result.message || 'Ошибка при публикации объявления';
-                NotificationComponent.show({ type: 'error', message: errorMessage });
+                NotificationComponent.show({
+                    type: 'error',
+                    message: result.error || 'Ошибка при публикации объявления',
+                });
             }
         } catch (error) {
             console.error('Error publishing ad:', error);
-
-            // Фолбек на оффлайн при сетевой ошибке
-            if (this.draftData) {
+            if (!networkStatus.isOnline) {
                 await this.saveForOfflinePublish(
-                    this.draftData.formData,
-                    this.draftData.photoFiles,
+                    this.draftData!.formData,
+                    this.draftData!.photoFiles,
                 );
             } else {
                 NotificationComponent.show({

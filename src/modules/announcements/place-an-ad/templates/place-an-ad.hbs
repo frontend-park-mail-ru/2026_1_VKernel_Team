@@ -165,10 +165,11 @@
 
                     <!-- Кнопки формы -->
                     <div class="form-actions">
-                        <button type="button" class="btn-cancel" data-action="cancel-ad">Отмена</button>
+                        <button type="button" class="btn-cancel" id="cancelAdBtn">Отмена</button>
                         {{#if isEditing}}
                             <button type="button" class="btn-preview" id="saveEditBtn">Сохранить изменения</button>
                         {{else}}
+                            <button type="button" class="btn-clear-draft" id="clearDraftBtn">Очистить черновик</button>
                             <button type="button" class="btn-draft" id="saveDraftBtn">Сохранить в черновик</button>
                             <button type="button" class="btn-preview" id="previewBtn">Посмотреть результат</button>
                         {{/if}}
@@ -176,6 +177,18 @@
                 </form>
             </div>
             
+            <!-- Модалка подтверждения отмены -->
+            <div id="cancelAdModal" class="modal-overlay" style="display: none;">
+                <div class="modal-content">
+                    <h3>Отменить создание</h3>
+                    <p class="cancel-ad-modal__description">Вы уверены? Все введённые данные и черновик будут удалены.</p>
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn-secondary" id="cancelAdModalClose">Вернуться</button>
+                        <button type="button" class="btn btn-danger" id="cancelAdModalConfirm">Удалить и выйти</button>
+                    </div>
+                </div>
+            </div>
+
             <!-- Правая колонка с подсказками -->
             <div class="ad-column">
                 <div class="tips-section">

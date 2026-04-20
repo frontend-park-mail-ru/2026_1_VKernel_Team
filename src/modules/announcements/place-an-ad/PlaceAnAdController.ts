@@ -16,6 +16,8 @@ import { NotificationComponent } from '@modules/common/notifications/notificatio
 import { adsService } from '@/services/adsServices';
 import { apiClient, API_ENDPOINTS } from '@/api/apiClient';
 import { CONFIG } from '@/core/config';
+import { AdValidator } from '@/validators/adValidator';
+import '@modules/common/components/modal/modal.css';
 import type {
     Category,
     CategoryCharacteristic,
@@ -422,6 +424,14 @@ export class PlaceAnAdController {
                     this.photoPreviews.push(...previewsToAdd);
                     this.renderPhotosGrid();
                     this.autoSaveDraft();
+                    const photosGrid = document.getElementById('photosGrid');
+                    if (photosGrid?.classList.contains('error')) {
+                        photosGrid.classList.remove('error');
+                        photosGrid
+                            .closest('.photos-section')
+                            ?.querySelector('.field-error')
+                            ?.remove();
+                    }
                 }
             };
             reader.readAsDataURL(file);
@@ -561,7 +571,69 @@ export class PlaceAnAdController {
         };
     }
 
+    private static clearFieldErrors(): void {
+        document.querySelectorAll('.place-ad-page .field-error').forEach((el) => el.remove());
+        document
+            .querySelectorAll('.place-ad-page .error')
+            .forEach((el) => el.classList.remove('error'));
+    }
+
+    private static showFieldError(fieldId: string, message: string): void {
+        const field = document.getElementById(fieldId);
+        if (!field) return;
+
+        field.classList.add('error');
+
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'field-error';
+        errorDiv.textContent = message;
+
+        const section = field.closest('.form-section') || field.closest('.photos-section');
+        if (section) {
+            section.appendChild(errorDiv);
+        } else {
+            field.parentElement?.appendChild(errorDiv);
+        }
+    }
+
+    private static validateAndShowErrors(): boolean {
+        this.clearFieldErrors();
+
+        const titleInput = document.getElementById('title') as HTMLInputElement;
+        const categorySelect = document.getElementById('category') as HTMLSelectElement;
+        const priceInput = document.getElementById('price') as HTMLInputElement;
+        const descriptionTextarea = document.getElementById('description') as HTMLTextAreaElement;
+
+        const locationInput = document.getElementById('location') as HTMLInputElement;
+
+        const result = AdValidator.validateForm({
+            title: titleInput?.value || '',
+            categoryId: parseInt(categorySelect?.value || '0'),
+            price: parseInt(priceInput?.value || '0'),
+            description: descriptionTextarea?.value || '',
+            location: locationInput?.value || '',
+            photosCount: this.photoFiles.length + this.existingPhotos.length,
+        });
+
+        if (!result.isValid) {
+            Object.entries(result.fieldErrors).forEach(([field, error]) => {
+                if (error) this.showFieldError(field, error);
+            });
+
+            const firstErrorField = Object.keys(result.fieldErrors)[0];
+            if (firstErrorField) {
+                document
+                    .getElementById(firstErrorField)
+                    ?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+
+        return result.isValid;
+    }
+
     private static async handleSubmit(mode: 'publish' | 'draft'): Promise<void> {
+        if (mode !== 'draft' && !this.validateAndShowErrors()) return;
+
         AppController.showLoading(true);
         try {
             const formData = this.collectFormData();
@@ -585,7 +657,7 @@ export class PlaceAnAdController {
 
             if (result.success) {
                 const adId = result.data?.ad_id || result.data?.id || this.editingAdId;
-                if (!this.editingAdId) AdDraftService.clear();
+                if (!this.editingAdId) await AdDraftService.clear();
                 this.clearAllData();
                 NotificationComponent.show({ type: 'success', message: 'Успешно сохранено!' });
                 AppController.navigateTo(adId ? `/ad/${adId}` : '/profile');
@@ -597,7 +669,14 @@ export class PlaceAnAdController {
             }
         } catch (error) {
             console.error('Submit error:', error);
-            await this.saveForOfflinePublish(this.collectFormData());
+            if (!networkStatus.isOnline) {
+                await this.saveForOfflinePublish(this.collectFormData());
+            } else {
+                NotificationComponent.show({
+                    type: 'error',
+                    message: 'Произошла ошибка при публикации',
+                });
+            }
         } finally {
             AppController.showLoading(false);
         }
@@ -623,13 +702,68 @@ export class PlaceAnAdController {
         }
     }
 
+    private static showCancelModal(): void {
+        const modal = document.getElementById('cancelAdModal');
+        if (modal) modal.style.display = 'flex';
+    }
+
+    private static hideCancelModal(): void {
+        const modal = document.getElementById('cancelAdModal');
+        if (modal) modal.style.display = 'none';
+    }
+
+    private static async handleCancelConfirm(): Promise<void> {
+        this.hideCancelModal();
+        await AdDraftService.clear();
+        this.clearAllData();
+        AppController.navigateTo('/');
+    }
+
+    private static async handleSaveDraft(): Promise<void> {
+        try {
+            const formData = this.collectFormData();
+            await AdDraftService.save(formData, this.photoFiles);
+            NotificationComponent.show({ type: 'success', message: 'Черновик сохранён' });
+        } catch (error) {
+            console.error('Draft save error:', error);
+            NotificationComponent.show({ type: 'error', message: 'Не удалось сохранить черновик' });
+        }
+    }
+
+    private static async handleClearDraft(): Promise<void> {
+        await AdDraftService.clear();
+        this.clearAllData();
+
+        const titleInput = document.getElementById('title') as HTMLInputElement;
+        const categorySelect = document.getElementById('category') as HTMLSelectElement;
+        const priceInput = document.getElementById('price') as HTMLInputElement;
+        const descriptionTextarea = document.getElementById('description') as HTMLTextAreaElement;
+        const locationInput = document.getElementById('location') as HTMLInputElement;
+
+        if (titleInput) titleInput.value = '';
+        if (categorySelect) categorySelect.value = '';
+        if (priceInput) priceInput.value = '0';
+        if (descriptionTextarea) descriptionTextarea.value = '';
+        if (locationInput) locationInput.value = '';
+
+        this.renderCategoryCharacteristicsForm();
+        this.renderDynamicAttributes();
+        this.renderPhotosGrid();
+        this.clearFieldErrors();
+
+        NotificationComponent.show({ type: 'success', message: 'Черновик очищен' });
+    }
+
     private static async handlePreview(): Promise<void> {
+        if (!this.validateAndShowErrors()) return;
+
         AppController.showLoading(true);
         try {
             const formData = this.collectFormData();
             await AdDraftService.save(formData, this.photoFiles);
             AppController.navigateTo('/ad-preview');
         } catch (error) {
+            console.error('Preview error:', error);
             uiActions.showError('Не удалось создать предпросмотр');
         } finally {
             AppController.showLoading(false);
@@ -639,17 +773,28 @@ export class PlaceAnAdController {
     private static attachEventListeners(): void {
         const categorySelect = document.getElementById('category') as HTMLSelectElement;
         categorySelect?.addEventListener('change', async () => {
+            if (categorySelect.classList.contains('error')) {
+                categorySelect.classList.remove('error');
+                categorySelect.closest('.form-section')?.querySelector('.field-error')?.remove();
+            }
             await this.loadCategoryCharacteristics(parseInt(categorySelect.value));
             this.autoSaveDraft();
         });
 
         ['title', 'price', 'description', 'location'].forEach((id) => {
-            document.getElementById(id)?.addEventListener('input', () => this.autoSaveDraft());
+            document.getElementById(id)?.addEventListener('input', (e) => {
+                const el = e.target as HTMLElement;
+                if (el.classList.contains('error')) {
+                    el.classList.remove('error');
+                    el.closest('.form-section')?.querySelector('.field-error')?.remove();
+                }
+                this.autoSaveDraft();
+            });
         });
 
         document
             .getElementById('saveDraftBtn')
-            ?.addEventListener('click', () => this.handleSubmit('draft'));
+            ?.addEventListener('click', () => this.handleSaveDraft());
         document
             .getElementById('previewBtn')
             ?.addEventListener('click', () => this.handlePreview());
@@ -669,6 +814,23 @@ export class PlaceAnAdController {
         document
             .getElementById('addAttributeBtn')
             ?.addEventListener('click', () => this.addDynamicAttribute());
+        document
+            .getElementById('clearDraftBtn')
+            ?.addEventListener('click', () => this.handleClearDraft());
+        document
+            .getElementById('cancelAdBtn')
+            ?.addEventListener('click', () => this.showCancelModal());
+
+        const cancelModal = document.getElementById('cancelAdModal');
+        cancelModal?.addEventListener('click', (e) => {
+            if (e.target === cancelModal) this.hideCancelModal();
+        });
+        document
+            .getElementById('cancelAdModalClose')
+            ?.addEventListener('click', () => this.hideCancelModal());
+        document
+            .getElementById('cancelAdModalConfirm')
+            ?.addEventListener('click', () => this.handleCancelConfirm());
 
         document.querySelectorAll('[data-action="back"]').forEach((btn) =>
             btn.addEventListener('click', (e) => {

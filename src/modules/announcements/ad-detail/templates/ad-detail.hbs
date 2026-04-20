@@ -132,12 +132,18 @@
 
                     <!-- КНОПКИ ДЕЙСТВИЙ -->
                     <div class="action-buttons">
+                        {{#if isOwner}}
+                        <button class="action-btn edit-btn" data-action="edit-ad" data-ad-id="{{id}}">
+                            Редактировать
+                        </button>
+                        {{else}}
                         <button class="action-btn cart-btn" data-action="add-to-cart">
                             Добавить в корзину
                         </button>
                         <button class="action-btn buy-btn" data-action="buy-now">
                             Купить сейчас
                         </button>
+                        {{/if}}
                     </div>
 
                     <!-- ПРОДАВЕЦ (кликабельный блок) -->
