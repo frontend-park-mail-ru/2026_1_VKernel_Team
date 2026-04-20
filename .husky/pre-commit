@@ -1,3 +1,4 @@
 npm run dep
+git add graphs/
 npx tsc --noEmit
 npx lint-staged
