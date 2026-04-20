@@ -183,6 +183,7 @@ export class AdDetailController {
             formattedDate: formattedDate,
             status: ad.status || 'active',
             statusText: this.getStatusText(ad.status),
+            isClosed: ad.status === 'sold' || ad.status === 'archived' || ad.status === 'reserved',
             description: ad.description || 'Описание отсутствует',
             mainPhoto: mainPhoto,
             allPhotos: allPhotos,

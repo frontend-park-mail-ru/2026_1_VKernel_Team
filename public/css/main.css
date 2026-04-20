@@ -429,7 +429,7 @@ body .main-container {
     overflow: hidden;
     box-shadow: 0 4px 12px rgba(0,0,0,0.08);
     transition: transform 0.2s, box-shadow 0.2s;
-    height: 300px;
+    height: 360px;
     display: flex;
     flex-direction: column;
     border: 1px solid #e9ecef;
@@ -455,21 +455,20 @@ body .main-container {
 }
 
 .rec-card-content {
-    height: 40%;
-    padding: 10px 8px;
+    flex: 1;
+    padding: 12px;
     display: flex;
     flex-direction: column;
-    gap: 0px;
-    flex: 1;
+    gap: 4px;
+    overflow: hidden;
 }
 
 .rec-card-footer {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
     gap: 10px;
-    align-items: center;
-    margin-top: auto;  /*прижимаем к низу */
-    margin-bottom: 10px;
+    align-items: end;
+    margin-top: auto;
 }
 
 .rec-card-footer-info {
@@ -495,6 +494,9 @@ body .main-container {
     font-size: 16px;
     font-weight: 700;
     color: #000000;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .rec-card-location {
@@ -503,6 +505,9 @@ body .main-container {
     display: flex;
     align-items: center;
     gap: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .location-icon {

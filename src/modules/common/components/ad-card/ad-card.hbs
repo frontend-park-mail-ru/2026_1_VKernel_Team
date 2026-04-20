@@ -1,0 +1,37 @@
+<div class="rec-card{{#if archived}} rec-card--archived{{/if}}" data-id="{{id}}">
+    <div class="rec-card-image-container">
+        <img src="{{image}}" alt="{{title}}" class="rec-card-image">
+        {{#unless archived}}
+        <button class="rec-card-fav">♡</button>
+        {{/unless}}
+    </div>
+    <div class="rec-card-content">
+        <span class="rec-card-title">{{title}}</span>
+        <div class="rec-card-footer">
+            <div class="rec-card-footer-info">
+                <span class="rec-card-price">{{formattedPrice}}</span>
+                <span class="rec-card-location">
+                    <span class="location-icon">📍</span>
+                    {{location}}
+                </span>
+            </div>
+            {{#if showCartButton}}
+            {{#unless isOwn}}
+            <div class="rec-card-footer-actions">
+                {{> cart/components/cart-button/cart-button productId=id}}
+            </div>
+            {{/unless}}
+            {{/if}}
+            {{#if showEditButton}}
+            <div class="rec-card-footer-actions">
+                <button class="rec-card-edit" data-edit-id="{{id}}" title="Редактировать">
+                    ✏️
+                </button>
+                <button class="rec-card-close" data-close-id="{{id}}" data-close-title="{{title}}" title="Закрыть объявление">
+                    ✕
+                </button>
+            </div>
+            {{/if}}
+        </div>
+    </div>
+</div>
