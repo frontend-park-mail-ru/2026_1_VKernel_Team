@@ -16,32 +16,7 @@
         {{#if activeAds.length}}
             <div class="recommendations-row">
                 {{#each activeAds}}
-                    <div class="rec-card" data-id="{{id}}">
-                        <div class="rec-card-image-container">
-                            <img src="{{image}}" alt="{{title}}" class="rec-card-image">
-                            <button class="rec-card-fav">♡</button>
-                        </div>
-                        <div class="rec-card-content">
-                            <span class="rec-card-title">{{title}}</span>
-                            <div class="rec-card-footer">
-                                <div class="rec-card-footer-info">
-                                    <span class="rec-card-price">{{formattedPrice}}</span>
-                                    <span class="rec-card-location">
-                                        <span class="location-icon">📍</span>
-                                        {{location}}
-                                    </span>
-                                </div>
-                                <div class="rec-card-footer-actions">
-                                    <button class="rec-card-edit" data-edit-id="{{id}}" title="Редактировать">
-                                        ✏️
-                                    </button>
-                                    <button class="rec-card-close" data-close-id="{{id}}" data-close-title="{{title}}" title="Закрыть объявление">
-                                        ✕
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    {{> common/components/ad-card/ad-card this showEditButton=true}}
                 {{/each}}
             </div>
         {{else}}
@@ -55,23 +30,7 @@
         {{#if archivedAds.length}}
             <div class="recommendations-row">
                 {{#each archivedAds}}
-                    <div class="rec-card rec-card--archived" data-id="{{id}}">
-                        <div class="rec-card-image-container">
-                            <img src="{{image}}" alt="{{title}}" class="rec-card-image">
-                        </div>
-                        <div class="rec-card-content">
-                            <span class="rec-card-title">{{title}}</span>
-                            <div class="rec-card-footer">
-                                <div class="rec-card-footer-info">
-                                    <span class="rec-card-price">{{formattedPrice}}</span>
-                                    <span class="rec-card-location">
-                                        <span class="location-icon">📍</span>
-                                        {{location}}
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    {{> common/components/ad-card/ad-card this archived=true}}
                 {{/each}}
             </div>
         {{else}}

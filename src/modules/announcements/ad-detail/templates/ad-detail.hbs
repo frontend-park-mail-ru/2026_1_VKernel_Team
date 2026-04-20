@@ -131,22 +131,22 @@
                     </div>
 
                     <!-- КНОПКИ ДЕЙСТВИЙ -->
-                    {{#unless isOwner}}
                     <div class="action-buttons">
                         {{#if isOwner}}
                         <button class="action-btn edit-btn" data-action="edit-ad" data-ad-id="{{id}}">
                             Редактировать
                         </button>
                         {{else}}
+                        {{#unless isClosed}}
                         <button class="action-btn cart-btn" data-action="add-to-cart">
                             Добавить в корзину
                         </button>
                         <button class="action-btn buy-btn" data-action="buy-now">
                             Купить сейчас
                         </button>
+                        {{/unless}}
                         {{/if}}
                     </div>
-                    {{/unless}}
 
                     <!-- ПРОДАВЕЦ (кликабельный блок) -->
                     <div class="seller-card">

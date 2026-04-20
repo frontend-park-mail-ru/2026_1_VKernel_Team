@@ -4,7 +4,7 @@
     overflow: hidden;
     box-shadow: 0 4px 12px rgba(0,0,0,0.08);
     transition: transform 0.2s, box-shadow 0.2s;
-    height: 300px;
+    height: 360px;
     display: flex;
     flex-direction: column;
     border: 1px solid #e9ecef;
@@ -30,20 +30,20 @@
 }
 
 .rec-card-content {
-    height: 40%;
-    padding: 12px 12px;
+    flex: 1;
+    padding: 12px;
     display: flex;
-    gap: 8px;
-    align-items: stretch;
+    flex-direction: column;
+    gap: 4px;
+    overflow: hidden;
 }
 
 .rec-card-footer {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
     gap: 10px;
-    align-items: center;
+    align-items: end;
     margin-top: auto;
-    margin-bottom: 10px;
 }
 
 .rec-card-footer-info {
@@ -98,6 +98,9 @@
     font-size: 16px;
     font-weight: 700;
     color: #000000;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .rec-card-location {
@@ -106,6 +109,9 @@
     display: flex;
     align-items: center;
     gap: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .location-icon {
