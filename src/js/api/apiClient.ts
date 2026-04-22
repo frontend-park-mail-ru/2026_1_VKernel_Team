@@ -33,12 +33,12 @@ export const API_ENDPOINTS = {
     CATEGORIES: {
         GET_ALL: '/categories',
     },
-    FAVORITES: {
-        GET_ALL: '/profile/favorites',
-        ADD: (id: number | string) => `/favorites/${id}`,
-        REMOVE: (id: number | string) => `/favorites/${id}`,
-        CHECK: (id: number | string) => `/favorites/${id}/check`,
-    },
+    // FAVORITES: {
+    //     GET_ALL: '/profile/favorites',
+    //     ADD: (id: number | string) => `/favorites/${id}`,
+    //     REMOVE: (id: number | string) => `/favorites/${id}`,
+    //     CHECK: (id: number | string) => `/favorites/${id}/check`,
+    // },
 };
 
 const getCookie = (name: string): string | null => {

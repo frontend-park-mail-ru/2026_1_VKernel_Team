@@ -146,6 +146,24 @@ export const AppController = {
         this.setupStoreSubscription();
 
         await this.checkAuth().catch(() => {});
+        if (store.isAuthenticated) {
+            await AdsController.syncFavorites();
+        }
+        window.addEventListener('app:navigate', ((e: CustomEvent) => {
+            if (e.detail && e.detail.path) {
+                this.navigateTo(e.detail.path);
+            }
+        }) as EventListener);
+
+        window.addEventListener('app:route', () => {
+            this.router();
+        });
+
+        window.addEventListener('app:loading', ((e: CustomEvent) => {
+            if (e.detail !== undefined) {
+                this.showLoading(e.detail.show);
+            }
+        }) as EventListener);
 
         this.renderHeader();
         this.router();
@@ -196,7 +214,7 @@ export const AppController = {
         }
     },
 
-    renderHeader(): void {
+renderHeader(): void {
         const container = document.getElementById('app-header');
         if (!container) return;
 
@@ -215,9 +233,11 @@ export const AppController = {
         }
 
         const user = store.user;
+        
         container.innerHTML = this._headerCompiled!({
             isAuthenticated: store.isAuthenticated,
             user,
+            favoritesCount: store.favoriteIds.size, // Передаем количество избранного
         });
     },
 
@@ -314,6 +334,16 @@ export const AppController = {
             if (navElement) {
                 e.preventDefault();
                 const path = (navElement as HTMLElement).dataset.nav;
+                const tab = (navElement as HTMLElement).dataset.tab; // Получаем желаемую вкладку
+
+                if (path === '/profile' && tab) {
+                    // Принудительно устанавливаем вкладку в контроллере перед переходом
+                    ProfileController.currentTab = tab as any;
+                } else if (path === '/profile' && !tab) {
+                    // Если просто кликнули на аватар — сбрасываем на дефолтную (Мои объявления)
+                    ProfileController.currentTab = 'ads';
+                }
+
                 if (path) this.navigateTo(path);
                 return;
             }

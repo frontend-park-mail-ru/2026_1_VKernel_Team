@@ -14,13 +14,18 @@
                 </a>
             </div>
             <div class="nav-icon">
-                <a href="#" class="nav-link">
-                    <span class="icon favorites">♡</span>
+                <a href="/profile" class="nav-link" data-nav="/profile" data-tab="favorites">
+                    <span class="icon favorites">
+                        {{#if favoritesCount}}
+                            <span class="header-badge">{{favoritesCount}}</span>
+                        {{/if}}
+                        ♡
+                    </span>
                     <span class="nav-text">Избранное</span>
                 </a>
             </div>
             <div class="nav-icon">
-                <a href="#" class="nav-link cart-active" data-nav="/cart">
+                <a href="/cart" class="nav-link cart-active" data-nav="/cart">
                     <span class="icon">🛒</span>
                     <span class="nav-text">Корзина</span>
                 </a>
@@ -44,4 +49,3 @@
         </div>
     </div>
 </div>
- 

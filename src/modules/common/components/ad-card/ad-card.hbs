@@ -2,7 +2,9 @@
     <div class="rec-card-image-container">
         <img src="{{image}}" alt="{{title}}" class="rec-card-image">
         {{#unless archived}}
-        <button class="rec-card-fav">♡</button>
+        <button class="rec-card-fav {{#if isFavorite}}rec-card-fav--active{{/if}}" data-fav-id="{{id}}">
+            {{#if isFavorite}}♥{{else}}♡{{/if}}
+        </button>
         {{/unless}}
     </div>
     <div class="rec-card-content">

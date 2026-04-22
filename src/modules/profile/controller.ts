@@ -13,6 +13,10 @@ import { ProfileContent } from '@modules/profile/components/profile-content/prof
 import { EditNameModal } from '@modules/profile/components/edit-name-modal/edit-name-modal';
 import { CloseAdModal } from '@modules/profile/components/close-ad-modal/close-ad-modal';
 
+// Подключаем наш новый компонент и конфиг
+import { FavoriteCard } from '@modules/profile/components/favorite-card/favorite-card';
+import { PROFILE_CONFIG } from '@modules/profile/config';
+
 import { apiClient, API_ENDPOINTS } from '@/api/apiClient';
 import { CONFIG } from '@/core/config';
 import { purchasesStore } from '@modules/profile/purchases-store';
@@ -70,6 +74,10 @@ export const ProfileController = {
             eventBus.on('profile:switch-tab', (tab: ProfileTab) => this.switchTab(tab)),
             eventBus.on('profile:logout', () => this.handleLogout()),
             eventBus.on('profile:update-ui', () => this.refreshUI()),
+            eventBus.on('profile:favorite-removed', (removedAdId: number) => {
+                this.userFavorites = this.userFavorites.filter(ad => Number(ad.id) !== removedAdId);
+                this.refreshUI();
+            }),
             eventBus.on('profile:ad-closed', (closedAdId: number | string) => {
                 this.userAds = this.userAds.map((ad) =>
                     String(ad.id) === String(closedAdId) ? { ...ad, status: 'archived' } : ad,
@@ -87,8 +95,10 @@ export const ProfileController = {
         this.isInitialized = false;
     },
 
+    // Состояния данных профиля
     userAds: [] as any[],
     userPurchases: [] as PurchaseItem[],
+    userFavorites: [] as any[],
 
     async loadUserAds(): Promise<void> {
         const userId = store.user?.id;
@@ -114,6 +124,38 @@ export const ProfileController = {
         this.userPurchases = purchasesStore.getState().items;
         this.rerenderTab(store.user as UserProfile);
         this.attachEventListeners();
+    },
+
+    // Новый метод загрузки избранного
+    async loadUserFavorites(): Promise<void> {
+        try {
+            const result = await apiClient.get<any>(PROFILE_CONFIG.API.GET_FAVORITES);
+            if (result.success && result.data) {
+                let favoritesArray: any[] = [];
+                
+                if (Array.isArray(result.data)) {
+                    favoritesArray = result.data;
+                } else if (Array.isArray(result.data.ads)) {
+                    favoritesArray = result.data.ads;
+                } else if (Array.isArray(result.data.data)) {
+                    favoritesArray = result.data.data;
+                } else if (typeof result.data === 'object') {
+                    // Если бэкенд завернул в странный ключ (типа additionalProp1)
+                    // Ищем первый попавшийся массив внутри объекта
+                    const arrays = Object.values(result.data).filter(Array.isArray);
+                    if (arrays.length > 0) {
+                        favoritesArray = arrays[0] as any[];
+                    }
+                }
+
+                this.userFavorites = favoritesArray.map((ad: any) => formatAdCard(ad));
+                this.rerenderTab(store.user as UserProfile);
+                this.attachEventListeners();
+            }
+        } catch (error) {
+            console.error('Failed to load user favorites:', error);
+            this.userFavorites = [];
+        }
     },
 
     async showProfile(): Promise<void> {
@@ -145,9 +187,14 @@ export const ProfileController = {
 
         this.renderAll();
 
-        // Подгружаем свежие данные с сервера (не блокируя рендер)
+        // Подгружаем свежие данные с сервера
         this.loadUserAds();
         this.loadProfileData();
+        
+        // Если открыли профиль сразу на вкладке избранного (при роутинге)
+        if (this.currentTab === 'favorites') {
+            this.loadUserFavorites();
+        }
     },
 
     renderAll(): void {
@@ -190,6 +237,7 @@ export const ProfileController = {
             activeAdsCount: activeAds.length,
             archivedAdsCount: archivedAds.length,
             purchases: this.formatPurchases(this.userPurchases),
+            favorites: this.userFavorites, // Передаем избранное в шаблон
             isAuthenticated: store.isAuthenticated,
         });
     },
@@ -202,15 +250,20 @@ export const ProfileController = {
             currentTab: this.currentTab,
             user,
             totalAdsCount: this.userAds.length,
+            favoritesCount: this.userFavorites.length,
             isAuthenticated: store.isAuthenticated,
         });
     },
 
     switchTab(tab: ProfileTab): void {
         this.currentTab = tab;
+        
         if (tab === 'purchases') {
             this.loadUserPurchases();
+        } else if (tab === 'favorites') {
+            this.loadUserFavorites();
         }
+        
         this.renderAll();
     },
 
@@ -220,6 +273,7 @@ export const ProfileController = {
         if (ProfileContent?.init) ProfileContent.init();
         if (EditNameModal?.init) EditNameModal.init();
         if (CloseAdModal?.init) CloseAdModal.init();
+        if (FavoriteCard?.init) FavoriteCard.init(); // Инициализация кликов для карточек избранного
     },
 
     async loadProfileData(): Promise<void> {
