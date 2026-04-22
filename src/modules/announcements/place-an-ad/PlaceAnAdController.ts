@@ -7,7 +7,6 @@ import Handlebars from 'handlebars';
 import placeAnAdTpl from './templates/place-an-ad.hbs';
 import { store } from '@/core/store';
 import { uiActions } from '@/actions/uiActions';
-import { AppController } from '@/controllers/AppController';
 import { AdDraftService } from '@/services/adDraftService';
 import { categoryService } from '@/services/categoryService';
 import { networkStatus } from '@modules/common/offline/network/networkStatus';
@@ -67,11 +66,11 @@ export class PlaceAnAdController {
         }
 
         document.body.classList.remove('auth-page');
-        AppController.showLoading(true);
+        window.dispatchEvent(new CustomEvent('app:loading', { detail: { show: true } }));
 
         try {
             if (!store.isAuthenticated) {
-                AppController.navigateTo('/login');
+                window.dispatchEvent(new CustomEvent('app:navigate', { detail: { path: '/login' } }));
                 uiActions.showError('Пожалуйста, войдите в систему');
                 return;
             }
@@ -107,7 +106,7 @@ export class PlaceAnAdController {
             console.error('Error loading place-an-ad page:', error);
             await this.showNotFound();
         } finally {
-            AppController.showLoading(false);
+            window.dispatchEvent(new CustomEvent('app:loading', { detail: { show: false } }));
             this.isRendering = false;
         }
     }
@@ -129,7 +128,7 @@ export class PlaceAnAdController {
 
             if (!result.success || !result.data) {
                 uiActions.showError('Не удалось загрузить объявление');
-                AppController.navigateTo('/profile');
+                window.dispatchEvent(new CustomEvent('app:navigate', { detail: { path: '/profile' } }));
                 return;
             }
 
@@ -634,7 +633,7 @@ export class PlaceAnAdController {
     private static async handleSubmit(mode: 'publish' | 'draft'): Promise<void> {
         if (mode !== 'draft' && !this.validateAndShowErrors()) return;
 
-        AppController.showLoading(true);
+        window.dispatchEvent(new CustomEvent('app:loading', { detail: { show: true } }));
         try {
             const formData = this.collectFormData();
             if (mode === 'draft') formData.status = 'draft';
@@ -660,7 +659,7 @@ export class PlaceAnAdController {
                 if (!this.editingAdId) await AdDraftService.clear();
                 this.clearAllData();
                 NotificationComponent.show({ type: 'success', message: 'Успешно сохранено!' });
-                AppController.navigateTo(adId ? `/ad/${adId}` : '/profile');
+                window.dispatchEvent(new CustomEvent('app:navigate', { detail: { path: adId ? `/ad/${adId}` : '/profile' } }));
             } else {
                 NotificationComponent.show({
                     type: 'error',
@@ -678,7 +677,7 @@ export class PlaceAnAdController {
                 });
             }
         } finally {
-            AppController.showLoading(false);
+            window.dispatchEvent(new CustomEvent('app:loading', { detail: { show: false } }));
         }
     }
 
@@ -696,7 +695,7 @@ export class PlaceAnAdController {
                 message: 'Будет опубликовано при подключении к сети',
                 duration: 5000,
             });
-            AppController.navigateTo('/');
+            window.dispatchEvent(new CustomEvent('app:navigate', { detail: { path: '/' } }));
         } catch (error) {
             NotificationComponent.show({ type: 'error', message: 'Не удалось сохранить оффлайн' });
         }
@@ -716,7 +715,7 @@ export class PlaceAnAdController {
         this.hideCancelModal();
         await AdDraftService.clear();
         this.clearAllData();
-        AppController.navigateTo('/');
+        window.dispatchEvent(new CustomEvent('app:navigate', { detail: { path: '/' } }));
     }
 
     private static async handleSaveDraft(): Promise<void> {
@@ -757,16 +756,16 @@ export class PlaceAnAdController {
     private static async handlePreview(): Promise<void> {
         if (!this.validateAndShowErrors()) return;
 
-        AppController.showLoading(true);
+        window.dispatchEvent(new CustomEvent('app:loading', { detail: { show: true } }));
         try {
             const formData = this.collectFormData();
             await AdDraftService.save(formData, this.photoFiles);
-            AppController.navigateTo('/ad-preview');
+            window.dispatchEvent(new CustomEvent('app:navigate', { detail: { path: '/ad-preview' } }));
         } catch (error) {
             console.error('Preview error:', error);
             uiActions.showError('Не удалось создать предпросмотр');
         } finally {
-            AppController.showLoading(false);
+            window.dispatchEvent(new CustomEvent('app:loading', { detail: { show: false } }));
         }
     }
 
@@ -836,9 +835,9 @@ export class PlaceAnAdController {
             btn.addEventListener('click', (e) => {
                 e.preventDefault();
                 if (this.editingAdId) {
-                    AppController.navigateTo(`/ad/${this.editingAdId}`);
+                    window.dispatchEvent(new CustomEvent('app:navigate', { detail: { path: `/ad/${this.editingAdId}` } }));
                 } else {
-                    AppController.navigateTo('/');
+                    window.dispatchEvent(new CustomEvent('app:navigate', { detail: { path: '/' } }));
                 }
             }),
         );

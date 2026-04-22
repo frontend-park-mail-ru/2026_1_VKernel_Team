@@ -2,7 +2,6 @@ import { authActions } from '@/actions/authActions';
 import { store } from '@/core/store';
 import { uiActions } from '@/actions/uiActions';
 import type { HandlebarsTemplateFunction } from '@/types';
-import { AppController } from '@/controllers/AppController';
 declare const Handlebars: any;
 
 export const AuthController = {
@@ -65,7 +64,7 @@ export const AuthController = {
         if (result.isValid) {
             await authActions.checkAuth();
             uiActions.showSuccess('Вход выполнен!');
-            AppController.navigateTo('/');
+            window.dispatchEvent(new CustomEvent('app:navigate', { detail: { path: '/' } }));
         } else {
             uiActions.showError(result.error || 'Ошибка входа');
             this.showLoginError(result.error ?? 'Ошибка входа');
@@ -78,7 +77,7 @@ export const AuthController = {
         if (result.isValid) {
             await authActions.checkAuth();
             uiActions.showSuccess('Регистрация успешна!');
-            AppController.navigateTo('/');
+            window.dispatchEvent(new CustomEvent('app:navigate', { detail: { path: '/' } }));
         } else {
             uiActions.showError(result.error || 'Ошибка регистрации');
         }
@@ -87,7 +86,7 @@ export const AuthController = {
     async handleLogout(): Promise<void> {
         await authActions.logout();
         localStorage.removeItem('authToken');
-        AppController.router();
+        window.dispatchEvent(new CustomEvent('app:route'));
     },
 
     initPasswordToggles(): void {

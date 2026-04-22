@@ -146,7 +146,19 @@ export const AppController = {
         this.setupStoreSubscription();
 
         await this.checkAuth().catch(() => {});
-
+        window.addEventListener('app:navigate', ((e: CustomEvent) => {
+            if (e.detail && e.detail.path) {
+                this.navigateTo(e.detail.path);
+            }
+        }) as EventListener);
+        window.addEventListener('app:route', () => {
+            this.router();
+        });
+        window.addEventListener('app:loading', ((e: CustomEvent) => {
+            if (e.detail !== undefined) {
+                this.showLoading(e.detail.show);
+            }
+        }) as EventListener);
         this.renderHeader();
         this.router();
         window.addEventListener('popstate', () => this.router());

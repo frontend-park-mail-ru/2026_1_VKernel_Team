@@ -47,9 +47,9 @@ export const ProfileContent = {
             if (editBtn) {
                 const adId = editBtn.getAttribute('data-edit-id');
                 if (adId) {
-                    import('@/controllers/AppController').then(({ AppController }) => {
-                        AppController.navigateTo(`/edit-ad/${adId}`);
-                    });
+                    window.dispatchEvent(new CustomEvent('app:navigate', { 
+                        detail: { path: `/edit-ad/${adId}` }
+                    }));
                 }
                 return;
             }
@@ -65,9 +65,9 @@ export const ProfileContent = {
             ) {
                 const adId = card.getAttribute('data-id');
                 if (adId) {
-                    import('@/controllers/AppController').then(({ AppController }) => {
-                        AppController.navigateTo(`/ad/${adId}`);
-                    });
+                    window.dispatchEvent(new CustomEvent('app:navigate', { 
+                        detail: { path: `/ad/${adId}` }
+                    }));
                 }
             }
         });
