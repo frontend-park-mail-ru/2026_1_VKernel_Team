@@ -7,7 +7,6 @@ import adDetailTpl from './templates/ad-detail.hbs';
 import { CONFIG } from '@/core/config';
 import { adsService } from '@/services/adsServices';
 import { store } from '@/core/store';
-import { AppController } from '@/controllers/AppController';
 import { PhotoViewer } from '@modules/announcements/shared/photo-view/photoViewer';
 import { sellerService } from '@modules/seller-page/service';
 import { uiActions } from '@/actions/uiActions';
@@ -45,7 +44,7 @@ export class AdDetailController {
         const app = document.getElementById('app');
         if (!app) return;
 
-        AppController.showLoading(true);
+        window.dispatchEvent(new CustomEvent('app:loading', { detail: { show: true } }));
 
         try {
             const result = await adsService.getAdById(adId);
@@ -86,7 +85,7 @@ export class AdDetailController {
             console.error('Error loading ad:', error);
             await this.showNotFound();
         } finally {
-            AppController.showLoading(false);
+            window.dispatchEvent(new CustomEvent('app:loading', { detail: { show: false } }));
         }
     }
 
@@ -242,7 +241,7 @@ export class AdDetailController {
             const btn = backBtns[i];
             const handler = (e: Event) => {
                 e.preventDefault();
-                AppController.navigateTo('/');
+                window.dispatchEvent(new CustomEvent('app:navigate', { detail: { path: '/' } }));
             };
             btn.addEventListener('click', handler);
             this._handlers.set(`back-${i}`, handler);
@@ -341,7 +340,7 @@ export class AdDetailController {
                 e.stopPropagation();
 
                 if (!store.isAuthenticated) {
-                    AppController.navigateTo('/login');
+                    window.dispatchEvent(new CustomEvent('app:navigate', { detail: { path: '/login' } }));
                     return;
                 }
 
@@ -398,7 +397,7 @@ export class AdDetailController {
                 e.stopPropagation();
 
                 if (!store.isAuthenticated) {
-                    AppController.navigateTo('/login');
+                    window.dispatchEvent(new CustomEvent('app:navigate', { detail: { path: '/login' } }));
                     return;
                 }
 
@@ -408,18 +407,18 @@ export class AdDetailController {
                 }
 
                 // Показываем лоадер
-                AppController.showLoading(true);
+                window.dispatchEvent(new CustomEvent('app:loading', { detail: { show: true } }));
 
                 try {
                     const { cartActions } = await import('@modules/cart/actions');
                     const product = this.extractProductFromPage(Number(adId));
                     await cartActions.addToCart(Number(adId), product);
 
-                    AppController.showLoading(false);
-                    AppController.navigateTo('/cart');
+                    window.dispatchEvent(new CustomEvent('app:loading', { detail: { show: false } }));
+                    window.dispatchEvent(new CustomEvent('app:navigate', { detail: { path: '/cart' } }));
                 } catch (error) {
                     console.error('Error in buy now:', error);
-                    AppController.showLoading(false);
+                    window.dispatchEvent(new CustomEvent('app:loading', { detail: { show: false } }));
                     uiActions.showError('Не удалось добавить товар в корзину');
                 }
             };
@@ -433,7 +432,7 @@ export class AdDetailController {
         if (editBtn) {
             const handler = (e: Event) => {
                 e.preventDefault();
-                AppController.navigateTo(`/edit-ad/${adId}`);
+                window.dispatchEvent(new CustomEvent('app:navigate', { detail: { path: `/edit-ad/${adId}` } }));
             };
             editBtn.addEventListener('click', handler);
             this._handlers.set('editAd', handler);
@@ -451,10 +450,10 @@ export class AdDetailController {
                 if (sellerId) {
                     if (isOwner) {
                         // Если это своё объявление - идём в личный профиль
-                        AppController.navigateTo('/profile');
+                        window.dispatchEvent(new CustomEvent('app:navigate', { detail: { path: '/profile' } }));
                     } else {
                         // Если чужое - на страницу продавца
-                        AppController.navigateTo(`/seller/${sellerId}`);
+                        window.dispatchEvent(new CustomEvent('app:navigate', { detail: { path: `/seller/${sellerId}` } }));
                     }
                 }
             };

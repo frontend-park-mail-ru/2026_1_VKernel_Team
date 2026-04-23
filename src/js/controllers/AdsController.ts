@@ -92,9 +92,12 @@ export const AdsController = {
                 const adId = (card as HTMLElement).dataset.id;
                 if (adId) {
                     // Используем navigateTo из AppController
-                    import('@/controllers/AppController').then(({ AppController }) => {
-                        AppController.navigateTo(`/ad/${adId}`);
-                    });
+                    if (adId) {
+                    // Используем глобальное событие вместо импорта AppController
+                    window.dispatchEvent(new CustomEvent('app:navigate', { 
+                        detail: { path: `/ad/${adId}` } 
+                    }));
+                }
                 }
             });
         });
