@@ -93,11 +93,13 @@ export const AdsController = {
                 if (adId) {
                     // Используем navigateTo из AppController
                     if (adId) {
-                    // Используем глобальное событие вместо импорта AppController
-                    window.dispatchEvent(new CustomEvent('app:navigate', { 
-                        detail: { path: `/ad/${adId}` } 
-                    }));
-                }
+                        // Используем глобальное событие вместо импорта AppController
+                        window.dispatchEvent(
+                            new CustomEvent('app:navigate', {
+                                detail: { path: `/ad/${adId}` },
+                            }),
+                        );
+                    }
                 }
             });
         });

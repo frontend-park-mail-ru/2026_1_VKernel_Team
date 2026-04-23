@@ -22,13 +22,16 @@ export class AdPreviewController {
     private static categoryCharacteristicsDefs: CategoryCharacteristic[] = [];
 
     static async render(): Promise<void> {
+        this.currentPhotoIndex = 0;
         const app = document.getElementById('app');
         if (!app) return;
 
         this.draftData = await AdDraftService.get();
         if (!this.draftData) {
             uiActions.showError('Нет данных для предпросмотра');
-            window.dispatchEvent(new CustomEvent('app:navigate', { detail: { path: '/place-ad' } }));
+            window.dispatchEvent(
+                new CustomEvent('app:navigate', { detail: { path: '/place-ad' } }),
+            );
             return;
         }
 
@@ -146,7 +149,9 @@ export class AdPreviewController {
         if (backBtn) {
             const handler = (e: Event) => {
                 e.preventDefault();
-                window.dispatchEvent(new CustomEvent('app:navigate', { detail: { path: '/place-ad' } }));
+                window.dispatchEvent(
+                    new CustomEvent('app:navigate', { detail: { path: '/place-ad' } }),
+                );
             };
             backBtn.addEventListener('click', handler);
             this._handlers.set('back-to-edit', handler);
@@ -256,13 +261,15 @@ export class AdPreviewController {
     }
 
     private static async updateMainPhoto(): Promise<void> {
+        const targetIndex = this.currentPhotoIndex;
         const mainPhoto = document.getElementById('mainPhoto') as HTMLImageElement;
-        if (mainPhoto && this.draftData?.photoFiles[this.currentPhotoIndex]) {
+        if (mainPhoto && this.draftData?.photoFiles[targetIndex]) {
             const preview = await new Promise<string>((resolve) => {
                 const reader = new FileReader();
                 reader.onload = (e) => resolve(e.target?.result as string);
-                reader.readAsDataURL(this.draftData!.photoFiles[this.currentPhotoIndex]);
+                reader.readAsDataURL(this.draftData!.photoFiles[targetIndex]);
             });
+            if (this.currentPhotoIndex !== targetIndex) return;
             mainPhoto.src = preview;
             this.setActiveThumbnail(this.currentPhotoIndex);
         }
@@ -325,7 +332,11 @@ export class AdPreviewController {
                 await AdDraftService.clear();
 
                 const adId = result.data?.ad_id || result.data?.id;
-                window.dispatchEvent(new CustomEvent('app:navigate', { detail: { path: adId ? `/ad/${adId}` : '/profile' } }));
+                window.dispatchEvent(
+                    new CustomEvent('app:navigate', {
+                        detail: { path: adId ? `/ad/${adId}` : '/profile' },
+                    }),
+                );
             } else {
                 NotificationComponent.show({
                     type: 'error',

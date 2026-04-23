@@ -41,6 +41,8 @@ export class AdDetailController {
 
     static async render(adId: string): Promise<void> {
         this.adId = adId;
+        this.currentPhotoIndex = 0;
+        this.allPhotosArray = [];
         const app = document.getElementById('app');
         if (!app) return;
 
@@ -340,7 +342,9 @@ export class AdDetailController {
                 e.stopPropagation();
 
                 if (!store.isAuthenticated) {
-                    window.dispatchEvent(new CustomEvent('app:navigate', { detail: { path: '/login' } }));
+                    window.dispatchEvent(
+                        new CustomEvent('app:navigate', { detail: { path: '/login' } }),
+                    );
                     return;
                 }
 
@@ -397,7 +401,9 @@ export class AdDetailController {
                 e.stopPropagation();
 
                 if (!store.isAuthenticated) {
-                    window.dispatchEvent(new CustomEvent('app:navigate', { detail: { path: '/login' } }));
+                    window.dispatchEvent(
+                        new CustomEvent('app:navigate', { detail: { path: '/login' } }),
+                    );
                     return;
                 }
 
@@ -414,11 +420,17 @@ export class AdDetailController {
                     const product = this.extractProductFromPage(Number(adId));
                     await cartActions.addToCart(Number(adId), product);
 
-                    window.dispatchEvent(new CustomEvent('app:loading', { detail: { show: false } }));
-                    window.dispatchEvent(new CustomEvent('app:navigate', { detail: { path: '/cart' } }));
+                    window.dispatchEvent(
+                        new CustomEvent('app:loading', { detail: { show: false } }),
+                    );
+                    window.dispatchEvent(
+                        new CustomEvent('app:navigate', { detail: { path: '/cart' } }),
+                    );
                 } catch (error) {
                     console.error('Error in buy now:', error);
-                    window.dispatchEvent(new CustomEvent('app:loading', { detail: { show: false } }));
+                    window.dispatchEvent(
+                        new CustomEvent('app:loading', { detail: { show: false } }),
+                    );
                     uiActions.showError('Не удалось добавить товар в корзину');
                 }
             };
@@ -432,7 +444,9 @@ export class AdDetailController {
         if (editBtn) {
             const handler = (e: Event) => {
                 e.preventDefault();
-                window.dispatchEvent(new CustomEvent('app:navigate', { detail: { path: `/edit-ad/${adId}` } }));
+                window.dispatchEvent(
+                    new CustomEvent('app:navigate', { detail: { path: `/edit-ad/${adId}` } }),
+                );
             };
             editBtn.addEventListener('click', handler);
             this._handlers.set('editAd', handler);
@@ -450,10 +464,16 @@ export class AdDetailController {
                 if (sellerId) {
                     if (isOwner) {
                         // Если это своё объявление - идём в личный профиль
-                        window.dispatchEvent(new CustomEvent('app:navigate', { detail: { path: '/profile' } }));
+                        window.dispatchEvent(
+                            new CustomEvent('app:navigate', { detail: { path: '/profile' } }),
+                        );
                     } else {
                         // Если чужое - на страницу продавца
-                        window.dispatchEvent(new CustomEvent('app:navigate', { detail: { path: `/seller/${sellerId}` } }));
+                        window.dispatchEvent(
+                            new CustomEvent('app:navigate', {
+                                detail: { path: `/seller/${sellerId}` },
+                            }),
+                        );
                     }
                 }
             };
