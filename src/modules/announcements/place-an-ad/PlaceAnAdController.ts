@@ -70,7 +70,9 @@ export class PlaceAnAdController {
 
         try {
             if (!store.isAuthenticated) {
-                window.dispatchEvent(new CustomEvent('app:navigate', { detail: { path: '/login' } }));
+                window.dispatchEvent(
+                    new CustomEvent('app:navigate', { detail: { path: '/login' } }),
+                );
                 uiActions.showError('Пожалуйста, войдите в систему');
                 return;
             }
@@ -128,7 +130,9 @@ export class PlaceAnAdController {
 
             if (!result.success || !result.data) {
                 uiActions.showError('Не удалось загрузить объявление');
-                window.dispatchEvent(new CustomEvent('app:navigate', { detail: { path: '/profile' } }));
+                window.dispatchEvent(
+                    new CustomEvent('app:navigate', { detail: { path: '/profile' } }),
+                );
                 return;
             }
 
@@ -659,7 +663,11 @@ export class PlaceAnAdController {
                 if (!this.editingAdId) await AdDraftService.clear();
                 this.clearAllData();
                 NotificationComponent.show({ type: 'success', message: 'Успешно сохранено!' });
-                window.dispatchEvent(new CustomEvent('app:navigate', { detail: { path: adId ? `/ad/${adId}` : '/profile' } }));
+                window.dispatchEvent(
+                    new CustomEvent('app:navigate', {
+                        detail: { path: adId ? `/ad/${adId}` : '/profile' },
+                    }),
+                );
             } else {
                 NotificationComponent.show({
                     type: 'error',
@@ -760,7 +768,9 @@ export class PlaceAnAdController {
         try {
             const formData = this.collectFormData();
             await AdDraftService.save(formData, this.photoFiles);
-            window.dispatchEvent(new CustomEvent('app:navigate', { detail: { path: '/ad-preview' } }));
+            window.dispatchEvent(
+                new CustomEvent('app:navigate', { detail: { path: '/ad-preview' } }),
+            );
         } catch (error) {
             console.error('Preview error:', error);
             uiActions.showError('Не удалось создать предпросмотр');
@@ -835,9 +845,15 @@ export class PlaceAnAdController {
             btn.addEventListener('click', (e) => {
                 e.preventDefault();
                 if (this.editingAdId) {
-                    window.dispatchEvent(new CustomEvent('app:navigate', { detail: { path: `/ad/${this.editingAdId}` } }));
+                    window.dispatchEvent(
+                        new CustomEvent('app:navigate', {
+                            detail: { path: `/ad/${this.editingAdId}` },
+                        }),
+                    );
                 } else {
-                    window.dispatchEvent(new CustomEvent('app:navigate', { detail: { path: '/' } }));
+                    window.dispatchEvent(
+                        new CustomEvent('app:navigate', { detail: { path: '/' } }),
+                    );
                 }
             }),
         );
