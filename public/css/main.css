@@ -298,6 +298,9 @@ body .main-container {
     display: flex;
     flex-direction: column;
     gap: 20px;
+    min-width: 0;
+    overflow-wrap: break-word;
+    word-break: break-word;
 }
 
 .ad-column {
@@ -505,13 +508,19 @@ body .main-container {
     display: flex;
     align-items: center;
     gap: 2px;
+    min-width: 0;
+}
+
+.rec-card-location-text {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    min-width: 0;
 }
 
 .location-icon {
     font-size: 12px;
+    flex-shrink: 0;
 }
 
 .rec-card-footer-actions {
@@ -536,7 +545,8 @@ body .main-container {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 32px;
+    font-size: 16px;
+    color: #666;
     cursor: pointer;
     box-shadow: 0 2px 8px rgba(0,0,0,0.15);
     transition: all 0.2s;

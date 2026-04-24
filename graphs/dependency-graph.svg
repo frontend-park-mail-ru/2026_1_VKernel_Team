@@ -191,18 +191,18 @@
 </g>
 <g id="clust37" class="cluster">
 <title>cluster_src/modules/common/components/header</title>
-<path fill="#ffffff" stroke="black" stroke-width="2" d="M530.25,-2902C530.25,-2902 715.75,-2902 715.75,-2902 721.75,-2902 727.75,-2908 727.75,-2914 727.75,-2914 727.75,-2972 727.75,-2972 727.75,-2978 721.75,-2984 715.75,-2984 715.75,-2984 530.25,-2984 530.25,-2984 524.25,-2984 518.25,-2978 518.25,-2972 518.25,-2972 518.25,-2914 518.25,-2914 518.25,-2908 524.25,-2902 530.25,-2902"/>
-<text xml:space="preserve" text-anchor="middle" x="623" y="-2971.45" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="9.00">header</text>
+<path fill="#ffffff" stroke="black" stroke-width="2" d="M530.25,-3022C530.25,-3022 715.75,-3022 715.75,-3022 721.75,-3022 727.75,-3028 727.75,-3034 727.75,-3034 727.75,-3092 727.75,-3092 727.75,-3098 721.75,-3104 715.75,-3104 715.75,-3104 530.25,-3104 530.25,-3104 524.25,-3104 518.25,-3098 518.25,-3092 518.25,-3092 518.25,-3034 518.25,-3034 518.25,-3028 524.25,-3022 530.25,-3022"/>
+<text xml:space="preserve" text-anchor="middle" x="623" y="-3091.45" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="9.00">header</text>
 </g>
 <g id="clust38" class="cluster">
 <title>cluster_src/modules/common/components/modal</title>
-<path fill="#ffffff" stroke="black" stroke-width="2" d="M528.75,-3052C528.75,-3052 578,-3052 578,-3052 584,-3052 590,-3058 590,-3064 590,-3064 590,-3092 590,-3092 590,-3098 584,-3104 578,-3104 578,-3104 528.75,-3104 528.75,-3104 522.75,-3104 516.75,-3098 516.75,-3092 516.75,-3092 516.75,-3064 516.75,-3064 516.75,-3058 522.75,-3052 528.75,-3052"/>
-<text xml:space="preserve" text-anchor="middle" x="553.38" y="-3091.45" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="9.00">modal</text>
+<path fill="#ffffff" stroke="black" stroke-width="2" d="M528.75,-2962C528.75,-2962 578,-2962 578,-2962 584,-2962 590,-2968 590,-2974 590,-2974 590,-3002 590,-3002 590,-3008 584,-3014 578,-3014 578,-3014 528.75,-3014 528.75,-3014 522.75,-3014 516.75,-3008 516.75,-3002 516.75,-3002 516.75,-2974 516.75,-2974 516.75,-2968 522.75,-2962 528.75,-2962"/>
+<text xml:space="preserve" text-anchor="middle" x="553.38" y="-3001.45" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="9.00">modal</text>
 </g>
 <g id="clust39" class="cluster">
 <title>cluster_src/modules/common/components/search&#45;section</title>
-<path fill="#ffffff" stroke="black" stroke-width="2" d="M514.88,-2992C514.88,-2992 711.5,-2992 711.5,-2992 717.5,-2992 723.5,-2998 723.5,-3004 723.5,-3004 723.5,-3032 723.5,-3032 723.5,-3038 717.5,-3044 711.5,-3044 711.5,-3044 514.88,-3044 514.88,-3044 508.88,-3044 502.88,-3038 502.88,-3032 502.88,-3032 502.88,-3004 502.88,-3004 502.88,-2998 508.88,-2992 514.88,-2992"/>
-<text xml:space="preserve" text-anchor="middle" x="613.19" y="-3031.45" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="9.00">search&#45;section</text>
+<path fill="#ffffff" stroke="black" stroke-width="2" d="M514.88,-2902C514.88,-2902 711.5,-2902 711.5,-2902 717.5,-2902 723.5,-2908 723.5,-2914 723.5,-2914 723.5,-2942 723.5,-2942 723.5,-2948 717.5,-2954 711.5,-2954 711.5,-2954 514.88,-2954 514.88,-2954 508.88,-2954 502.88,-2948 502.88,-2942 502.88,-2942 502.88,-2914 502.88,-2914 502.88,-2908 508.88,-2902 514.88,-2902"/>
+<text xml:space="preserve" text-anchor="middle" x="613.19" y="-2941.45" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="9.00">search&#45;section</text>
 </g>
 <g id="clust40" class="cluster">
 <title>cluster_src/modules/common/notifications</title>
@@ -754,16 +754,16 @@
 <g id="node25" class="node">
 <title>src/modules/common/components/header/header.hbs</title>
 <g id="a_node25"><a xlink:href="src/modules/common/components/header/header.hbs" xlink:title="header.hbs">
-<path fill="#ffffcc" stroke="black" d="M713.83,-2957.88C713.83,-2957.88 663.17,-2957.88 663.17,-2957.88 660.21,-2957.88 657.25,-2954.92 657.25,-2951.96 657.25,-2951.96 657.25,-2946.04 657.25,-2946.04 657.25,-2943.08 660.21,-2940.12 663.17,-2940.12 663.17,-2940.12 713.83,-2940.12 713.83,-2940.12 716.79,-2940.12 719.75,-2943.08 719.75,-2946.04 719.75,-2946.04 719.75,-2951.96 719.75,-2951.96 719.75,-2954.92 716.79,-2957.88 713.83,-2957.88"/>
-<text xml:space="preserve" text-anchor="start" x="665.25" y="-2946.38" font-family="Helvetica,sans-Serif" font-size="9.00">header.hbs</text>
+<path fill="#ffffcc" stroke="black" d="M713.83,-3077.88C713.83,-3077.88 663.17,-3077.88 663.17,-3077.88 660.21,-3077.88 657.25,-3074.92 657.25,-3071.96 657.25,-3071.96 657.25,-3066.04 657.25,-3066.04 657.25,-3063.08 660.21,-3060.12 663.17,-3060.12 663.17,-3060.12 713.83,-3060.12 713.83,-3060.12 716.79,-3060.12 719.75,-3063.08 719.75,-3066.04 719.75,-3066.04 719.75,-3071.96 719.75,-3071.96 719.75,-3074.92 716.79,-3077.88 713.83,-3077.88"/>
+<text xml:space="preserve" text-anchor="start" x="665.25" y="-3066.38" font-family="Helvetica,sans-Serif" font-size="9.00">header.hbs</text>
 </a>
 </g>
 </g>
 <!-- src/js/controllers/AppController.ts&#45;&gt;src/modules/common/components/header/header.hbs -->
 <g id="edge27" class="edge">
 <title>src/js/controllers/AppController.ts&#45;&gt;src/modules/common/components/header/header.hbs</title>
-<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M187.43,-406.29C191.15,-486.96 217.88,-1077.5 227,-1557 227.3,-1572.64 228.58,-3795.73 235,-3810 261.55,-3869.03 298.85,-3860.26 343.62,-3907 413.16,-3979.58 396.04,-4038.97 486.88,-4082 544.81,-4109.45 585.63,-4127.17 631.12,-4082 641.9,-4071.3 632.61,-3002.71 639.12,-2989 644.09,-2978.54 653.27,-2969.87 662.31,-2963.31"/>
-<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="663.45,-2965.08 667.26,-2959.99 661.1,-2961.59 663.45,-2965.08"/>
+<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M187.43,-406.29C191.15,-486.96 217.88,-1077.5 227,-1557 227.3,-1572.64 228.58,-3795.73 235,-3810 261.55,-3869.03 298.85,-3860.26 343.62,-3907 413.16,-3979.58 396.04,-4038.97 486.88,-4082 544.81,-4109.45 585.6,-4127.14 631.12,-4082 640.21,-4072.99 636,-3173.41 639.12,-3161 646.26,-3132.62 663.77,-3103.28 675.64,-3085.58"/>
+<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="677.26,-3086.94 678.93,-3080.81 673.8,-3084.56 677.26,-3086.94"/>
 </g>
 <!-- src/modules/common/offline/offline&#45;indicator.ts -->
 <g id="node26" class="node">
@@ -1210,31 +1210,31 @@
 <g id="node91" class="node">
 <title>src/modules/common/components/header/header.ts</title>
 <g id="a_node91"><a xlink:href="src/modules/common/components/header/header.ts" xlink:title="header.ts">
-<path fill="#ddfeff" stroke="black" d="M574.58,-2927.88C574.58,-2927.88 532.17,-2927.88 532.17,-2927.88 529.21,-2927.88 526.25,-2924.92 526.25,-2921.96 526.25,-2921.96 526.25,-2916.04 526.25,-2916.04 526.25,-2913.08 529.21,-2910.12 532.17,-2910.12 532.17,-2910.12 574.58,-2910.12 574.58,-2910.12 577.54,-2910.12 580.5,-2913.08 580.5,-2916.04 580.5,-2916.04 580.5,-2921.96 580.5,-2921.96 580.5,-2924.92 577.54,-2927.88 574.58,-2927.88"/>
-<text xml:space="preserve" text-anchor="start" x="534.25" y="-2916.38" font-family="Helvetica,sans-Serif" font-size="9.00">header.ts</text>
+<path fill="#ddfeff" stroke="black" d="M574.58,-3062.88C574.58,-3062.88 532.17,-3062.88 532.17,-3062.88 529.21,-3062.88 526.25,-3059.92 526.25,-3056.96 526.25,-3056.96 526.25,-3051.04 526.25,-3051.04 526.25,-3048.08 529.21,-3045.12 532.17,-3045.12 532.17,-3045.12 574.58,-3045.12 574.58,-3045.12 577.54,-3045.12 580.5,-3048.08 580.5,-3051.04 580.5,-3051.04 580.5,-3056.96 580.5,-3056.96 580.5,-3059.92 577.54,-3062.88 574.58,-3062.88"/>
+<text xml:space="preserve" text-anchor="start" x="534.25" y="-3051.38" font-family="Helvetica,sans-Serif" font-size="9.00">header.ts</text>
 </a>
 </g>
 </g>
 <!-- src/modules/cart/pages/cart/cart.ts&#45;&gt;src/modules/common/components/header/header.ts -->
 <g id="edge154" class="edge">
 <title>src/modules/cart/pages/cart/cart.ts&#45;&gt;src/modules/common/components/header/header.ts</title>
-<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M320.53,-1633.74C329.25,-1635.4 338.11,-1638.92 343.62,-1646 358.96,-1665.71 337.61,-2524.33 351.62,-2545 385.91,-2595.57 444.14,-2546.74 478.88,-2597 497.83,-2624.43 467.05,-2870.19 486.88,-2897 494.04,-2906.68 505.66,-2912.16 517.13,-2915.23"/>
-<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="516.54,-2917.25 522.85,-2916.49 517.45,-2913.15 516.54,-2917.25"/>
+<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M320.53,-1633.74C329.25,-1635.4 338.11,-1638.92 343.62,-1646 351.55,-1656.18 349.66,-2562.25 351.62,-2575 382.89,-2778.04 358.21,-2856.84 486.88,-3017 495.04,-3027.16 506.79,-3035.02 518.09,-3040.83"/>
+<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="517.13,-3042.7 523.45,-3043.4 518.94,-3038.91 517.13,-3042.7"/>
 </g>
 <!-- src/modules/common/components/search&#45;section/search&#45;section.ts -->
 <g id="node92" class="node">
 <title>src/modules/common/components/search&#45;section/search&#45;section.ts</title>
 <g id="a_node92"><a xlink:href="src/modules/common/components/search-section/search-section.ts" xlink:title="search&#45;section.ts">
-<path fill="#ddfeff" stroke="black" d="M589.96,-3017.88C589.96,-3017.88 516.79,-3017.88 516.79,-3017.88 513.83,-3017.88 510.88,-3014.92 510.88,-3011.96 510.88,-3011.96 510.88,-3006.04 510.88,-3006.04 510.88,-3003.08 513.83,-3000.12 516.79,-3000.12 516.79,-3000.12 589.96,-3000.12 589.96,-3000.12 592.92,-3000.12 595.88,-3003.08 595.88,-3006.04 595.88,-3006.04 595.88,-3011.96 595.88,-3011.96 595.88,-3014.92 592.92,-3017.88 589.96,-3017.88"/>
-<text xml:space="preserve" text-anchor="start" x="518.88" y="-3006.38" font-family="Helvetica,sans-Serif" font-size="9.00">search&#45;section.ts</text>
+<path fill="#ddfeff" stroke="black" d="M589.96,-2927.88C589.96,-2927.88 516.79,-2927.88 516.79,-2927.88 513.83,-2927.88 510.88,-2924.92 510.88,-2921.96 510.88,-2921.96 510.88,-2916.04 510.88,-2916.04 510.88,-2913.08 513.83,-2910.12 516.79,-2910.12 516.79,-2910.12 589.96,-2910.12 589.96,-2910.12 592.92,-2910.12 595.88,-2913.08 595.88,-2916.04 595.88,-2916.04 595.88,-2921.96 595.88,-2921.96 595.88,-2924.92 592.92,-2927.88 589.96,-2927.88"/>
+<text xml:space="preserve" text-anchor="start" x="518.88" y="-2916.38" font-family="Helvetica,sans-Serif" font-size="9.00">search&#45;section.ts</text>
 </a>
 </g>
 </g>
 <!-- src/modules/cart/pages/cart/cart.ts&#45;&gt;src/modules/common/components/search&#45;section/search&#45;section.ts -->
 <g id="edge155" class="edge">
 <title>src/modules/cart/pages/cart/cart.ts&#45;&gt;src/modules/common/components/search&#45;section/search&#45;section.ts</title>
-<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M320.53,-1633.74C329.25,-1635.4 338.11,-1638.92 343.62,-1646 351.55,-1656.18 349.53,-2562.27 351.62,-2575 382.88,-2765.17 351.06,-2850.26 486.88,-2987 491.35,-2991.51 496.77,-2995.09 502.57,-2997.94"/>
-<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="501.51,-2999.77 507.85,-3000.2 503.16,-2995.91 501.51,-2999.77"/>
+<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M320.53,-1633.74C329.25,-1635.4 338.11,-1638.92 343.62,-1646 358.96,-1665.71 337.61,-2524.33 351.62,-2545 385.91,-2595.57 444.14,-2546.74 478.88,-2597 497.83,-2624.43 467.05,-2870.19 486.88,-2897 490.94,-2902.49 496.43,-2906.63 502.53,-2909.75"/>
+<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="501.37,-2911.54 507.71,-2911.97 503.03,-2907.68 501.37,-2911.54"/>
 </g>
 <!-- src/modules/common/offline/offline&#45;indicator.ts&#45;&gt;src/modules/common/offline/network/networkStatus.ts -->
 <g id="edge171" class="edge">
@@ -1452,14 +1452,14 @@
 <!-- src/modules/profile/pages/profile/profile.ts&#45;&gt;src/modules/common/components/header/header.ts -->
 <g id="edge222" class="edge">
 <title>src/modules/profile/pages/profile/profile.ts&#45;&gt;src/modules/common/components/header/header.ts</title>
-<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M188.49,-3202.76C192.42,-3181.01 204.91,-3125.89 235,-3092 314.79,-3002.14 452.79,-2949.92 517.27,-2929.3"/>
-<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="517.89,-2931.31 522.98,-2927.51 516.63,-2927.3 517.89,-2931.31"/>
+<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M193.05,-3202.8C201.23,-3191.04 216.9,-3170.79 235,-3159 327.02,-3099.08 456.37,-3070.38 517.62,-3059.48"/>
+<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="517.61,-3061.61 523.16,-3058.52 516.89,-3057.47 517.61,-3061.61"/>
 </g>
 <!-- src/modules/profile/pages/profile/profile.ts&#45;&gt;src/modules/common/components/search&#45;section/search&#45;section.ts -->
 <g id="edge223" class="edge">
 <title>src/modules/profile/pages/profile/profile.ts&#45;&gt;src/modules/common/components/search&#45;section/search&#45;section.ts</title>
-<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M193.57,-3202.73C202.08,-3191.27 217.85,-3171.72 235,-3159 326.4,-3091.21 453.31,-3042.51 515.3,-3021.12"/>
-<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="515.75,-3023.18 520.75,-3019.26 514.39,-3019.21 515.75,-3023.18"/>
+<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M189.03,-3202.84C193.86,-3182.8 207.75,-3134.41 235,-3104 316.06,-3013.54 452.16,-2955.29 516.55,-2931.38"/>
+<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="517.02,-2933.45 521.93,-2929.41 515.58,-2929.5 517.02,-2933.45"/>
 </g>
 <!-- src/modules/profile/pages/profile/profile.ts&#45;&gt;src/modules/profile/components/profile&#45;avatar/profile&#45;avatar.ts -->
 <g id="edge224" class="edge">
@@ -1551,17 +1551,11 @@
 <path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M387.13,-564.15C370.1,-565.05 352.45,-570.06 347.62,-586 344.3,-596.99 344.3,-2228.01 347.62,-2239 353.9,-2259.74 373.55,-2274.43 391.24,-2283.85"/>
 <polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="390.16,-2285.65 396.46,-2286.45 392.03,-2281.89 390.16,-2285.65"/>
 </g>
-<!-- src/modules/seller&#45;page/pages/seller&#45;page/seller&#45;page.ts&#45;&gt;src/modules/common/components/header/header.ts -->
-<g id="edge255" class="edge">
-<title>src/modules/seller&#45;page/pages/seller&#45;page/seller&#45;page.ts&#45;&gt;src/modules/common/components/header/header.ts</title>
-<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M459.34,-568.32C466.88,-570.33 474.03,-573.89 478.88,-580 498.87,-605.22 468.04,-2870.9 486.88,-2897 493.98,-2906.84 505.7,-2912.34 517.28,-2915.39"/>
-<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="516.77,-2917.43 523.07,-2916.64 517.65,-2913.33 516.77,-2917.43"/>
-</g>
 <!-- src/modules/seller&#45;page/pages/seller&#45;page/seller&#45;page.ts&#45;&gt;src/modules/common/components/search&#45;section/search&#45;section.ts -->
-<g id="edge256" class="edge">
+<g id="edge255" class="edge">
 <title>src/modules/seller&#45;page/pages/seller&#45;page/seller&#45;page.ts&#45;&gt;src/modules/common/components/search&#45;section/search&#45;section.ts</title>
-<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M459.34,-568.32C466.88,-570.33 474.03,-573.89 478.88,-580 499.64,-606.2 467.31,-2959.89 486.88,-2987 490.92,-2992.61 496.47,-2996.81 502.63,-2999.95"/>
-<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="501.58,-3001.78 507.92,-3002.2 503.22,-2997.91 501.58,-3001.78"/>
+<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M459.34,-568.32C466.88,-570.33 474.03,-573.89 478.88,-580 498.87,-605.22 468.04,-2870.9 486.88,-2897 490.92,-2902.61 496.47,-2906.81 502.63,-2909.95"/>
+<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="501.58,-2911.78 507.92,-2912.2 503.22,-2907.91 501.58,-2911.78"/>
 </g>
 <!-- src/modules/common/components/ad&#45;card/ad&#45;card.ts -->
 <g id="node95" class="node">
@@ -1588,7 +1582,7 @@
 </g>
 </g>
 <!-- src/modules/seller&#45;page/pages/seller&#45;page/seller&#45;page.ts&#45;&gt;src/modules/seller&#45;page/components/seller&#45;info&#45;card/seller&#45;info&#45;card.ts -->
-<g id="edge257" class="edge">
+<g id="edge256" class="edge">
 <title>src/modules/seller&#45;page/pages/seller&#45;page/seller&#45;page.ts&#45;&gt;src/modules/seller&#45;page/components/seller&#45;info&#45;card/seller&#45;info&#45;card.ts</title>
 <path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M459.47,-568.52C466.91,-570.54 473.98,-574.05 478.88,-580 493.35,-597.61 473.21,-766.76 486.88,-785 490.78,-790.21 495.98,-794.21 501.74,-797.26"/>
 <polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="500.78,-799.13 507.12,-799.64 502.48,-795.29 500.78,-799.13"/>
@@ -1603,7 +1597,7 @@
 </g>
 </g>
 <!-- src/modules/seller&#45;page/pages/seller&#45;page/seller&#45;page.ts&#45;&gt;src/modules/seller&#45;page/components/seller&#45;tabs/seller&#45;tabs.ts -->
-<g id="edge258" class="edge">
+<g id="edge257" class="edge">
 <title>src/modules/seller&#45;page/pages/seller&#45;page/seller&#45;page.ts&#45;&gt;src/modules/seller&#45;page/components/seller&#45;tabs/seller&#45;tabs.ts</title>
 <path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M459.23,-568.4C466.78,-570.41 473.96,-573.95 478.88,-580 499.55,-605.45 467.37,-848.64 486.88,-875 492.66,-882.83 501.37,-887.9 510.55,-891.18"/>
 <polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="509.8,-893.15 516.15,-892.86 511,-889.13 509.8,-893.15"/>
@@ -1618,7 +1612,7 @@
 </g>
 </g>
 <!-- src/modules/seller&#45;page/pages/seller&#45;page/seller&#45;page.ts&#45;&gt;src/modules/seller&#45;page/pages/seller&#45;page/seller&#45;page.css -->
-<g id="edge259" class="edge">
+<g id="edge258" class="edge">
 <title>src/modules/seller&#45;page/pages/seller&#45;page/seller&#45;page.ts&#45;&gt;src/modules/seller&#45;page/pages/seller&#45;page/seller&#45;page.css</title>
 <path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M459.34,-558.53C468.32,-556.38 477.95,-554.09 486.88,-552 492.89,-550.59 499.21,-549.12 505.47,-547.68"/>
 <polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="505.59,-549.81 510.97,-546.42 504.65,-545.72 505.59,-549.81"/>
@@ -1633,7 +1627,7 @@
 </g>
 </g>
 <!-- src/modules/seller&#45;page/pages/seller&#45;page/seller&#45;page.ts&#45;&gt;src/modules/seller&#45;page/pages/seller&#45;page/seller&#45;page.hbs -->
-<g id="edge260" class="edge">
+<g id="edge259" class="edge">
 <title>src/modules/seller&#45;page/pages/seller&#45;page/seller&#45;page.ts&#45;&gt;src/modules/seller&#45;page/pages/seller&#45;page/seller&#45;page.hbs</title>
 <path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M459.26,-567C473.26,-567 489.6,-567 504.66,-567"/>
 <polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="504.32,-569.1 510.32,-567 504.32,-564.9 504.32,-569.1"/>
@@ -2103,8 +2097,8 @@
 <!-- src/modules/cart/actions.ts&#45;&gt;src/modules/profile/purchases&#45;store.ts -->
 <g id="edge113" class="edge">
 <title>src/modules/cart/actions.ts&#45;&gt;src/modules/profile/purchases&#45;store.ts</title>
-<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M548.46,-2488.28C537.93,-2513.34 508.38,-2584.58 486.88,-2645 420.4,-2831.75 386.05,-2874.79 351.62,-3070 347.86,-3091.36 353.37,-3245.63 343.62,-3265 338.3,-3275.59 328.74,-3284.33 319.43,-3290.91"/>
-<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="318.5,-3289.01 314.64,-3294.06 320.81,-3292.52 318.5,-3289.01"/>
+<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M548.41,-2488.26C537.77,-2513.28 507.97,-2584.44 486.88,-2645 418.75,-2840.61 386.71,-2886.86 351.62,-3091 348.35,-3110.07 352.36,-3247.73 343.62,-3265 338.27,-3275.58 328.71,-3284.32 319.4,-3290.9"/>
+<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="318.48,-3289 314.61,-3294.05 320.78,-3292.51 318.48,-3289"/>
 </g>
 <!-- src/modules/cart/store.ts&#45;&gt;src/modules/common/offline/db/indexedDB.ts -->
 <g id="edge160" class="edge">
@@ -2119,13 +2113,13 @@
 <polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="810.78,-445.39 809.2,-439.23 806.59,-445.03 810.78,-445.39"/>
 </g>
 <!-- src/modules/seller&#45;page/service.ts&#45;&gt;src/js/api/apiClient.ts -->
-<g id="edge261" class="edge">
+<g id="edge260" class="edge">
 <title>src/modules/seller&#45;page/service.ts&#45;&gt;src/js/api/apiClient.ts</title>
 <path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M580.91,-677.49C597.96,-677.49 619.1,-674.19 631.12,-660 641.29,-648 632.23,-391.13 639.12,-377 644.2,-366.59 653.4,-357.94 662.42,-351.37"/>
 <polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="663.55,-353.14 667.35,-348.04 661.2,-349.65 663.55,-353.14"/>
 </g>
 <!-- src/modules/seller&#45;page/service.ts&#45;&gt;src/js/core/config.ts -->
-<g id="edge262" class="edge">
+<g id="edge261" class="edge">
 <title>src/modules/seller&#45;page/service.ts&#45;&gt;src/js/core/config.ts</title>
 <path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M580.9,-677.47C597.94,-677.47 619.07,-674.17 631.12,-660 648.99,-639 622.41,-433.93 639.12,-412 642.59,-407.46 647.41,-404.25 652.67,-402"/>
 <polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="653.27,-404.02 658.31,-400.14 651.96,-400.03 653.27,-404.02"/>
@@ -2140,7 +2134,7 @@
 </g>
 </g>
 <!-- src/modules/seller&#45;page/service.ts&#45;&gt;src/modules/seller&#45;page/config.ts -->
-<g id="edge263" class="edge">
+<g id="edge262" class="edge">
 <title>src/modules/seller&#45;page/service.ts&#45;&gt;src/modules/seller&#45;page/config.ts</title>
 <path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M580.99,-675C601.54,-675 630.13,-675 652.52,-675"/>
 <polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="652.35,-677.1 658.35,-675 652.35,-672.9 652.35,-677.1"/>
@@ -2326,16 +2320,16 @@
 <g id="node61" class="node">
 <title>src/modules/common/components/modal/modal.css</title>
 <g id="a_node61"><a xlink:href="src/modules/common/components/modal/modal.css" xlink:title="modal.css">
-<path fill="#ffffcc" stroke="black" d="M576.08,-3077.88C576.08,-3077.88 530.67,-3077.88 530.67,-3077.88 527.71,-3077.88 524.75,-3074.92 524.75,-3071.96 524.75,-3071.96 524.75,-3066.04 524.75,-3066.04 524.75,-3063.08 527.71,-3060.12 530.67,-3060.12 530.67,-3060.12 576.08,-3060.12 576.08,-3060.12 579.04,-3060.12 582,-3063.08 582,-3066.04 582,-3066.04 582,-3071.96 582,-3071.96 582,-3074.92 579.04,-3077.88 576.08,-3077.88"/>
-<text xml:space="preserve" text-anchor="start" x="532.75" y="-3066.38" font-family="Helvetica,sans-Serif" font-size="9.00">modal.css</text>
+<path fill="#ffffcc" stroke="black" d="M576.08,-2987.88C576.08,-2987.88 530.67,-2987.88 530.67,-2987.88 527.71,-2987.88 524.75,-2984.92 524.75,-2981.96 524.75,-2981.96 524.75,-2976.04 524.75,-2976.04 524.75,-2973.08 527.71,-2970.12 530.67,-2970.12 530.67,-2970.12 576.08,-2970.12 576.08,-2970.12 579.04,-2970.12 582,-2973.08 582,-2976.04 582,-2976.04 582,-2981.96 582,-2981.96 582,-2984.92 579.04,-2987.88 576.08,-2987.88"/>
+<text xml:space="preserve" text-anchor="start" x="532.75" y="-2976.38" font-family="Helvetica,sans-Serif" font-size="9.00">modal.css</text>
 </a>
 </g>
 </g>
 <!-- src/modules/announcements/place&#45;an&#45;ad/PlaceAnAdController.ts&#45;&gt;src/modules/common/components/modal/modal.css -->
 <g id="edge99" class="edge">
 <title>src/modules/announcements/place&#45;an&#45;ad/PlaceAnAdController.ts&#45;&gt;src/modules/common/components/modal/modal.css</title>
-<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M429.9,-1466.36C441.8,-1486.69 469.16,-1536.8 478.88,-1583 483.06,-1602.9 474.96,-3030.52 486.88,-3047 493.64,-3056.36 504.58,-3061.79 515.6,-3064.92"/>
-<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="515.1,-3066.96 521.43,-3066.29 516.06,-3062.87 515.1,-3066.96"/>
+<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M429.89,-1466.36C441.79,-1486.69 469.15,-1536.8 478.88,-1583 482.81,-1601.67 475.69,-2941.54 486.88,-2957 493.64,-2966.36 504.58,-2971.79 515.6,-2974.92"/>
+<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="515.11,-2976.96 521.43,-2976.28 516.06,-2972.87 515.11,-2976.96"/>
 </g>
 <!-- src/modules/cart/service.ts&#45;&gt;src/js/api/apiClient.ts -->
 <g id="edge156" class="edge">
@@ -2367,8 +2361,8 @@
 <!-- src/modules/profile/purchases&#45;store.ts&#45;&gt;src/modules/common/offline/db/indexedDB.ts -->
 <g id="edge230" class="edge">
 <title>src/modules/profile/purchases&#45;store.ts&#45;&gt;src/modules/common/offline/db/indexedDB.ts</title>
-<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M338.83,-3296.83C437.81,-3275.98 673.49,-3210.45 759.88,-3047 787.32,-2995.07 804.1,-2811.75 808.85,-2753.15"/>
-<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="810.93,-2753.45 809.31,-2747.3 806.75,-2753.12 810.93,-2753.45"/>
+<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M338.91,-3300.83C434.36,-3289.32 657.49,-3247.92 759.88,-3107 801.69,-3049.45 808.82,-2819.56 810.01,-2753.09"/>
+<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="812.11,-2753.25 810.11,-2747.21 807.91,-2753.18 812.11,-2753.25"/>
 </g>
 <!-- src/modules/profile/purchases&#45;store.ts&#45;&gt;src/js/core/eventBus.ts -->
 <g id="edge229" class="edge">
@@ -2637,38 +2631,38 @@
 <!-- src/modules/common/components/header/header.ts&#45;&gt;src/modules/common/components/header/header.hbs -->
 <g id="edge165" class="edge">
 <title>src/modules/common/components/header/header.ts&#45;&gt;src/modules/common/components/header/header.hbs</title>
-<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M580.99,-2925C600.33,-2929.36 626.81,-2935.32 648.53,-2940.22"/>
-<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="647.94,-2942.24 654.25,-2941.51 648.86,-2938.14 647.94,-2942.24"/>
+<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M580.99,-3057C600.25,-3059.17 626.58,-3062.14 648.24,-3064.58"/>
+<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="648,-3066.66 654.2,-3065.25 648.47,-3062.49 648,-3066.66"/>
 </g>
 <!-- src/modules/common/components/header/styles.css -->
 <g id="node96" class="node">
 <title>src/modules/common/components/header/styles.css</title>
 <g id="a_node96"><a xlink:href="src/modules/common/components/header/styles.css" xlink:title="styles.css">
-<path fill="#ffffcc" stroke="black" d="M710.08,-2927.88C710.08,-2927.88 666.92,-2927.88 666.92,-2927.88 663.96,-2927.88 661,-2924.92 661,-2921.96 661,-2921.96 661,-2916.04 661,-2916.04 661,-2913.08 663.96,-2910.12 666.92,-2910.12 666.92,-2910.12 710.08,-2910.12 710.08,-2910.12 713.04,-2910.12 716,-2913.08 716,-2916.04 716,-2916.04 716,-2921.96 716,-2921.96 716,-2924.92 713.04,-2927.88 710.08,-2927.88"/>
-<text xml:space="preserve" text-anchor="start" x="669" y="-2916.38" font-family="Helvetica,sans-Serif" font-size="9.00">styles.css</text>
+<path fill="#ffffcc" stroke="black" d="M710.08,-3047.88C710.08,-3047.88 666.92,-3047.88 666.92,-3047.88 663.96,-3047.88 661,-3044.92 661,-3041.96 661,-3041.96 661,-3036.04 661,-3036.04 661,-3033.08 663.96,-3030.12 666.92,-3030.12 666.92,-3030.12 710.08,-3030.12 710.08,-3030.12 713.04,-3030.12 716,-3033.08 716,-3036.04 716,-3036.04 716,-3041.96 716,-3041.96 716,-3044.92 713.04,-3047.88 710.08,-3047.88"/>
+<text xml:space="preserve" text-anchor="start" x="669" y="-3036.38" font-family="Helvetica,sans-Serif" font-size="9.00">styles.css</text>
 </a>
 </g>
 </g>
 <!-- src/modules/common/components/header/header.ts&#45;&gt;src/modules/common/components/header/styles.css -->
 <g id="edge166" class="edge">
 <title>src/modules/common/components/header/header.ts&#45;&gt;src/modules/common/components/header/styles.css</title>
-<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M580.99,-2919C601.4,-2919 629.76,-2919 652.08,-2919"/>
-<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="651.9,-2921.1 657.9,-2919 651.9,-2916.9 651.9,-2921.1"/>
+<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M580.99,-3051C601.4,-3048.7 629.76,-3045.51 652.08,-3042.99"/>
+<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="652.19,-3045.09 657.92,-3042.33 651.72,-3040.92 652.19,-3045.09"/>
 </g>
 <!-- src/modules/common/components/search&#45;section/style.css -->
 <g id="node97" class="node">
 <title>src/modules/common/components/search&#45;section/style.css</title>
 <g id="a_node97"><a xlink:href="src/modules/common/components/search-section/style.css" xlink:title="style.css">
-<path fill="#ffffcc" stroke="black" d="M709.58,-3017.88C709.58,-3017.88 667.42,-3017.88 667.42,-3017.88 664.46,-3017.88 661.5,-3014.92 661.5,-3011.96 661.5,-3011.96 661.5,-3006.04 661.5,-3006.04 661.5,-3003.08 664.46,-3000.12 667.42,-3000.12 667.42,-3000.12 709.58,-3000.12 709.58,-3000.12 712.54,-3000.12 715.5,-3003.08 715.5,-3006.04 715.5,-3006.04 715.5,-3011.96 715.5,-3011.96 715.5,-3014.92 712.54,-3017.88 709.58,-3017.88"/>
-<text xml:space="preserve" text-anchor="start" x="671.25" y="-3006.38" font-family="Helvetica,sans-Serif" font-size="9.00">style.css</text>
+<path fill="#ffffcc" stroke="black" d="M709.58,-2927.88C709.58,-2927.88 667.42,-2927.88 667.42,-2927.88 664.46,-2927.88 661.5,-2924.92 661.5,-2921.96 661.5,-2921.96 661.5,-2916.04 661.5,-2916.04 661.5,-2913.08 664.46,-2910.12 667.42,-2910.12 667.42,-2910.12 709.58,-2910.12 709.58,-2910.12 712.54,-2910.12 715.5,-2913.08 715.5,-2916.04 715.5,-2916.04 715.5,-2921.96 715.5,-2921.96 715.5,-2924.92 712.54,-2927.88 709.58,-2927.88"/>
+<text xml:space="preserve" text-anchor="start" x="671.25" y="-2916.38" font-family="Helvetica,sans-Serif" font-size="9.00">style.css</text>
 </a>
 </g>
 </g>
 <!-- src/modules/common/components/search&#45;section/search&#45;section.ts&#45;&gt;src/modules/common/components/search&#45;section/style.css -->
 <g id="edge167" class="edge">
 <title>src/modules/common/components/search&#45;section/search&#45;section.ts&#45;&gt;src/modules/common/components/search&#45;section/style.css</title>
-<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M596.13,-3009C614.31,-3009 635.38,-3009 652.69,-3009"/>
-<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="652.35,-3011.1 658.35,-3009 652.35,-3006.9 652.35,-3011.1"/>
+<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M596.13,-2919C614.31,-2919 635.38,-2919 652.69,-2919"/>
+<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="652.35,-2921.1 658.35,-2919 652.35,-2916.9 652.35,-2921.1"/>
 </g>
 <!-- src/modules/cart/types.ts -->
 <g id="node93" class="node">
@@ -2724,8 +2718,8 @@
 <!-- src/modules/profile/components/close&#45;ad&#45;modal/close&#45;ad&#45;modal.ts&#45;&gt;src/modules/common/components/modal/modal.css -->
 <g id="edge179" class="edge">
 <title>src/modules/profile/components/close&#45;ad&#45;modal/close&#45;ad&#45;modal.ts&#45;&gt;src/modules/common/components/modal/modal.css</title>
-<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M463.8,-3607.67C469.73,-3604.58 475.11,-3600.47 478.88,-3595 492.55,-3575.14 479.32,-3183.9 486.88,-3161 496.96,-3130.43 521.05,-3101.22 537.04,-3084.21"/>
-<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="538.17,-3086.06 540.82,-3080.29 535.15,-3083.15 538.17,-3086.06"/>
+<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M463.82,-3607.69C469.75,-3604.6 475.12,-3600.48 478.88,-3595 496.97,-3568.6 471.02,-3046.8 486.88,-3019 493.58,-3007.24 505.27,-2998.52 516.94,-2992.27"/>
+<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="517.78,-2994.2 522.24,-2989.67 515.93,-2990.43 517.78,-2994.2"/>
 </g>
 <!-- src/modules/profile/components/close&#45;ad&#45;modal/close&#45;ad&#45;modal.ts&#45;&gt;src/modules/profile/components/close&#45;ad&#45;modal/close&#45;ad&#45;modal.hbs -->
 <g id="edge180" class="edge">
@@ -2790,8 +2784,8 @@
 <!-- src/modules/profile/components/edit&#45;name&#45;modal/edit&#45;name&#45;modal.ts&#45;&gt;src/modules/common/components/modal/modal.css -->
 <g id="edge185" class="edge">
 <title>src/modules/profile/components/edit&#45;name&#45;modal/edit&#45;name&#45;modal.ts&#45;&gt;src/modules/common/components/modal/modal.css</title>
-<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M463.82,-3697.68C469.74,-3694.59 475.11,-3690.48 478.88,-3685 495.35,-3661 477.8,-3188.66 486.88,-3161 496.91,-3130.41 521.02,-3101.21 537.02,-3084.2"/>
-<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="538.15,-3086.05 540.81,-3080.28 535.13,-3083.14 538.15,-3086.05"/>
+<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M463.83,-3697.69C469.75,-3694.6 475.12,-3690.48 478.88,-3685 499.77,-3654.46 468.58,-3051.16 486.88,-3019 493.57,-3007.24 505.26,-2998.51 516.93,-2992.27"/>
+<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="517.77,-2994.19 522.23,-2989.67 515.92,-2990.42 517.77,-2994.19"/>
 </g>
 <!-- src/modules/profile/components/edit&#45;name&#45;modal/edit&#45;name&#45;modal.ts&#45;&gt;src/modules/profile/components/edit&#45;name&#45;modal/edit&#45;name&#45;modal.hbs -->
 <g id="edge188" class="edge">
@@ -2877,7 +2871,7 @@
 <!-- src/modules/profile/components/profile&#45;avatar/profile&#45;avatar.ts&#45;&gt;src/modules/common/offline/sync/syncQueue.ts -->
 <g id="edge194" class="edge">
 <title>src/modules/profile/components/profile&#45;avatar/profile&#45;avatar.ts&#45;&gt;src/modules/common/offline/sync/syncQueue.ts</title>
-<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M333.02,-3356.1C336.93,-3354.3 340.58,-3351.98 343.62,-3349 353.36,-3339.49 476.74,-2891.44 478.88,-2878 480.83,-2865.7 477.91,-2662.65 486.88,-2654 533.01,-2609.48 580.12,-2615.16 631.12,-2654 641.76,-2662.1 630.44,-2672.83 639.12,-2683 641.86,-2686.21 645.17,-2688.97 648.75,-2691.35"/>
+<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M333.01,-3356.1C336.92,-3354.29 340.57,-3351.98 343.62,-3349 353.28,-3339.59 476.74,-2896.31 478.88,-2883 480.89,-2870.43 477.72,-2662.84 486.88,-2654 532.99,-2609.46 580.12,-2615.16 631.12,-2654 641.76,-2662.1 630.44,-2672.83 639.12,-2683 641.86,-2686.21 645.17,-2688.97 648.75,-2691.35"/>
 <polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="647.5,-2693.06 653.76,-2694.2 649.58,-2689.41 647.5,-2693.06"/>
 </g>
 <!-- src/modules/profile/components/profile&#45;avatar/profile&#45;avatar.ts&#45;&gt;src/modules/profile/service.ts -->
@@ -2989,7 +2983,7 @@
 <polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="517.58,-655.06 522.96,-651.67 516.64,-650.96 517.58,-655.06"/>
 </g>
 <!-- src/modules/seller&#45;page/store.ts&#45;&gt;src/js/core/eventBus.ts -->
-<g id="edge264" class="edge">
+<g id="edge263" class="edge">
 <title>src/modules/seller&#45;page/store.ts&#45;&gt;src/js/core/eventBus.ts</title>
 <path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M576.23,-635.76C592.17,-628.52 613.9,-617.59 631.12,-605 700.88,-554 769.4,-476.02 797.24,-442.84"/>
 <polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="798.68,-444.39 800.91,-438.43 795.45,-441.7 798.68,-444.39"/>

@@ -82,6 +82,17 @@ const authService = {
             const fieldErrors: Record<string, string> = {};
             const data = result.data as Record<string, string>;
 
+            // Глобальная ошибка (например, "user already exists")
+            if (data.error) {
+                const translated = AuthErrorMap[data.error] || data.error;
+                return {
+                    success: false,
+                    error: translated,
+                    fieldErrors: { email: translated },
+                    status: result.status,
+                };
+            }
+
             if (data.email) {
                 fieldErrors.email = AuthErrorMap[data.email] || data.email;
             }
