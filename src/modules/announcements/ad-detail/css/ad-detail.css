@@ -59,6 +59,8 @@
     font-weight: 700;
     color: #333;
     margin: 0;
+    overflow-wrap: break-word;
+    word-break: break-word;
 }
 
 .ad-detail-page .ad-gallery-section {

@@ -5,6 +5,15 @@
     line-height: 1.5;
 }
 
+.close-ad-modal__description strong {
+    display: inline-block;
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: bottom;
+}
+
 .close-ad-modal__hint {
     margin: 0 0 24px;
     font-size: 14px;

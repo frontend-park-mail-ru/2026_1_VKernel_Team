@@ -298,6 +298,9 @@ body .main-container {
     display: flex;
     flex-direction: column;
     gap: 20px;
+    min-width: 0;
+    overflow-wrap: break-word;
+    word-break: break-word;
 }
 
 .ad-column {
