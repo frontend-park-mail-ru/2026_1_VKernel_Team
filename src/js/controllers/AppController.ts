@@ -25,6 +25,7 @@ import { loadTemplates as loadProfileTemplates } from '@modules/profile/pages/pr
 import { ProfileController } from '@modules/profile/controller';
 
 import { store } from '@/core/store';
+import { eventBus } from '@/core/eventBus'; 
 import { uiActions } from '@/actions/uiActions';
 import type { HandlebarsTemplateFunction, TemplateName, UIConstants } from '@/types';
 import { authActions } from '@/actions/authActions';
@@ -159,12 +160,11 @@ export const AppController = {
         if (store.isAuthenticated) {
             await AdsController.syncFavorites();
         }
-        window.addEventListener('app:navigate', ((e: CustomEvent) => {
-            if (e.detail && e.detail.path) {
-                this.navigateTo(e.detail.path);
+        eventBus.on('app:navigate', (path: string) => {
+            if (path) {
+                this.navigateTo(path);
             }
-        }) as EventListener);
-
+        });
         window.addEventListener('app:route', () => {
             this.router();
         });
@@ -173,6 +173,7 @@ export const AppController = {
                 this.showLoading(e.detail.show);
             }
         }) as EventListener);
+
         this.renderHeader();
         this.router();
         window.addEventListener('popstate', () => this.router());
@@ -357,9 +358,11 @@ export const AppController = {
                 } else if (path === '/profile' && !tab) {
                     ProfileController.currentTab = 'ads';
                 }
+
                 if (path) {
                     this.navigateTo(path);
                 }
+                
                 return;
             }
 
@@ -369,6 +372,9 @@ export const AppController = {
                 const action = (actionElement as HTMLElement).dataset.action;
                 if (action === 'logout') {
                     AuthController.handleLogout();
+                }
+                else if (action === 'back') {
+                    this.navigateTo('/'); 
                 }
                 return;
             }

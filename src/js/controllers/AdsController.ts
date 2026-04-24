@@ -24,7 +24,9 @@ export const AdsController = {
     async renderMain(): Promise<void> {
         const app = document.getElementById('app');
         const template = this.templates['main-page'];
-        if (!app || !template) return;
+        if (!app || !template) {
+            return;
+        }
 
         const cachedAds = store.ads;
         if (cachedAds.length > 0) {
@@ -78,6 +80,7 @@ export const AdsController = {
             isFavorite: store.favoriteIds.has(Number(ad.id)), 
         };
     },
+
     attachMainEventListeners(): void {
         document
             .querySelectorAll(ADS_SELECTORS.FAVORITE_BTN)
@@ -96,13 +99,16 @@ export const AdsController = {
             eventBus.emit('app:navigate', '/login');
             return;
         }
+
         const favBtn = e.currentTarget as HTMLButtonElement; 
         const card = favBtn.closest(ADS_SELECTORS.CARD);
         const adId = Number(card?.getAttribute('data-id')); 
-        if (!adId) return;
+        
+        if (!adId) {
+            return;
+        }
 
         const isFavorite = store.favoriteIds.has(adId);
-
         favBtn.disabled = true;
 
         try {
@@ -113,10 +119,12 @@ export const AdsController = {
             const result = isFavorite
                 ? await apiClient.delete(endpoint)
                 : await apiClient.post(endpoint, {});
+            
             if (!result.success) {
                 uiActions.showError(result.error || 'Ошибка при работе с избранным');
                 return;
             }
+
             const newFavorites = new Set(store.favoriteIds);
             if (isFavorite) {
                 newFavorites.delete(adId);
@@ -136,14 +144,17 @@ export const AdsController = {
             favBtn.disabled = false;
         }
     },
+
     handleCardClick(e: Event): void {
         const target = e.target as HTMLElement;
+        
         if (target.closest(ADS_SELECTORS.FAVORITE_BTN) || target.closest(ADS_SELECTORS.CART_BTN)) {
             return;
         }
 
         const card = e.currentTarget as HTMLElement;
         const adId = card.dataset.id;
+        
         if (adId) {
             eventBus.emit('app:navigate', `/ad/${adId}`);
         }
@@ -153,8 +164,9 @@ export const AdsController = {
         try {
             const result = await apiClient.get<any>(PROFILE_CONFIG.API.GET_FAVORITES);
             
-            // Ранний выход
-            if (!result.success || !result.data) return;
+            if (!result.success || !result.data) {
+                return;
+            }
 
             let favoritesArray: any[] = [];
             
