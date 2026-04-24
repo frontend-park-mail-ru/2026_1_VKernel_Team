@@ -23,6 +23,10 @@ import { CartController } from '@modules/cart/controller';
 import { loadTemplates as loadCartTemplates } from '@modules/cart/pages/cart/cart';
 import { loadTemplates as loadProfileTemplates } from '@modules/profile/pages/profile/profile';
 import { ProfileController } from '@modules/profile/controller';
+import { ChatController } from '@modules/chat/controller';
+import { loadTemplates as loadChatListTemplates } from '@modules/chat/pages/chat-list/chat-list';
+import { loadTemplates as loadChatDetailTemplates } from '@modules/chat/pages/chat-detail/chat-detail';
+import { unreadStore, UNREAD_CHANGED_EVENT } from '@modules/chat/unread-store';
 
 import { store } from '@/core/store';
 import { uiActions } from '@/actions/uiActions';
@@ -130,6 +134,8 @@ export const AppController = {
         loadSellerPageTemplates();
         loadCartTemplates();
         loadProfileTemplates();
+        loadChatListTemplates();
+        loadChatDetailTemplates();
 
         AuthController.templates = {
             'login-forms': this.templates['login-forms'],
@@ -159,9 +165,16 @@ export const AppController = {
                 this.showLoading(e.detail.show);
             }
         }) as EventListener);
+        window.addEventListener(UNREAD_CHANGED_EVENT, () => {
+            this.renderHeader();
+        });
         this.renderHeader();
         this.router();
         window.addEventListener('popstate', () => this.router());
+
+        if (store.isAuthenticated) {
+            unreadStore.refreshCountFromServer();
+        }
 
         initOfflineIndicator();
     },
@@ -198,9 +211,12 @@ export const AppController = {
             this._lastAuthState !== state.isAuthenticated ||
             this._lastAvatarPath !== currentAvatar
         ) {
+            const loggedIn = this._lastAuthState !== state.isAuthenticated && state.isAuthenticated;
             this._lastAuthState = state.isAuthenticated;
             this._lastAvatarPath = currentAvatar;
             this.renderHeader();
+            if (loggedIn) unreadStore.refreshCountFromServer();
+            if (state.isAuthenticated === false) unreadStore.reset();
         }
         if (state.currentPage && state.currentPage !== this._lastPage) {
             this._lastPage = state.currentPage;
@@ -230,6 +246,7 @@ export const AppController = {
         container.innerHTML = this._headerCompiled!({
             isAuthenticated: store.isAuthenticated,
             user,
+            unreadChatsCount: store.isAuthenticated ? unreadStore.count : 0,
         });
     },
 
@@ -272,7 +289,12 @@ export const AppController = {
         }
 
         // Защита маршрутов
-        if (!store.isAuthenticated && (path === '/profile' || path === '/cart')) {
+        const chatDetailMatch = path.match(/^\/chats\/(\d+)$/);
+        const isChatsListPath = path === '/chats';
+        if (
+            !store.isAuthenticated &&
+            (path === '/profile' || path === '/cart' || isChatsListPath || chatDetailMatch)
+        ) {
             this.navigateTo('/login');
             return;
         }
@@ -280,6 +302,11 @@ export const AppController = {
         const sellerMatch = path.match(/^\/seller\/(\d+)$/);
         if (sellerMatch) {
             SellerPageController.renderSellerPage(sellerMatch[1]);
+            return;
+        }
+
+        if (chatDetailMatch) {
+            ChatController.renderChatDetail(chatDetailMatch[1]);
             return;
         }
 
@@ -299,6 +326,9 @@ export const AppController = {
                 break;
             case '/cart':
                 CartController.renderCart();
+                break;
+            case '/chats':
+                ChatController.renderChatList();
                 break;
             default:
                 this.renderNotFound();

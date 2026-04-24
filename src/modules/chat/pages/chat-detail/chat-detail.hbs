@@ -1,0 +1,63 @@
+<div class="main-container">
+    {{> search-section}}
+
+    <main class="main-content">
+        <div class="chat-detail-page">
+            <a class="chat-detail-page__back" href="/chats" data-nav="/chats">← К списку чатов</a>
+
+            <div class="chat-detail-page__header">
+                <a class="chat-detail-page__partner"
+                   href="/seller/{{partner.id}}"
+                   data-nav="/seller/{{partner.id}}"
+                   title="Перейти в профиль">
+                    <img class="chat-detail-page__partner-avatar"
+                         src="{{avatarUrl partner.avatar_path partner.avatar_path}}"
+                         alt="{{partner.name}}">
+                    <div class="chat-detail-page__partner-info">
+                        <span class="chat-detail-page__partner-name">{{partner.name}}</span>
+                        <span class="chat-detail-page__partner-hint">Перейти в профиль →</span>
+                    </div>
+                </a>
+
+                <a class="chat-detail-page__ad"
+                   href="/ad/{{ad.ad_id}}"
+                   data-nav="/ad/{{ad.ad_id}}"
+                   title="Перейти к объявлению">
+                    <div class="chat-detail-page__ad-photo">
+                        <img src="{{adPhotoUrl}}" alt="{{ad.title}}">
+                        {{#if isSold}}
+                            <span class="chat-detail-page__ad-sold">Продано</span>
+                        {{/if}}
+                    </div>
+                    <div class="chat-detail-page__ad-info">
+                        <span class="chat-detail-page__ad-title">{{ad.title}}</span>
+                        <span class="chat-detail-page__ad-price">{{formattedPrice}}</span>
+                    </div>
+                </a>
+            </div>
+
+            {{#if isSeller}}
+                {{#unless isSold}}
+                    <div class="chat-detail-page__actions">
+                        <button class="chat-detail-page__confirm-btn" data-action="confirm-order">
+                            Подтвердить покупку
+                        </button>
+                        <span class="chat-detail-page__actions-hint">
+                            Подтверждая, вы закрываете объявление и убираете его из корзин покупателей.
+                        </span>
+                    </div>
+                {{/unless}}
+            {{/if}}
+
+            <div class="chat-detail-page__messages" id="chat-messages">
+                {{#if hasMessages}}
+                    {{#each messages}}
+                        {{> chat-message this}}
+                    {{/each}}
+                {{else}}
+                    <div class="chat-detail-page__empty">Пока нет сообщений.</div>
+                {{/if}}
+            </div>
+        </div>
+    </main>
+</div>

@@ -1,0 +1,22 @@
+<div class="main-container">
+    {{> search-section}}
+
+    <main class="main-content">
+        <div class="chat-list-page">
+            <h1 class="chat-list-page__title">Сообщения</h1>
+
+            {{#if isEmpty}}
+                <div class="chat-list-page__empty">
+                    <p>У вас пока нет чатов.</p>
+                    <button class="btn place-ad-btn" data-nav="/">Перейти к покупкам</button>
+                </div>
+            {{else}}
+                <ul class="chat-list-page__items">
+                    {{#each chats}}
+                        {{> chat-list-item this}}
+                    {{/each}}
+                </ul>
+            {{/if}}
+        </div>
+    </main>
+</div>

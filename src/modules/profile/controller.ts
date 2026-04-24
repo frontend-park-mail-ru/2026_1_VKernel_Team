@@ -18,6 +18,7 @@ import { CONFIG } from '@/core/config';
 import { purchasesStore } from '@modules/profile/purchases-store';
 import { cartService } from '@modules/cart/service';
 import type { PurchaseItem } from '@modules/profile/purchases-store';
+import { unreadStore, UNREAD_CHANGED_EVENT } from '@modules/chat/unread-store';
 
 const DEFAULT_AD_IMAGE = '/images/default-ad.jpg';
 
@@ -77,6 +78,16 @@ export const ProfileController = {
                 this.rerenderTab(store.user as UserProfile);
                 ProfileContent.init();
             }),
+        );
+        const onUnreadChanged = () => {
+            if (store.user) {
+                this.rerenderSidebar(store.user as UserProfile);
+                if (ProfileSidebar?.init) ProfileSidebar.init();
+            }
+        };
+        window.addEventListener(UNREAD_CHANGED_EVENT, onUnreadChanged);
+        this._unsubscribers.push(() =>
+            window.removeEventListener(UNREAD_CHANGED_EVENT, onUnreadChanged),
         );
         this.isInitialized = true;
     },
@@ -179,8 +190,9 @@ export const ProfileController = {
         const contentEl = document.getElementById('tabContent');
         if (!contentEl) return;
 
-        const activeAds = this.userAds.filter((ad) => ad.status !== 'archived');
-        const archivedAds = this.userAds.filter((ad) => ad.status === 'archived');
+        const isArchivedStatus = (status?: string) => status === 'archived' || status === 'sold';
+        const activeAds = this.userAds.filter((ad) => !isArchivedStatus(ad.status));
+        const archivedAds = this.userAds.filter((ad) => isArchivedStatus(ad.status));
 
         contentEl.innerHTML = profileContentTpl({
             currentTab: this.currentTab,
@@ -198,9 +210,13 @@ export const ProfileController = {
         const sidebarEl = document.querySelector('#sidebarContainer');
         if (!sidebarEl) return;
 
+        // Счётчик непрочитанных чатов рисуем через `messages_count` — в шаблоне
+        // бейдж берётся по `lookup user (concat tab '_count')`.
+        const userWithUnread = { ...user, messages_count: unreadStore.count };
+
         sidebarEl.innerHTML = profileSidebarTpl({
             currentTab: this.currentTab,
-            user,
+            user: userWithUnread,
             totalAdsCount: this.userAds.length,
             isAuthenticated: store.isAuthenticated,
         });

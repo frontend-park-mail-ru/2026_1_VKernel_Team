@@ -1,0 +1,22 @@
+{{#if isOrder}}
+    <div class="chat-message chat-message--order" data-message-id="{{id}}">
+        <span class="chat-message__order-icon">🛍</span>
+        <div class="chat-message__order-body">
+            <div class="chat-message__order-text">{{text}}</div>
+            {{#if canConfirm}}
+                <button class="chat-message__confirm-btn" data-action="confirm-order">
+                    Подтвердить покупку
+                </button>
+            {{/if}}
+            <span class="chat-message__time">{{formattedTime}}</span>
+        </div>
+    </div>
+{{else}}
+    <div class="chat-message {{#if isMine}}chat-message--mine{{else}}chat-message--theirs{{/if}}"
+         data-message-id="{{id}}">
+        <div class="chat-message__bubble">
+            <div class="chat-message__text">{{text}}</div>
+            <span class="chat-message__time">{{formattedTime}}</span>
+        </div>
+    </div>
+{{/if}}

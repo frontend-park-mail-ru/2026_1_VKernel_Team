@@ -202,6 +202,14 @@
     transform: translateY(0);
 }
 
+.cart-checkout-btn:disabled {
+    background: #c7e9d6;
+    color: #fff;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
 .cart-order-disclaimer {
     font-size: 12px;
     color: #999;
