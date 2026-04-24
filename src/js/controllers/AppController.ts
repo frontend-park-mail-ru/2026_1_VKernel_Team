@@ -35,7 +35,9 @@ import * as HandlebarsFull from 'handlebars';
 import * as HandlebarsRuntime from 'handlebars/dist/handlebars.runtime.js';
 
 const registerHelpers = (Hbs: any) => {
-    if (!Hbs || !Hbs.registerHelper || Hbs.helpers?.avatarUrl) return;
+    if (!Hbs || !Hbs.registerHelper || Hbs.helpers?.avatarUrl) {
+        return;
+    }
 
     Hbs.registerHelper('formatPrice', (price: number) => {
         return price === 0 ? 'Бесплатно' : `${price} ₽`;
@@ -51,10 +53,14 @@ const registerHelpers = (Hbs: any) => {
         const source =
             typeof avatar === 'string' ? avatar : typeof avatarPath === 'string' ? avatarPath : '';
 
-        if (!source) return DEFAULT_AVATAR;
+        if (!source) {
+            return DEFAULT_AVATAR;
+        }
 
         const trimmed = source.trim();
-        if (!trimmed) return DEFAULT_AVATAR;
+        if (!trimmed) {
+            return DEFAULT_AVATAR;
+        }
 
         if (
             trimmed.startsWith('http://') ||
@@ -96,9 +102,13 @@ const registerHelpers = (Hbs: any) => {
     });
 
     Hbs.registerHelper('formatDate', function (dateString: string) {
-        if (!dateString) return '—';
+        if (!dateString) {
+            return '—';
+        }
         const date = new Date(dateString);
-        if (isNaN(date.getTime())) return '—';
+        if (isNaN(date.getTime())) {
+            return '—';
+        }
         return date.toLocaleDateString('ru-RU');
     });
 };
@@ -158,13 +168,11 @@ export const AppController = {
         window.addEventListener('app:route', () => {
             this.router();
         });
-
         window.addEventListener('app:loading', ((e: CustomEvent) => {
             if (e.detail !== undefined) {
                 this.showLoading(e.detail.show);
             }
         }) as EventListener);
-
         this.renderHeader();
         this.router();
         window.addEventListener('popstate', () => this.router());
@@ -173,7 +181,6 @@ export const AppController = {
     },
 
     async loadTemplates(): Promise<void> {
-        // Шаблоны уже прекомпилированы лоадером, просто присваиваем их
         this.templates['main-page'] = mainPageTpl;
         this.templates['login-forms'] = loginFormsTpl;
         this.templates['register-form'] = registerFormTpl;
@@ -198,7 +205,6 @@ export const AppController = {
             uiActions.showError(state.error);
             uiActions.clearError();
         }
-        // Обновляем header при изменении auth-состояния или аватара
         const currentAvatar = state.user?.avatar_path || null;
         if (
             this._lastAuthState !== state.isAuthenticated ||
@@ -214,9 +220,11 @@ export const AppController = {
         }
     },
 
-renderHeader(): void {
+    renderHeader(): void {
         const container = document.getElementById('app-header');
-        if (!container) return;
+        if (!container) {
+            return;
+        }
 
         const path = window.location.pathname;
         const isAuthPage = path === '/login' || path === '/register';
@@ -237,7 +245,7 @@ renderHeader(): void {
         container.innerHTML = this._headerCompiled!({
             isAuthenticated: store.isAuthenticated,
             user,
-            favoritesCount: store.favoriteIds.size, // Передаем количество избранного
+            favoritesCount: store.favoriteIds.size,
         });
     },
 
@@ -246,16 +254,19 @@ renderHeader(): void {
         const path = window.location.pathname;
         const adMatch = path.match(/^\/ad\/(\d+)$/);
 
-        // Логика новых фич из main
         if (path === '/place-ad') {
-            if (this._currentFeature === 'place-ad') PlaceAnAdController.cleanup();
+            if (this._currentFeature === 'place-ad') {
+                PlaceAnAdController.cleanup();
+            }
             this._currentFeature = 'place-ad';
             PlaceAnAdController.render();
             return;
         }
 
         if (path === '/ad-preview') {
-            if (this._currentFeature === 'ad-preview') AdPreviewController.cleanup();
+            if (this._currentFeature === 'ad-preview') {
+                AdPreviewController.cleanup();
+            }
             this._currentFeature = 'ad-preview';
             AdPreviewController.render();
             return;
@@ -263,7 +274,9 @@ renderHeader(): void {
 
         const editAdMatch = path.match(/^\/edit-ad\/(\d+)$/);
         if (editAdMatch) {
-            if (this._currentFeature === 'place-ad') PlaceAnAdController.cleanup();
+            if (this._currentFeature === 'place-ad') {
+                PlaceAnAdController.cleanup();
+            }
             this._currentFeature = 'place-ad';
             PlaceAnAdController.render(editAdMatch[1]);
             return;
@@ -279,7 +292,6 @@ renderHeader(): void {
             return;
         }
 
-        // Защита маршрутов
         if (!store.isAuthenticated && (path === '/profile' || path === '/cart')) {
             this.navigateTo('/login');
             return;
@@ -314,7 +326,9 @@ renderHeader(): void {
     },
 
     navigateTo(path: string): void {
-        if (window.location.pathname === path) return;
+        if (window.location.pathname === path) {
+            return;
+        }
         window.history.pushState({}, '', path);
         uiActions.navigateTo(path);
         this.router();
@@ -322,7 +336,9 @@ renderHeader(): void {
 
     renderNotFound(): void {
         const app = document.getElementById('app');
-        if (!app || !this.templates['not-found']) return;
+        if (!app || !this.templates['not-found']) {
+            return;
+        }
         app.innerHTML = this.templates['not-found']({});
     },
 
@@ -334,17 +350,16 @@ renderHeader(): void {
             if (navElement) {
                 e.preventDefault();
                 const path = (navElement as HTMLElement).dataset.nav;
-                const tab = (navElement as HTMLElement).dataset.tab; // Получаем желаемую вкладку
+                const tab = (navElement as HTMLElement).dataset.tab;
 
                 if (path === '/profile' && tab) {
-                    // Принудительно устанавливаем вкладку в контроллере перед переходом
                     ProfileController.currentTab = tab as any;
                 } else if (path === '/profile' && !tab) {
-                    // Если просто кликнули на аватар — сбрасываем на дефолтную (Мои объявления)
                     ProfileController.currentTab = 'ads';
                 }
-
-                if (path) this.navigateTo(path);
+                if (path) {
+                    this.navigateTo(path);
+                }
                 return;
             }
 

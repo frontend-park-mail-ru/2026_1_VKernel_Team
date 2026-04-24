@@ -20,7 +20,7 @@ class Store {
         currentPage: 'main-page',
         error: null,
         isLoading: false,
-        favoriteIds: new Set<number>(), // <--- ИНИЦИАЛИЗИРОВАЛИ ПУСТЫМ SET
+        favoriteIds: new Set<number>(), 
     };
 
     private eventBus: EventBus;
@@ -66,7 +66,7 @@ class Store {
     get isLoading(): boolean {
         return this.state.isLoading;
     }
-    get favoriteIds(): Set<number> { // <--- ГЕТТЕР ДЛЯ УДОБСТВА
+    get favoriteIds(): Set<number> { 
         return this.state.favoriteIds;
     }
 }

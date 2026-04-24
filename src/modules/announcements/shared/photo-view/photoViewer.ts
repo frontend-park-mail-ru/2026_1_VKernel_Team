@@ -8,6 +8,7 @@ export class PhotoViewer {
     private static photos: string[] = [];
     private static currentIndex: number = 0;
     private static isZoomed: boolean = false;
+    private static handlersAttached: boolean = false;
 
     /**
      * Инициализация просмотрщика
@@ -18,8 +19,11 @@ export class PhotoViewer {
             this.createViewer();
         }
 
-        // Навешиваем глобальные обработчики
-        this.attachGlobalHandlers();
+        // Навешиваем глобальные обработчики только один раз
+        if (!this.handlersAttached) {
+            this.attachGlobalHandlers();
+            this.handlersAttached = true;
+        }
     }
 
     /**

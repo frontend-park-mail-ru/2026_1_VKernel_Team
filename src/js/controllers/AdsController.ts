@@ -9,6 +9,8 @@ import { store } from '@/core/store';
 import { apiClient } from '@/api/apiClient';
 import { uiActions } from '@/actions/uiActions';
 import type { Ad, HandlebarsTemplateFunction } from '@/types';
+import { PROFILE_CONFIG } from '@modules/profile/config'; 
+import { ADS_SELECTORS } from '@/types/adsConstants'; 
 
 declare const Handlebars: any;
 
@@ -76,110 +78,101 @@ export const AdsController = {
             isFavorite: store.favoriteIds.has(Number(ad.id)), 
         };
     },
-
     attachMainEventListeners(): void {
-        document.querySelectorAll('.rec-card-fav').forEach((favBtn) => {
-            favBtn.addEventListener('click', async (e) => {
-                e.preventDefault();
-                e.stopPropagation();
+        document
+            .querySelectorAll(ADS_SELECTORS.FAVORITE_BTN)
+            .forEach((btn) => btn.addEventListener('click', this.handleFavoriteClick.bind(this)));
 
-                if (!store.isAuthenticated) {
-                    window.dispatchEvent(new CustomEvent('app:navigate', { detail: { path: '/login' } }));
-                    return;
-                }
+        document
+            .querySelectorAll(ADS_SELECTORS.CARD)
+            .forEach((card) => card.addEventListener('click', this.handleCardClick.bind(this)));
+    },
 
-                const card = (favBtn as HTMLElement).closest('.rec-card, .ad-card');
-                const adId = Number(card?.getAttribute('data-id')); // Привели к числу
-                if (!adId) return;
+    async handleFavoriteClick(e: Event): Promise<void> {
+        e.preventDefault();
+        e.stopPropagation();
 
-                const btn = favBtn as HTMLButtonElement;
-                
-                // Проверяем статус ИЗ STORE
-                const isFavorite = store.favoriteIds.has(adId);
+        if (!store.isAuthenticated) {
+            eventBus.emit('app:navigate', '/login');
+            return;
+        }
+        const favBtn = e.currentTarget as HTMLButtonElement; 
+        const card = favBtn.closest(ADS_SELECTORS.CARD);
+        const adId = Number(card?.getAttribute('data-id')); 
+        if (!adId) return;
 
-                btn.disabled = true;
+        const isFavorite = store.favoriteIds.has(adId);
 
-                try {
-                    const { PROFILE_CONFIG } = await import('@modules/profile/config');
+        favBtn.disabled = true;
 
-                    const endpoint = isFavorite
-                        ? PROFILE_CONFIG.API.REMOVE_FAVORITE(adId)
-                        : PROFILE_CONFIG.API.ADD_FAVORITE(adId);
+        try {
+            const endpoint = isFavorite
+                ? PROFILE_CONFIG.API.REMOVE_FAVORITE(adId)
+                : PROFILE_CONFIG.API.ADD_FAVORITE(adId);
 
-                    const result = isFavorite
-                        ? await apiClient.delete(endpoint)
-                        : await apiClient.post(endpoint, {});
+            const result = isFavorite
+                ? await apiClient.delete(endpoint)
+                : await apiClient.post(endpoint, {});
+            if (!result.success) {
+                uiActions.showError(result.error || 'Ошибка при работе с избранным');
+                return;
+            }
+            const newFavorites = new Set(store.favoriteIds);
+            if (isFavorite) {
+                newFavorites.delete(adId);
+            } else {
+                newFavorites.add(adId);
+            }
+            store.setState({ favoriteIds: newFavorites });
 
-                    if (result.success) {
-                        // === ВАЖНО: ОБНОВЛЯЕМ ГЛОБАЛЬНЫЙ STORE ===
-                        const newFavorites = new Set(store.favoriteIds);
-                        if (isFavorite) {
-                            newFavorites.delete(adId); // Удаляем
-                        } else {
-                            newFavorites.add(adId);    // Добавляем
-                        }
-                        store.setState({ favoriteIds: newFavorites });
+            favBtn.classList.toggle(ADS_SELECTORS.ACTIVE_FAV_CLASS);
+            favBtn.innerHTML = newFavorites.has(adId) ? '♥' : '♡';
 
-                        // Переключаем визуальное состояние на самой кнопке
-                        btn.classList.toggle('rec-card-fav--active');
-                        btn.innerHTML = newFavorites.has(adId) ? '♥' : '♡';
+            eventBus.emit('profile:update-ui');
+        } catch (error) {
+            console.error('Favorite error:', error);
+            uiActions.showError('Не удалось изменить состояние избранного');
+        } finally {
+            favBtn.disabled = false;
+        }
+    },
+    handleCardClick(e: Event): void {
+        const target = e.target as HTMLElement;
+        if (target.closest(ADS_SELECTORS.FAVORITE_BTN) || target.closest(ADS_SELECTORS.CART_BTN)) {
+            return;
+        }
 
-                        eventBus.emit('profile:update-ui');
-                    } else {
-                        uiActions.showError(result.error || 'Ошибка при работе с избранным');
-                    }
-                } catch (error) {
-                    console.error('Favorite error:', error);
-                    uiActions.showError('Не удалось изменить состояние избранного');
-                } finally {
-                    btn.disabled = false;
-                }
-            });
-        });
-
-        document.querySelectorAll('.rec-card, .ad-card').forEach((card) => {
-            card.addEventListener('click', (e) => {
-                const target = e.target as HTMLElement;
-                if (target.closest('.rec-card-fav') || target.closest('.rec-card-cart')) {
-                    return;
-                }
-
-                const adId = (card as HTMLElement).dataset.id;
-                if (adId) {
-                    window.dispatchEvent(new CustomEvent('app:navigate', {
-                        detail: { path: `/ad/${adId}` }
-                    }));
-                }
-            });
-        });
+        const card = e.currentTarget as HTMLElement;
+        const adId = card.dataset.id;
+        if (adId) {
+            eventBus.emit('app:navigate', `/ad/${adId}`);
+        }
     },
 
     async syncFavorites() {
         try {
-            const { PROFILE_CONFIG } = await import('@modules/profile/config');
             const result = await apiClient.get<any>(PROFILE_CONFIG.API.GET_FAVORITES);
             
-            if (result.success && result.data) {
-                // Пуленепробиваемый парсинг ответа
-                let favoritesArray: any[] = [];
-                
-                if (Array.isArray(result.data)) {
-                    favoritesArray = result.data;
-                } else if (Array.isArray(result.data.ads)) {
-                    favoritesArray = result.data.ads;
-                } else if (Array.isArray(result.data.data)) {
-                    favoritesArray = result.data.data;
-                } else if (typeof result.data === 'object') {
-                    const arrays = Object.values(result.data).filter(Array.isArray);
-                    if (arrays.length > 0) {
-                        favoritesArray = arrays[0] as any[];
-                    }
-                }
+            // Ранний выход
+            if (!result.success || !result.data) return;
 
-                // Заполняем Set айдишниками
-                const ids = new Set<number>(favoritesArray.map((ad: any) => Number(ad.id)));
-                store.setState({ favoriteIds: ids });
+            let favoritesArray: any[] = [];
+            
+            if (Array.isArray(result.data)) {
+                favoritesArray = result.data;
+            } else if (Array.isArray(result.data.ads)) {
+                favoritesArray = result.data.ads;
+            } else if (Array.isArray(result.data.data)) {
+                favoritesArray = result.data.data;
+            } else if (typeof result.data === 'object') {
+                const arrays = Object.values(result.data).filter(Array.isArray);
+                if (arrays.length > 0) {
+                    favoritesArray = arrays[0] as any[];
+                }
             }
+
+            const ids = new Set<number>(favoritesArray.map((ad: any) => Number(ad.id)));
+            store.setState({ favoriteIds: ids });
         } catch (error) {
             console.error('Failed to sync favorites', error);
         }
