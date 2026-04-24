@@ -74,7 +74,8 @@
     width: 32px;
     height: 32px;
     padding: 0;
-    font-size: 18px;
+    font-size: 16px;
+    color: #666;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -121,6 +122,7 @@
 
 .location-icon {
     font-size: 12px;
+    flex-shrink: 0;
 }
 
 .rec-card-cart {
