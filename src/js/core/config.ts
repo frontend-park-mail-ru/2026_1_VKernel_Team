@@ -18,18 +18,12 @@ declare const process: { env: { BASE_URL?: string } };
  * @property {string} APP.VERSION - версия приложения
  */
 
-// Определяем, где запущен фронтенд
-const _isLocal =
-    typeof window !== 'undefined' &&
-    (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
-
 const BASE_URL = process.env.BASE_URL || 'http://clover-go.ru:8000';
 
 const CONFIG = {
     API: {
         BASE_URL,
-        // Если локально - шлем на прокси, чтобы браузер не бло��ировал куки!
-        API_URL: _isLocal ? '/api/v1' : `${BASE_URL}/api/v1`,
+        API_URL: `${BASE_URL}/api/v1`,
     },
     APP: {
         NAME: 'Клевер',
