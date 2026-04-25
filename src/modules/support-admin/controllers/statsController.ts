@@ -1,6 +1,7 @@
 import { adminApi } from '../api/adminApi';
 import { store } from '@/core/store';
 import { ChatController } from '@modules/support/controllers/chatController';
+import { SearchSectionComponent } from '@modules/common/components/search-section/search-section';
 import type { SupportTicketAdmin, StatsResponse } from '../types';
 
 import statsTemplateRaw from '../views/stats-page.hbs?raw';
@@ -28,6 +29,7 @@ function getStatsTemplate(): (ctx: any) => string {
     if (!statsCompiled) {
         ensureHelpers();
         Handlebars.registerPartial('ticket-table', tableTemplateRaw);
+        Handlebars.registerPartial('search-section', SearchSectionComponent.getTemplate());
         statsCompiled = Handlebars.compile(statsTemplateRaw);
     }
     return statsCompiled!;
