@@ -66,7 +66,6 @@ export const AuthController = {
             uiActions.showSuccess('Вход выполнен!');
             window.dispatchEvent(new CustomEvent('app:navigate', { detail: { path: '/' } }));
         } else {
-            uiActions.showError(result.error || 'Ошибка входа');
             this.showLoginError(result.error ?? 'Ошибка входа');
         }
     },
@@ -79,7 +78,11 @@ export const AuthController = {
             uiActions.showSuccess('Регистрация успешна!');
             window.dispatchEvent(new CustomEvent('app:navigate', { detail: { path: '/' } }));
         } else {
-            uiActions.showError(result.error || 'Ошибка регистрации');
+            if (result.fieldErrors && Object.keys(result.fieldErrors).length > 0) {
+                this.showFieldErrors(result.fieldErrors);
+            } else {
+                this.showFieldErrors({ email: result.error || 'Ошибка регистрации' });
+            }
         }
     },
 

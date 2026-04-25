@@ -1,6 +1,5 @@
 import '@modules/seller-page/pages/seller-page/seller-page.css';
 import template from '@modules/seller-page/pages/seller-page/seller-page.hbs?raw';
-import { HeaderComponent } from '@modules/common/components/header/header';
 import { SearchSectionComponent } from '@modules/common/components/search-section/search-section';
 import { SellerInfoCardComponent } from '@modules/seller-page/components/seller-info-card/seller-info-card';
 import { AdCardComponent } from '@modules/common/components/ad-card/ad-card';
@@ -16,7 +15,6 @@ export function loadTemplates(): void {
     try {
         compiledTemplate = Handlebars.compile(template);
 
-        Handlebars.registerPartial('header', HeaderComponent.getTemplate());
         Handlebars.registerPartial('search-section', SearchSectionComponent.getTemplate());
 
         Handlebars.registerPartial('seller-info-card', SellerInfoCardComponent.getTemplate());

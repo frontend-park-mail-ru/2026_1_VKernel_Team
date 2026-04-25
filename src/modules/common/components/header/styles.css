@@ -31,6 +31,12 @@
 
 .nav-icon .icon {
     font-size: 1.1rem;
+    display: inline-flex;
+    align-items: center;
+}
+
+.nav-icon .icon svg {
+    vertical-align: middle;
 }
 
 .nav-icon .nav-text {

@@ -23,17 +23,12 @@ export const authActions = {
                 return { isValid: true };
             }
 
-            store.setState({
-                error: result.error || 'Ошибка входа',
-            });
-
             return {
                 isValid: false,
                 error: result.error || 'Ошибка входа',
                 fieldErrors: result.fieldErrors,
             };
         } catch (error) {
-            store.setState({ error: 'Не удалось соединиться с сервером' });
             return {
                 isValid: false,
                 error: 'Не удалось соединиться с сервером',
@@ -65,17 +60,12 @@ export const authActions = {
                 return { isValid: true };
             }
 
-            store.setState({
-                error: result.error || 'Ошибка регистрации',
-            });
-
             return {
                 isValid: false,
                 error: result.error || 'Ошибка регистрации',
                 fieldErrors: result.fieldErrors,
             };
         } catch (error) {
-            store.setState({ error: 'Не удалось соединиться с сервером' });
             return {
                 isValid: false,
                 error: 'Не удалось соединиться с сервером',
