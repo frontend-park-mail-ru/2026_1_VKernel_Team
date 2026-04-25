@@ -1,10 +1,17 @@
 import { apiClient } from '@api/apiClient';
 import type { ApiResponse } from '@/types';
-import type { SupportTicket, CreateTicketRequest, UpdateTicketRequest } from '../types';
+import type {
+    SupportTicket,
+    CreateTicketRequest,
+    UpdateTicketRequest,
+    SupportMessage,
+    SendMessageRequest,
+} from '../types';
 
 const ENDPOINTS = {
     TICKETS: '/support/tickets',
     TICKET_BY_ID: (id: number) => `/support/tickets/${id}`,
+    MESSAGES: (id: number) => `/support/tickets/${id}/messages`,
 };
 
 export const supportApi = {
@@ -26,5 +33,16 @@ export const supportApi = {
 
     async rateTicket(id: number, rating: number): Promise<ApiResponse<SupportTicket>> {
         return apiClient.post<SupportTicket>(`${ENDPOINTS.TICKET_BY_ID(id)}/rate`, { rating });
+    },
+
+    async getMessages(ticketId: number): Promise<ApiResponse<SupportMessage[]>> {
+        return apiClient.get<SupportMessage[]>(ENDPOINTS.MESSAGES(ticketId));
+    },
+
+    async sendMessage(
+        ticketId: number,
+        data: SendMessageRequest,
+    ): Promise<ApiResponse<SupportMessage>> {
+        return apiClient.post<SupportMessage>(ENDPOINTS.MESSAGES(ticketId), data);
     },
 };

@@ -1,0 +1,42 @@
+<div class="admin-table-wrapper">
+    {{#if tickets.length}}
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Автор</th>
+                    <th>Заголовок</th>
+                    <th>Категория</th>
+                    <th>Статус</th>
+                    <th>Создано</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each tickets}}
+                    <tr class="admin-table__row" data-ticket-id="{{this.id}}">
+                        <td>#{{this.id}}</td>
+                        <td>{{this.user_id}}</td>
+                        <td class="admin-table__title">{{this.title}}</td>
+                        <td>
+                            <span class="admin-badge admin-badge--{{this.category}}">
+                                {{#if (eq this.category "bug")}}Баг{{/if}}
+                                {{#if (eq this.category "suggestion")}}Предложение{{/if}}
+                                {{#if (eq this.category "complaint")}}Жалоба{{/if}}
+                            </span>
+                        </td>
+                        <td>
+                            <select class="admin-status-select admin-status-select--{{this.status}}" data-ticket-id="{{this.id}}">
+                                <option value="open" {{#if (eq this.status "open")}}selected{{/if}}>Открыто</option>
+                                <option value="in_progress" {{#if (eq this.status "in_progress")}}selected{{/if}}>В работе</option>
+                                <option value="closed" {{#if (eq this.status "closed")}}selected{{/if}}>Закрыто</option>
+                            </select>
+                        </td>
+                        <td>{{formatDate this.created_at}}</td>
+                    </tr>
+                {{/each}}
+            </tbody>
+        </table>
+    {{else}}
+        <div class="admin-table__empty">Обращений не найдено</div>
+    {{/if}}
+</div>

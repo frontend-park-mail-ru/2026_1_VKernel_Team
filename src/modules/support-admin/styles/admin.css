@@ -1,0 +1,215 @@
+.admin-stats {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 24px 20px 80px;
+}
+
+.admin-stats__title {
+    font-size: 26px;
+    font-weight: 700;
+    color: #222;
+    margin: 0 0 24px;
+}
+
+.admin-stats__subtitle {
+    font-size: 18px;
+    font-weight: 600;
+    color: #444;
+    margin: 28px 0 12px;
+}
+
+.admin-stats__cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 16px;
+}
+
+.admin-stats-card {
+    padding: 18px 20px;
+    background: #fff;
+    border-radius: 12px;
+    border: 1px solid #eee;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    border-left: 4px solid #ccc;
+}
+
+.admin-stats-card__label {
+    font-size: 13px;
+    color: #777;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.admin-stats-card__value {
+    font-size: 28px;
+    font-weight: 700;
+    color: #222;
+}
+
+.admin-stats-card--total {
+    border-left-color: #2bc0de;
+}
+
+.admin-stats-card--open {
+    border-left-color: #2bde8c;
+}
+
+.admin-stats-card--in_progress {
+    border-left-color: #f57f17;
+}
+
+.admin-stats-card--closed {
+    border-left-color: #9e9e9e;
+}
+
+.admin-stats-card--bug {
+    border-left-color: #c62828;
+}
+
+.admin-stats-card--suggestion {
+    border-left-color: #1565c0;
+}
+
+.admin-stats-card--complaint {
+    border-left-color: #e65100;
+}
+
+.admin-stats__filters {
+    display: flex;
+    gap: 16px;
+    margin: 24px 0 16px;
+    flex-wrap: wrap;
+}
+
+.admin-stats__filter {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: #555;
+}
+
+.admin-stats__select {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+    background: #fff;
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.admin-stats__select:focus {
+    border-color: #2bde8c;
+}
+
+.admin-table-wrapper {
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.admin-table thead {
+    background: #f7f7f7;
+}
+
+.admin-table th {
+    text-align: left;
+    padding: 14px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid #eee;
+}
+
+.admin-table td {
+    padding: 14px 16px;
+    font-size: 14px;
+    color: #333;
+    border-bottom: 1px solid #f3f3f3;
+    vertical-align: middle;
+}
+
+.admin-table__row:hover {
+    background: #fafafa;
+}
+
+.admin-table__title {
+    max-width: 360px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.admin-table__empty {
+    text-align: center;
+    padding: 60px 20px;
+    color: #999;
+    font-size: 15px;
+}
+
+.admin-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.admin-badge--bug {
+    background: #ffebee;
+    color: #c62828;
+}
+
+.admin-badge--suggestion {
+    background: #e3f2fd;
+    color: #1565c0;
+}
+
+.admin-badge--complaint {
+    background: #fff3e0;
+    color: #e65100;
+}
+
+.admin-status-select {
+    padding: 6px 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 13px;
+    background: #fff;
+    cursor: pointer;
+    outline: none;
+    font-weight: 600;
+}
+
+.admin-status-select:focus {
+    border-color: #2bde8c;
+}
+
+.admin-status-select--open {
+    color: #24b875;
+    border-color: #24b875;
+}
+
+.admin-status-select--in_progress {
+    color: #f57f17;
+    border-color: #f57f17;
+}
+
+.admin-status-select--closed {
+    color: #757575;
+    border-color: #bbb;
+}

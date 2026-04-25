@@ -1,4 +1,5 @@
 import { supportApi } from '../api/supportApi';
+import { ChatController } from './chatController';
 import type { SupportTicket } from '../types';
 
 import detailTemplateRaw from '../views/ticket-detail.hbs?raw';
@@ -46,6 +47,15 @@ export const TicketDetailController = {
 
         container.innerHTML = getDetailTemplate()({ ticket: this._ticket });
         this.attachDetailEvents(container);
+        this.mountChat(container);
+    },
+
+    mountChat(container: HTMLElement): void {
+        if (!this._ticket) return;
+        const chatEl = container.querySelector('#chat-container') as HTMLElement | null;
+        if (chatEl) {
+            ChatController.render(chatEl, this._ticket.id);
+        }
     },
 
     attachDetailEvents(container: HTMLElement): void {
@@ -128,6 +138,7 @@ export const TicketDetailController = {
     renderDetail(container: HTMLElement): void {
         container.innerHTML = getDetailTemplate()({ ticket: this._ticket });
         this.attachDetailEvents(container);
+        this.mountChat(container);
     },
 
     validate(category: string, title: string, description: string): boolean {

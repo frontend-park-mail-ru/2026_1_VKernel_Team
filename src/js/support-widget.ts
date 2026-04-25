@@ -16,6 +16,13 @@ const registerHelpers = (Hbs: any) => {
         if (isNaN(date.getTime())) return '';
         return date.toLocaleDateString('ru-RU');
     });
+
+    Hbs.registerHelper('formatTime', function (dateString: string) {
+        if (!dateString) return '';
+        const date = new Date(dateString);
+        if (isNaN(date.getTime())) return '';
+        return date.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+    });
 };
 
 window.addEventListener('message', (event: MessageEvent) => {

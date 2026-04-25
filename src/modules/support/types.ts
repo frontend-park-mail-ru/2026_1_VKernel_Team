@@ -21,3 +21,15 @@ export interface UpdateTicketRequest {
     title: string;
     description: string;
 }
+
+export interface SupportMessage {
+    id: number;
+    ticket_id: number;
+    user_id: number;
+    text: string;
+    created_at: string;
+}
+
+export interface SendMessageRequest {
+    text: string;
+}

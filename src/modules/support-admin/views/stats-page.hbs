@@ -1,0 +1,63 @@
+<div class="admin-stats">
+    <h1 class="admin-stats__title">Статистика обращений</h1>
+
+    <div class="admin-stats__cards">
+        <div class="admin-stats-card admin-stats-card--total">
+            <div class="admin-stats-card__label">Всего</div>
+            <div class="admin-stats-card__value">{{stats.total}}</div>
+        </div>
+        <div class="admin-stats-card admin-stats-card--open">
+            <div class="admin-stats-card__label">Открытых</div>
+            <div class="admin-stats-card__value">{{open}}</div>
+        </div>
+        <div class="admin-stats-card admin-stats-card--in_progress">
+            <div class="admin-stats-card__label">В работе</div>
+            <div class="admin-stats-card__value">{{inProgress}}</div>
+        </div>
+        <div class="admin-stats-card admin-stats-card--closed">
+            <div class="admin-stats-card__label">Закрытых</div>
+            <div class="admin-stats-card__value">{{closed}}</div>
+        </div>
+    </div>
+
+    <h2 class="admin-stats__subtitle">По категориям</h2>
+    <div class="admin-stats__cards">
+        <div class="admin-stats-card admin-stats-card--bug">
+            <div class="admin-stats-card__label">Баги</div>
+            <div class="admin-stats-card__value">{{bug}}</div>
+        </div>
+        <div class="admin-stats-card admin-stats-card--suggestion">
+            <div class="admin-stats-card__label">Предложения</div>
+            <div class="admin-stats-card__value">{{suggestion}}</div>
+        </div>
+        <div class="admin-stats-card admin-stats-card--complaint">
+            <div class="admin-stats-card__label">Жалобы</div>
+            <div class="admin-stats-card__value">{{complaint}}</div>
+        </div>
+    </div>
+
+    <div class="admin-stats__filters">
+        <label class="admin-stats__filter">
+            <span>Статус:</span>
+            <select id="admin-filter-status" class="admin-stats__select">
+                <option value="">Все</option>
+                <option value="open">Открытые</option>
+                <option value="in_progress">В работе</option>
+                <option value="closed">Закрытые</option>
+            </select>
+        </label>
+        <label class="admin-stats__filter">
+            <span>Категория:</span>
+            <select id="admin-filter-category" class="admin-stats__select">
+                <option value="">Все</option>
+                <option value="bug">Баг</option>
+                <option value="suggestion">Предложение</option>
+                <option value="complaint">Жалоба</option>
+            </select>
+        </label>
+    </div>
+
+    <div id="admin-table-container">
+        {{> ticket-table}}
+    </div>
+</div>

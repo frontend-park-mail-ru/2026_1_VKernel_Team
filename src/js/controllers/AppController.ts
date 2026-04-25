@@ -27,6 +27,7 @@ import { ChatController } from '@modules/chat/controller';
 import { loadTemplates as loadChatListTemplates } from '@modules/chat/pages/chat-list/chat-list';
 import { loadTemplates as loadChatDetailTemplates } from '@modules/chat/pages/chat-detail/chat-detail';
 import { unreadStore, UNREAD_CHANGED_EVENT } from '@modules/chat/unread-store';
+import { StatsController } from '@modules/support-admin/controllers/statsController';
 
 import { store } from '@/core/store';
 import { uiActions } from '@/actions/uiActions';
@@ -333,10 +334,12 @@ export const AppController = {
         }
 
         const user = store.user;
+        const role = user?.role;
         container.innerHTML = this._headerCompiled!({
             isAuthenticated: store.isAuthenticated,
             user,
             unreadChatsCount: store.isAuthenticated ? unreadStore.count : 0,
+            isStaff: role === 'support' || role === 'admin',
         });
     },
 
@@ -397,6 +400,11 @@ export const AppController = {
 
         if (chatDetailMatch) {
             ChatController.renderChatDetail(chatDetailMatch[1]);
+            return;
+        }
+
+        if (path === '/support/stats') {
+            StatsController.render();
             return;
         }
 
