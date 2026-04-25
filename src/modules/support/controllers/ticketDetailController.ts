@@ -60,6 +60,48 @@ export const TicketDetailController = {
                 this.renderEdit(container);
             }
         });
+
+        this.attachRatingEvents(container);
+    },
+
+    attachRatingEvents(container: HTMLElement): void {
+        const starsContainer = container.querySelector('#support-rating-stars');
+        if (!starsContainer) return;
+
+        const stars = starsContainer.querySelectorAll('.support-rating__star');
+
+        const highlightStars = (count: number) => {
+            stars.forEach((star, i) => {
+                star.classList.toggle('support-rating__star--filled', i < count);
+            });
+        };
+
+        stars.forEach((star) => {
+            star.addEventListener('mouseenter', () => {
+                const rating = Number((star as HTMLElement).dataset.rating);
+                highlightStars(rating);
+            });
+
+            star.addEventListener('click', async () => {
+                const rating = Number((star as HTMLElement).dataset.rating);
+                if (!this._ticket || !rating) return;
+
+                highlightStars(rating);
+                starsContainer.classList.add('support-rating__stars--sending');
+
+                const result = await supportApi.rateTicket(this._ticket.id, rating);
+                if (result.success && result.data) {
+                    this._ticket = result.data;
+                } else {
+                    this._ticket.rating = rating;
+                }
+                this.renderDetail(container);
+            });
+        });
+
+        starsContainer.addEventListener('mouseleave', () => {
+            highlightStars(0);
+        });
     },
 
     renderEdit(container: HTMLElement): void {

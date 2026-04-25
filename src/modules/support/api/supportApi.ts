@@ -23,4 +23,8 @@ export const supportApi = {
     async updateTicket(id: number, data: UpdateTicketRequest): Promise<ApiResponse<SupportTicket>> {
         return apiClient.put<SupportTicket>(ENDPOINTS.TICKET_BY_ID(id), data);
     },
+
+    async rateTicket(id: number, rating: number): Promise<ApiResponse<SupportTicket>> {
+        return apiClient.post<SupportTicket>(`${ENDPOINTS.TICKET_BY_ID(id)}/rate`, { rating });
+    },
 };

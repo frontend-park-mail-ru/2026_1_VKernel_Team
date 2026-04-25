@@ -28,5 +28,32 @@
         </button>
     {{/if}}
 
+    {{#if (eq ticket.status "closed")}}
+        <div class="support-rating" id="support-rating-section">
+            {{#if ticket.rating}}
+                <div class="support-rating__done">
+                    <p class="support-rating__label">Ваша оценка</p>
+                    <div class="support-rating__stars support-rating__stars--readonly">
+                        {{#each (array 1 2 3 4 5)}}
+                            <span class="support-rating__star {{#if (gt ../ticket.rating @index)}}support-rating__star--filled{{/if}}">&#9733;</span>
+                        {{/each}}
+                    </div>
+                    <p class="support-rating__thanks">Спасибо за обратную связь!</p>
+                </div>
+            {{else}}
+                <div class="support-rating__prompt">
+                    <p class="support-rating__label">Оцените работу поддержки</p>
+                    <div class="support-rating__stars" id="support-rating-stars" data-ticket-id="{{ticket.id}}">
+                        <span class="support-rating__star" data-rating="1">&#9733;</span>
+                        <span class="support-rating__star" data-rating="2">&#9733;</span>
+                        <span class="support-rating__star" data-rating="3">&#9733;</span>
+                        <span class="support-rating__star" data-rating="4">&#9733;</span>
+                        <span class="support-rating__star" data-rating="5">&#9733;</span>
+                    </div>
+                </div>
+            {{/if}}
+        </div>
+    {{/if}}
+
     <div id="chat-container"></div>
 </div>

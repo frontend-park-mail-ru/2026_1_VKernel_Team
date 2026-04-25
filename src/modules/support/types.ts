@@ -5,6 +5,7 @@ export interface SupportTicket {
     status: 'open' | 'in_progress' | 'closed';
     title: string;
     description: string;
+    rating: number | null;
     created_at: string;
     updated_at: string;
 }
