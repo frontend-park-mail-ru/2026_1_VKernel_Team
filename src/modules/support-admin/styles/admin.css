@@ -4,11 +4,41 @@
     padding: 24px 20px 80px;
 }
 
+.admin-stats__topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    gap: 16px;
+}
+
 .admin-stats__title {
     font-size: 26px;
     font-weight: 700;
     color: #222;
-    margin: 0 0 24px;
+    margin: 0;
+}
+
+.admin-home-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background: #fff;
+    color: #555;
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.admin-home-btn:hover {
+    border-color: #2bde8c;
+    color: #24b875;
 }
 
 .admin-stats__subtitle {
