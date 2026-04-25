@@ -1,3 +1,5 @@
+declare const process: { env: { BASE_URL?: string } };
+
 /**
  * Файл с настройками приложения
  * Здесь хранятся все важные константы: адреса сервера, название сайта и т.д.
@@ -21,11 +23,13 @@ const _isLocal =
     typeof window !== 'undefined' &&
     (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
 
+const BASE_URL = process.env.BASE_URL || 'http://clover-go.ru:8000';
+
 const CONFIG = {
     API: {
-        BASE_URL: 'http://clover-go.ru:8000',
-        // Если локально - шлем на прокси, чтобы браузер не блокировал куки!
-        API_URL: _isLocal ? '/api/v1' : 'http://clover-go.ru:8000/api/v1',
+        BASE_URL,
+        // Если локально - шлем на прокси, чтобы браузер не бло��ировал куки!
+        API_URL: _isLocal ? '/api/v1' : `${BASE_URL}/api/v1`,
     },
     APP: {
         NAME: 'Клевер',

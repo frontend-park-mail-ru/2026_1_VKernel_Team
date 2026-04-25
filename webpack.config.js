@@ -1,16 +1,23 @@
 import path from 'path';
 import { fileURLToPath } from 'url';
+import webpack from 'webpack';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
+import dotenv from 'dotenv';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+dotenv.config();
 
 export default (env, argv) => {
     const isDevelopment = argv?.mode === 'development';
 
     return {
-        entry: './src/js/main.ts',
+        entry: {
+            app: './src/js/main.ts',
+            'support-widget': './src/js/support-widget.ts',
+        },
         output: {
             path: path.resolve(__dirname, 'dist'),
             filename: 'js/[name].[contenthash].js',
@@ -79,10 +86,20 @@ export default (env, argv) => {
             ],
         },
         plugins: [
+            new webpack.DefinePlugin({
+                'process.env.BASE_URL': JSON.stringify(process.env.BASE_URL || 'http://clover-go.ru:8000'),
+            }),
             new HtmlWebpackPlugin({
                 template: './public/index.html',
                 filename: 'index.html',
                 inject: 'body',
+                chunks: ['app'],
+            }),
+            new HtmlWebpackPlugin({
+                template: './public/support-widget.html',
+                filename: 'support-widget.html',
+                inject: 'body',
+                chunks: ['support-widget'],
             }),
             new CopyWebpackPlugin({
                 patterns: [
