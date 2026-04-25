@@ -389,11 +389,11 @@ export class AdDetailController {
             this._handlers.set('addToCart', handler);
         }
 
-        // ===== КНОПКА "КУПИТЬ СЕЙЧАС" (исправленная) =====
-        const buyBtn = document.querySelector('[data-action="buy-now"]');
-        if (buyBtn) {
-            if (this._handlers.has('buyNow')) {
-                buyBtn.removeEventListener('click', this._handlers.get('buyNow')!);
+        // ===== КНОПКА "НАПИСАТЬ ПРОДАВЦУ" =====
+        const messageBtn = document.querySelector('[data-action="message-seller"]');
+        if (messageBtn) {
+            if (this._handlers.has('messageSeller')) {
+                messageBtn.removeEventListener('click', this._handlers.get('messageSeller')!);
             }
 
             const handler = async (e: Event) => {
@@ -412,31 +412,31 @@ export class AdDetailController {
                     return;
                 }
 
-                // Показываем лоадер
+                const btn = messageBtn as HTMLButtonElement;
+                btn.disabled = true;
+
                 window.dispatchEvent(new CustomEvent('app:loading', { detail: { show: true } }));
 
                 try {
-                    const { cartActions } = await import('@modules/cart/actions');
-                    const product = this.extractProductFromPage(Number(adId));
-                    await cartActions.addToCart(Number(adId), product);
-
+                    const { chatActions } = await import('@modules/chat/actions');
+                    const chatId = await chatActions.createOrderForAd(Number(adId));
+                    if (chatId) {
+                        window.dispatchEvent(
+                            new CustomEvent('app:navigate', {
+                                detail: { path: `/chats/${chatId}` },
+                            }),
+                        );
+                    }
+                } finally {
+                    btn.disabled = false;
                     window.dispatchEvent(
                         new CustomEvent('app:loading', { detail: { show: false } }),
                     );
-                    window.dispatchEvent(
-                        new CustomEvent('app:navigate', { detail: { path: '/cart' } }),
-                    );
-                } catch (error) {
-                    console.error('Error in buy now:', error);
-                    window.dispatchEvent(
-                        new CustomEvent('app:loading', { detail: { show: false } }),
-                    );
-                    uiActions.showError('Не удалось добавить товар в корзину');
                 }
             };
 
-            buyBtn.addEventListener('click', handler);
-            this._handlers.set('buyNow', handler);
+            messageBtn.addEventListener('click', handler);
+            this._handlers.set('messageSeller', handler);
         }
 
         // ===== КНОПКА "РЕДАКТИРОВАТЬ" (для владельца) =====

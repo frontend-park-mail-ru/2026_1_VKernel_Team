@@ -9,6 +9,7 @@ import { cartStore } from '@modules/cart/store';
 import { store } from '@/core/store';
 import { networkStatus } from '@modules/common/offline/network/networkStatus';
 import { getTemplate } from '@modules/cart/pages/cart/cart';
+import { chatActions } from '@modules/chat/actions';
 
 export const CartController = {
     async renderCart(): Promise<void> {
@@ -88,6 +89,36 @@ export const CartController = {
             });
         });
 
+        // Написать продавцу из карточки в корзине
+        document.querySelectorAll('[data-message-seller-id]').forEach((btn) => {
+            btn.addEventListener('click', async (e: Event) => {
+                e.preventDefault();
+                e.stopPropagation();
+                const adId = Number((btn as HTMLElement).dataset.messageSellerId);
+                if (!adId) return;
+
+                const button = btn as HTMLButtonElement;
+                button.disabled = true;
+                window.dispatchEvent(new CustomEvent('app:loading', { detail: { show: true } }));
+
+                try {
+                    const chatId = await chatActions.createOrderForAd(adId);
+                    if (chatId) {
+                        window.dispatchEvent(
+                            new CustomEvent('app:navigate', {
+                                detail: { path: `/chats/${chatId}` },
+                            }),
+                        );
+                    }
+                } finally {
+                    button.disabled = false;
+                    window.dispatchEvent(
+                        new CustomEvent('app:loading', { detail: { show: false } }),
+                    );
+                }
+            });
+        });
+
         // Табы доставки
         document.querySelectorAll('.cart-delivery-tab').forEach((tab) => {
             tab.addEventListener('click', () => {
@@ -106,16 +137,5 @@ export const CartController = {
                 }
             });
         });
-
-        // Оформление заказа
-        const checkoutBtn = document.getElementById('checkout-btn');
-        if (checkoutBtn) {
-            checkoutBtn.addEventListener('click', async () => {
-                const success = await cartActions.checkout();
-                if (success) {
-                    this.renderFromState();
-                }
-            });
-        }
     },
 };

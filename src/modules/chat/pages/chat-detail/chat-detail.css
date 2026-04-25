@@ -1,0 +1,212 @@
+.chat-detail-page {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 24px 0 80px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.chat-detail-page__back {
+    align-self: flex-start;
+    font-size: 14px;
+    color: #555;
+    text-decoration: none;
+}
+
+.chat-detail-page__back:hover {
+    color: #2bde8c;
+}
+
+.chat-detail-page__header {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 12px;
+    padding: 16px 20px;
+    align-items: center;
+}
+
+.chat-detail-page__partner {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    text-decoration: none;
+    color: #222;
+    min-width: 0;
+}
+
+.chat-detail-page__partner-avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.chat-detail-page__partner-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.chat-detail-page__partner-name {
+    font-weight: 600;
+    font-size: 17px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.chat-detail-page__partner:hover .chat-detail-page__partner-name,
+.chat-detail-page__partner:hover .chat-detail-page__partner-hint {
+    color: #2bde8c;
+}
+
+.chat-detail-page__partner-hint {
+    font-size: 12px;
+    color: #999;
+}
+
+.chat-detail-page__ad {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    color: #222;
+    border-left: 1px solid #eee;
+    padding-left: 24px;
+    min-width: 0;
+}
+
+.chat-detail-page__ad-photo {
+    position: relative;
+    width: 72px;
+    height: 72px;
+    border-radius: 8px;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.chat-detail-page__ad-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.chat-detail-page__ad-sold {
+    position: absolute;
+    bottom: 4px;
+    left: 4px;
+    right: 4px;
+    text-align: center;
+    font-size: 10px;
+    font-weight: 700;
+    color: #fff;
+    background: rgba(220, 53, 69, 0.9);
+    border-radius: 4px;
+    padding: 2px 0;
+    text-transform: uppercase;
+}
+
+.chat-detail-page__ad-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+}
+
+.chat-detail-page__ad-title {
+    font-size: 14px;
+    color: #333;
+    line-height: 1.3;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+.chat-detail-page__ad:hover .chat-detail-page__ad-title {
+    color: #2bde8c;
+}
+
+.chat-detail-page__ad-price {
+    font-size: 15px;
+    font-weight: 700;
+    color: #2bde8c;
+}
+
+.chat-detail-page__actions {
+    background: #f6fdf9;
+    border: 1px solid #cdeedd;
+    border-radius: 12px;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.chat-detail-page__confirm-btn {
+    background: #2bde8c;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.chat-detail-page__confirm-btn:hover {
+    background: #22b974;
+}
+
+.chat-detail-page__confirm-btn:disabled {
+    background: #9cd8bc;
+    cursor: not-allowed;
+}
+
+.chat-detail-page__actions-hint {
+    color: #555;
+    font-size: 13px;
+    flex: 1;
+    min-width: 200px;
+}
+
+.chat-detail-page__messages {
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 12px;
+    padding: 20px;
+    min-height: 240px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.chat-detail-page__empty {
+    color: #999;
+    text-align: center;
+    padding: 24px;
+    font-style: italic;
+}
+
+@media (max-width: 720px) {
+    .chat-detail-page__header {
+        grid-template-columns: 1fr;
+    }
+
+    .chat-detail-page__ad {
+        border-left: none;
+        border-top: 1px solid #eee;
+        padding-left: 0;
+        padding-top: 16px;
+    }
+}

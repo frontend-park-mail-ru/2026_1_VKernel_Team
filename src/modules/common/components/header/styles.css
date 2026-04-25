@@ -48,3 +48,17 @@
     height: 50px;
     border-radius: 50%;
 }
+
+.nav-link--with-badge {
+    position: relative;
+}
+
+.nav-link--with-badge .nav-badge {
+    margin-left: 6px;
+    background: #1892e5;
+    color: #fff;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: bold;
+}

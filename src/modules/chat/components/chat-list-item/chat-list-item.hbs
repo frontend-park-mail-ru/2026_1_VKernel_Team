@@ -1,0 +1,47 @@
+<li class="chat-list-item {{#if isUnread}}chat-list-item--unread{{/if}}"
+    data-chat-id="{{chat_id}}"
+    data-nav="/chats/{{chat_id}}">
+    <a class="chat-list-item__partner"
+       href="/seller/{{partner.id}}"
+       data-nav="/seller/{{partner.id}}"
+       title="Перейти в профиль"
+       onclick="event.stopPropagation()">
+        <img class="chat-list-item__avatar"
+             src="{{avatarUrl partner.avatar_path partner.avatar_path}}"
+             alt="{{partner.name}}">
+        <span class="chat-list-item__partner-name">{{partner.name}}</span>
+    </a>
+
+    <div class="chat-list-item__ad">
+        <a class="chat-list-item__ad-photo"
+           href="/ad/{{ad.ad_id}}"
+           data-nav="/ad/{{ad.ad_id}}"
+           onclick="event.stopPropagation()">
+            <img src="{{adPhotoUrl}}" alt="{{ad.title}}">
+            {{#if isSold}}
+                <span class="chat-list-item__sold-badge">Продано</span>
+            {{/if}}
+        </a>
+        <div class="chat-list-item__ad-info">
+            <a class="chat-list-item__ad-title"
+               href="/ad/{{ad.ad_id}}"
+               data-nav="/ad/{{ad.ad_id}}"
+               onclick="event.stopPropagation()">{{ad.title}}</a>
+            <span class="chat-list-item__ad-price">{{formattedPrice}}</span>
+        </div>
+    </div>
+
+    <div class="chat-list-item__last">
+        {{#if last_message}}
+            <span class="chat-list-item__last-text {{#if isOrderPreview}}chat-list-item__last-text--order{{/if}}">
+                {{#if isOrderPreview}}🛍 {{/if}}{{lastMessagePreview}}
+            </span>
+            <span class="chat-list-item__last-time">{{lastMessageTime}}</span>
+        {{else}}
+            <span class="chat-list-item__last-text chat-list-item__last-text--empty">Нет сообщений</span>
+        {{/if}}
+        {{#if isUnread}}
+            <span class="chat-list-item__unread-dot" title="Есть непрочитанные"></span>
+        {{/if}}
+    </div>
+</li>

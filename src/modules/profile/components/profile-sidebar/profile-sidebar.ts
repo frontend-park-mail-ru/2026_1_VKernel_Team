@@ -21,6 +21,12 @@ export const ProfileSidebar = {
             const tabBtn = target.closest('.profile-nav-item[data-tab]');
             if (tabBtn) {
                 const tab = (tabBtn as HTMLElement).dataset.tab;
+                if (tab === 'messages') {
+                    window.dispatchEvent(
+                        new CustomEvent('app:navigate', { detail: { path: '/chats' } }),
+                    );
+                    return;
+                }
                 eventBus.emit('profile:switch-tab', tab);
                 return;
             }
