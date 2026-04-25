@@ -1,18 +1,32 @@
 import { adminApi } from '../api/adminApi';
 import { store } from '@/core/store';
+import { ChatController } from '@modules/support/controllers/chatController';
 import type { SupportTicketAdmin, StatsResponse } from '../types';
 
 import statsTemplateRaw from '../views/stats-page.hbs?raw';
 import tableTemplateRaw from '../views/ticket-table.hbs?raw';
+import chatPanelTemplateRaw from '../views/admin-chat.hbs?raw';
 import '../styles/admin.css';
 
 declare const Handlebars: any;
 
 let statsCompiled: ((ctx: any) => string) | null = null;
 let tableCompiled: ((ctx: any) => string) | null = null;
+let chatPanelCompiled: ((ctx: any) => string) | null = null;
+
+function ensureHelpers(): void {
+    if (Handlebars.helpers?.formatTime) return;
+    Handlebars.registerHelper('formatTime', function (dateString: string) {
+        if (!dateString) return '';
+        const date = new Date(dateString);
+        if (isNaN(date.getTime())) return '';
+        return date.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+    });
+}
 
 function getStatsTemplate(): (ctx: any) => string {
     if (!statsCompiled) {
+        ensureHelpers();
         Handlebars.registerPartial('ticket-table', tableTemplateRaw);
         statsCompiled = Handlebars.compile(statsTemplateRaw);
     }
@@ -21,9 +35,17 @@ function getStatsTemplate(): (ctx: any) => string {
 
 function getTableTemplate(): (ctx: any) => string {
     if (!tableCompiled) {
+        ensureHelpers();
         tableCompiled = Handlebars.compile(tableTemplateRaw);
     }
     return tableCompiled!;
+}
+
+function getChatPanelTemplate(): (ctx: any) => string {
+    if (!chatPanelCompiled) {
+        chatPanelCompiled = Handlebars.compile(chatPanelTemplateRaw);
+    }
+    return chatPanelCompiled!;
 }
 
 function isAuthorized(): boolean {
@@ -36,6 +58,7 @@ export const StatsController = {
     _stats: null as StatsResponse | null,
     _filterStatus: '' as string,
     _filterCategory: '' as string,
+    _openChatTicketId: null as number | null,
 
     async render(): Promise<void> {
         const app = document.getElementById('app');
@@ -115,6 +138,53 @@ export const StatsController = {
         document.querySelectorAll<HTMLSelectElement>('.admin-status-select').forEach((select) => {
             select.addEventListener('change', () => this.handleStatusChange(select));
         });
+        document.querySelectorAll<HTMLButtonElement>('.admin-chat-btn').forEach((btn) => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const ticketId = Number(btn.dataset.ticketId);
+                if (ticketId) this.openChat(ticketId);
+            });
+        });
+    },
+
+    async openChat(ticketId: number): Promise<void> {
+        this._openChatTicketId = ticketId;
+        const ticket = this._tickets.find((t) => t.id === ticketId);
+
+        let overlay = document.getElementById('admin-chat-overlay') as HTMLElement | null;
+        if (!overlay) {
+            overlay = document.createElement('div');
+            overlay.id = 'admin-chat-overlay';
+            overlay.className = 'admin-chat-overlay';
+            document.body.appendChild(overlay);
+        }
+
+        overlay.innerHTML = getChatPanelTemplate()({
+            ticketId,
+            ticketTitle: ticket?.title ?? '',
+        });
+        overlay.classList.add('admin-chat-overlay--open');
+
+        const closeBtn = overlay.querySelector('#admin-chat-close');
+        closeBtn?.addEventListener('click', () => this.closeChat());
+        overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) this.closeChat();
+        });
+
+        const chatBody = overlay.querySelector('#admin-chat-body') as HTMLElement | null;
+        if (chatBody) {
+            await ChatController.render(chatBody, ticketId);
+        }
+    },
+
+    closeChat(): void {
+        this._openChatTicketId = null;
+        ChatController.reset();
+        const overlay = document.getElementById('admin-chat-overlay');
+        if (overlay) {
+            overlay.classList.remove('admin-chat-overlay--open');
+            overlay.innerHTML = '';
+        }
     },
 
     async handleStatusChange(select: HTMLSelectElement): Promise<void> {

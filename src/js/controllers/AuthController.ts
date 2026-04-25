@@ -64,7 +64,7 @@ export const AuthController = {
         if (result.isValid) {
             await authActions.checkAuth();
             uiActions.showSuccess('Вход выполнен!');
-            window.dispatchEvent(new CustomEvent('app:navigate', { detail: { path: '/' } }));
+            window.location.href = '/';
         } else {
             this.showLoginError(result.error ?? 'Ошибка входа');
         }
@@ -76,7 +76,7 @@ export const AuthController = {
         if (result.isValid) {
             await authActions.checkAuth();
             uiActions.showSuccess('Регистрация успешна!');
-            window.dispatchEvent(new CustomEvent('app:navigate', { detail: { path: '/' } }));
+            window.location.href = '/';
         } else {
             if (result.fieldErrors && Object.keys(result.fieldErrors).length > 0) {
                 this.showFieldErrors(result.fieldErrors);
@@ -89,7 +89,7 @@ export const AuthController = {
     async handleLogout(): Promise<void> {
         await authActions.logout();
         localStorage.removeItem('authToken');
-        window.dispatchEvent(new CustomEvent('app:route'));
+        window.location.href = '/';
     },
 
     initPasswordToggles(): void {

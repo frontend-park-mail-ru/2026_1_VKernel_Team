@@ -254,8 +254,7 @@ export const ProfileController = {
         try {
             await ProfileService.logout();
             store.setState({ isAuthenticated: false, user: null });
-            window.history.pushState({}, '', '/login');
-            uiActions.navigateTo('/login');
+            window.location.href = '/';
         } catch (err) {
             uiActions.showError('Ошибка при выходе');
         }

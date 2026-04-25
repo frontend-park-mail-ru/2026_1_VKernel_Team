@@ -1,0 +1,14 @@
+<div class="admin-chat-panel">
+    <div class="admin-chat-panel__header">
+        <div class="admin-chat-panel__info">
+            <span class="admin-chat-panel__title">Чат по обращению #{{ticketId}}</span>
+            {{#if ticketTitle}}
+                <span class="admin-chat-panel__subtitle">{{ticketTitle}}</span>
+            {{/if}}
+        </div>
+        <button class="admin-chat-panel__close" id="admin-chat-close" title="Закрыть">&times;</button>
+    </div>
+    <div class="admin-chat-panel__body" id="admin-chat-body">
+        <div class="support-chat__loader"><div class="spinner"></div></div>
+    </div>
+</div>
