@@ -162,6 +162,14 @@
     white-space: nowrap;
 }
 
+.admin-table__description {
+    max-width: 420px;
+    color: #555;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 .admin-table__empty {
     text-align: center;
     padding: 60px 20px;

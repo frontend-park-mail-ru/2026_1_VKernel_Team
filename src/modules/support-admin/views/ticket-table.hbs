@@ -6,6 +6,7 @@
                     <th>ID</th>
                     <th>Автор</th>
                     <th>Заголовок</th>
+                    <th>Описание</th>
                     <th>Категория</th>
                     <th>Статус</th>
                     <th>Создано</th>
@@ -18,6 +19,7 @@
                         <td>#{{this.id}}</td>
                         <td>{{this.user_id}}</td>
                         <td class="admin-table__title">{{this.title}}</td>
+                        <td class="admin-table__description">{{this.description}}</td>
                         <td>
                             <span class="admin-badge admin-badge--{{this.category}}">
                                 {{#if (eq this.category "bug")}}Баг{{/if}}
