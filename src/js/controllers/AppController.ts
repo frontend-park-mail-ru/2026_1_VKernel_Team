@@ -27,13 +27,16 @@ import { ChatController } from '@modules/chat/controller';
 import { loadTemplates as loadChatListTemplates } from '@modules/chat/pages/chat-list/chat-list';
 import { loadTemplates as loadChatDetailTemplates } from '@modules/chat/pages/chat-detail/chat-detail';
 import { unreadStore, UNREAD_CHANGED_EVENT } from '@modules/chat/unread-store';
+import { StatsController } from '@modules/support-admin/controllers/statsController';
 
 import { store } from '@/core/store';
 import { uiActions } from '@/actions/uiActions';
 import type { HandlebarsTemplateFunction, TemplateName, UIConstants } from '@/types';
 import { authActions } from '@/actions/authActions';
+import { storage } from '@/utils/storage';
 import { CONFIG } from '@/core/config';
 import { initOfflineIndicator } from '@modules/common/offline/offline-indicator';
+import '@modules/support/styles/support.css';
 
 import * as HandlebarsFull from 'handlebars';
 import * as HandlebarsRuntime from 'handlebars/dist/handlebars.runtime.js';
@@ -177,6 +180,115 @@ export const AppController = {
         }
 
         initOfflineIndicator();
+        this.initSupportWidget();
+    },
+
+    initSupportWidget(): void {
+        // Кнопка-триггер
+        const triggerBtn = document.createElement('button');
+        triggerBtn.className = 'support-trigger-btn';
+        triggerBtn.id = 'support-trigger';
+        triggerBtn.title = 'Техподдержка';
+        triggerBtn.innerHTML = `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M11.95 18q.525 0 .888-.363.362-.362.362-.887 0-.525-.362-.888-.363-.362-.888-.362-.525 0-.887.362-.363.363-.363.888t.363.887q.362.363.887.363Zm-.9-3.85h1.85q0-.825.188-1.3.187-.475 1.062-1.3.65-.65 1.025-1.238.375-.587.375-1.362 0-1.35-.962-2.15Q13.625 6 12.1 6q-1.275 0-2.187.75-.913.75-1.213 1.8l1.65.65q.125-.45.525-.975.4-.525 1.175-.525.7 0 1.088.413.387.412.387.962 0 .5-.3.938-.3.437-.75.887-.8.75-1.063 1.375-.262.625-.262 1.875ZM12 22q-2.075 0-3.9-.787-1.825-.788-3.175-2.138-1.35-1.35-2.137-3.175Q2 14.075 2 12t.788-3.9q.787-1.825 2.137-3.175 1.35-1.35 3.175-2.138Q9.925 2 12 2t3.9.787q1.825.788 3.175 2.138 1.35 1.35 2.137 3.175Q22 9.925 22 12t-.788 3.9q-.787 1.825-2.137 3.175-1.35 1.35-3.175 2.137Q14.075 22 12 22Z"/></svg>`;
+        document.body.appendChild(triggerBtn);
+
+        // Wrapper для ресайза
+        const wrapper = document.createElement('div');
+        wrapper.id = 'support-iframe-wrapper';
+        wrapper.className = 'support-iframe-wrapper';
+
+        // Resize handle
+        const resizeHandle = document.createElement('div');
+        resizeHandle.className = 'support-resize-handle';
+        wrapper.appendChild(resizeHandle);
+
+        // Iframe
+        const iframe = document.createElement('iframe');
+        iframe.id = 'support-iframe';
+        iframe.className = 'support-iframe';
+        iframe.src = '/support-widget';
+        wrapper.appendChild(iframe);
+
+        document.body.appendChild(wrapper);
+
+        // Toggle по клику
+        triggerBtn.addEventListener('click', () => {
+            const isOpen = wrapper.classList.toggle('support-iframe-wrapper--open');
+            if (isOpen) {
+                const token = storage.getToken();
+                if (token) {
+                    iframe.contentWindow?.postMessage({ type: 'support-widget-token', token }, '*');
+                }
+                iframe.contentWindow?.postMessage(
+                    { type: 'support-widget-auth-changed', isAuthenticated: store.isAuthenticated },
+                    '*',
+                );
+            }
+        });
+
+        // Отправляем токен и статус авторизации при загрузке iframe
+        iframe.addEventListener('load', () => {
+            const token = storage.getToken();
+            if (token) {
+                iframe.contentWindow?.postMessage({ type: 'support-widget-token', token }, '*');
+            }
+            iframe.contentWindow?.postMessage(
+                { type: 'support-widget-auth-changed', isAuthenticated: store.isAuthenticated },
+                '*',
+            );
+        });
+
+        // При смене авторизации — обновить виджет
+        store.subscribe((state) => {
+            const token = storage.getToken();
+            if (state.isAuthenticated && token) {
+                iframe.contentWindow?.postMessage({ type: 'support-widget-token', token }, '*');
+            }
+            iframe.contentWindow?.postMessage(
+                { type: 'support-widget-auth-changed', isAuthenticated: state.isAuthenticated },
+                '*',
+            );
+        });
+
+        // Слушаем сообщение о закрытии от iframe
+        window.addEventListener('message', (event: MessageEvent) => {
+            if (event.data?.type === 'support-widget-close') {
+                wrapper.classList.remove('support-iframe-wrapper--open');
+            }
+        });
+
+        // Resize logic
+        let isResizing = false;
+        let startX = 0;
+        let startY = 0;
+        let startW = 0;
+        let startH = 0;
+
+        resizeHandle.addEventListener('mousedown', (e: MouseEvent) => {
+            e.preventDefault();
+            isResizing = true;
+            startX = e.clientX;
+            startY = e.clientY;
+            startW = wrapper.offsetWidth;
+            startH = wrapper.offsetHeight;
+            iframe.style.pointerEvents = 'none';
+            document.body.style.cursor = 'nwse-resize';
+        });
+
+        document.addEventListener('mousemove', (e: MouseEvent) => {
+            if (!isResizing) return;
+            const dw = startX - e.clientX;
+            const dh = startY - e.clientY;
+            wrapper.style.width = Math.max(320, Math.min(700, startW + dw)) + 'px';
+            wrapper.style.height = Math.max(380, startH + dh) + 'px';
+        });
+
+        document.addEventListener('mouseup', () => {
+            if (!isResizing) return;
+            isResizing = false;
+            iframe.style.pointerEvents = '';
+            document.body.style.cursor = '';
+        });
     },
 
     async loadTemplates(): Promise<void> {
@@ -243,10 +355,12 @@ export const AppController = {
         }
 
         const user = store.user;
+        const role = user?.role;
         container.innerHTML = this._headerCompiled!({
             isAuthenticated: store.isAuthenticated,
             user,
             unreadChatsCount: store.isAuthenticated ? unreadStore.count : 0,
+            isStaff: role === 'support' || role === 'admin',
         });
     },
 
@@ -307,6 +421,11 @@ export const AppController = {
 
         if (chatDetailMatch) {
             ChatController.renderChatDetail(chatDetailMatch[1]);
+            return;
+        }
+
+        if (path === '/support/stats') {
+            StatsController.render();
             return;
         }
 

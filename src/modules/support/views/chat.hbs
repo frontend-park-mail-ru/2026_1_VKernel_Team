@@ -1,0 +1,30 @@
+<div class="support-chat">
+    <div class="support-chat__messages" id="support-chat-messages">
+        {{#if messages.length}}
+            {{#each messages}}
+                <div class="support-chat__message support-chat__message--{{#if this.isOwn}}own{{else}}other{{/if}}">
+                    <div class="support-chat__bubble">{{this.text}}</div>
+                    <div class="support-chat__time">{{formatTime this.created_at}}</div>
+                </div>
+            {{/each}}
+        {{else}}
+            <div class="support-chat__empty">Напишите сообщение, чтобы начать диалог</div>
+        {{/if}}
+    </div>
+
+    <form class="support-chat__form" id="support-chat-form">
+        <textarea
+            class="support-chat__input"
+            id="support-chat-input"
+            placeholder="Сообщение..."
+            rows="1"
+            maxlength="2000"
+        ></textarea>
+        <button class="support-chat__send" type="submit" id="support-chat-send" title="Отправить">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="22" y1="2" x2="11" y2="13"/>
+                <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+            </svg>
+        </button>
+    </form>
+</div>

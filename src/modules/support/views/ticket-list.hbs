@@ -1,0 +1,39 @@
+<div class="support-tickets">
+    <button class="support-btn support-btn--primary support-tickets__create-btn" id="support-create-btn">
+        + Создать обращение
+    </button>
+
+    {{#if isLoading}}
+        <div class="support-tickets__loader">
+            <div class="spinner"></div>
+        </div>
+    {{else}}
+        {{#if tickets.length}}
+            <div class="support-tickets__list">
+                {{#each tickets}}
+                    <div class="support-ticket-card" data-ticket-id="{{this.id}}">
+                        <div class="support-ticket-card__top">
+                            <span class="support-ticket-card__category support-ticket-card__category--{{this.category}}">
+                                {{#if (eq this.category "bug")}}Bug{{/if}}
+                                {{#if (eq this.category "suggestion")}}Idea{{/if}}
+                                {{#if (eq this.category "complaint")}}!{{/if}}
+                            </span>
+                            <span class="support-ticket-card__status support-ticket-card__status--{{this.status}}">
+                                {{#if (eq this.status "open")}}Открыто{{/if}}
+                                {{#if (eq this.status "in_progress")}}В работе{{/if}}
+                                {{#if (eq this.status "closed")}}Закрыто{{/if}}
+                            </span>
+                        </div>
+                        <div class="support-ticket-card__title">{{this.title}}</div>
+                        <div class="support-ticket-card__date">{{formatDate this.created_at}}</div>
+                    </div>
+                {{/each}}
+            </div>
+        {{else}}
+            <div class="support-tickets__empty">
+                <div class="support-tickets__empty-icon">📭</div>
+                <p>У вас пока нет обращений</p>
+            </div>
+        {{/if}}
+    {{/if}}
+</div>
