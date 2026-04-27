@@ -1,4 +1,4 @@
-import '@modules/chat/pages/chat-list/chat-list.css';
+import '@modules/chat/pages/chat-list/chat-list.scss';
 import template from '@modules/chat/pages/chat-list/chat-list.hbs?raw';
 import { SearchSectionComponent } from '@modules/common/components/search-section/search-section';
 import { ChatListItemComponent } from '@modules/chat/components/chat-list-item/chat-list-item';

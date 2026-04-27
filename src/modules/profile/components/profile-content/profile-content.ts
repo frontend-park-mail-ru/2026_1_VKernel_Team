@@ -1,4 +1,4 @@
-import '@modules/profile/components/profile-content/style.css';
+import '@modules/profile/components/profile-content/style.scss';
 import template from '@modules/profile/components/profile-content/profile-content.hbs';
 import { CloseAdModal } from '@modules/profile/components/close-ad-modal/close-ad-modal';
 

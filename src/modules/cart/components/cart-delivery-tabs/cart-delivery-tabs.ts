@@ -1,4 +1,4 @@
-import '@modules/cart/components/cart-delivery-tabs/styles.css';
+import '@modules/cart/components/cart-delivery-tabs/styles.scss';
 import template from '@modules/cart/components/cart-delivery-tabs/cart-delivery-tabs.hbs?raw';
 
 export const CartDeliveryTabsComponent = {

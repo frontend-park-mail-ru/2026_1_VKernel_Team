@@ -1,6 +1,6 @@
 import template from '@modules/profile/components/edit-name-modal/edit-name-modal.hbs';
-import '@modules/common/components/modal/modal.css';
-import '@modules/profile/components/edit-name-modal/style.css';
+import '@modules/common/components/modal/modal.scss';
+import '@modules/profile/components/edit-name-modal/style.scss';
 import { ProfileService } from '@modules/profile/service';
 import { store } from '@/core/store';
 import { uiActions } from '@/actions/uiActions';

@@ -1,4 +1,4 @@
-import '@modules/common/components/header/styles.css';
+import '@modules/common/components/header/styles.scss';
 
 import template from '@modules/common/components/header/header.hbs?raw';
 

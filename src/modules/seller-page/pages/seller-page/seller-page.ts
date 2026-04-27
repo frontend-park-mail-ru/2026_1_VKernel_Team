@@ -1,4 +1,4 @@
-import '@modules/seller-page/pages/seller-page/seller-page.css';
+import '@modules/seller-page/pages/seller-page/seller-page.scss';
 import template from '@modules/seller-page/pages/seller-page/seller-page.hbs?raw';
 import { SearchSectionComponent } from '@modules/common/components/search-section/search-section';
 import { SellerInfoCardComponent } from '@modules/seller-page/components/seller-info-card/seller-info-card';

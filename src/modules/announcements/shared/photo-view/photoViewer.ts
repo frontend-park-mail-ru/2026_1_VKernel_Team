@@ -2,6 +2,8 @@
  * Компонент для просмотра фото в полный экран
  */
 
+import './css/photo-viewer.scss';
+
 export class PhotoViewer {
     private static overlay: HTMLElement | null = null;
     private static imageElement: HTMLImageElement | null = null;

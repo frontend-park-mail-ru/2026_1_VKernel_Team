@@ -1,4 +1,4 @@
-import '@modules/profile/components/profile-sidebar/style.css';
+import '@modules/profile/components/profile-sidebar/style.scss';
 import template from '@modules/profile/components/profile-sidebar/profile-sidebar.hbs';
 import { eventBus } from '@/core/eventBus';
 import { EditNameModal } from '@modules/profile/components/edit-name-modal/edit-name-modal';

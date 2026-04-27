@@ -3,6 +3,7 @@
  * Реализована поддержка оффлайн-сохранения (IndexedDB) и режима редактирования
  */
 
+import './css/place-an-ad.scss';
 import Handlebars from 'handlebars';
 import placeAnAdTpl from './templates/place-an-ad.hbs';
 import { store } from '@/core/store';
@@ -16,7 +17,7 @@ import { adsService } from '@/services/adsServices';
 import { apiClient, API_ENDPOINTS } from '@/api/apiClient';
 import { CONFIG } from '@/core/config';
 import { AdValidator } from '@/validators/adValidator';
-import '@modules/common/components/modal/modal.css';
+import '@modules/common/components/modal/modal.scss';
 import type {
     Category,
     CategoryCharacteristic,
