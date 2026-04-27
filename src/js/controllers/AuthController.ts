@@ -64,7 +64,7 @@ export const AuthController = {
         if (result.isValid) {
             await authActions.checkAuth();
             uiActions.showSuccess('Вход выполнен!');
-            window.location.href = '/';
+            this.navigateTo('/');
         } else {
             this.showLoginError(result.error ?? 'Ошибка входа');
         }
@@ -76,7 +76,7 @@ export const AuthController = {
         if (result.isValid) {
             await authActions.checkAuth();
             uiActions.showSuccess('Регистрация успешна!');
-            window.location.href = '/';
+            this.navigateTo('/');
         } else {
             if (result.fieldErrors && Object.keys(result.fieldErrors).length > 0) {
                 this.showFieldErrors(result.fieldErrors);
@@ -89,7 +89,7 @@ export const AuthController = {
     async handleLogout(): Promise<void> {
         await authActions.logout();
         localStorage.removeItem('authToken');
-        window.location.href = '/';
+        this.navigateTo('/');
     },
 
     initPasswordToggles(): void {

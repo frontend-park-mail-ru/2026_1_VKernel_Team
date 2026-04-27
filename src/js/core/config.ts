@@ -20,10 +20,16 @@ declare const process: { env: { BASE_URL?: string } };
 
 const BASE_URL = process.env.BASE_URL || 'http://clover-go.ru:8000';
 
+// Определяем, где запущен фронтенд
+const _isLocal =
+    typeof window !== 'undefined' &&
+    (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+
 const CONFIG = {
     API: {
         BASE_URL,
-        API_URL: `${BASE_URL}/api/v1`,
+        // Если локально — шлём на прокси, чтобы браузер не блокировал куки!
+        API_URL: _isLocal ? '/api/v1' : `${BASE_URL}/api/v1`,
     },
     APP: {
         NAME: 'Клевер',

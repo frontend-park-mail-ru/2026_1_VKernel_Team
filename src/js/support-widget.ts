@@ -1,4 +1,5 @@
 import { storage } from '@/utils/storage';
+import { widgetAuth } from '@modules/support/widgetAuth';
 import { SupportWidgetController } from '@modules/support/controllers/supportWidgetController';
 
 import * as HandlebarsFull from 'handlebars';
@@ -38,7 +39,16 @@ window.addEventListener('message', (event: MessageEvent) => {
         const token = event.data.token;
         if (token) {
             storage.setToken(token);
+            widgetAuth.isAuthenticated = true;
         }
+    }
+
+    if (event.data?.type === 'support-widget-auth-changed') {
+        widgetAuth.isAuthenticated = !!event.data.isAuthenticated;
+        if (!event.data.isAuthenticated) {
+            storage.removeToken();
+        }
+        SupportWidgetController.navigate('list');
     }
 });
 

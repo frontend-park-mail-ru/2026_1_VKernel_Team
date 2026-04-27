@@ -347,6 +347,45 @@
     animation: support-fadeIn 0.3s ease;
 }
 
+/* === Auth Required === */
+
+.support-auth-required {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 40px 24px;
+    height: 100%;
+    min-height: 300px;
+}
+
+.support-auth-required__icon {
+    margin-bottom: 20px;
+    opacity: 0.6;
+}
+
+.support-auth-required__title {
+    margin: 0 0 12px;
+    font-size: 18px;
+    font-weight: 700;
+    color: #333;
+}
+
+.support-auth-required__text {
+    margin: 0 0 8px;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #555;
+}
+
+.support-auth-required__hint {
+    margin: 0;
+    font-size: 13px;
+    color: #999;
+    line-height: 1.5;
+}
+
 /* === Create / Edit Form === */
 
 .support-create__title {

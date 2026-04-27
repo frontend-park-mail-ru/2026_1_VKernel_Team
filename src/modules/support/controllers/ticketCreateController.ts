@@ -1,16 +1,26 @@
 import { supportApi } from '../api/supportApi';
+import { widgetAuth } from '../widgetAuth';
 
 import templateRaw from '../views/ticket-create.hbs?raw';
+import authRequiredRaw from '../views/auth-required.hbs?raw';
 
 declare const Handlebars: any;
 
 let compiled: ((ctx: any) => string) | null = null;
+let authRequiredCompiled: ((ctx: any) => string) | null = null;
 
 function getTemplate(): (ctx: any) => string {
     if (!compiled) {
         compiled = Handlebars.compile(templateRaw);
     }
     return compiled!;
+}
+
+function getAuthRequiredTemplate(): (ctx: any) => string {
+    if (!authRequiredCompiled) {
+        authRequiredCompiled = Handlebars.compile(authRequiredRaw);
+    }
+    return authRequiredCompiled!;
 }
 
 export const TicketCreateController = {
@@ -21,6 +31,15 @@ export const TicketCreateController = {
     },
 
     render(container: HTMLElement): void {
+        if (!widgetAuth.isAuthenticated) {
+            container.innerHTML = getAuthRequiredTemplate()({});
+            const backBtn = container.querySelector('#support-back-btn');
+            backBtn?.addEventListener('click', () => {
+                this._onNavigate?.('list');
+            });
+            return;
+        }
+
         container.innerHTML = getTemplate()({});
         this.attachEvents(container);
     },

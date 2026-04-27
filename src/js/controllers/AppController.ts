@@ -33,6 +33,7 @@ import { store } from '@/core/store';
 import { uiActions } from '@/actions/uiActions';
 import type { HandlebarsTemplateFunction, TemplateName, UIConstants } from '@/types';
 import { authActions } from '@/actions/authActions';
+import { storage } from '@/utils/storage';
 import { CONFIG } from '@/core/config';
 import { initOfflineIndicator } from '@modules/common/offline/offline-indicator';
 import '@modules/support/styles/support.css';
@@ -214,19 +215,39 @@ export const AppController = {
         triggerBtn.addEventListener('click', () => {
             const isOpen = wrapper.classList.toggle('support-iframe-wrapper--open');
             if (isOpen) {
-                const token = localStorage.getItem('token');
+                const token = storage.getToken();
                 if (token) {
                     iframe.contentWindow?.postMessage({ type: 'support-widget-token', token }, '*');
                 }
+                iframe.contentWindow?.postMessage(
+                    { type: 'support-widget-auth-changed', isAuthenticated: store.isAuthenticated },
+                    '*',
+                );
             }
         });
 
-        // Отправляем токен при загрузке iframe
+        // Отправляем токен и статус авторизации при загрузке iframe
         iframe.addEventListener('load', () => {
-            const token = localStorage.getItem('token');
+            const token = storage.getToken();
             if (token) {
                 iframe.contentWindow?.postMessage({ type: 'support-widget-token', token }, '*');
             }
+            iframe.contentWindow?.postMessage(
+                { type: 'support-widget-auth-changed', isAuthenticated: store.isAuthenticated },
+                '*',
+            );
+        });
+
+        // При смене авторизации — обновить виджет
+        store.subscribe((state) => {
+            const token = storage.getToken();
+            if (state.isAuthenticated && token) {
+                iframe.contentWindow?.postMessage({ type: 'support-widget-token', token }, '*');
+            }
+            iframe.contentWindow?.postMessage(
+                { type: 'support-widget-auth-changed', isAuthenticated: state.isAuthenticated },
+                '*',
+            );
         });
 
         // Слушаем сообщение о закрытии от iframe

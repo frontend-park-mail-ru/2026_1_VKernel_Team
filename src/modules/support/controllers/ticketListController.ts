@@ -1,17 +1,27 @@
 import { supportApi } from '../api/supportApi';
+import { widgetAuth } from '../widgetAuth';
 import type { SupportTicket } from '../types';
 
 import templateRaw from '../views/ticket-list.hbs?raw';
+import authRequiredRaw from '../views/auth-required.hbs?raw';
 
 declare const Handlebars: any;
 
 let compiled: ((ctx: any) => string) | null = null;
+let authRequiredCompiled: ((ctx: any) => string) | null = null;
 
 function getTemplate(): (ctx: any) => string {
     if (!compiled) {
         compiled = Handlebars.compile(templateRaw);
     }
     return compiled!;
+}
+
+function getAuthRequiredTemplate(): (ctx: any) => string {
+    if (!authRequiredCompiled) {
+        authRequiredCompiled = Handlebars.compile(authRequiredRaw);
+    }
+    return authRequiredCompiled!;
 }
 
 export const TicketListController = {
@@ -23,6 +33,11 @@ export const TicketListController = {
     },
 
     async render(container: HTMLElement): Promise<void> {
+        if (!widgetAuth.isAuthenticated) {
+            container.innerHTML = getAuthRequiredTemplate()({});
+            return;
+        }
+
         container.innerHTML = getTemplate()({ isLoading: true, tickets: [] });
 
         const result = await supportApi.getMyTickets();
