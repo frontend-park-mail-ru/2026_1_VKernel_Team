@@ -17,6 +17,7 @@ import { apiClient, API_ENDPOINTS } from '@/api/apiClient';
 import { CONFIG } from '@/core/config';
 import { purchasesStore } from '@modules/profile/purchases-store';
 import { cartService } from '@modules/cart/service';
+import { cartStore } from '@modules/cart/store';
 import type { PurchaseItem } from '@modules/profile/purchases-store';
 import { unreadStore, UNREAD_CHANGED_EVENT } from '@modules/chat/unread-store';
 
@@ -212,7 +213,11 @@ export const ProfileController = {
 
         // Счётчик непрочитанных чатов рисуем через `messages_count` — в шаблоне
         // бейдж берётся по `lookup user (concat tab '_count')`.
-        const userWithUnread = { ...user, messages_count: unreadStore.count };
+        const userWithUnread = {
+            ...user,
+            messages_count: unreadStore.count,
+            cart_count: cartStore.getState().items.length,
+        };
 
         sidebarEl.innerHTML = profileSidebarTpl({
             currentTab: this.currentTab,

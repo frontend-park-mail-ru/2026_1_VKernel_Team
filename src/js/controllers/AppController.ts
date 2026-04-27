@@ -27,6 +27,7 @@ import { ChatController } from '@modules/chat/controller';
 import { loadTemplates as loadChatListTemplates } from '@modules/chat/pages/chat-list/chat-list';
 import { loadTemplates as loadChatDetailTemplates } from '@modules/chat/pages/chat-detail/chat-detail';
 import { unreadStore, UNREAD_CHANGED_EVENT } from '@modules/chat/unread-store';
+import { cartStore } from '@modules/cart/store';
 import { StatsController } from '@modules/support-admin/controllers/statsController';
 
 import { store } from '@/core/store';
@@ -169,6 +170,9 @@ export const AppController = {
             }
         }) as EventListener);
         window.addEventListener(UNREAD_CHANGED_EVENT, () => {
+            this.renderHeader();
+        });
+        cartStore.subscribe(() => {
             this.renderHeader();
         });
         this.renderHeader();
@@ -360,6 +364,7 @@ export const AppController = {
             isAuthenticated: store.isAuthenticated,
             user,
             unreadChatsCount: store.isAuthenticated ? unreadStore.count : 0,
+            cartCount: store.isAuthenticated ? cartStore.getState().items.length : 0,
             isStaff: role === 'support' || role === 'admin',
         });
     },
