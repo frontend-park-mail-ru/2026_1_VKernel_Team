@@ -1,0 +1,59 @@
+<div class="support-detail">
+    <button class="support-btn support-btn--back" id="support-back-btn">&larr; Назад</button>
+
+    <div class="support-detail__header">
+        <span class="support-ticket-card__category support-ticket-card__category--{{ticket.category}}">
+            {{#if (eq ticket.category "bug")}}Баг{{/if}}
+            {{#if (eq ticket.category "suggestion")}}Предложение{{/if}}
+            {{#if (eq ticket.category "complaint")}}Жалоба{{/if}}
+        </span>
+        <span class="support-ticket-card__status support-ticket-card__status--{{ticket.status}}">
+            {{#if (eq ticket.status "open")}}Открыто{{/if}}
+            {{#if (eq ticket.status "in_progress")}}В работе{{/if}}
+            {{#if (eq ticket.status "closed")}}Закрыто{{/if}}
+        </span>
+    </div>
+
+    <h3 class="support-detail__title">{{ticket.title}}</h3>
+
+    <p class="support-detail__description">{{ticket.description}}</p>
+
+    <div class="support-detail__meta">
+        Создано: {{formatDate ticket.created_at}}
+    </div>
+
+    {{#if (eq ticket.status "open")}}
+        <button class="support-btn support-btn--secondary" id="support-edit-btn" data-ticket-id="{{ticket.id}}">
+            Редактировать
+        </button>
+    {{/if}}
+
+    {{#if (eq ticket.status "closed")}}
+        <div class="support-rating" id="support-rating-section">
+            {{#if ticket.rating}}
+                <div class="support-rating__done">
+                    <p class="support-rating__label">Ваша оценка</p>
+                    <div class="support-rating__stars support-rating__stars--readonly">
+                        {{#each (array 1 2 3 4 5)}}
+                            <span class="support-rating__star {{#if (gt ../ticket.rating @index)}}support-rating__star--filled{{/if}}">&#9733;</span>
+                        {{/each}}
+                    </div>
+                    <p class="support-rating__thanks">Спасибо за обратную связь!</p>
+                </div>
+            {{else}}
+                <div class="support-rating__prompt">
+                    <p class="support-rating__label">Оцените работу поддержки</p>
+                    <div class="support-rating__stars" id="support-rating-stars" data-ticket-id="{{ticket.id}}">
+                        <span class="support-rating__star" data-rating="1">&#9733;</span>
+                        <span class="support-rating__star" data-rating="2">&#9733;</span>
+                        <span class="support-rating__star" data-rating="3">&#9733;</span>
+                        <span class="support-rating__star" data-rating="4">&#9733;</span>
+                        <span class="support-rating__star" data-rating="5">&#9733;</span>
+                    </div>
+                </div>
+            {{/if}}
+        </div>
+    {{/if}}
+
+    <div id="chat-container"></div>
+</div>

@@ -33,6 +33,12 @@ export const API_ENDPOINTS = {
     CATEGORIES: {
         GET_ALL: '/categories',
     },
+    CHATS: {
+        GET_ALL: '/chats',
+        GET_BY_ID: (id: number | string) => `/chats/${id}`,
+        CONFIRM: (id: number | string) => `/chats/${id}/confirm`,
+        CREATE_ORDER: (adId: number | string) => `/ads/${adId}/order`,
+    },
 };
 
 const getCookie = (name: string): string | null => {

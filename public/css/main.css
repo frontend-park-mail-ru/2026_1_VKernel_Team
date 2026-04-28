@@ -298,6 +298,9 @@ body .main-container {
     display: flex;
     flex-direction: column;
     gap: 20px;
+    min-width: 0;
+    overflow-wrap: break-word;
+    word-break: break-word;
 }
 
 .ad-column {
@@ -505,13 +508,19 @@ body .main-container {
     display: flex;
     align-items: center;
     gap: 2px;
+    min-width: 0;
+}
+
+.rec-card-location-text {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    min-width: 0;
 }
 
 .location-icon {
     font-size: 12px;
+    flex-shrink: 0;
 }
 
 .rec-card-footer-actions {
@@ -536,13 +545,37 @@ body .main-container {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 32px;
+    color: #666; /* Цвет контура по умолчанию (серый) */
     cursor: pointer;
     box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-    transition: all 0.2s;
+    transition: background-color 0.2s ease, transform 0.2s ease;
     z-index: 10;
     padding: 0;
-    line-height: 1;
+}
+
+/* Стили самого SVG-сердечка */
+.rec-card-fav svg {
+    fill: transparent; /* Пустое внутри по умолчанию */
+    transition: fill 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+/* Эффекты при наведении */
+.rec-card-fav:hover {
+    background: #ffffff;
+    transform: scale(1.05);
+}
+
+.rec-card-fav:hover svg {
+    transform: scale(1.1); /* Легкое пульсирование иконки */
+}
+
+/* === АКТИВНОЕ СОСТОЯНИЕ (Добавлено в избранное) === */
+.rec-card-fav--active {
+    color: #ff4d4d; /* Меняем цвет контура на красный */
+}
+
+.rec-card-fav--active svg {
+    fill: #ff4d4d; /* Закрашиваем внутренность красным */
 }
 
 .rec-card-views {
@@ -569,10 +602,7 @@ body .main-container {
     object-fit: cover;  /* чтобы фото не искажалось */
 }
 
-.rec-card-fav:hover {
-    background: #fff0f0;
-    transform: scale(1.1);
-}
+
 
 /* ========== АДАПТИВНОСТЬ ========== */
 @media (max-width: 1200px) {

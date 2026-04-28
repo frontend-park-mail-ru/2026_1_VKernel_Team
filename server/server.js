@@ -10,6 +10,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 dotenv.config({ path: path.join(__dirname, '..', '.env') });
 const PORT = process.env.PORT || 80;
+const BASE_URL = process.env.BASE_URL || 'http://clover-go.ru:8000';
 const PUBLIC_DIR = path.join(__dirname, '..', process.env.PUBLIC_DIR || 'dist');
 
 const MIME_TYPES = {
@@ -48,7 +49,7 @@ process.on('unhandledRejection', (reason) => {
 //function handleApiProxy(req, res, pathname)
 function handleApiProxy(req, res) {
     // Указываем адрес боевого бэкенда на сервере
-    const targetUrl = new URL(req.url, 'http://clover-go.ru:8000');
+    const targetUrl = new URL(req.url, BASE_URL);
 
     // Формируем настройки для внутреннего запроса от Node.js к бэкенду
     const options = {
@@ -154,7 +155,10 @@ const server = http.createServer(async (req, res) => {
         let filePath;
         let fileExists = false;
 
-        if (pathname === '/' || pathname === '/index.html') {
+        if (pathname === '/support-widget') {
+            filePath = path.join(PUBLIC_DIR, 'support-widget.html');
+            fileExists = true;
+        } else if (pathname === '/' || pathname === '/index.html') {
             filePath = path.join(PUBLIC_DIR, 'index.html');
             fileExists = true;
         } else {

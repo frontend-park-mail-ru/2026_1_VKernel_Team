@@ -132,10 +132,7 @@ export const AdsController = {
                 newFavorites.add(adId);
             }
             store.setState({ favoriteIds: newFavorites });
-
             favBtn.classList.toggle(ADS_SELECTORS.ACTIVE_FAV_CLASS);
-            favBtn.innerHTML = newFavorites.has(adId) ? '♥' : '♡';
-
             eventBus.emit('profile:update-ui');
         } catch (error) {
             console.error('Favorite error:', error);

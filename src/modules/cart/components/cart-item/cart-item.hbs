@@ -19,7 +19,12 @@
             пн-пт: 10:00-20:00
         </div>
     </div>
-    <button class="cart-item-delete" data-delete-id="{{product_id}}">
-        🗑
-    </button>
+    <div class="cart-item-actions">
+        <button class="cart-item-message" data-message-seller-id="{{product_id}}" type="button">
+            Написать продавцу
+        </button>
+        <button class="cart-item-delete" data-delete-id="{{product_id}}" type="button" title="Удалить из корзины">
+            🗑
+        </button>
+    </div>
 </div>

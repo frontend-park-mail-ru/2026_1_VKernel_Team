@@ -31,6 +31,12 @@
 
 .nav-icon .icon {
     font-size: 1.1rem;
+    display: inline-flex;
+    align-items: center;
+}
+
+.nav-icon .icon svg {
+    vertical-align: middle;
 }
 
 .nav-icon .nav-text {
@@ -42,6 +48,7 @@
     height: 50px;
     border-radius: 50%;
 }
+
 
 .icon.favorites {
     position: relative;
@@ -62,4 +69,18 @@
     align-items: center;
     justify-content: center;
     padding: 2px;
+}
+
+.nav-link--with-badge {
+    position: relative;
+}
+
+.nav-link--with-badge .nav-badge {
+    margin-left: 6px;
+    background: #1892e5;
+    color: #fff;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: bold;
 }

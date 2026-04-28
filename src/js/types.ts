@@ -17,6 +17,7 @@ export interface User {
     reviews_count?: number;
     created_at?: string;
     updated_at?: string;
+    role?: 'user' | 'support' | 'admin';
 }
 
 export interface Ad {
