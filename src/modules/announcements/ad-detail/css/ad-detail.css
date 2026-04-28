@@ -563,48 +563,126 @@
 }
 
 @media (max-width: 768px) {
-    .ad-detail-page .ad-gallery-container {
-        flex-direction: column;
+    .ad-detail-page .search-section {
+        position: fixed !important; /* Возвращаем фиксацию */
+        top: 80px !important;      /* Высота твоего хедера */
+        left: 0 !important;
+        right: 0 !important;
+        z-index: 999 !important;
+        padding: 8px 10px !important;
+        background: white !important;
+        width: 100% !important;
+        margin: 0 !important;
+        border-radius: 0 0 12px 12px !important;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1) !important;
     }
 
-    .ad-detail-page .ad-main-photo-wrapper {
-        flex: 0 0 100%;
-        aspect-ratio: 4 / 3;
+    /* ПОИСК В ОДНУ СТРОКУ */
+    .ad-detail-page .search-row {
+        display: flex !important;
+        flex-direction: row !important; 
+        flex-wrap: nowrap !important;
+        align-items: center !important;
+        gap: 8px !important;
+        width: 100% !important;
     }
 
-    .ad-detail-page .ad-thumbnails-vertical {
-        flex: 0 0 auto;
-        flex-direction: row;
-        width: 100%;
-        overflow-x: auto;
-        overflow-y: hidden;
-        max-height: none;
-        gap: 10px;
-        padding-bottom: 8px;
+    .ad-detail-page .search-row {
+        display: flex !important;
+        flex-direction: row !important; /* Оставляем в один ряд */
+        flex-wrap: nowrap !important;   /* Запрещаем перенос */
+        align-items: center !important;
+        gap: 6px !important;           /* Минимальные отступы */
+        height: auto !important;
     }
 
-    .ad-detail-page .thumbnail-vertical-wrapper {
-        width: 80px;
-        flex-shrink: 0;
-        aspect-ratio: 1;
+    .ad-detail-page .brand {
+        min-width: 0 !important;
+        flex-shrink: 1 !important;
+        position: static !important;
+        height: auto !important;
     }
 
-    .ad-detail-page .attributes-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .ad-detail-page .ad-title {
-        font-size: 22px;
+    .ad-detail-page .logo {
+        position: static !important;
+        transform: none !important;
+        width: 80px !important; /* Уменьшаем лого, чтобы все влезло */
+        margin: 0 !important;
     }
 
     .ad-detail-page .btn-categories {
-        padding: 0 12px;
-        font-size: 12px;
+        display: flex !important;
+        height: 36px !important;
+        padding: 0 8px !important;
+        font-size: 11px !important;
+        white-space: nowrap !important;
+        flex-shrink: 0 !important; /* Кнопка не должна сжиматься */
     }
 
-    .ad-detail-page .gallery-nav {
-        width: 32px;
-        height: 32px;
-        font-size: 18px;
+    .ad-detail-page .search-wrapper {
+        flex: 1 !important; /* Инпут забирает всё оставшееся место */
+        min-width: 0 !important;
+        gap: 4px !important;
+    }
+
+    .ad-detail-page .search-input {
+        height: 36px !important;
+        font-size: 14px !important;
+        padding: 0 10px !important;
+    }
+
+    .ad-detail-page .search-wrapper .btn {
+        padding: 0 10px !important;
+        height: 36px !important;
+        font-size: 13px !important;
+    }
+
+    /* 2. ПОРЯДОК: СНАЧАЛА MAIN-COLUMN, ПОТОМ ACTION-BLOCK */
+    .ad-detail-page .content-grid {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 15px !important;
+    }
+
+    .ad-detail-page .main-column {
+        order: 1 !important; /* Теперь колонка с фото первая */
+        padding: 0 !important;
+        background: transparent !important;
+        box-shadow: none !important;
+    }
+
+    /* ФИКС ЗАГОЛОВКА: ставим в самый верх внутри колонки */
+    .ad-detail-page .ad-title-section {
+        order: -1 !important; /* Отрицательный порядок поднимает блок выше всех */
+        padding: 10px 0 !important;
+        margin: 0 !important;
+    }
+
+    .ad-detail-page .ad-right {
+        order: 2 !important; /* Блок цены и кнопок идет вторым (под колонкой) */
+        position: static !important;
+        width: 100% !important;
+    }
+
+    /* 3. ГАЛЕРЕЯ И ХАРАКТЕРИСТИКИ */
+    .ad-detail-page .ad-gallery-container {
+        flex-direction: column !important;
+    }
+
+    .ad-detail-page .ad-thumbnails-vertical {
+        flex-direction: row !important;
+        width: 100% !important;
+        overflow-x: auto !important;
+        padding: 10px 0 !important;
+    }
+
+    .ad-detail-page .thumbnail-vertical-wrapper {
+        width: 65px !important;
+        height: 65px !important;
+        flex-shrink: 0 !important;
+    }
+
+    .ad-detail-page .attributes-grid {
+        grid-template-columns: 1fr !important;
     }
 }

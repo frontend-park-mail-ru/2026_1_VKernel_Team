@@ -89,6 +89,7 @@
         opacity: 1 !important;
     }
 
+
     /* 2. ЗАЩИЩАЕМ ССЫЛКИ ОТ СЖАТИЯ */
     .nav-icon, 
     .nav-icon .nav-link {
@@ -102,9 +103,9 @@
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
-        width: 24px !important;
-        height: 24px !important;
-        min-width: 24px !important;
+        width: 20px !important;
+        height: 20px !important;
+        min-width: 20px !important;
         margin-right: 0 !important;
     }
 
@@ -142,6 +143,32 @@
         width: 32px !important;
         height: 32px !important;
         flex-shrink: 0 !important;
+    }
+
+    .header-right .nav-login {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: 32px !important;
+        height: 32px !important;
+        background: #f0f0f0 !important; /* Серый фон для гостя */
+        border-radius: 50% !important;
+        font-size: 0 !important; /* Скрываем текст "Войти" */
+        color: transparent !important;
+        position: relative !important;
+        transition: background 0.2s !important;
+    }
+
+    /* Добавляем символ пользователя вместо текста */
+    .header-right .nav-login::before {
+        content: '👤' !important;
+        font-size: 18px !important;
+        color: #555 !important;
+        display: block !important;
+    }
+
+    .header-right .nav-login:hover {
+        background: #e0e0e0 !important;
     }
 
 /* Превращаем кнопку "Разместить объявление" в круглый "+" */
