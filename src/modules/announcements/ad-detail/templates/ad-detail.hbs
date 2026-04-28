@@ -106,7 +106,13 @@
                         {{!-- <span class="location-icon">📍</span> --}}
                         <div class="location-details">
                             <div class="location-address">{{location}}</div>
-                            <div class="seller-name">Продавец: {{sellerName}}</div>
+                            <div class="seller-name" 
+     data-action="go-to-seller" 
+     data-seller-id="{{sellerId}}" 
+     data-is-owner="{{isOwner}}"
+     style="cursor: pointer;">
+    Продавец: <a>{{sellerName}}</a>
+</div>
                             <div class="seller-since">Зарегистрирован: {{sellerSince}}</div>
                         </div>
                     </div>

@@ -13,6 +13,7 @@ import { uiActions } from '@/actions/uiActions';
 import { cloverDB } from '@modules/common/offline/db/indexedDB';
 import { networkStatus } from '@modules/common/offline/network/networkStatus';
 import type { Ad } from '@/types';
+import { eventBus } from '@/core/eventBus';
 
 const AD_DETAIL_STORE = 'ads';
 
@@ -563,17 +564,9 @@ export class AdDetailController {
 
                 if (sellerId) {
                     if (isOwner) {
-                        // Если это своё объявление - идём в личный профиль
-                        window.dispatchEvent(
-                            new CustomEvent('app:navigate', { detail: { path: '/profile' } }),
-                        );
+                        eventBus.emit('app:navigate', '/profile');
                     } else {
-                        // Если чужое - на страницу продавца
-                        window.dispatchEvent(
-                            new CustomEvent('app:navigate', {
-                                detail: { path: `/seller/${sellerId}` },
-                            }),
-                        );
+                        eventBus.emit('app:navigate', `/seller/${sellerId}`);
                     }
                 }
             };
