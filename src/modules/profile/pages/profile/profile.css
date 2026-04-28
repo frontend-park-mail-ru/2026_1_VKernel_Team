@@ -14,8 +14,38 @@
     min-height: 500px;
 }
 
+/* =========================================
+   МОБИЛЬНАЯ АДАПТИВКА ПРОФИЛЯ
+   ========================================= */
+
 @media (max-width: 900px) {
     .profile-page-layout {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr !important;
+        gap: 15px !important;
+        margin-top: 10px !important;
+    }
+
+    /* Делаем контентную часть на всю ширину мобильного экрана */
+    .profile-content-section {
+        padding: 15px !important;
+        border-radius: 12px !important; 
+        box-shadow: none !important; /* Убираем тени для более плоского дизайна */
+        min-height: auto !important;
+        border: 1px solid #eee !important; /* Добавляем легкую границу вместо тени */
+    }
+
+    /* Подготавливаем контейнер сайдбара к горизонтальному скроллу */
+    #sidebarContainer {
+        width: 100% !important;
+        overflow-x: auto !important; /* Включаем свайп влево/вправо */
+        white-space: nowrap !important; /* Запрещаем пунктам падать на новые строки */
+        -webkit-overflow-scrolling: touch !important; /* Плавный скролл на iOS */
+        padding-bottom: 5px !important;
+    }
+
+    /* Прячем уродливый системный скроллбар */
+    #sidebarContainer::-webkit-scrollbar {
+        height: 0px !important;
+        background: transparent !important;
     }
 }
