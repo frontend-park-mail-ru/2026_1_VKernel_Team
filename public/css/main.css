@@ -555,8 +555,12 @@ body .main-container {
 
 /* Стили самого SVG-сердечка */
 .rec-card-fav svg {
+    transition: transform 0.2s ease;
+}
+
+.rec-card-fav svg path {
     fill: transparent; /* Пустое внутри по умолчанию */
-    transition: fill 0.2s ease, color 0.2s ease, transform 0.2s ease;
+    transition: fill 0.2s ease;
 }
 
 /* Эффекты при наведении */
@@ -576,6 +580,10 @@ body .main-container {
 
 .rec-card-fav--active svg {
     fill: #ff4d4d; /* Закрашиваем внутренность красным */
+}
+
+.rec-card-fav--active svg path {
+    fill: #ff4d4d; /* Явно закрашиваем path для надёжности */
 }
 
 .rec-card-views {

@@ -208,7 +208,7 @@
 <polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="553.71,-379.56 559.54,-377.04 553.4,-375.37 553.71,-379.56"/>
 </g>
 <!-- src/modules/common/&#45;&gt;src/js/core/ -->
-<g id="edge66" class="edge">
+<g id="edge67" class="edge">
 <title>src/modules/common/&#45;&gt;src/js/core/</title>
 <path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M441.06,-232.99C444.03,-234.86 446.72,-237.17 448.75,-240 460.45,-256.32 444.48,-314.11 456.75,-330 458.81,-332.66 461.38,-334.85 464.22,-336.66"/>
 <polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="463.22,-338.5 469.53,-339.25 465.06,-334.73 463.22,-338.5"/>
@@ -301,19 +301,19 @@
 <g id="node12" class="node">
 <title>src/modules/profile/</title>
 <g id="a_node12"><a xlink:href="src/modules/profile/" xlink:title="no&#45;orphans">
-<polygon fill="#ccffcc" stroke="orange" points="177.25,-245.88 125.22,-245.88 123.25,-243.9 123.25,-228.12 175.28,-228.12 177.25,-230.1 177.25,-245.88"/>
-<polyline fill="none" stroke="orange" points="175.28,-243.9 123.25,-243.9"/>
-<polyline fill="none" stroke="orange" points="175.28,-243.9 175.28,-228.12"/>
-<polyline fill="none" stroke="orange" points="175.28,-243.9 177.25,-245.88"/>
-<text xml:space="preserve" text-anchor="start" x="137.5" y="-234.38" font-family="Helvetica,sans-Serif" font-size="9.00" fill="orange">profile</text>
+<polygon fill="#ccffcc" stroke="orange" points="177.25,-249.88 125.22,-249.88 123.25,-247.9 123.25,-232.12 175.28,-232.12 177.25,-234.1 177.25,-249.88"/>
+<polyline fill="none" stroke="orange" points="175.28,-247.9 123.25,-247.9"/>
+<polyline fill="none" stroke="orange" points="175.28,-247.9 175.28,-232.12"/>
+<polyline fill="none" stroke="orange" points="175.28,-247.9 177.25,-249.88"/>
+<text xml:space="preserve" text-anchor="start" x="137.5" y="-238.38" font-family="Helvetica,sans-Serif" font-size="9.00" fill="orange">profile</text>
 </a>
 </g>
 </g>
 <!-- src/js/controllers/&#45;&gt;src/modules/profile/ -->
 <g id="edge13" class="edge">
 <title>src/js/controllers/&#45;&gt;src/modules/profile/</title>
-<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M150.25,-388.8C150.25,-344.22 150.25,-299.63 150.25,-255.04"/>
-<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="152.35,-255.15 150.25,-249.15 148.15,-255.15 152.35,-255.15"/>
+<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M150.25,-388.76C150.25,-345.55 150.25,-302.34 150.25,-259.13"/>
+<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="152.35,-259.23 150.25,-253.23 148.15,-259.23 152.35,-259.23"/>
 </g>
 <!-- src/modules/announcements/ -->
 <g id="node13" class="node">
@@ -384,8 +384,8 @@
 <!-- src/js/controllers/&#45;&gt;src/modules/seller&#45;page/ -->
 <g id="edge19" class="edge">
 <title>src/js/controllers/&#45;&gt;src/modules/seller&#45;page/</title>
-<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M144.9,-388.68C130.8,-362.86 94.84,-288.35 112.5,-228 117.16,-212.07 127.58,-196.35 136.3,-185.15"/>
-<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="137.91,-186.5 140.06,-180.52 134.65,-183.85 137.91,-186.5"/>
+<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M145.04,-388.93C131.27,-363.8 96.11,-291.25 112.5,-232 117.3,-214.66 128.27,-197.3 137.16,-185.2"/>
+<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="138.8,-186.52 140.77,-180.48 135.46,-183.97 138.8,-186.52"/>
 </g>
 <!-- src/modules/support&#45;admin/ -->
 <g id="node17" class="node">
@@ -499,49 +499,49 @@
 <polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="188.97,-624.52 194.98,-626.58 191.57,-621.22 188.97,-624.52"/>
 </g>
 <!-- src/modules/profile/&#45;&gt;src/js/actions/ -->
-<g id="edge69" class="edge">
+<g id="edge70" class="edge">
 <title>src/modules/profile/&#45;&gt;src/js/actions/</title>
-<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M154.78,-246.05C160.29,-259.08 172.15,-283.09 189.5,-297 193.9,-300.53 199.05,-303.4 204.34,-305.73"/>
-<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="203.5,-307.66 209.85,-307.87 205.02,-303.74 203.5,-307.66"/>
+<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M155.33,-250.27C161.19,-262.59 173.13,-284.29 189.5,-297 193.91,-300.42 199.03,-303.24 204.27,-305.54"/>
+<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="203.35,-307.43 209.7,-307.65 204.87,-303.52 203.35,-307.43"/>
 </g>
 <!-- src/modules/profile/&#45;&gt;src/js/core/ -->
-<g id="edge67" class="edge">
+<g id="edge68" class="edge">
 <title>src/modules/profile/&#45;&gt;src/js/core/</title>
-<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M156.69,-227.66C162.81,-217.11 173,-199.4 181.5,-184 185.15,-177.39 183.75,-173.9 189.5,-169 280.11,-91.68 363.06,-18.25 448.75,-101 467.06,-118.69 441.73,-309.44 456.75,-330 458.84,-332.86 461.53,-335.18 464.54,-337.06"/>
+<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M156.24,-231.76C162.3,-220.51 172.78,-200.93 181.5,-184 185.14,-176.93 183.51,-173.23 189.5,-168 279.18,-89.77 363.14,-18.33 448.75,-101 467.06,-118.69 441.73,-309.44 456.75,-330 458.84,-332.86 461.53,-335.18 464.54,-337.06"/>
 <polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="463.45,-338.87 469.77,-339.57 465.27,-335.08 463.45,-338.87"/>
 </g>
 <!-- src/modules/profile/&#45;&gt;src/js/services/ -->
-<g id="edge73" class="edge">
+<g id="edge74" class="edge">
 <title>src/modules/profile/&#45;&gt;src/js/services/</title>
-<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M167.02,-246.25C173.83,-250.09 181.95,-254.47 189.5,-258 226.54,-275.33 270.41,-292 300.25,-302.79"/>
-<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="299.45,-304.73 305.8,-304.78 300.87,-300.78 299.45,-304.73"/>
+<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M171.82,-250.35C177.52,-252.88 183.73,-255.59 189.5,-258 227.81,-274 272.31,-291.22 301.93,-302.5"/>
+<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="301.07,-304.42 307.42,-304.58 302.56,-300.49 301.07,-304.42"/>
 </g>
 <!-- src/modules/profile/&#45;&gt;src/modules/common/ -->
-<g id="edge68" class="edge">
+<g id="edge69" class="edge">
 <title>src/modules/profile/&#45;&gt;src/modules/common/</title>
-<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M162.59,-227.7C169.84,-222.24 179.71,-215.71 189.5,-212 266.36,-182.87 295.72,-170.17 373.75,-196 382.34,-198.84 390.57,-204.39 397.25,-209.88"/>
+<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M160.08,-231.81C167.31,-224.89 178.16,-215.81 189.5,-211 234.52,-191.92 249.71,-199.34 298.5,-196 331.87,-193.71 342,-185.49 373.75,-196 382.34,-198.84 390.57,-204.39 397.25,-209.88"/>
 <polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="395.66,-211.28 401.55,-213.68 398.44,-208.13 395.66,-211.28"/>
 </g>
 <!-- src/modules/profile/&#45;&gt;src/js/api/ -->
-<g id="edge70" class="edge">
+<g id="edge71" class="edge">
 <title>src/modules/profile/&#45;&gt;src/js/api/</title>
-<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M162.59,-227.7C169.84,-222.24 179.71,-215.71 189.5,-212 266.36,-182.87 311.89,-141.88 373.75,-196 390.12,-210.32 376.31,-273.92 386.75,-293 388.11,-295.49 389.88,-297.82 391.85,-299.96"/>
+<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M160.08,-231.81C167.31,-224.89 178.16,-215.81 189.5,-211 265.14,-178.94 311.92,-141.9 373.75,-196 390.12,-210.32 376.31,-273.92 386.75,-293 388.11,-295.49 389.88,-297.82 391.85,-299.96"/>
 <polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="390.11,-301.22 395.95,-303.74 392.96,-298.13 390.11,-301.22"/>
 </g>
 <!-- src/modules/profile/&#45;&gt;src/modules/cart/ -->
-<g id="edge71" class="edge">
+<g id="edge72" class="edge">
 <title>src/modules/profile/&#45;&gt;src/modules/cart/</title>
-<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M177.58,-234.64C185.82,-234.87 195.05,-235.41 203.81,-236.17"/>
-<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="203.5,-238.25 209.68,-236.74 203.91,-234.07 203.5,-238.25"/>
+<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M177.58,-237.44C185.82,-237.29 195.05,-237.42 203.81,-237.78"/>
+<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="203.57,-239.87 209.67,-238.08 203.78,-235.67 203.57,-239.87"/>
 </g>
 <!-- src/modules/profile/&#45;&gt;src/modules/chat/ -->
-<g id="edge72" class="edge">
+<g id="edge73" class="edge">
 <title>src/modules/profile/&#45;&gt;src/modules/chat/</title>
-<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M177.51,-230.4C181.51,-229.52 185.6,-228.68 189.5,-228 226.99,-221.42 270.37,-216.73 299.96,-213.96"/>
-<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="299.89,-216.08 305.67,-213.44 299.5,-211.9 299.89,-216.08"/>
+<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M176.13,-231.7C180.54,-230.29 185.12,-228.99 189.5,-228 226.74,-219.6 270.33,-215.21 300.05,-213.01"/>
+<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="299.94,-215.12 305.78,-212.61 299.65,-210.93 299.94,-215.12"/>
 </g>
 <!-- src/modules/announcements/&#45;&gt;node_modules/handlebars -->
-<g id="edge53" class="edge">
+<g id="edge55" class="edge">
 <title>src/modules/announcements/&#45;&gt;node_modules/handlebars</title>
 <path fill="none" stroke="#000000" stroke-opacity="0.200000" d="M68.09,-245.82C78.36,-203.35 127.51,-28 239,-28 239,-28 239,-28 414.75,-28 461.71,-28 515.8,-26.89 551.04,-26.02"/>
 <polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-opacity="0.200000" points="550.81,-28.13 556.75,-25.88 550.7,-23.93 550.81,-28.13"/>
@@ -553,163 +553,169 @@
 <polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="203.51,-304.91 209.87,-304.9 204.88,-300.95 203.51,-304.91"/>
 </g>
 <!-- src/modules/announcements/&#45;&gt;src/js/core/ -->
-<g id="edge47" class="edge">
+<g id="edge48" class="edge">
 <title>src/modules/announcements/&#45;&gt;src/js/core/</title>
 <path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M79.4,-264.13C88.71,-271.32 100.4,-282.23 106,-295 134.48,-359.98 98.08,-546.21 119,-614 142.86,-691.35 158.06,-751 239,-751 239,-751 239,-751 337.12,-751 421.87,-751 481.72,-441.7 495.57,-363.03"/>
 <polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="497.62,-363.5 496.57,-357.23 493.48,-362.78 497.62,-363.5"/>
 </g>
 <!-- src/modules/announcements/&#45;&gt;src/js/services/ -->
-<g id="edge48" class="edge">
+<g id="edge49" class="edge">
 <title>src/modules/announcements/&#45;&gt;src/js/services/</title>
 <path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M79.14,-264.25C88.32,-271.5 99.96,-282.43 106,-295 128.83,-342.56 109.23,-361.15 119,-413 141.33,-531.5 93.79,-601.64 189.5,-675 207.31,-688.65 274.37,-690.61 290.5,-675 300.36,-665.45 296.14,-441.52 298.5,-428 304.58,-393.16 318.95,-354.29 327.78,-332.42"/>
 <polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="329.69,-333.3 330.03,-326.95 325.8,-331.7 329.69,-333.3"/>
 </g>
 <!-- src/modules/announcements/&#45;&gt;src/modules/common/ -->
-<g id="edge51" class="edge">
+<g id="edge52" class="edge">
 <title>src/modules/announcements/&#45;&gt;src/modules/common/</title>
-<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M73.35,-246C82.83,-234.91 100.34,-216.19 119,-205 144.13,-189.93 154.44,-195.25 181.5,-184 185.17,-182.47 185.63,-180.91 189.5,-180 229.35,-170.59 336.5,-162.99 373.75,-180 386.36,-185.76 396.47,-197.84 403.23,-208.03"/>
-<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="401.39,-209.06 406.33,-213.07 404.97,-206.86 401.39,-209.06"/>
+<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M73.61,-245.84C83.09,-235.06 100.34,-217.42 119,-208 147.6,-193.56 157.73,-197.08 189.5,-193 270.75,-182.56 297.66,-157.65 373.75,-188 384.37,-192.24 393.76,-200.89 400.66,-208.76"/>
+<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="398.93,-209.96 404.35,-213.28 402.18,-207.31 398.93,-209.96"/>
 </g>
 <!-- src/modules/announcements/&#45;&gt;src/js/validators/ -->
-<g id="edge55" class="edge">
+<g id="edge56" class="edge">
 <title>src/modules/announcements/&#45;&gt;src/js/validators/</title>
 <path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M79.36,-264.15C88.64,-271.35 100.33,-282.26 106,-295 128.45,-345.42 104.92,-489.64 119,-543 136.88,-610.74 129.9,-647.17 189.5,-684 227.68,-707.6 255.99,-712.71 290.5,-684 324.77,-655.49 332.84,-512.2 334.64,-461.12"/>
 <polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="336.73,-461.29 334.82,-455.22 332.53,-461.15 336.73,-461.29"/>
 </g>
 <!-- src/modules/announcements/&#45;&gt;src/js/api/ -->
-<g id="edge54" class="edge">
+<g id="edge47" class="edge">
 <title>src/modules/announcements/&#45;&gt;src/js/api/</title>
-<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M67.57,-245.87C71.69,-225.11 84.94,-174.59 119,-154 142.77,-139.63 153.88,-151.02 181.5,-154 268.45,-163.39 314.49,-131.68 373.75,-196 403.22,-227.99 365.86,-254.85 386.75,-293 388.11,-295.49 389.88,-297.82 391.85,-299.96"/>
+<path fill="none" stroke="#000000" stroke-width="2" stroke-dasharray="5,2" stroke-opacity="0.200000" d="M67.57,-245.87C71.69,-225.11 84.94,-174.59 119,-154 142.77,-139.63 153.88,-151.02 181.5,-154 268.45,-163.39 314.49,-131.68 373.75,-196 403.22,-227.99 365.86,-254.85 386.75,-293 388.11,-295.49 389.88,-297.82 391.85,-299.96"/>
 <polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="390.11,-301.22 395.95,-303.74 392.96,-298.13 390.11,-301.22"/>
 </g>
+<!-- src/modules/announcements/&#45;&gt;src/modules/profile/ -->
+<g id="edge53" class="edge">
+<title>src/modules/announcements/&#45;&gt;src/modules/profile/</title>
+<path fill="none" stroke="#000000" stroke-width="2" stroke-dasharray="5,2" stroke-opacity="0.200000" d="M106.16,-248.25C108.81,-247.8 111.47,-247.35 114.09,-246.91"/>
+<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="114.26,-249.01 119.83,-245.95 113.57,-244.87 114.26,-249.01"/>
+</g>
 <!-- src/modules/announcements/&#45;&gt;src/modules/cart/ -->
-<g id="edge49" class="edge">
+<g id="edge50" class="edge">
 <title>src/modules/announcements/&#45;&gt;src/modules/cart/</title>
-<path fill="none" stroke="#000000" stroke-width="2" stroke-dasharray="5,2" stroke-opacity="0.200000" d="M106.43,-255.23C128.63,-255.03 156.63,-254.26 181.5,-252 188.88,-251.33 196.74,-250.31 204.22,-249.18"/>
-<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="204.16,-251.32 209.76,-248.31 203.51,-247.17 204.16,-251.32"/>
+<path fill="none" stroke="#000000" stroke-width="2" stroke-dasharray="5,2" stroke-opacity="0.200000" d="M106.22,-255.84C110.54,-255.9 114.86,-255.96 119,-256 146.78,-256.26 153.89,-259.08 181.5,-256 188.88,-255.18 196.7,-253.77 204.12,-252.19"/>
+<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="204.25,-254.31 209.63,-250.94 203.32,-250.22 204.25,-254.31"/>
 </g>
 <!-- src/modules/announcements/&#45;&gt;src/modules/chat/ -->
-<g id="edge50" class="edge">
+<g id="edge51" class="edge">
 <title>src/modules/announcements/&#45;&gt;src/modules/chat/</title>
-<path fill="none" stroke="#000000" stroke-width="2" stroke-dasharray="5,2" stroke-opacity="0.200000" d="M77.47,-245.87C87.74,-238.21 103.52,-227.63 119,-222 179.65,-199.94 256.22,-202.53 300.04,-206.62"/>
-<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="299.68,-208.7 305.86,-207.21 300.1,-204.52 299.68,-208.7"/>
+<path fill="none" stroke="#000000" stroke-width="2" stroke-dasharray="5,2" stroke-opacity="0.200000" d="M79.84,-245.89C90.22,-239.45 105,-231.08 119,-226 179.73,-203.95 256.27,-204.73 300.06,-207.64"/>
+<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="299.73,-209.72 305.87,-208.07 300.04,-205.53 299.73,-209.72"/>
 </g>
 <!-- src/modules/announcements/&#45;&gt;src/modules/seller&#45;page/ -->
-<g id="edge52" class="edge">
+<g id="edge54" class="edge">
 <title>src/modules/announcements/&#45;&gt;src/modules/seller&#45;page/</title>
 <path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M71.6,-245.76C80.4,-231.79 98.57,-205.02 119,-187 120.49,-185.69 122.09,-184.42 123.74,-183.2"/>
 <polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="124.86,-184.98 128.69,-179.91 122.53,-181.48 124.86,-184.98"/>
 </g>
 <!-- src/modules/cart/&#45;&gt;src/js/core/ -->
-<g id="edge60" class="edge">
+<g id="edge61" class="edge">
 <title>src/modules/cart/&#45;&gt;src/js/core/</title>
 <path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M249.37,-233.76C259.77,-222.9 278.6,-205.18 298.5,-196 359.48,-167.86 400.02,-133.8 448.75,-180 460.86,-191.48 446.78,-316.61 456.75,-330 458.76,-332.7 461.3,-334.91 464.13,-336.73"/>
 <polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="463.1,-338.57 469.41,-339.33 464.96,-334.8 463.1,-338.57"/>
 </g>
 <!-- src/modules/cart/&#45;&gt;src/js/services/ -->
-<g id="edge56" class="edge">
+<g id="edge57" class="edge">
 <title>src/modules/cart/&#45;&gt;src/js/services/</title>
 <path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M250.34,-252.03C261.38,-262.49 280.52,-279.94 298.5,-293 302.4,-295.83 306.68,-298.65 310.9,-301.27"/>
 <polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="309.51,-302.88 315.73,-304.18 311.67,-299.28 309.51,-302.88"/>
 </g>
 <!-- src/modules/cart/&#45;&gt;src/modules/common/ -->
-<g id="edge57" class="edge">
+<g id="edge58" class="edge">
 <title>src/modules/cart/&#45;&gt;src/modules/common/</title>
 <path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M267.46,-240.23C296.96,-237.14 344.81,-232.12 377.48,-228.7"/>
 <polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="377.5,-230.81 383.25,-228.09 377.06,-226.63 377.5,-230.81"/>
 </g>
 <!-- src/modules/cart/&#45;&gt;src/js/api/ -->
-<g id="edge59" class="edge">
+<g id="edge60" class="edge">
 <title>src/modules/cart/&#45;&gt;src/js/api/</title>
 <path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M260.03,-252.31C271.16,-257.66 285.54,-264.41 298.5,-270 313.67,-276.54 352.34,-291.65 380.5,-302.56"/>
 <polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="379.69,-304.5 386.04,-304.71 381.2,-300.58 379.69,-304.5"/>
 </g>
 <!-- src/modules/cart/&#45;&gt;src/modules/profile/ -->
-<g id="edge58" class="edge">
+<g id="edge59" class="edge">
 <title>src/modules/cart/&#45;&gt;src/modules/profile/</title>
-<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M212.69,-245.36C204.45,-245.13 195.22,-244.59 186.46,-243.83"/>
-<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="186.77,-241.75 180.59,-243.26 186.36,-245.93 186.77,-241.75"/>
+<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M212.69,-246.56C204.45,-246.71 195.22,-246.58 186.46,-246.22"/>
+<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="186.7,-244.13 180.6,-245.92 186.48,-248.33 186.7,-244.13"/>
 </g>
 <!-- src/modules/cart/&#45;&gt;src/modules/chat/ -->
-<g id="edge61" class="edge">
+<g id="edge62" class="edge">
 <title>src/modules/cart/&#45;&gt;src/modules/chat/</title>
 <path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M267.47,-234C277.68,-230.53 289.5,-226.51 300.38,-222.81"/>
 <polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="300.98,-224.83 305.99,-220.91 299.63,-220.85 300.98,-224.83"/>
 </g>
 <!-- src/modules/chat/&#45;&gt;src/js/actions/ -->
-<g id="edge62" class="edge">
+<g id="edge63" class="edge">
 <title>src/modules/chat/&#45;&gt;src/js/actions/</title>
 <path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M318.48,-220.23C311.18,-225.14 303.22,-231.86 298.5,-240 286.55,-260.61 304.94,-274.05 290.5,-293 286.58,-298.14 281.2,-302.11 275.42,-305.16"/>
 <polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="274.76,-303.16 270.15,-307.54 276.48,-306.98 274.76,-303.16"/>
 </g>
 <!-- src/modules/chat/&#45;&gt;src/js/core/ -->
-<g id="edge64" class="edge">
+<g id="edge65" class="edge">
 <title>src/modules/chat/&#45;&gt;src/js/core/</title>
 <path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M353.21,-201.64C377.34,-188.96 422.82,-170.56 448.75,-195 459.68,-205.31 447.74,-317.97 456.75,-330 458.77,-332.69 461.31,-334.9 464.14,-336.72"/>
 <polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="463.12,-338.56 469.43,-339.32 464.98,-334.79 463.12,-338.56"/>
 </g>
 <!-- src/modules/chat/&#45;&gt;src/modules/common/ -->
-<g id="edge65" class="edge">
+<g id="edge66" class="edge">
 <title>src/modules/chat/&#45;&gt;src/modules/common/</title>
 <path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M363.57,-215.9C368.21,-216.75 373.09,-217.66 377.91,-218.55"/>
 <polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="377.18,-220.55 383.47,-219.58 377.95,-216.42 377.18,-220.55"/>
 </g>
 <!-- src/modules/chat/&#45;&gt;src/js/api/ -->
-<g id="edge63" class="edge">
+<g id="edge64" class="edge">
 <title>src/modules/chat/&#45;&gt;src/js/api/</title>
 <path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M353.07,-220.18C360.39,-225.16 368.58,-231.95 373.75,-240 386.85,-260.41 373.98,-272.38 386.75,-293 388.28,-295.46 390.17,-297.79 392.24,-299.94"/>
 <polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="390.65,-301.34 396.51,-303.8 393.46,-298.22 390.65,-301.34"/>
 </g>
 <!-- src/modules/seller&#45;page/&#45;&gt;src/js/core/ -->
-<g id="edge75" class="edge">
+<g id="edge76" class="edge">
 <title>src/modules/seller&#45;page/&#45;&gt;src/js/core/</title>
-<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M158.27,-159.74C165.17,-151.47 176.54,-139.93 189.5,-135 266.04,-105.9 294.85,-114.06 373.75,-136 410.98,-146.36 428.66,-146.99 448.75,-180 466.11,-208.51 436.81,-303.23 456.75,-330 458.76,-332.7 461.3,-334.91 464.13,-336.73"/>
+<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M157.95,-159.8C164.78,-151.28 176.24,-139.15 189.5,-134 265.83,-104.35 294.96,-112.67 373.75,-135 411.15,-145.6 428.7,-146.69 448.75,-180 465.96,-208.6 436.81,-303.23 456.75,-330 458.76,-332.7 461.3,-334.91 464.13,-336.73"/>
 <polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="463.1,-338.57 469.41,-339.33 464.96,-334.8 463.1,-338.57"/>
 </g>
 <!-- src/modules/seller&#45;page/&#45;&gt;src/modules/common/ -->
-<g id="edge77" class="edge">
+<g id="edge78" class="edge">
 <title>src/modules/seller&#45;page/&#45;&gt;src/modules/common/</title>
 <path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M181.73,-161.06C226.6,-151.12 311.81,-138.98 373.75,-171 388.61,-178.68 399.12,-194.92 405.46,-207.59"/>
 <polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="403.49,-208.34 407.92,-212.9 407.31,-206.57 403.49,-208.34"/>
 </g>
 <!-- src/modules/seller&#45;page/&#45;&gt;src/js/api/ -->
-<g id="edge74" class="edge">
+<g id="edge75" class="edge">
 <title>src/modules/seller&#45;page/&#45;&gt;src/js/api/</title>
-<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M174.64,-159.75C219.53,-143.69 318.25,-116.93 373.75,-167 394.65,-185.86 373.61,-268.11 386.75,-293 387.97,-295.3 389.53,-297.47 391.3,-299.47"/>
-<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="389.81,-300.95 395.61,-303.55 392.69,-297.9 389.81,-300.95"/>
+<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M174.29,-159.72C219.03,-143.4 318.12,-115.78 373.75,-166 394.81,-185.01 373.52,-267.91 386.75,-293 387.97,-295.3 389.53,-297.47 391.29,-299.47"/>
+<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="389.8,-300.95 395.61,-303.55 392.69,-297.9 389.8,-300.95"/>
 </g>
 <!-- src/modules/seller&#45;page/&#45;&gt;src/modules/cart/ -->
-<g id="edge76" class="edge">
+<g id="edge77" class="edge">
 <title>src/modules/seller&#45;page/&#45;&gt;src/modules/cart/</title>
 <path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M162.36,-178.37C177.26,-190.94 203.88,-213.38 221.49,-228.23"/>
 <polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="219.72,-229.49 225.66,-231.75 222.43,-226.28 219.72,-229.49"/>
 </g>
 <!-- src/modules/support&#45;admin/&#45;&gt;src/js/core/ -->
-<g id="edge78" class="edge">
+<g id="edge79" class="edge">
 <title>src/modules/support&#45;admin/&#45;&gt;src/js/core/</title>
 <path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M350.24,-245.72C357.49,-240.32 366.48,-233.18 373.75,-226 380.27,-219.56 378.48,-213.94 386.75,-210 411.63,-198.16 428.63,-191.17 448.75,-210 468.27,-228.26 440.65,-308.67 456.75,-330 458.78,-332.68 461.33,-334.89 464.16,-336.7"/>
 <polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="463.15,-338.54 469.46,-339.3 465,-334.77 463.15,-338.54"/>
 </g>
 <!-- src/modules/support&#45;admin/&#45;&gt;src/modules/common/ -->
-<g id="edge79" class="edge">
+<g id="edge80" class="edge">
 <title>src/modules/support&#45;admin/&#45;&gt;src/modules/common/</title>
 <path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M360.64,-245.67C367.04,-243.13 374.08,-240.34 380.87,-237.65"/>
 <polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="381.63,-239.6 386.44,-235.44 380.09,-235.7 381.63,-239.6"/>
 </g>
 <!-- src/modules/support&#45;admin/&#45;&gt;src/js/api/ -->
-<g id="edge81" class="edge">
+<g id="edge82" class="edge">
 <title>src/modules/support&#45;admin/&#45;&gt;src/js/api/</title>
 <path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M359.17,-264.21C364.27,-266.92 369.46,-270.2 373.75,-274 381.41,-280.78 379.89,-285.4 386.75,-293 388.94,-295.43 391.39,-297.83 393.9,-300.11"/>
 <polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="392.28,-301.48 398.2,-303.8 395.01,-298.3 392.28,-301.48"/>
 </g>
 <!-- src/modules/support&#45;admin/&#45;&gt;src/modules/support/ -->
-<g id="edge80" class="edge">
+<g id="edge81" class="edge">
 <title>src/modules/support&#45;admin/&#45;&gt;src/modules/support/</title>
 <path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M374.05,-255C375.23,-255 376.41,-255 377.59,-255"/>
 <polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="377.46,-257.1 383.46,-255 377.46,-252.9 377.46,-257.1"/>
 </g>
 <!-- src/modules/support/&#45;&gt;src/js/api/ -->
-<g id="edge82" class="edge">
+<g id="edge83" class="edge">
 <title>src/modules/support/&#45;&gt;src/js/api/</title>
 <path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M413.75,-264.38C413.75,-275.3 413.75,-286.22 413.75,-297.14"/>
 <polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="411.65,-296.88 413.75,-302.88 415.85,-296.88 411.65,-296.88"/>
@@ -768,8 +774,8 @@
 <!-- src/js/main.ts&#45;&gt;src/modules/profile/ -->
 <g id="edge38" class="edge">
 <title>src/js/main.ts&#45;&gt;src/modules/profile/</title>
-<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M72.26,-348.91C86.24,-328.58 120.18,-279.25 137.96,-253.41"/>
-<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="139.53,-254.83 141.2,-248.69 136.07,-252.45 139.53,-254.83"/>
+<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" d="M72.53,-348.82C86.58,-329.08 119.8,-282.39 137.57,-257.42"/>
+<polygon fill="#000000" fill-opacity="0.200000" stroke="#000000" stroke-width="2" stroke-opacity="0.200000" points="139.23,-258.71 140.99,-252.6 135.8,-256.28 139.23,-258.71"/>
 </g>
 <!-- src/js/main.ts&#45;&gt;src/modules/announcements/ -->
 <g id="edge35" class="edge">

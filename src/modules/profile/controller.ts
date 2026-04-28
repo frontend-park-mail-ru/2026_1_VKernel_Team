@@ -75,7 +75,9 @@ export const ProfileController = {
             eventBus.on('profile:logout', () => this.handleLogout()),
             eventBus.on('profile:update-ui', () => this.refreshUI()),
             eventBus.on('profile:favorite-removed', (removedAdId: number) => {
-                this.userFavorites = this.userFavorites.filter(ad => Number(ad.id) !== removedAdId);
+                this.userFavorites = this.userFavorites.filter(
+                    (ad) => Number(ad.id) !== removedAdId,
+                );
                 this.refreshUI();
             }),
             eventBus.on('profile:ad-closed', (closedAdId: number | string) => {
@@ -275,6 +277,11 @@ export const ProfileController = {
 
     switchTab(tab: ProfileTab): void {
         this.currentTab = tab;
+
+        const tabUrl = tab === 'ads' ? '/profile' : `/profile?tab=${tab}`;
+        if (window.location.pathname + window.location.search !== tabUrl) {
+            window.history.replaceState({}, '', tabUrl);
+        }
 
         if (tab === 'purchases') {
             this.loadUserPurchases();

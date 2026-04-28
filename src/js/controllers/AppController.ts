@@ -473,9 +473,14 @@ export const AppController = {
             case '/register':
                 AuthController.showRegister();
                 break;
-            case '/profile':
+            case '/profile': {
+                const tabParam = new URLSearchParams(window.location.search).get('tab');
+                if (tabParam) {
+                    ProfileController.currentTab = tabParam as any;
+                }
                 ProfileController.showProfile();
                 break;
+            }
             case '/cart':
                 CartController.renderCart();
                 break;
@@ -488,7 +493,8 @@ export const AppController = {
     },
 
     navigateTo(path: string): void {
-        if (window.location.pathname === path) {
+        const currentFull = window.location.pathname + window.location.search;
+        if (currentFull === path) {
             return;
         }
         window.history.pushState({}, '', path);
@@ -516,12 +522,18 @@ export const AppController = {
 
                 if (path === '/profile' && tab) {
                     ProfileController.currentTab = tab as any;
+                    if (window.location.pathname === '/profile') {
+                        window.history.replaceState({}, '', `/profile?tab=${tab}`);
+                        ProfileController.switchTab(tab as any);
+                        return;
+                    }
                 } else if (path === '/profile' && !tab) {
                     ProfileController.currentTab = 'ads';
                 }
 
                 if (path) {
-                    this.navigateTo(path);
+                    const url = path === '/profile' && tab ? `${path}?tab=${tab}` : path!;
+                    this.navigateTo(url);
                 }
 
                 return;
@@ -533,8 +545,7 @@ export const AppController = {
                 const action = (actionElement as HTMLElement).dataset.action;
                 if (action === 'logout') {
                     AuthController.handleLogout();
-                }
-                else if (action === 'back') {
+                } else if (action === 'back') {
                     this.navigateTo('/');
                 }
                 return;
