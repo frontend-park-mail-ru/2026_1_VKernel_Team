@@ -219,6 +219,7 @@ export class AdDetailController {
                 if (src.startsWith('http') || src.startsWith('data:')) return src;
                 return `${CONFIG.API.BASE_URL}/${src}`;
             })(),
+            isFavorite: store.favoriteIds.has(Number(ad.id)),
         };
     }
 
@@ -450,6 +451,105 @@ export class AdDetailController {
             };
             editBtn.addEventListener('click', handler);
             this._handlers.set('editAd', handler);
+        }
+
+        // ===== КНОПКА "В ИЗБРАННОЕ" =====
+        const favoriteBtn = document.querySelector('[data-action="add-to-favorites"]');
+        if (favoriteBtn) {
+            if (this._handlers.has('addToFavorites')) {
+                favoriteBtn.removeEventListener('click', this._handlers.get('addToFavorites')!);
+            }
+
+            const handler = async (e: Event) => {
+                e.preventDefault();
+                e.stopPropagation();
+
+                if (!store.isAuthenticated) {
+                    window.dispatchEvent(
+                        new CustomEvent('app:navigate', { detail: { path: '/login' } }),
+                    );
+                    return;
+                }
+
+                if (!adId) return;
+
+                const btn = favoriteBtn as HTMLButtonElement;
+                btn.disabled = true;
+
+                const isFavorite = store.favoriteIds.has(Number(adId));
+
+                // Optimistic UI: toggle immediately
+                const heartIcon = btn.querySelector('.heart-icon');
+                if (!isFavorite) {
+                    btn.classList.add('active');
+                    if (heartIcon) heartIcon.innerHTML = '♥';
+                } else {
+                    btn.classList.remove('active');
+                    if (heartIcon) heartIcon.innerHTML = '♡';
+                }
+                const newFavorites = new Set(store.favoriteIds);
+                if (isFavorite) {
+                    newFavorites.delete(Number(adId));
+                } else {
+                    newFavorites.add(Number(adId));
+                }
+                store.setState({ favoriteIds: newFavorites });
+
+                try {
+                    const { PROFILE_CONFIG } = await import('@modules/profile/config');
+                    const endpoint = isFavorite
+                        ? PROFILE_CONFIG.API.REMOVE_FAVORITE(Number(adId))
+                        : PROFILE_CONFIG.API.ADD_FAVORITE(Number(adId));
+
+                    const { apiClient } = await import('@/api/apiClient');
+                    const result = isFavorite
+                        ? await apiClient.delete(endpoint)
+                        : await apiClient.post(endpoint, {});
+
+                    if (!result.success) {
+                        // Revert on failure
+                        if (isFavorite) {
+                            btn.classList.add('active');
+                            if (heartIcon) heartIcon.innerHTML = '♥';
+                        } else {
+                            btn.classList.remove('active');
+                            if (heartIcon) heartIcon.innerHTML = '♡';
+                        }
+                        const revertFavorites = new Set(store.favoriteIds);
+                        if (isFavorite) {
+                            revertFavorites.add(Number(adId));
+                        } else {
+                            revertFavorites.delete(Number(adId));
+                        }
+                        store.setState({ favoriteIds: revertFavorites });
+                        uiActions.showError(result.error || 'Ошибка при работе с избранным');
+                        return;
+                    }
+                } catch (error) {
+                    // Revert on error
+                    if (isFavorite) {
+                        btn.classList.add('active');
+                        if (heartIcon) heartIcon.innerHTML = '♥';
+                    } else {
+                        btn.classList.remove('active');
+                        if (heartIcon) heartIcon.innerHTML = '♡';
+                    }
+                    const revertFavorites = new Set(store.favoriteIds);
+                    if (isFavorite) {
+                        revertFavorites.add(Number(adId));
+                    } else {
+                        revertFavorites.delete(Number(adId));
+                    }
+                    store.setState({ favoriteIds: revertFavorites });
+                    console.error('Favorite error:', error);
+                    uiActions.showError('Не удалось изменить состояние избранного');
+                } finally {
+                    btn.disabled = false;
+                }
+            };
+
+            favoriteBtn.addEventListener('click', handler);
+            this._handlers.set('addToFavorites', handler);
         }
 
         // ===== ПЕРЕХОД НА СТРАНИЦУ ПРОДАВЦА (по клику на аватар или имя) =====

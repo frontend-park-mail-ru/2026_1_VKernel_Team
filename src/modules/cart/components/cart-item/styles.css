@@ -2,7 +2,7 @@
 
 .cart-item {
     display: grid;
-    grid-template-columns: 120px 1fr 1fr auto;
+    grid-template-columns: 150px 1fr 1fr auto;
     gap: 16px;
     align-items: center;
     padding: 16px 0;
@@ -16,8 +16,8 @@
 
 .cart-item-image {
     display: block;
-    width: 120px;
-    height: 90px;
+    width: 150px;
+    height: 112px;
     border-radius: 8px;
     overflow: hidden;
     transition: opacity 0.2s;
@@ -78,25 +78,16 @@ a.cart-item-title:hover {
 }
 
 .cart-item-address-value {
-    display: block;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
     font-weight: 500;
     color: #333;
+    overflow-wrap: anywhere;
 }
 
-.cart-item-time {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-}
-
-.cart-item-time-icon {
-    font-size: 14px;
-}
-
-.cart-item-schedule {
-    font-size: 12px;
-    color: #999;
-}
 
 .cart-item-actions {
     display: flex;

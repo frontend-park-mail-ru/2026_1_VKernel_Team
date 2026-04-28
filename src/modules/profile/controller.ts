@@ -12,8 +12,6 @@ import { ProfileSidebar } from '@modules/profile/components/profile-sidebar/prof
 import { ProfileContent } from '@modules/profile/components/profile-content/profile-content';
 import { EditNameModal } from '@modules/profile/components/edit-name-modal/edit-name-modal';
 import { CloseAdModal } from '@modules/profile/components/close-ad-modal/close-ad-modal';
-
-// Подключаем наш новый компонент и конфиг
 import { FavoriteCard } from '@modules/profile/components/favorite-card/favorite-card';
 import { PROFILE_CONFIG } from '@modules/profile/config';
 
@@ -21,6 +19,7 @@ import { apiClient, API_ENDPOINTS } from '@/api/apiClient';
 import { CONFIG } from '@/core/config';
 import { purchasesStore } from '@modules/profile/purchases-store';
 import { cartService } from '@modules/cart/service';
+import { cartStore } from '@modules/cart/store';
 import type { PurchaseItem } from '@modules/profile/purchases-store';
 import { unreadStore, UNREAD_CHANGED_EVENT } from '@modules/chat/unread-store';
 
@@ -76,7 +75,9 @@ export const ProfileController = {
             eventBus.on('profile:logout', () => this.handleLogout()),
             eventBus.on('profile:update-ui', () => this.refreshUI()),
             eventBus.on('profile:favorite-removed', (removedAdId: number) => {
-                this.userFavorites = this.userFavorites.filter(ad => Number(ad.id) !== removedAdId);
+                this.userFavorites = this.userFavorites.filter(
+                    (ad) => Number(ad.id) !== removedAdId,
+                );
                 this.refreshUI();
             }),
             eventBus.on('profile:ad-closed', (closedAdId: number | string) => {
@@ -143,7 +144,7 @@ export const ProfileController = {
             const result = await apiClient.get<any>(PROFILE_CONFIG.API.GET_FAVORITES);
             if (result.success && result.data) {
                 let favoritesArray: any[] = [];
-                
+
                 if (Array.isArray(result.data)) {
                     favoritesArray = result.data;
                 } else if (Array.isArray(result.data.ads)) {
@@ -201,7 +202,7 @@ export const ProfileController = {
         // Подгружаем свежие данные с сервера
         this.loadUserAds();
         this.loadProfileData();
-        
+
         // Если открыли профиль сразу на вкладке избранного (при роутинге)
         if (this.currentTab === 'favorites') {
             this.loadUserFavorites();
@@ -249,7 +250,7 @@ export const ProfileController = {
             activeAdsCount: activeAds.length,
             archivedAdsCount: archivedAds.length,
             purchases: this.formatPurchases(this.userPurchases),
-            favorites: this.userFavorites, 
+            favorites: this.userFavorites,
             isAuthenticated: store.isAuthenticated,
         });
     },
@@ -260,7 +261,11 @@ export const ProfileController = {
 
         // Счётчик непрочитанных чатов рисуем через `messages_count` — в шаблоне
         // бейдж берётся по `lookup user (concat tab '_count')`.
-        const userWithUnread = { ...user, messages_count: unreadStore.count };
+        const userWithUnread = {
+            ...user,
+            messages_count: unreadStore.count,
+            cart_count: cartStore.getState().items.length,
+        };
 
         sidebarEl.innerHTML = profileSidebarTpl({
             currentTab: this.currentTab,
@@ -272,13 +277,18 @@ export const ProfileController = {
 
     switchTab(tab: ProfileTab): void {
         this.currentTab = tab;
-        
+
+        const tabUrl = tab === 'ads' ? '/profile' : `/profile?tab=${tab}`;
+        if (window.location.pathname + window.location.search !== tabUrl) {
+            window.history.replaceState({}, '', tabUrl);
+        }
+
         if (tab === 'purchases') {
             this.loadUserPurchases();
         } else if (tab === 'favorites') {
             this.loadUserFavorites();
         }
-        
+
         this.renderAll();
     },
 

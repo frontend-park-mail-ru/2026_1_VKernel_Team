@@ -9,8 +9,8 @@ import { store } from '@/core/store';
 import { apiClient } from '@/api/apiClient';
 import { uiActions } from '@/actions/uiActions';
 import type { Ad, HandlebarsTemplateFunction } from '@/types';
-import { PROFILE_CONFIG } from '@modules/profile/config'; 
-import { ADS_SELECTORS } from '@/types/adsConstants'; 
+import { PROFILE_CONFIG } from '@modules/profile/config';
+import { ADS_SELECTORS } from '@/types/adsConstants';
 
 declare const Handlebars: any;
 
@@ -77,7 +77,7 @@ export const AdsController = {
             views: ad.views_count || 0,
             createdDate: ad.created_at ? new Date(ad.created_at).toLocaleDateString('ru-RU') : '',
             isOwn: store.isAuthenticated && store.user?.id === ad.seller_id,
-            isFavorite: store.favoriteIds.has(Number(ad.id)), 
+            isFavorite: store.favoriteIds.has(Number(ad.id)),
         };
     },
 
@@ -100,16 +100,26 @@ export const AdsController = {
             return;
         }
 
-        const favBtn = e.currentTarget as HTMLButtonElement; 
+        const favBtn = e.currentTarget as HTMLButtonElement;
         const card = favBtn.closest(ADS_SELECTORS.CARD);
-        const adId = Number(card?.getAttribute('data-id')); 
-        
+        const adId = Number(card?.getAttribute('data-id'));
+
         if (!adId) {
             return;
         }
 
         const isFavorite = store.favoriteIds.has(adId);
         favBtn.disabled = true;
+
+        // Optimistic UI: toggle immediately
+        favBtn.classList.toggle(ADS_SELECTORS.ACTIVE_FAV_CLASS);
+        const newFavorites = new Set(store.favoriteIds);
+        if (isFavorite) {
+            newFavorites.delete(adId);
+        } else {
+            newFavorites.add(adId);
+        }
+        store.setState({ favoriteIds: newFavorites });
 
         try {
             const endpoint = isFavorite
@@ -119,22 +129,32 @@ export const AdsController = {
             const result = isFavorite
                 ? await apiClient.delete(endpoint)
                 : await apiClient.post(endpoint, {});
-            
+
             if (!result.success) {
+                // Revert on failure
+                favBtn.classList.toggle(ADS_SELECTORS.ACTIVE_FAV_CLASS);
+                const revertFavorites = new Set(store.favoriteIds);
+                if (isFavorite) {
+                    revertFavorites.add(adId);
+                } else {
+                    revertFavorites.delete(adId);
+                }
+                store.setState({ favoriteIds: revertFavorites });
                 uiActions.showError(result.error || 'Ошибка при работе с избранным');
                 return;
             }
 
-            const newFavorites = new Set(store.favoriteIds);
-            if (isFavorite) {
-                newFavorites.delete(adId);
-            } else {
-                newFavorites.add(adId);
-            }
-            store.setState({ favoriteIds: newFavorites });
-            favBtn.classList.toggle(ADS_SELECTORS.ACTIVE_FAV_CLASS);
             eventBus.emit('profile:update-ui');
         } catch (error) {
+            // Revert on error
+            favBtn.classList.toggle(ADS_SELECTORS.ACTIVE_FAV_CLASS);
+            const revertFavorites = new Set(store.favoriteIds);
+            if (isFavorite) {
+                revertFavorites.add(adId);
+            } else {
+                revertFavorites.delete(adId);
+            }
+            store.setState({ favoriteIds: revertFavorites });
             console.error('Favorite error:', error);
             uiActions.showError('Не удалось изменить состояние избранного');
         } finally {
@@ -144,14 +164,14 @@ export const AdsController = {
 
     handleCardClick(e: Event): void {
         const target = e.target as HTMLElement;
-        
+
         if (target.closest(ADS_SELECTORS.FAVORITE_BTN) || target.closest(ADS_SELECTORS.CART_BTN)) {
             return;
         }
 
         const card = e.currentTarget as HTMLElement;
         const adId = card.dataset.id;
-        
+
         if (adId) {
             eventBus.emit('app:navigate', `/ad/${adId}`);
         }
@@ -160,13 +180,13 @@ export const AdsController = {
     async syncFavorites() {
         try {
             const result = await apiClient.get<any>(PROFILE_CONFIG.API.GET_FAVORITES);
-            
+
             if (!result.success || !result.data) {
                 return;
             }
 
             let favoritesArray: any[] = [];
-            
+
             if (Array.isArray(result.data)) {
                 favoritesArray = result.data;
             } else if (Array.isArray(result.data.ads)) {
@@ -185,5 +205,5 @@ export const AdsController = {
         } catch (error) {
             console.error('Failed to sync favorites', error);
         }
-    }
+    },
 };

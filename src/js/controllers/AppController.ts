@@ -27,10 +27,11 @@ import { ChatController } from '@modules/chat/controller';
 import { loadTemplates as loadChatListTemplates } from '@modules/chat/pages/chat-list/chat-list';
 import { loadTemplates as loadChatDetailTemplates } from '@modules/chat/pages/chat-detail/chat-detail';
 import { unreadStore, UNREAD_CHANGED_EVENT } from '@modules/chat/unread-store';
+import { cartStore } from '@modules/cart/store';
 import { StatsController } from '@modules/support-admin/controllers/statsController';
 
 import { store } from '@/core/store';
-import { eventBus } from '@/core/eventBus'; 
+import { eventBus } from '@/core/eventBus';
 import { uiActions } from '@/actions/uiActions';
 import type { HandlebarsTemplateFunction, TemplateName, UIConstants } from '@/types';
 import { authActions } from '@/actions/authActions';
@@ -126,6 +127,7 @@ export const AppController = {
     _currentFeature: '',
     _lastAuthState: null as boolean | null,
     _lastAvatarPath: null as string | null,
+    _lastFavoritesCount: null as number | null,
     _headerCompiled: null as HandlebarsTemplateFunction | null,
     templates: {} as Record<TemplateName, HandlebarsTemplateFunction>,
 
@@ -184,6 +186,9 @@ export const AppController = {
         }) as EventListener);
 
         window.addEventListener(UNREAD_CHANGED_EVENT, () => {
+            this.renderHeader();
+        });
+        cartStore.subscribe(() => {
             this.renderHeader();
         });
         this.renderHeader();
@@ -343,6 +348,10 @@ export const AppController = {
             if (loggedIn) unreadStore.refreshCountFromServer();
             if (state.isAuthenticated === false) unreadStore.reset();
         }
+        if (state.favoriteIds.size !== this._lastFavoritesCount) {
+            this._lastFavoritesCount = state.favoriteIds.size;
+            this.renderHeader();
+        }
         if (state.currentPage && state.currentPage !== this._lastPage) {
             this._lastPage = state.currentPage;
             this.router();
@@ -371,13 +380,14 @@ export const AppController = {
 
         const user = store.user;
         const role = user?.role;
-        
+
         // Объединили данные из обеих веток!
         container.innerHTML = this._headerCompiled!({
             isAuthenticated: store.isAuthenticated,
             user,
             favoritesCount: store.favoriteIds.size,
             unreadChatsCount: store.isAuthenticated ? unreadStore.count : 0,
+            cartCount: store.isAuthenticated ? cartStore.getState().items.length : 0,
             isStaff: role === 'support' || role === 'admin',
         });
     },
@@ -463,9 +473,14 @@ export const AppController = {
             case '/register':
                 AuthController.showRegister();
                 break;
-            case '/profile':
+            case '/profile': {
+                const tabParam = new URLSearchParams(window.location.search).get('tab');
+                if (tabParam) {
+                    ProfileController.currentTab = tabParam as any;
+                }
                 ProfileController.showProfile();
                 break;
+            }
             case '/cart':
                 CartController.renderCart();
                 break;
@@ -478,7 +493,8 @@ export const AppController = {
     },
 
     navigateTo(path: string): void {
-        if (window.location.pathname === path) {
+        const currentFull = window.location.pathname + window.location.search;
+        if (currentFull === path) {
             return;
         }
         window.history.pushState({}, '', path);
@@ -506,14 +522,20 @@ export const AppController = {
 
                 if (path === '/profile' && tab) {
                     ProfileController.currentTab = tab as any;
+                    if (window.location.pathname === '/profile') {
+                        window.history.replaceState({}, '', `/profile?tab=${tab}`);
+                        ProfileController.switchTab(tab as any);
+                        return;
+                    }
                 } else if (path === '/profile' && !tab) {
                     ProfileController.currentTab = 'ads';
                 }
 
                 if (path) {
-                    this.navigateTo(path);
+                    const url = path === '/profile' && tab ? `${path}?tab=${tab}` : path!;
+                    this.navigateTo(url);
                 }
-                
+
                 return;
             }
 
@@ -523,9 +545,8 @@ export const AppController = {
                 const action = (actionElement as HTMLElement).dataset.action;
                 if (action === 'logout') {
                     AuthController.handleLogout();
-                }
-                else if (action === 'back') {
-                    this.navigateTo('/'); 
+                } else if (action === 'back') {
+                    this.navigateTo('/');
                 }
                 return;
             }
