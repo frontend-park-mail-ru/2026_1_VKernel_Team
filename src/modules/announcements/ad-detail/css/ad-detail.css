@@ -562,13 +562,6 @@
     transform: none;
 }
 
-
-
-
-
-
-
-
 @media (max-width: 768px) {
     .ad-detail-page .ad-gallery-container {
         flex-direction: column;

@@ -612,40 +612,99 @@ body .main-container {
 
 
 
-/* ========== АДАПТИВНОСТЬ ========== */
-@media (max-width: 1200px) {
-    .header-content,
-    .main-content {
-        padding-left: 60px;
-        padding-right: 60px;
-    }
-}
+/* =========================================
+   МОБИЛЬНАЯ АДАПТИВКА ГЛАВНОЙ СТРАНИЦЫ
+   ========================================= */
 
+/* =========================================
+   МОБИЛЬНАЯ АДАПТИВКА ГЛАВНОЙ СТРАНИЦЫ (ФИНАЛ)
+   ========================================= */
 @media (max-width: 768px) {
-    .header-content,
+    /* --- БАЗА СТРАНИЦЫ --- */
     .main-content {
-        padding-left: 20px;
-        padding-right: 20px;
-    }
-
-    .search-section {
-        flex-direction: column;
-        align-items: stretch;
-    }
-
-    .header-left {
-        gap: 15px;
-    }
-
-    .nav-icon .nav-link {
-        display: none;
+        padding-top: 140px !important; /* Отступаем от поиска */
+        padding-left: 10px !important;
+        padding-right: 10px !important;
     }
 
     .content-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr !important; /* Убираем правую колонку с рекламой */
     }
 
     .ad-column {
-        display: none;
+        display: none !important;
+    }
+
+    /* --- КАТЕГОРИИ (2 КОЛОНКИ) --- */
+.cards-row {
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 10px !important;
+    }
+
+    .category-card {
+        height: 100px !important; /* Сделали карточку повыше (было 80px) */
+        overflow: hidden !important; 
+    }
+
+    .category-card .card-title {
+        font-size: 14px !important; /* Чуть увеличили шрифт для баланса */
+        line-height: 1.1 !important;
+        top: 10px !important;
+        left: 10px !important;
+        right: 10px !important; 
+    }
+
+    .category-card img {
+        width: 100px !important; /* Увеличили саму фотку (было 70px) */
+        bottom: -5px !important;
+        right: -10px !important; /* Слегка сдвинули вправо, чтобы красиво обрезалась краем */
+    }
+
+    /* --- ТОВАРЫ / РЕКОМЕНДАЦИИ (2 КОЛОНКИ) --- */
+    .recommendations-row {
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 10px !important;
+    }
+
+    .rec-card {
+        height: auto !important;
+        min-height: 240px !important;
+    }
+
+    .rec-card-image-container {
+        height: 130px !important; /* Меньше места под фото, больше под текст */
+    }
+
+    .rec-card-content {
+        padding: 8px !important;
+    }
+
+    .rec-card-title {
+        font-size: 13px !important;
+        line-height: 1.2 !important;
+        margin-bottom: 4px !important;
+        /* Жестко обрезаем длинные названия на 2 строки */
+        display: -webkit-box !important;
+        -webkit-line-clamp: 2 !important;
+        -webkit-box-orient: vertical !important;
+        overflow: hidden !important;
+    }
+
+    .rec-card-price {
+        font-size: 14px !important;
+    }
+
+    .rec-card-location {
+        font-size: 11px !important;
+    }
+
+    /* Иконка лайка на карточке товара */
+    .rec-card-fav {
+        width: 28px !important;
+        height: 28px !important;
+        top: 5px !important;
+        right: 5px !important;
     }
 }
