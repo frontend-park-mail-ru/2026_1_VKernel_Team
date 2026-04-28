@@ -30,9 +30,12 @@
             data-tab="{{tab}}"
         >
             <span class="nav-label">{{labelForTab tab}}</span>
-            {{#if (gt (lookup ../user (concat tab '_count')) 0)}}
-                <span class="nav-badge">{{lookup ../user (concat tab '_count')}}</span>
+            {{#if (eq tab 'messages')}}
+                {{#if (gt (lookup ../user (concat tab '_count')) 0)}}
+                    <span class="nav-badge">{{lookup ../user (concat tab '_count')}}</span>
+                {{/if}}
             {{/if}}
+            
         </button>
     {{/each}}
 

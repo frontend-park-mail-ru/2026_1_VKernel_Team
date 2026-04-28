@@ -49,6 +49,12 @@
     border-radius: 50%;
 }
 
+
+.nav-link:hover,
+.nav-link.active {
+    color: #1892e5;
+}
+
 .nav-link--with-badge {
     position: relative;
 }

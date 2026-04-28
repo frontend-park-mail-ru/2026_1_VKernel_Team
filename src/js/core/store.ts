@@ -8,7 +8,8 @@ export interface AppState {
     ads: any[];
     currentPage: string;
     error: string | null;
-    isLoading: boolean; // Добавлено
+    isLoading: boolean;
+    favoriteIds: Set<number>; 
 }
 
 class Store {
@@ -18,7 +19,8 @@ class Store {
         ads: [],
         currentPage: 'main-page',
         error: null,
-        isLoading: false, // Добавлено
+        isLoading: false,
+        favoriteIds: new Set<number>(), 
     };
 
     private eventBus: EventBus;
@@ -63,7 +65,10 @@ class Store {
     }
     get isLoading(): boolean {
         return this.state.isLoading;
-    } // Добавлено
+    }
+    get favoriteIds(): Set<number> { 
+        return this.state.favoriteIds;
+    }
 }
 
 export const store = new Store();

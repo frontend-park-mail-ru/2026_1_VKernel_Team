@@ -28,6 +28,8 @@ export default [
             '@typescript-eslint/no-unused-vars': 'off',
             'no-console': 'off',
             'prettier/prettier': 'error',
+            'max-depth': ['error', 4],
+            'max-nested-callbacks': ['error', 3],
         },
     },
 
@@ -43,6 +45,9 @@ export default [
         },
         rules: {
             'no-console': 'off',
+            
+            'max-depth': ['error', 4],
+            'max-nested-callbacks': ['error', 3],
         },
     },
 
