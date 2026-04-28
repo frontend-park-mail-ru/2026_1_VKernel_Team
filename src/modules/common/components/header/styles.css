@@ -68,3 +68,104 @@
     font-size: 12px;
     font-weight: bold;
 }
+
+/* =========================================
+   БРОНЕБОЙНАЯ АДАПТИВКА ШАПКИ (360x800)
+   ========================================= */
+
+@media (max-width: 768px) {
+    .header-content {
+        padding: 8px 10px !important;
+        justify-content: space-between !important;
+        width: 100% !important;
+    }
+
+    /* 1. ПРИНУДИТЕЛЬНО ВКЛЮЧАЕМ ЛЕВЫЙ БЛОК */
+    .header-left {
+        display: flex !important; 
+        flex: 1 !important;
+        gap: 15px !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+
+    /* 2. ЗАЩИЩАЕМ ССЫЛКИ ОТ СЖАТИЯ */
+    .nav-icon, 
+    .nav-icon .nav-link {
+        display: flex !important;
+        align-items: center !important;
+        flex-shrink: 0 !important;
+    }
+
+    /* 3. ЖЕСТКИЙ РАЗМЕР ДЛЯ ИКОНОК (Иначе SVG может стать 0x0) */
+    .nav-icon .icon {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: 24px !important;
+        height: 24px !important;
+        min-width: 24px !important;
+        margin-right: 0 !important;
+    }
+
+    .nav-icon .icon svg {
+        width: 100% !important;
+        height: 100% !important;
+        display: block !important;
+    }
+
+    /* 4. БЕСПОЩАДНО УБИВАЕМ ТЕКСТ */
+    .nav-icon .nav-text {
+        display: none !important;
+    }
+
+    /* Бейджи (красные кружочки с цифрами) */
+    .nav-link--with-badge .nav-badge {
+        position: absolute !important;
+        top: -6px !important;
+        right: -8px !important;
+        font-size: 10px !important;
+        padding: 2px 4px !important;
+        min-width: 14px !important;
+        line-height: 1 !important;
+        margin-left: 0 !important;
+    }
+
+    /* 5. ПРАВЫЙ БЛОК */
+    .header-right {
+        display: flex !important;
+        flex-shrink: 0 !important;
+        gap: 12px !important;
+    }
+
+    .header-right .avatar {
+        width: 32px !important;
+        height: 32px !important;
+        flex-shrink: 0 !important;
+    }
+
+/* Превращаем кнопку "Разместить объявление" в круглый "+" */
+    .btn.place-ad-btn {
+        position: relative !important;
+        font-size: 0 !important; 
+        color: transparent !important; /* Делаем оригинальный текст невидимым */
+        min-width: 32px !important;
+        width: 32px !important;
+        height: 32px !important;
+        padding: 0 !important;
+        border-radius: 50% !important;
+        overflow: hidden !important; /* Обрезаем всё, что пытается вылезти */
+    }
+
+    /* Жестко центрируем плюсик абсолютным позиционированием */
+    .btn.place-ad-btn::after {
+        content: '+' !important;
+        position: absolute !important;
+        top: 50% !important;
+        left: 50% !important;
+        transform: translate(-50%, -50%) !important;
+        font-size: 26px !important;
+        line-height: 1 !important;
+        color: #fff !important; /* Белый цвет плюсика */
+    }
+}

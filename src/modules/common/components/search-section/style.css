@@ -40,3 +40,66 @@
     align-items: center;
     gap: 0.5rem;
 }
+
+/* =========================================
+   МОБИЛЬНАЯ АДАПТИВКА БЛОКА ПОИСКА (Фикс наложений)
+   ========================================= */
+
+@media (max-width: 768px) {
+    .search-row {
+        height: auto !important;
+        flex-wrap: wrap !important;
+        gap: 6px 8px !important; /* Ужали расстояние между этажами и элементами */
+    }
+
+    .brand {
+        flex-shrink: 0 !important;
+        order: 1 !important;
+    }
+    
+    /* Логотип стал совсем миниатюрным */
+    .logo {
+        width: 90px !important; 
+        max-height: none !important; 
+        object-fit: contain !important;
+    }
+
+    .geo {
+        order: 2 !important;
+        font-size: 11px !important;
+        flex-shrink: 0 !important;
+    }
+
+    /* Кнопка категорий: меньше паддинги, меньше шрифт */
+    .btn-categories {
+        order: 3 !important;
+        margin-left: auto !important; 
+        padding: 4px 8px !important; 
+        font-size: 12px !important;
+    }
+
+    .search-wrapper {
+        order: 4 !important;
+        flex: 0 0 100% !important;
+        width: 100% !important;
+        margin-top: 0 !important;
+    }
+
+    /* Ультра-тонкая строка поиска */
+    .search-input {
+        flex: 1 !important; 
+        width: 100% !important;
+        padding: 0 10px !important; 
+        font-size: 13px !important; 
+        height: 32px !important; /* Жестко фиксируем высоту */
+    }
+
+    /* Кнопку "Найти" подгоняем точно под высоту инпута */
+    .search-wrapper .btn {
+        padding: 0 10px !important;
+        font-size: 13px !important;
+        height: 32px !important;
+        line-height: 32px !important; /* Чтобы текст стоял ровно по центру */
+        flex-shrink: 0 !important;
+    }
+}
