@@ -49,6 +49,28 @@
     border-radius: 50%;
 }
 
+
+.icon.favorites {
+    position: relative;
+}
+
+.header-badge {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background-color: #ff4d4d;
+    color: white;
+    font-size: 10px;
+    font-weight: bold;
+    min-width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px;
+}
+
 .nav-link--with-badge {
     position: relative;
 }

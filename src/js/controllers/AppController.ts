@@ -30,6 +30,7 @@ import { unreadStore, UNREAD_CHANGED_EVENT } from '@modules/chat/unread-store';
 import { StatsController } from '@modules/support-admin/controllers/statsController';
 
 import { store } from '@/core/store';
+import { eventBus } from '@/core/eventBus'; 
 import { uiActions } from '@/actions/uiActions';
 import type { HandlebarsTemplateFunction, TemplateName, UIConstants } from '@/types';
 import { authActions } from '@/actions/authActions';
@@ -42,7 +43,9 @@ import * as HandlebarsFull from 'handlebars';
 import * as HandlebarsRuntime from 'handlebars/dist/handlebars.runtime.js';
 
 const registerHelpers = (Hbs: any) => {
-    if (!Hbs || !Hbs.registerHelper || Hbs.helpers?.avatarUrl) return;
+    if (!Hbs || !Hbs.registerHelper || Hbs.helpers?.avatarUrl) {
+        return;
+    }
 
     Hbs.registerHelper('formatPrice', (price: number) => {
         return price === 0 ? 'Бесплатно' : `${price} ₽`;
@@ -58,10 +61,14 @@ const registerHelpers = (Hbs: any) => {
         const source =
             typeof avatar === 'string' ? avatar : typeof avatarPath === 'string' ? avatarPath : '';
 
-        if (!source) return DEFAULT_AVATAR;
+        if (!source) {
+            return DEFAULT_AVATAR;
+        }
 
         const trimmed = source.trim();
-        if (!trimmed) return DEFAULT_AVATAR;
+        if (!trimmed) {
+            return DEFAULT_AVATAR;
+        }
 
         if (
             trimmed.startsWith('http://') ||
@@ -103,9 +110,13 @@ const registerHelpers = (Hbs: any) => {
     });
 
     Hbs.registerHelper('formatDate', function (dateString: string) {
-        if (!dateString) return '—';
+        if (!dateString) {
+            return '—';
+        }
         const date = new Date(dateString);
-        if (isNaN(date.getTime())) return '—';
+        if (isNaN(date.getTime())) {
+            return '—';
+        }
         return date.toLocaleDateString('ru-RU');
     });
 };
@@ -155,11 +166,14 @@ export const AppController = {
         this.setupStoreSubscription();
 
         await this.checkAuth().catch(() => {});
-        window.addEventListener('app:navigate', ((e: CustomEvent) => {
-            if (e.detail && e.detail.path) {
-                this.navigateTo(e.detail.path);
+        if (store.isAuthenticated) {
+            await AdsController.syncFavorites();
+        }
+        eventBus.on('app:navigate', (path: string) => {
+            if (path) {
+                this.navigateTo(path);
             }
-        }) as EventListener);
+        });
         window.addEventListener('app:route', () => {
             this.router();
         });
@@ -168,6 +182,7 @@ export const AppController = {
                 this.showLoading(e.detail.show);
             }
         }) as EventListener);
+
         window.addEventListener(UNREAD_CHANGED_EVENT, () => {
             this.renderHeader();
         });
@@ -292,7 +307,6 @@ export const AppController = {
     },
 
     async loadTemplates(): Promise<void> {
-        // Шаблоны уже прекомпилированы лоадером, просто присваиваем их
         this.templates['main-page'] = mainPageTpl;
         this.templates['login-forms'] = loginFormsTpl;
         this.templates['register-form'] = registerFormTpl;
@@ -317,7 +331,6 @@ export const AppController = {
             uiActions.showError(state.error);
             uiActions.clearError();
         }
-        // Обновляем header при изменении auth-состояния или аватара
         const currentAvatar = state.user?.avatar_path || null;
         if (
             this._lastAuthState !== state.isAuthenticated ||
@@ -338,7 +351,9 @@ export const AppController = {
 
     renderHeader(): void {
         const container = document.getElementById('app-header');
-        if (!container) return;
+        if (!container) {
+            return;
+        }
 
         const path = window.location.pathname;
         const isAuthPage = path === '/login' || path === '/register';
@@ -356,9 +371,12 @@ export const AppController = {
 
         const user = store.user;
         const role = user?.role;
+        
+        // Объединили данные из обеих веток!
         container.innerHTML = this._headerCompiled!({
             isAuthenticated: store.isAuthenticated,
             user,
+            favoritesCount: store.favoriteIds.size,
             unreadChatsCount: store.isAuthenticated ? unreadStore.count : 0,
             isStaff: role === 'support' || role === 'admin',
         });
@@ -369,16 +387,19 @@ export const AppController = {
         const path = window.location.pathname;
         const adMatch = path.match(/^\/ad\/(\d+)$/);
 
-        // Логика новых фич из main
         if (path === '/place-ad') {
-            if (this._currentFeature === 'place-ad') PlaceAnAdController.cleanup();
+            if (this._currentFeature === 'place-ad') {
+                PlaceAnAdController.cleanup();
+            }
             this._currentFeature = 'place-ad';
             PlaceAnAdController.render();
             return;
         }
 
         if (path === '/ad-preview') {
-            if (this._currentFeature === 'ad-preview') AdPreviewController.cleanup();
+            if (this._currentFeature === 'ad-preview') {
+                AdPreviewController.cleanup();
+            }
             this._currentFeature = 'ad-preview';
             AdPreviewController.render();
             return;
@@ -386,7 +407,9 @@ export const AppController = {
 
         const editAdMatch = path.match(/^\/edit-ad\/(\d+)$/);
         if (editAdMatch) {
-            if (this._currentFeature === 'place-ad') PlaceAnAdController.cleanup();
+            if (this._currentFeature === 'place-ad') {
+                PlaceAnAdController.cleanup();
+            }
             this._currentFeature = 'place-ad';
             PlaceAnAdController.render(editAdMatch[1]);
             return;
@@ -402,7 +425,7 @@ export const AppController = {
             return;
         }
 
-        // Защита маршрутов
+        // Защита маршрутов из ветки main (объединенная)
         const chatDetailMatch = path.match(/^\/chats\/(\d+)$/);
         const isChatsListPath = path === '/chats';
         if (
@@ -455,7 +478,9 @@ export const AppController = {
     },
 
     navigateTo(path: string): void {
-        if (window.location.pathname === path) return;
+        if (window.location.pathname === path) {
+            return;
+        }
         window.history.pushState({}, '', path);
         uiActions.navigateTo(path);
         this.router();
@@ -463,7 +488,9 @@ export const AppController = {
 
     renderNotFound(): void {
         const app = document.getElementById('app');
-        if (!app || !this.templates['not-found']) return;
+        if (!app || !this.templates['not-found']) {
+            return;
+        }
         app.innerHTML = this.templates['not-found']({});
     },
 
@@ -475,7 +502,18 @@ export const AppController = {
             if (navElement) {
                 e.preventDefault();
                 const path = (navElement as HTMLElement).dataset.nav;
-                if (path) this.navigateTo(path);
+                const tab = (navElement as HTMLElement).dataset.tab;
+
+                if (path === '/profile' && tab) {
+                    ProfileController.currentTab = tab as any;
+                } else if (path === '/profile' && !tab) {
+                    ProfileController.currentTab = 'ads';
+                }
+
+                if (path) {
+                    this.navigateTo(path);
+                }
+                
                 return;
             }
 
@@ -485,6 +523,9 @@ export const AppController = {
                 const action = (actionElement as HTMLElement).dataset.action;
                 if (action === 'logout') {
                     AuthController.handleLogout();
+                }
+                else if (action === 'back') {
+                    this.navigateTo('/'); 
                 }
                 return;
             }
