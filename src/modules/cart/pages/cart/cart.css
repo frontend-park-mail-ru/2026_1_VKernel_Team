@@ -476,62 +476,276 @@
     color: #fff;
 }
 
-/* ========== АДАПТИВНОСТЬ ========== */
-@media (max-width: 1024px) {
-    .cart-layout {
-        grid-template-columns: 1fr;
-    }
-
-    .cart-right {
-        position: static;
-    }
-
-    .cart-item {
-        grid-template-columns: 100px 1fr 40px;
-    }
-
-    .cart-item-delivery {
-        display: none;
-    }
-}
-
+/* ========== АДАПТИВНОСТЬ: МОБИЛЬНАЯ КОРЗИНА (ФИНАЛ) ========== */
 @media (max-width: 768px) {
+    /* 1. ГЛОБАЛЬНЫЙ СБРОС */
+    .main-content {
+        padding: 0 !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+        overflow-x: hidden !important;
+    }
+
+    .cart-page {
+        width: 100% !important;
+        box-sizing: border-box !important;
+        padding: 10px 15px 40px !important; 
+        margin: 0 !important;
+        overflow-x: hidden !important;
+    }
+
     .cart-title {
-        font-size: 22px;
+        font-size: 22px !important;
+        margin-bottom: 16px !important;
     }
 
-    .cart-layout {
-        gap: 16px;
+    /* 2. ЛЕЙАУТ */
+    .cart-page .cart-layout {
+        display: flex !important;
+        flex-direction: column !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+        gap: 16px !important;
     }
 
-    .cart-section {
-        padding: 16px 20px;
+    .cart-page .cart-left {
+        width: 100% !important;
+        box-sizing: border-box !important;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 16px !important;
     }
 
-    .cart-order-summary {
-        padding: 20px;
+    /* 3. КАРТОЧКИ ПРОДАВЦОВ */
+    .cart-page .cart-seller-group, 
+    .cart-page .cart-section,
+    .cart-page .cart-payment {
+        background: #ffffff !important;
+        border-radius: 16px !important;
+        padding: 16px !important;
+        margin: 0 !important; 
+        border: 1px solid #e0e0e0 !important; 
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04) !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+        display: block !important;
     }
 
-    .cart-delivery-tabs {
-        flex-direction: column;
+    .cart-page .cart-seller-header {
+        margin: 0 0 12px 0 !important;
+        padding: 0 0 12px 0 !important;
+        border-bottom: 1px solid #f0f0f0 !important;
+        display: block !important;
     }
 
-    .cart-delivery-tab {
-        border-right: none;
-        border-bottom: 1px solid #e0e0e0;
+    .cart-page .cart-seller-name {
+        font-size: 16px !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        display: block !important;
     }
 
-    .cart-delivery-tab:last-child {
-        border-bottom: none;
+    /* -------------------------------------------
+       ТОВАРЫ: GRID-AREAS 
+       ------------------------------------------- */
+    
+    /* 🌟 CSS-МАГИЯ: "Растворяем" обертку кнопок, чтобы Grid увидел кнопки 🌟 */
+    .cart-page .cart-item-actions {
+        display: contents !important; 
     }
 
-    .cart-item {
-        grid-template-columns: 80px 1fr 32px;
-        gap: 12px;
+    .cart-page .cart-item {
+        display: grid !important;
+        /* 3 колонки: Картинка (80px) | Центр (гибкий) | Крестик (32px) */
+        grid-template-columns: 80px 1fr 32px !important; 
+        /* 3 строки: Название+Цена | Доставка | Кнопка сообщения */
+        grid-template-areas: 
+            "img info del"
+            "img delivery delivery"
+            "img msg msg" !important;
+        gap: 6px 12px !important;
+        align-items: start !important; 
+        padding: 16px 0 !important;
+        margin: 0 !important;
+        border-bottom: 1px solid #f0f0f0 !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
     }
 
-    .cart-item-image {
-        width: 80px;
-        height: 60px;
+    .cart-page .cart-item:last-child {
+        border-bottom: none !important;
+        padding-bottom: 0 !important;
+    }
+
+    /* Назначаем элементы в их зоны */
+    .cart-page .cart-item-image {
+        grid-area: img !important; /* Картинка слева на все 3 строки */
+        width: 80px !important; 
+        height: 80px !important;
+        border-radius: 8px !important;
+        overflow: hidden !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        display: block !important;
+    }
+
+    .cart-page .cart-item-info {
+        grid-area: info !important; /* Название и цена сверху */
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 4px !important;
+        min-width: 0 !important; 
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    .cart-page .cart-item-delivery {
+        grid-area: delivery !important; /* Доставка посередине */
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 2px !important;
+        margin: 4px 0 0 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+    }
+
+    /* Крестик удаления (Правый верхний угол) */
+    .cart-page .cart-item-delete {
+        grid-area: del !important; 
+        background: transparent !important;
+        border: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        width: 100% !important;
+        height: 32px !important;
+        font-size: 20px !important;
+        color: #999 !important;
+        display: flex !important;
+        align-items: flex-start !important;
+        justify-content: flex-end !important;
+        box-shadow: none !important;
+    }
+
+    /* 🌟 Кнопка "Написать продавцу" (Возвращаем ей зеленый десктопный дизайн) 🌟 */
+    .cart-page .cart-item-message {
+        grid-area: msg !important; /* Встает в самый низ, растягивается на 2 колонки */
+        margin: 8px 0 0 0 !important; /* Отступ сверху от доставки */
+        width: 100% !important;
+        height: 40px !important; /* Делаем удобной для пальца */
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        /* Наследуем background, color, border-radius из твоих десктопных стилей */
+    }
+
+    /* Внутренние тексты */
+    .cart-page .cart-item-title {
+        font-size: 14px !important;
+        font-weight: 500 !important;
+        color: #222 !important;
+        line-height: 1.3 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        display: -webkit-box !important;
+        -webkit-line-clamp: 2 !important; 
+        -webkit-box-orient: vertical !important;
+        overflow: hidden !important;
+    }
+
+    .cart-page .cart-item-price {
+        font-size: 16px !important;
+        font-weight: 700 !important;
+        color: #2bde8c !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    .cart-page .cart-item-address-label {
+        font-size: 12px !important;
+        color: #888 !important;
+        margin: 0 !important;
+        line-height: 1.2 !important;
+    }
+
+    .cart-page .cart-item-address-value {
+        font-size: 13px !important;
+        color: #555 !important;
+        margin: 0 !important;
+        line-height: 1.2 !important;
+        display: -webkit-box !important;
+        -webkit-line-clamp: 1 !important; 
+        -webkit-box-orient: vertical !important;
+        overflow: hidden !important;
+        white-space: normal !important;
+    }
+
+    /* 4. КАРТОЧКА ЗАКАЗА */
+    .cart-page .cart-right {
+        position: static !important; 
+        width: 100% !important;
+        box-sizing: border-box !important;
+        margin: 0 !important; 
+        padding: 0 !important;
+    }
+
+    .cart-page .cart-order-summary {
+        background: #ffffff !important;
+        border-radius: 16px !important;
+        padding: 20px !important;
+        border: 1px solid #e0e0e0 !important;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04) !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+        display: block !important; 
+        margin: 0 !important;
+    }
+    
+    .cart-page .cart-order-title { 
+        display: block !important; 
+        font-size: 18px !important;
+        margin: 0 0 16px 0 !important;
+        padding: 0 !important;
+    }
+    
+    .cart-page .cart-order-row {
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        padding: 6px 0 !important;
+        margin: 0 !important;
+        font-size: 14px !important;
+    }
+
+    .cart-page .cart-order-total {
+        margin: 12px 0 0 0 !important;
+        padding: 16px 0 0 0 !important;
+        border-top: 1px solid #e0e0e0 !important;
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+    }
+
+    .cart-page .cart-order-total-price {
+        font-size: 20px !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    .cart-page .cart-checkout-btn {
+        margin: 16px 0 0 0 !important;
+        height: 52px !important;
+        border-radius: 12px !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+
+    .cart-page .cart-order-disclaimer {
+        display: block !important;
+        margin: 12px 0 0 0 !important;
+        padding: 0 !important;
     }
 }
