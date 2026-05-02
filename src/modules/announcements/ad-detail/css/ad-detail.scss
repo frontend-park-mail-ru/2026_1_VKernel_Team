@@ -414,7 +414,8 @@
     transform: scale(1.05);
 }
 
-.favorite-circle-btn:hover .heart-icon {
+.favorite-circle-btn:hover .heart-icon,
+.favorite-circle-btn.active .heart-icon {
     color: #ff4757;
 }
 

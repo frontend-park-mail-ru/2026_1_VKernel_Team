@@ -125,8 +125,8 @@
                                 <div class="old-price">{{oldPrice}} ₽</div>
                             {{/if}}
                         </div>
-                        <button class="favorite-circle-btn" data-action="add-to-favorites" title="В избранное">
-                            <span class="heart-icon">♡</span>
+                        <button class="favorite-circle-btn {{#if isFavorite}}active{{/if}}" data-action="add-to-favorites" title="В избранное">
+                            <span class="heart-icon">{{#if isFavorite}}♥{{else}}♡{{/if}}</span>
                         </button>
                     </div>
 

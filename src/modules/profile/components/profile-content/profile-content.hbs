@@ -39,8 +39,17 @@
     </div>
   {{/if}}
 
-  {{#if (eq currentTab 'favorites')}}
-    <p class="profile-section-placeholder">Избранное — в разработке</p>
+    {{#if (eq currentTab 'favorites')}}
+        <h2 class="profile-section-title">Избранное</h2>
+    {{#if favorites.length}}
+        <div class="recommendations-row">
+            {{#each favorites}}
+                {{> profile/components/favorite-card/favorite-card this}}
+            {{/each}}
+        </div>
+    {{else}}
+        <p class="profile-ads-empty">У вас пока нет избранных объявлений</p>
+    {{/if}}
   {{/if}}
 
   {{#if (eq currentTab 'cart')}}

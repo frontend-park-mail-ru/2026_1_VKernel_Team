@@ -133,14 +133,21 @@ export const cartActions = {
             items.map(async (item) => {
                 try {
                     const result = await adsService.getAdById(item.product_id);
-                    if (result.success && result.data?.photos?.length) {
-                        const firstPhoto = result.data.photos[0]?.trim();
+                    if (result.success && result.data) {
+                        const patched: Partial<CartItem> = {};
+                        const firstPhoto = result.data.photos?.[0]?.trim();
                         if (firstPhoto) {
-                            return { ...item, image_path: firstPhoto };
+                            patched.image_path = firstPhoto;
+                        }
+                        if (result.data.location) {
+                            patched.location = result.data.location;
+                        }
+                        if (Object.keys(patched).length) {
+                            return { ...item, ...patched };
                         }
                     }
                 } catch {
-                    // fallback to original image_path
+                    // fallback to original data
                 }
                 return item;
             }),

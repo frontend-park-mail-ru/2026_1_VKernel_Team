@@ -1,0 +1,47 @@
+<div class="support-create">
+    <button class="support-btn support-btn--back" id="support-back-btn">&larr; Назад</button>
+
+    <h3 class="support-create__title">Редактировать обращение</h3>
+
+    <form class="support-create__form" id="support-edit-form">
+        <div class="support-form-group">
+            <label class="support-form-label" for="ticket-category">Категория</label>
+            <select class="support-form-select" id="ticket-category" name="category" required>
+                <option value="bug" {{#if (eq ticket.category "bug")}}selected{{/if}}>Баг</option>
+                <option value="suggestion" {{#if (eq ticket.category "suggestion")}}selected{{/if}}>Предложение</option>
+                <option value="complaint" {{#if (eq ticket.category "complaint")}}selected{{/if}}>Жалоба</option>
+            </select>
+            <span class="support-form-error" id="category-error"></span>
+        </div>
+
+        <div class="support-form-group">
+            <label class="support-form-label" for="ticket-title">Заголовок</label>
+            <input
+                class="support-form-input"
+                type="text"
+                id="ticket-title"
+                name="title"
+                maxlength="255"
+                value="{{ticket.title}}"
+                required
+            />
+            <span class="support-form-error" id="title-error"></span>
+        </div>
+
+        <div class="support-form-group">
+            <label class="support-form-label" for="ticket-description">Описание</label>
+            <textarea
+                class="support-form-textarea"
+                id="ticket-description"
+                name="description"
+                rows="5"
+                required
+            >{{ticket.description}}</textarea>
+            <span class="support-form-error" id="description-error"></span>
+        </div>
+
+        <button class="support-btn support-btn--primary support-btn--full" type="submit" id="support-save-btn">
+            Сохранить
+        </button>
+    </form>
+</div>

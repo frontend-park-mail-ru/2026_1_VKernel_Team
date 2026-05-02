@@ -12,11 +12,14 @@ import { ProfileSidebar } from '@modules/profile/components/profile-sidebar/prof
 import { ProfileContent } from '@modules/profile/components/profile-content/profile-content';
 import { EditNameModal } from '@modules/profile/components/edit-name-modal/edit-name-modal';
 import { CloseAdModal } from '@modules/profile/components/close-ad-modal/close-ad-modal';
+import { FavoriteCard } from '@modules/profile/components/favorite-card/favorite-card';
+import { PROFILE_CONFIG } from '@modules/profile/config';
 
 import { apiClient, API_ENDPOINTS } from '@/api/apiClient';
 import { CONFIG } from '@/core/config';
 import { purchasesStore } from '@modules/profile/purchases-store';
 import { cartService } from '@modules/cart/service';
+import { cartStore } from '@modules/cart/store';
 import type { PurchaseItem } from '@modules/profile/purchases-store';
 import { unreadStore, UNREAD_CHANGED_EVENT } from '@modules/chat/unread-store';
 
@@ -71,6 +74,12 @@ export const ProfileController = {
             eventBus.on('profile:switch-tab', (tab: ProfileTab) => this.switchTab(tab)),
             eventBus.on('profile:logout', () => this.handleLogout()),
             eventBus.on('profile:update-ui', () => this.refreshUI()),
+            eventBus.on('profile:favorite-removed', (removedAdId: number) => {
+                this.userFavorites = this.userFavorites.filter(
+                    (ad) => Number(ad.id) !== removedAdId,
+                );
+                this.refreshUI();
+            }),
             eventBus.on('profile:ad-closed', (closedAdId: number | string) => {
                 this.userAds = this.userAds.map((ad) =>
                     String(ad.id) === String(closedAdId) ? { ...ad, status: 'archived' } : ad,
@@ -98,8 +107,10 @@ export const ProfileController = {
         this.isInitialized = false;
     },
 
+    // Состояния данных профиля
     userAds: [] as any[],
     userPurchases: [] as PurchaseItem[],
+    userFavorites: [] as any[],
 
     async loadUserAds(): Promise<void> {
         const userId = store.user?.id;
@@ -125,6 +136,38 @@ export const ProfileController = {
         this.userPurchases = purchasesStore.getState().items;
         this.rerenderTab(store.user as UserProfile);
         this.attachEventListeners();
+    },
+
+    // Новый метод загрузки избранного
+    async loadUserFavorites(): Promise<void> {
+        try {
+            const result = await apiClient.get<any>(PROFILE_CONFIG.API.GET_FAVORITES);
+            if (result.success && result.data) {
+                let favoritesArray: any[] = [];
+
+                if (Array.isArray(result.data)) {
+                    favoritesArray = result.data;
+                } else if (Array.isArray(result.data.ads)) {
+                    favoritesArray = result.data.ads;
+                } else if (Array.isArray(result.data.data)) {
+                    favoritesArray = result.data.data;
+                } else if (typeof result.data === 'object') {
+                    // Если бэкенд завернул в странный ключ (типа additionalProp1)
+                    // Ищем первый попавшийся массив внутри объекта
+                    const arrays = Object.values(result.data).filter(Array.isArray);
+                    if (arrays.length > 0) {
+                        favoritesArray = arrays[0] as any[];
+                    }
+                }
+
+                this.userFavorites = favoritesArray.map((ad: any) => formatAdCard(ad));
+                this.rerenderTab(store.user as UserProfile);
+                this.attachEventListeners();
+            }
+        } catch (error) {
+            console.error('Failed to load user favorites:', error);
+            this.userFavorites = [];
+        }
     },
 
     async showProfile(): Promise<void> {
@@ -156,9 +199,14 @@ export const ProfileController = {
 
         this.renderAll();
 
-        // Подгружаем свежие данные с сервера (не блокируя рендер)
+        // Подгружаем свежие данные с сервера
         this.loadUserAds();
         this.loadProfileData();
+
+        // Если открыли профиль сразу на вкладке избранного (при роутинге)
+        if (this.currentTab === 'favorites') {
+            this.loadUserFavorites();
+        }
     },
 
     renderAll(): void {
@@ -202,6 +250,7 @@ export const ProfileController = {
             activeAdsCount: activeAds.length,
             archivedAdsCount: archivedAds.length,
             purchases: this.formatPurchases(this.userPurchases),
+            favorites: this.userFavorites,
             isAuthenticated: store.isAuthenticated,
         });
     },
@@ -212,7 +261,11 @@ export const ProfileController = {
 
         // Счётчик непрочитанных чатов рисуем через `messages_count` — в шаблоне
         // бейдж берётся по `lookup user (concat tab '_count')`.
-        const userWithUnread = { ...user, messages_count: unreadStore.count };
+        const userWithUnread = {
+            ...user,
+            messages_count: unreadStore.count,
+            cart_count: cartStore.getState().items.length,
+        };
 
         sidebarEl.innerHTML = profileSidebarTpl({
             currentTab: this.currentTab,
@@ -224,9 +277,18 @@ export const ProfileController = {
 
     switchTab(tab: ProfileTab): void {
         this.currentTab = tab;
+
+        const tabUrl = tab === 'ads' ? '/profile' : `/profile?tab=${tab}`;
+        if (window.location.pathname + window.location.search !== tabUrl) {
+            window.history.replaceState({}, '', tabUrl);
+        }
+
         if (tab === 'purchases') {
             this.loadUserPurchases();
+        } else if (tab === 'favorites') {
+            this.loadUserFavorites();
         }
+
         this.renderAll();
     },
 
@@ -236,6 +298,7 @@ export const ProfileController = {
         if (ProfileContent?.init) ProfileContent.init();
         if (EditNameModal?.init) EditNameModal.init();
         if (CloseAdModal?.init) CloseAdModal.init();
+        if (FavoriteCard?.init) FavoriteCard.init(); // Инициализация кликов для карточек избранного
     },
 
     async loadProfileData(): Promise<void> {
@@ -254,8 +317,7 @@ export const ProfileController = {
         try {
             await ProfileService.logout();
             store.setState({ isAuthenticated: false, user: null });
-            window.history.pushState({}, '', '/login');
-            uiActions.navigateTo('/login');
+            window.location.href = '/';
         } catch (err) {
             uiActions.showError('Ошибка при выходе');
         }

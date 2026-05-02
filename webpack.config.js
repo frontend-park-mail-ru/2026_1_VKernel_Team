@@ -1,16 +1,31 @@
 import path from 'path';
+import fs from 'fs';
 import { fileURLToPath } from 'url';
+import webpack from 'webpack';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// Читаем .env без dotenv, чтобы не загрязнять stdout (ломает pipe в dep-gen)
+const envPath = path.resolve(__dirname, '.env');
+const envVars = {};
+if (fs.existsSync(envPath)) {
+    fs.readFileSync(envPath, 'utf-8').split('\n').forEach((line) => {
+        const match = line.match(/^\s*([\w.-]+)\s*=\s*(.*)?\s*$/);
+        if (match) envVars[match[1]] = (match[2] || '').replace(/^['"]|['"]$/g, '');
+    });
+}
+
 export default (env, argv) => {
     const isDevelopment = argv?.mode === 'development';
 
     return {
-        entry: './src/js/main.ts',
+        entry: {
+            app: './src/js/main.ts',
+            'support-widget': './src/js/support-widget.ts',
+        },
         output: {
             path: path.resolve(__dirname, 'dist'),
             filename: 'js/[name].[contenthash].js',
@@ -79,10 +94,20 @@ export default (env, argv) => {
             ],
         },
         plugins: [
+            new webpack.DefinePlugin({
+                'process.env.BASE_URL': JSON.stringify(envVars.BASE_URL || 'http://clover-go.ru:8000'),
+            }),
             new HtmlWebpackPlugin({
                 template: './public/index.html',
                 filename: 'index.html',
                 inject: 'body',
+                chunks: ['app'],
+            }),
+            new HtmlWebpackPlugin({
+                template: './public/support-widget.html',
+                filename: 'support-widget.html',
+                inject: 'body',
+                chunks: ['support-widget'],
             }),
             new CopyWebpackPlugin({
                 patterns: [

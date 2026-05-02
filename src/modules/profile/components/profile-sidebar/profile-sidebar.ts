@@ -27,6 +27,12 @@ export const ProfileSidebar = {
                     );
                     return;
                 }
+                if (tab === 'cart') {
+                    window.dispatchEvent(
+                        new CustomEvent('app:navigate', { detail: { path: '/cart' } }),
+                    );
+                    return;
+                }
                 eventBus.emit('profile:switch-tab', tab);
                 return;
             }

@@ -27,19 +27,26 @@ import { ChatController } from '@modules/chat/controller';
 import { loadTemplates as loadChatListTemplates } from '@modules/chat/pages/chat-list/chat-list';
 import { loadTemplates as loadChatDetailTemplates } from '@modules/chat/pages/chat-detail/chat-detail';
 import { unreadStore, UNREAD_CHANGED_EVENT } from '@modules/chat/unread-store';
+import { cartStore } from '@modules/cart/store';
+import { StatsController } from '@modules/support-admin/controllers/statsController';
 
 import { store } from '@/core/store';
+import { eventBus } from '@/core/eventBus';
 import { uiActions } from '@/actions/uiActions';
 import type { HandlebarsTemplateFunction, TemplateName, UIConstants } from '@/types';
 import { authActions } from '@/actions/authActions';
+import { storage } from '@/utils/storage';
 import { CONFIG } from '@/core/config';
 import { initOfflineIndicator } from '@modules/common/offline/offline-indicator';
+import '@modules/support/styles/support.scss';
 
 import * as HandlebarsFull from 'handlebars';
 import * as HandlebarsRuntime from 'handlebars/dist/handlebars.runtime.js';
 
 const registerHelpers = (Hbs: any) => {
-    if (!Hbs || !Hbs.registerHelper || Hbs.helpers?.avatarUrl) return;
+    if (!Hbs || !Hbs.registerHelper || Hbs.helpers?.avatarUrl) {
+        return;
+    }
 
     Hbs.registerHelper('formatPrice', (price: number) => {
         return price === 0 ? 'Бесплатно' : `${price} ₽`;
@@ -55,10 +62,14 @@ const registerHelpers = (Hbs: any) => {
         const source =
             typeof avatar === 'string' ? avatar : typeof avatarPath === 'string' ? avatarPath : '';
 
-        if (!source) return DEFAULT_AVATAR;
+        if (!source) {
+            return DEFAULT_AVATAR;
+        }
 
         const trimmed = source.trim();
-        if (!trimmed) return DEFAULT_AVATAR;
+        if (!trimmed) {
+            return DEFAULT_AVATAR;
+        }
 
         if (
             trimmed.startsWith('http://') ||
@@ -100,9 +111,13 @@ const registerHelpers = (Hbs: any) => {
     });
 
     Hbs.registerHelper('formatDate', function (dateString: string) {
-        if (!dateString) return '—';
+        if (!dateString) {
+            return '—';
+        }
         const date = new Date(dateString);
-        if (isNaN(date.getTime())) return '—';
+        if (isNaN(date.getTime())) {
+            return '—';
+        }
         return date.toLocaleDateString('ru-RU');
     });
 };
@@ -112,6 +127,7 @@ export const AppController = {
     _currentFeature: '',
     _lastAuthState: null as boolean | null,
     _lastAvatarPath: null as string | null,
+    _lastFavoritesCount: null as number | null,
     _headerCompiled: null as HandlebarsTemplateFunction | null,
     templates: {} as Record<TemplateName, HandlebarsTemplateFunction>,
 
@@ -152,11 +168,14 @@ export const AppController = {
         this.setupStoreSubscription();
 
         await this.checkAuth().catch(() => {});
-        window.addEventListener('app:navigate', ((e: CustomEvent) => {
-            if (e.detail && e.detail.path) {
-                this.navigateTo(e.detail.path);
+        if (store.isAuthenticated) {
+            await AdsController.syncFavorites();
+        }
+        eventBus.on('app:navigate', (path: string) => {
+            if (path) {
+                this.navigateTo(path);
             }
-        }) as EventListener);
+        });
         window.addEventListener('app:route', () => {
             this.router();
         });
@@ -165,7 +184,11 @@ export const AppController = {
                 this.showLoading(e.detail.show);
             }
         }) as EventListener);
+
         window.addEventListener(UNREAD_CHANGED_EVENT, () => {
+            this.renderHeader();
+        });
+        cartStore.subscribe(() => {
             this.renderHeader();
         });
         this.renderHeader();
@@ -177,10 +200,118 @@ export const AppController = {
         }
 
         initOfflineIndicator();
+        this.initSupportWidget();
+    },
+
+    initSupportWidget(): void {
+        // Кнопка-триггер
+        const triggerBtn = document.createElement('button');
+        triggerBtn.className = 'support-trigger-btn';
+        triggerBtn.id = 'support-trigger';
+        triggerBtn.title = 'Техподдержка';
+        triggerBtn.innerHTML = `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M11.95 18q.525 0 .888-.363.362-.362.362-.887 0-.525-.362-.888-.363-.362-.888-.362-.525 0-.887.362-.363.363-.363.888t.363.887q.362.363.887.363Zm-.9-3.85h1.85q0-.825.188-1.3.187-.475 1.062-1.3.65-.65 1.025-1.238.375-.587.375-1.362 0-1.35-.962-2.15Q13.625 6 12.1 6q-1.275 0-2.187.75-.913.75-1.213 1.8l1.65.65q.125-.45.525-.975.4-.525 1.175-.525.7 0 1.088.413.387.412.387.962 0 .5-.3.938-.3.437-.75.887-.8.75-1.063 1.375-.262.625-.262 1.875ZM12 22q-2.075 0-3.9-.787-1.825-.788-3.175-2.138-1.35-1.35-2.137-3.175Q2 14.075 2 12t.788-3.9q.787-1.825 2.137-3.175 1.35-1.35 3.175-2.138Q9.925 2 12 2t3.9.787q1.825.788 3.175 2.138 1.35 1.35 2.137 3.175Q22 9.925 22 12t-.788 3.9q-.787 1.825-2.137 3.175-1.35 1.35-3.175 2.137Q14.075 22 12 22Z"/></svg>`;
+        document.body.appendChild(triggerBtn);
+
+        // Wrapper для ресайза
+        const wrapper = document.createElement('div');
+        wrapper.id = 'support-iframe-wrapper';
+        wrapper.className = 'support-iframe-wrapper';
+
+        // Resize handle
+        const resizeHandle = document.createElement('div');
+        resizeHandle.className = 'support-resize-handle';
+        wrapper.appendChild(resizeHandle);
+
+        // Iframe
+        const iframe = document.createElement('iframe');
+        iframe.id = 'support-iframe';
+        iframe.className = 'support-iframe';
+        iframe.src = '/support-widget';
+        wrapper.appendChild(iframe);
+
+        document.body.appendChild(wrapper);
+
+        // Toggle по клику
+        triggerBtn.addEventListener('click', () => {
+            const isOpen = wrapper.classList.toggle('support-iframe-wrapper--open');
+            if (isOpen) {
+                const token = storage.getToken();
+                if (token) {
+                    iframe.contentWindow?.postMessage({ type: 'support-widget-token', token }, '*');
+                }
+                iframe.contentWindow?.postMessage(
+                    { type: 'support-widget-auth-changed', isAuthenticated: store.isAuthenticated },
+                    '*',
+                );
+            }
+        });
+
+        // Отправляем токен и статус авторизации при загрузке iframe
+        iframe.addEventListener('load', () => {
+            const token = storage.getToken();
+            if (token) {
+                iframe.contentWindow?.postMessage({ type: 'support-widget-token', token }, '*');
+            }
+            iframe.contentWindow?.postMessage(
+                { type: 'support-widget-auth-changed', isAuthenticated: store.isAuthenticated },
+                '*',
+            );
+        });
+
+        // При смене авторизации — обновить виджет
+        store.subscribe((state) => {
+            const token = storage.getToken();
+            if (state.isAuthenticated && token) {
+                iframe.contentWindow?.postMessage({ type: 'support-widget-token', token }, '*');
+            }
+            iframe.contentWindow?.postMessage(
+                { type: 'support-widget-auth-changed', isAuthenticated: state.isAuthenticated },
+                '*',
+            );
+        });
+
+        // Слушаем сообщение о закрытии от iframe
+        window.addEventListener('message', (event: MessageEvent) => {
+            if (event.data?.type === 'support-widget-close') {
+                wrapper.classList.remove('support-iframe-wrapper--open');
+            }
+        });
+
+        // Resize logic
+        let isResizing = false;
+        let startX = 0;
+        let startY = 0;
+        let startW = 0;
+        let startH = 0;
+
+        resizeHandle.addEventListener('mousedown', (e: MouseEvent) => {
+            e.preventDefault();
+            isResizing = true;
+            startX = e.clientX;
+            startY = e.clientY;
+            startW = wrapper.offsetWidth;
+            startH = wrapper.offsetHeight;
+            iframe.style.pointerEvents = 'none';
+            document.body.style.cursor = 'nwse-resize';
+        });
+
+        document.addEventListener('mousemove', (e: MouseEvent) => {
+            if (!isResizing) return;
+            const dw = startX - e.clientX;
+            const dh = startY - e.clientY;
+            wrapper.style.width = Math.max(320, Math.min(700, startW + dw)) + 'px';
+            wrapper.style.height = Math.max(380, startH + dh) + 'px';
+        });
+
+        document.addEventListener('mouseup', () => {
+            if (!isResizing) return;
+            isResizing = false;
+            iframe.style.pointerEvents = '';
+            document.body.style.cursor = '';
+        });
     },
 
     async loadTemplates(): Promise<void> {
-        // Шаблоны уже прекомпилированы лоадером, просто присваиваем их
         this.templates['main-page'] = mainPageTpl;
         this.templates['login-forms'] = loginFormsTpl;
         this.templates['register-form'] = registerFormTpl;
@@ -205,7 +336,6 @@ export const AppController = {
             uiActions.showError(state.error);
             uiActions.clearError();
         }
-        // Обновляем header при изменении auth-состояния или аватара
         const currentAvatar = state.user?.avatar_path || null;
         if (
             this._lastAuthState !== state.isAuthenticated ||
@@ -218,6 +348,10 @@ export const AppController = {
             if (loggedIn) unreadStore.refreshCountFromServer();
             if (state.isAuthenticated === false) unreadStore.reset();
         }
+        if (state.favoriteIds.size !== this._lastFavoritesCount) {
+            this._lastFavoritesCount = state.favoriteIds.size;
+            this.renderHeader();
+        }
         if (state.currentPage && state.currentPage !== this._lastPage) {
             this._lastPage = state.currentPage;
             this.router();
@@ -226,7 +360,9 @@ export const AppController = {
 
     renderHeader(): void {
         const container = document.getElementById('app-header');
-        if (!container) return;
+        if (!container) {
+            return;
+        }
 
         const path = window.location.pathname;
         const isAuthPage = path === '/login' || path === '/register';
@@ -243,10 +379,16 @@ export const AppController = {
         }
 
         const user = store.user;
+        const role = user?.role;
+
+        // Объединили данные из обеих веток!
         container.innerHTML = this._headerCompiled!({
             isAuthenticated: store.isAuthenticated,
             user,
+            favoritesCount: store.favoriteIds.size,
             unreadChatsCount: store.isAuthenticated ? unreadStore.count : 0,
+            cartCount: store.isAuthenticated ? cartStore.getState().items.length : 0,
+            isStaff: role === 'support' || role === 'admin',
         });
     },
 
@@ -255,16 +397,19 @@ export const AppController = {
         const path = window.location.pathname;
         const adMatch = path.match(/^\/ad\/(\d+)$/);
 
-        // Логика новых фич из main
         if (path === '/place-ad') {
-            if (this._currentFeature === 'place-ad') PlaceAnAdController.cleanup();
+            if (this._currentFeature === 'place-ad') {
+                PlaceAnAdController.cleanup();
+            }
             this._currentFeature = 'place-ad';
             PlaceAnAdController.render();
             return;
         }
 
         if (path === '/ad-preview') {
-            if (this._currentFeature === 'ad-preview') AdPreviewController.cleanup();
+            if (this._currentFeature === 'ad-preview') {
+                AdPreviewController.cleanup();
+            }
             this._currentFeature = 'ad-preview';
             AdPreviewController.render();
             return;
@@ -272,7 +417,9 @@ export const AppController = {
 
         const editAdMatch = path.match(/^\/edit-ad\/(\d+)$/);
         if (editAdMatch) {
-            if (this._currentFeature === 'place-ad') PlaceAnAdController.cleanup();
+            if (this._currentFeature === 'place-ad') {
+                PlaceAnAdController.cleanup();
+            }
             this._currentFeature = 'place-ad';
             PlaceAnAdController.render(editAdMatch[1]);
             return;
@@ -288,7 +435,7 @@ export const AppController = {
             return;
         }
 
-        // Защита маршрутов
+        // Защита маршрутов из ветки main (объединенная)
         const chatDetailMatch = path.match(/^\/chats\/(\d+)$/);
         const isChatsListPath = path === '/chats';
         if (
@@ -310,6 +457,11 @@ export const AppController = {
             return;
         }
 
+        if (path === '/support/stats') {
+            StatsController.render();
+            return;
+        }
+
         switch (path) {
             case '/':
             case '/index.html':
@@ -321,9 +473,14 @@ export const AppController = {
             case '/register':
                 AuthController.showRegister();
                 break;
-            case '/profile':
+            case '/profile': {
+                const tabParam = new URLSearchParams(window.location.search).get('tab');
+                if (tabParam) {
+                    ProfileController.currentTab = tabParam as any;
+                }
                 ProfileController.showProfile();
                 break;
+            }
             case '/cart':
                 CartController.renderCart();
                 break;
@@ -336,7 +493,10 @@ export const AppController = {
     },
 
     navigateTo(path: string): void {
-        if (window.location.pathname === path) return;
+        const currentFull = window.location.pathname + window.location.search;
+        if (currentFull === path) {
+            return;
+        }
         window.history.pushState({}, '', path);
         uiActions.navigateTo(path);
         this.router();
@@ -344,7 +504,9 @@ export const AppController = {
 
     renderNotFound(): void {
         const app = document.getElementById('app');
-        if (!app || !this.templates['not-found']) return;
+        if (!app || !this.templates['not-found']) {
+            return;
+        }
         app.innerHTML = this.templates['not-found']({});
     },
 
@@ -356,7 +518,24 @@ export const AppController = {
             if (navElement) {
                 e.preventDefault();
                 const path = (navElement as HTMLElement).dataset.nav;
-                if (path) this.navigateTo(path);
+                const tab = (navElement as HTMLElement).dataset.tab;
+
+                if (path === '/profile' && tab) {
+                    ProfileController.currentTab = tab as any;
+                    if (window.location.pathname === '/profile') {
+                        window.history.replaceState({}, '', `/profile?tab=${tab}`);
+                        ProfileController.switchTab(tab as any);
+                        return;
+                    }
+                } else if (path === '/profile' && !tab) {
+                    ProfileController.currentTab = 'ads';
+                }
+
+                if (path) {
+                    const url = path === '/profile' && tab ? `${path}?tab=${tab}` : path!;
+                    this.navigateTo(url);
+                }
+
                 return;
             }
 
@@ -366,6 +545,8 @@ export const AppController = {
                 const action = (actionElement as HTMLElement).dataset.action;
                 if (action === 'logout') {
                     AuthController.handleLogout();
+                } else if (action === 'back') {
+                    this.navigateTo('/');
                 }
                 return;
             }
