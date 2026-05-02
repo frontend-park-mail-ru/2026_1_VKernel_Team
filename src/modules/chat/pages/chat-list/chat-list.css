@@ -32,3 +32,27 @@
     flex-direction: column;
     gap: 12px;
 }
+
+/* ========== АДАПТИВНОСТЬ: СПИСОК ЧАТОВ ========== */
+@media (max-width: 768px) {
+    .chat-list-page {
+        padding: 10px 10px 40px !important;
+    }
+
+    .chat-list-page__title {
+        font-size: 22px !important;
+        margin-bottom: 16px !important;
+    }
+
+    .chat-list-page__empty {
+        padding: 30px 16px !important;
+    }
+    
+    .chat-list-page__empty p {
+        font-size: 14px !important;
+    }
+
+    .chat-list-page__items {
+        gap: 8px !important;
+    }
+}
