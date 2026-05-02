@@ -625,6 +625,7 @@ body .main-container {
         padding-top: 140px !important; /* Отступаем от поиска */
         padding-left: 10px !important;
         padding-right: 10px !important;
+        margin-top: 180px !important; /* Отступаем от хедера */
     }
 
     .content-grid {
