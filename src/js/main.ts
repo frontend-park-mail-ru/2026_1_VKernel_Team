@@ -3,6 +3,13 @@
  * @module main
  */
 
+// === Глобальные стили ===
+import '@styles/base.scss';
+import '@styles/components.scss';
+import '@styles/auth.scss';
+import '@styles/main.scss';
+import '@styles/footer.scss';
+
 // === Side-effect модули (инициализация) ===
 import '@/utils/storage';
 import '@/validators/authValidator';

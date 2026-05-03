@@ -51,7 +51,7 @@ export default (env, argv) => {
         module: {
             rules: [
                 { test: /\.tsx?$/, use: 'ts-loader', exclude: /node_modules/ },
-                { test: /\.css$/i, use: ['style-loader', 'css-loader'] },
+                { test: /\.s?css$/i, use: ['style-loader', 'css-loader', 'sass-loader'] },
                 {
                     test: /\.(png|jpe?g|gif|svg|webp)$/i,
                     type: 'asset/resource',
@@ -113,16 +113,16 @@ export default (env, argv) => {
                 patterns: [
                     { from: 'public/images', to: 'images', noErrorOnMissing: true },
                     { from: 'public/site', to: 'site', noErrorOnMissing: true },
-                    { from: 'public/css', to: 'css', noErrorOnMissing: true },
                     { from: 'public/sw.js', to: 'sw.js' },
                 ],
             }),
         ],
         resolve: {
-            extensions: ['.ts', '.tsx', '.js', '.hbs'],
+            extensions: ['.ts', '.tsx', '.js', '.hbs', '.scss', '.css'],
             alias: {
                 '@': path.resolve(__dirname, 'src/js'),
-                '@css': path.resolve(__dirname, 'public/css'),
+                '@css': path.resolve(__dirname, 'src/styles'),
+                '@styles': path.resolve(__dirname, 'src/styles'),
                 '@core': path.resolve(__dirname, 'src/js/core'),
                 '@api': path.resolve(__dirname, 'src/js/api'),
                 '@services': path.resolve(__dirname, 'src/js/services'),

@@ -1,4 +1,4 @@
-import '@modules/cart/components/cart-payment-options/styles.css';
+import '@modules/cart/components/cart-payment-options/styles.scss';
 import template from '@modules/cart/components/cart-payment-options/cart-payment-options.hbs?raw';
 
 export const CartPaymentOptionsComponent = {

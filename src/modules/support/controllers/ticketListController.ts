@@ -24,12 +24,19 @@ function getAuthRequiredTemplate(): (ctx: any) => string {
     return authRequiredCompiled!;
 }
 
+const TICKETS_TTL_MS = 30_000;
+
 export const TicketListController = {
     _tickets: [] as SupportTicket[],
+    _lastFetchAt: 0,
     _onNavigate: null as ((page: string, data?: any) => void) | null,
 
     setNavigator(fn: (page: string, data?: any) => void) {
         this._onNavigate = fn;
+    },
+
+    _isCacheFresh(): boolean {
+        return this._lastFetchAt > 0 && Date.now() - this._lastFetchAt < TICKETS_TTL_MS;
     },
 
     async render(container: HTMLElement): Promise<void> {
@@ -38,12 +45,29 @@ export const TicketListController = {
             return;
         }
 
-        container.innerHTML = getTemplate()({ isLoading: true, tickets: [] });
+        // Если есть свежий кэш — отрисовываем его и не дёргаем сеть.
+        if (this._isCacheFresh()) {
+            container.innerHTML = getTemplate()({
+                isLoading: false,
+                tickets: this._tickets,
+            });
+            this.attachEvents(container);
+            return;
+        }
+
+        // Если кэш есть, но протух — показываем его сразу (без скелетона), затем тихо обновляем.
+        const hasStaleCache = this._tickets.length > 0;
+        container.innerHTML = getTemplate()({
+            isLoading: !hasStaleCache,
+            tickets: hasStaleCache ? this._tickets : [],
+        });
+        if (hasStaleCache) this.attachEvents(container);
 
         const result = await supportApi.getMyTickets();
         if (result.success && result.data) {
             this._tickets = Array.isArray(result.data) ? result.data : [];
-        } else {
+            this._lastFetchAt = Date.now();
+        } else if (!hasStaleCache) {
             this._tickets = [];
         }
 
@@ -51,8 +75,13 @@ export const TicketListController = {
             isLoading: false,
             tickets: this._tickets,
         });
-
         this.attachEvents(container);
+    },
+
+    // Принудительный сброс TTL — для случаев, когда нужен гарантированно свежий список
+    // (например, после создания/удаления тикета).
+    invalidate(): void {
+        this._lastFetchAt = 0;
     },
 
     attachEvents(container: HTMLElement): void {

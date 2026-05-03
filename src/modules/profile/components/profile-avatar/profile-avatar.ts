@@ -1,4 +1,4 @@
-import '@modules/profile/components/profile-avatar/style.css';
+import '@modules/profile/components/profile-avatar/style.scss';
 import template from '@modules/profile/components/profile-avatar/profile-avatar.hbs';
 import { ProfileService } from '@modules/profile/service';
 import { store } from '@/core/store';

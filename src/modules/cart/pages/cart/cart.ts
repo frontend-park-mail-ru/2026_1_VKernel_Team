@@ -3,7 +3,7 @@
  * Шаблон + стили + инициализация подкомпонентов.
  */
 
-import '@modules/cart/pages/cart/cart.css';
+import '@modules/cart/pages/cart/cart.scss';
 import template from '@modules/cart/pages/cart/cart.hbs?raw';
 import { HeaderComponent } from '@modules/common/components/header/header';
 import { SearchSectionComponent } from '@modules/common/components/search-section/search-section';

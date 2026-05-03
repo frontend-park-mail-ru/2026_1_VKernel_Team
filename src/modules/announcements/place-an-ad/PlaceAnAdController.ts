@@ -3,6 +3,7 @@
  * Реализована поддержка оффлайн-сохранения (IndexedDB) и режима редактирования
  */
 
+import './css/place-an-ad.scss';
 import Handlebars from 'handlebars';
 import placeAnAdTpl from './templates/place-an-ad.hbs';
 import { store } from '@/core/store';
@@ -16,7 +17,7 @@ import { adsService } from '@/services/adsServices';
 import { apiClient, API_ENDPOINTS } from '@/api/apiClient';
 import { CONFIG } from '@/core/config';
 import { AdValidator } from '@/validators/adValidator';
-import '@modules/common/components/modal/modal.css';
+import '@modules/common/components/modal/modal.scss';
 import type {
     Category,
     CategoryCharacteristic,
@@ -156,12 +157,7 @@ export class PlaceAnAdController {
                 await this.loadCategoryCharacteristics(ad.category_id);
 
                 if (ad.category_characteristics && ad.category_characteristics.length > 0) {
-                    for (const char of ad.category_characteristics) {
-                        const charId = char.category_characteristic_id || char.id;
-                        if (charId && char.value) {
-                            this.categoryCharacteristicsValues.set(charId, char.value);
-                        }
-                    }
+                    this.applyAdCategoryCharacteristics(ad.category_characteristics);
                     this.renderCategoryCharacteristicsForm();
                 }
             }
@@ -213,14 +209,7 @@ export class PlaceAnAdController {
                 await this.loadCategoryCharacteristics(parseInt(draft.formData.category_id));
 
                 if (draft.formData.category_characteristics) {
-                    for (const char of draft.formData.category_characteristics) {
-                        if (char.category_characteristic_id && char.value) {
-                            this.categoryCharacteristicsValues.set(
-                                char.category_characteristic_id,
-                                char.value,
-                            );
-                        }
-                    }
+                    this.applyDraftCategoryCharacteristics(draft.formData.category_characteristics);
                     this.renderCategoryCharacteristicsForm();
                 }
             }
@@ -254,6 +243,33 @@ export class PlaceAnAdController {
             }
         } finally {
             this.isRestoring = false;
+        }
+    }
+
+    // Бэкенд отдаёт ad.category_characteristics как {name, value} без id —
+    // сопоставляем с определениями категории по имени.
+    private static applyAdCategoryCharacteristics(chars: any[]): void {
+        const defIdByName = new Map<string, number>();
+        for (const def of this.categoryCharacteristicsDefs) {
+            defIdByName.set(def.name, def.id);
+        }
+        for (const char of chars) {
+            const charId =
+                char.category_characteristic_id ||
+                char.id ||
+                (char.name ? defIdByName.get(char.name) : undefined);
+            if (charId && char.value) {
+                this.categoryCharacteristicsValues.set(charId, char.value);
+            }
+        }
+    }
+
+    // Локальный драфт хранит характеристики уже с category_characteristic_id.
+    private static applyDraftCategoryCharacteristics(chars: any[]): void {
+        for (const char of chars) {
+            if (char.category_characteristic_id && char.value) {
+                this.categoryCharacteristicsValues.set(char.category_characteristic_id, char.value);
+            }
         }
     }
 
