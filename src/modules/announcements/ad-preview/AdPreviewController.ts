@@ -2,6 +2,7 @@
  * Контроллер просмотра созданного объявления
  */
 
+import './css/preview.scss';
 import { CONFIG } from '@/core/config';
 import previewTpl from './templates/before-publication.hbs';
 import { PhotoViewer } from '@modules/announcements/shared/photo-view/photoViewer';

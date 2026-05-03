@@ -40,7 +40,7 @@ import { authActions } from '@/actions/authActions';
 import { storage } from '@/utils/storage';
 import { CONFIG } from '@/core/config';
 import { initOfflineIndicator } from '@modules/common/offline/offline-indicator';
-import '@modules/support/styles/support.css';
+import '@modules/support/styles/support.scss';
 
 import * as HandlebarsFull from 'handlebars';
 import * as HandlebarsRuntime from 'handlebars/dist/handlebars.runtime.js';
@@ -174,11 +174,37 @@ export const AppController = {
         if (store.isAuthenticated) {
             await AdsController.syncFavorites();
         }
-        // eventBus.on('app:navigate', (path: string) => {
-        //     if (path) {
+        eventBus.on('app:navigate', (path: string) => {
+            if (path) {
+                this.navigateTo(path);
+            }
+        });
+
+        // // Часть кода диспатчит навигацию через CustomEvent на window
+        // // (например, AdDetailController при клике на продавца). Прокидываем в eventBus.
+        // window.addEventListener('app:navigate', ((e: CustomEvent) => {
+        //     const path = e.detail?.path;
+        //     if (typeof path === 'string' && path) {
         //         this.navigateTo(path);
         //     }
+        // }) as EventListener);
+
+        // let csrfExpiredHandling = false;
+        // eventBus.on('auth:csrf-expired', async () => {
+        //     if (csrfExpiredHandling) return;
+        //     if (!store.isAuthenticated) return;
+        //     csrfExpiredHandling = true;
+        //     try {
+        //         await authActions.logout();
+        //     } catch {
+        //         store.setState({ isAuthenticated: false, user: null });
+        //     }
+        //     storage.removeToken();
+        //     uiActions.showError('Сессия истекла, войдите заново');
+        //     this.navigateTo('/login');
+        //     csrfExpiredHandling = false;
         // });
+
         window.addEventListener('app:route', () => {
             this.router();
         });
@@ -242,10 +268,8 @@ export const AppController = {
                 if (token) {
                     iframe.contentWindow?.postMessage({ type: 'support-widget-token', token }, '*');
                 }
-                iframe.contentWindow?.postMessage(
-                    { type: 'support-widget-auth-changed', isAuthenticated: store.isAuthenticated },
-                    '*',
-                );
+                // Сигнал об открытии — виджет сам решит, нужно ли перезагрузить данные
+                iframe.contentWindow?.postMessage({ type: 'support-widget-opened' }, '*');
             }
         });
 
@@ -261,8 +285,12 @@ export const AppController = {
             );
         });
 
-        // При смене авторизации — обновить виджет
+        // При фактической смене isAuthenticated (а не на каждый setState) — обновить виджет
+        let lastAuth = store.isAuthenticated;
         store.subscribe((state) => {
+            if (state.isAuthenticated === lastAuth) return;
+            lastAuth = state.isAuthenticated;
+
             const token = storage.getToken();
             if (state.isAuthenticated && token) {
                 iframe.contentWindow?.postMessage({ type: 'support-widget-token', token }, '*');

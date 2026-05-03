@@ -1,4 +1,4 @@
-import '@modules/profile/pages/profile/profile.css';
+import '@modules/profile/pages/profile/profile.scss';
 import template from '@modules/profile/pages/profile/profile.hbs';
 import { HeaderComponent } from '@modules/common/components/header/header';
 import { SearchSectionComponent } from '@modules/common/components/search-section/search-section';

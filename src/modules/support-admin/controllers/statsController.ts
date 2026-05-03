@@ -7,7 +7,7 @@ import type { SupportTicketAdmin, StatsResponse } from '../types';
 import statsTemplateRaw from '../views/stats-page.hbs?raw';
 import tableTemplateRaw from '../views/ticket-table.hbs?raw';
 import chatPanelTemplateRaw from '../views/admin-chat.hbs?raw';
-import '../styles/admin.css';
+import '../styles/admin.scss';
 
 declare const Handlebars: any;
 

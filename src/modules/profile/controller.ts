@@ -4,7 +4,7 @@ import { ProfileService } from '@modules/profile/service';
 import { eventBus } from '@/core/eventBus';
 import type { HandlebarsTemplateFunction } from '@/types';
 import type { ProfileTab, UserProfile } from '@modules/profile/types';
-import '@modules/profile/pages/profile/profile.css';
+import '@modules/profile/pages/profile/profile.scss';
 import profileContentTpl from '@modules/profile/components/profile-content/profile-content.hbs';
 import profileSidebarTpl from '@modules/profile/components/profile-sidebar/profile-sidebar.hbs';
 import { ProfileAvatar } from '@modules/profile/components/profile-avatar/profile-avatar';

@@ -1,6 +1,6 @@
 import template from '@modules/profile/components/close-ad-modal/close-ad-modal.hbs';
-import '@modules/common/components/modal/modal.css';
-import '@modules/profile/components/close-ad-modal/style.css';
+import '@modules/common/components/modal/modal.scss';
+import '@modules/profile/components/close-ad-modal/style.scss';
 import { adsService } from '@/services/adsServices';
 import { uiActions } from '@/actions/uiActions';
 import { eventBus } from '@/core/eventBus';

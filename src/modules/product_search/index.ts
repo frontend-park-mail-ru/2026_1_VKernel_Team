@@ -1,4 +1,5 @@
 // src/modules/product_search/index.ts
+import './css/product_search.scss';
 
 import template from './templates/product_search.hbs?raw';
 import { HeaderComponent } from '@modules/common/components/header/header';

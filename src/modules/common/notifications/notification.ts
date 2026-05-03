@@ -1,4 +1,4 @@
-import '@modules/common/notifications/notification.css';
+import '@modules/common/notifications/notification.scss';
 
 export interface NotificationOptions {
     type: 'info' | 'warning' | 'error' | 'success';

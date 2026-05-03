@@ -1,4 +1,4 @@
-import '@modules/cart/components/cart-contacts-form/styles.css';
+import '@modules/cart/components/cart-contacts-form/styles.scss';
 import template from '@modules/cart/components/cart-contacts-form/cart-contacts-form.hbs?raw';
 
 export const CartContactsFormComponent = {

@@ -1,6 +1,7 @@
-import '@modules/profile/components/profile-content/style.css';
+import '@modules/profile/components/profile-content/style.scss';
 import template from '@modules/profile/components/profile-content/profile-content.hbs';
 import { CloseAdModal } from '@modules/profile/components/close-ad-modal/close-ad-modal';
+import { eventBus } from '@/core/eventBus';
 
 export const ProfileContent = {
     getTemplate() {
@@ -45,13 +46,11 @@ export const ProfileContent = {
             // Кнопка редактирования
             const editBtn = target.closest('.rec-card-edit') as HTMLElement | null;
             if (editBtn) {
+                e.preventDefault();
+                e.stopPropagation();
                 const adId = editBtn.getAttribute('data-edit-id');
                 if (adId) {
-                    window.dispatchEvent(
-                        new CustomEvent('app:navigate', {
-                            detail: { path: `/edit-ad/${adId}` },
-                        }),
-                    );
+                    eventBus.emit('app:navigate', `/edit-ad/${adId}`);
                 }
                 return;
             }

@@ -1,4 +1,4 @@
-import '@modules/cart/components/cart-button/styles.css';
+import '@modules/cart/components/cart-button/styles.scss';
 import { cartActions } from '@modules/cart/actions';
 import { cartStore } from '@modules/cart/store';
 import { store } from '@core/store';

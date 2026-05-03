@@ -2,6 +2,7 @@
  * Контроллер страницы объявления
  */
 
+import './css/ad-detail.scss';
 import Handlebars from 'handlebars';
 import adDetailTpl from './templates/ad-detail.hbs';
 import { CONFIG } from '@/core/config';
