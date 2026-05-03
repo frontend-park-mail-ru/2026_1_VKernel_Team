@@ -348,13 +348,13 @@ body .main-container {
     position: absolute;
     bottom: 0;
     right: 0;
-    width: 150px;
+    width: 130px;
     height: auto;
     z-index: 1;
 }
 
 .card-title {
-    font-size: 16px;
+    font-size: 12px;
     font-weight: 500;
     color: #495057;
     text-align: left;
@@ -381,7 +381,7 @@ body .main-container {
     align-items: center;
     gap: 5px;
     color: #495057;
-    font-size: 16px;
+    font-size: 12px;
     font-weight: 500;
     position: static;
     line-height: 1.2;
@@ -611,68 +611,108 @@ body .main-container {
 }
 
 
+@media (max-width: 1024px) {
+    .main-content .content-grid {
+        grid-template-columns: 1fr; 
+    }
+    
+    .main-content .ad-column {
+        display: none; 
+    }
+    
+    .main-content .cards-row {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    
+    .main-content .recommendations-row {
+        grid-template-columns: repeat(3, 1fr); 
+    }
+    .main-content .category-card.all-categories .card-title {
+        display: flex;
+        align-items: center;
+        justify-content: center; 
+        gap: 5px;
+        color: #495057;
+        font-size: 14px; 
+        font-weight: 500;
+        position: static;
+        line-height: 1.2;
+        width: 100%; 
+        padding: 0 10px; 
+        box-sizing: border-box;
+    }
+}
 
 @media (max-width: 768px) {
-    body .main-content {
-        padding-top: 140px; 
+    .main-container .main-content {
         padding-left: 10px;
         padding-right: 10px;
         margin-top: 180px; 
     }
 
-    body .content-grid {
+    .main-container .content-grid {
         grid-template-columns: 1fr; 
     }
 
-    body .ad-column {
+    .main-container .ad-column {
         display: none;
     }
-
-    body .cards-row {
+    .main-container .cards-row {
         display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 10px;
+        grid-template-columns: repeat(3, 1fr); 
+        gap: 8px; 
     }
 
-    body .category-card {
-        height: 100px; 
+    .main-container .category-card {
+        height: 75px; 
         overflow: hidden; 
+        border-radius: 8px;
     }
 
-    body .category-card .card-title {
-        font-size: 14px; 
+    .main-container .category-card .card-title {
+        font-size: 11px; 
         line-height: 1.1;
-        top: 10px;
-        left: 10px;
-        right: 10px; 
+        top: 6px;
+        left: 6px;
+        right: 6px; 
     }
 
-    body .category-card img {
-        width: 100px;
+    .main-container .category-card img {
+        width: 100px; 
         bottom: -5px;
-        right: -10px; 
+        right: -5px; 
     }
-
-    body .recommendations-row {
+    .main-container .category-card.all-categories .card-title {
+        font-size: 12px;
+        justify-content: center;
+        width: 100%;
+        padding: 0 5px;
+        box-sizing: border-box;
+        text-align: center;
+    }
+    .main-container .category-card.all-categories .card-title::after {
+        display: none;
+    }
+    .main-container .recommendations-row {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
-        gap: 10px;
+        gap: 8px;
     }
 
-    body .rec-card {
+    .main-container .rec-card {
         height: auto;
-        min-height: 240px;
+        min-height: 220px;
     }
 
-    body .rec-card-image-container {
-        height: 130px; 
+    .main-container .rec-card-image-container {
+        height: 120px; 
     }
 
-    body .rec-card-content {
+    .main-container .rec-card-content {
         padding: 8px;
     }
 
-    body .rec-card-title {
+    .main-container .rec-card-title {
         font-size: 13px;
         line-height: 1.2;
         margin-bottom: 4px;
@@ -682,15 +722,15 @@ body .main-container {
         overflow: hidden;
     }
 
-    body .rec-card-price {
+    .main-container .rec-card-price {
         font-size: 14px;
     }
 
-    body .rec-card-location {
+    .main-container .rec-card-location {
         font-size: 11px;
     }
 
-    body .rec-card-fav {
+    .main-container .rec-card-fav {
         width: 28px;
         height: 28px;
         top: 5px;
