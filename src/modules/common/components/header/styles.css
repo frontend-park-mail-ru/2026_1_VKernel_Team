@@ -69,130 +69,117 @@
     font-weight: bold;
 }
 
-/* =========================================
-   БРОНЕБОЙНАЯ АДАПТИВКА ШАПКИ (360x800)
-   ========================================= */
 
 @media (max-width: 768px) {
-    .header-content {
-        padding: 8px 10px !important;
-        justify-content: space-between !important;
-        width: 100% !important;
+    body .header-content {
+        padding: 8px 10px;
+        justify-content: space-between;
+        width: 100%;
     }
 
-    /* 1. ПРИНУДИТЕЛЬНО ВКЛЮЧАЕМ ЛЕВЫЙ БЛОК */
-    .header-left {
-        display: flex !important; 
-        flex: 1 !important;
-        gap: 15px !important;
-        visibility: visible !important;
-        opacity: 1 !important;
+    body .header-left {
+        display: flex; 
+        flex: 1;
+        gap: 15px;
+        visibility: visible;
+        opacity: 1;
     }
 
-
-    /* 2. ЗАЩИЩАЕМ ССЫЛКИ ОТ СЖАТИЯ */
-    .nav-icon, 
-    .nav-icon .nav-link {
-        display: flex !important;
-        align-items: center !important;
-        flex-shrink: 0 !important;
+    body .nav-icon, 
+    body .nav-icon .nav-link {
+        display: flex;
+        align-items: center;
+        flex-shrink: 0;
     }
 
-    /* 3. ЖЕСТКИЙ РАЗМЕР ДЛЯ ИКОНОК (Иначе SVG может стать 0x0) */
-    .nav-icon .icon {
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        width: 20px !important;
-        height: 20px !important;
-        min-width: 20px !important;
-        margin-right: 0 !important;
+    body .nav-icon .icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 20px;
+        height: 20px;
+        min-width: 20px;
+        margin-right: 0;
     }
 
-    .nav-icon .icon svg {
-        width: 100% !important;
-        height: 100% !important;
-        display: block !important;
+    body .nav-icon .icon svg {
+        width: 100%;
+        height: 100%;
+        display: block;
     }
 
-    /* 4. БЕСПОЩАДНО УБИВАЕМ ТЕКСТ */
-    .nav-icon .nav-text {
-        display: none !important;
+    body .nav-icon .nav-text {
+        display: none;
     }
 
-    /* Бейджи (красные кружочки с цифрами) */
-    .nav-link--with-badge .nav-badge {
-        position: absolute !important;
-        top: -6px !important;
-        right: -8px !important;
-        font-size: 10px !important;
-        padding: 2px 4px !important;
-        min-width: 14px !important;
-        line-height: 1 !important;
-        margin-left: 0 !important;
+    body .nav-link--with-badge .nav-badge {
+        position: absolute;
+        top: -6px;
+        right: -8px;
+        font-size: 10px;
+        padding: 2px 4px;
+        min-width: 14px;
+        line-height: 1;
+        margin-left: 0;
     }
 
-    /* 5. ПРАВЫЙ БЛОК */
-    .header-right {
-        display: flex !important;
-        flex-shrink: 0 !important;
-        gap: 12px !important;
+    body .header-right {
+        display: flex;
+        flex-shrink: 0;
+        gap: 12px;
     }
 
-    .header-right .avatar {
-        width: 32px !important;
-        height: 32px !important;
-        flex-shrink: 0 !important;
+    body .header-right .avatar {
+        width: 32px;
+        height: 32px;
+        flex-shrink: 0;
     }
 
-    .header-right .nav-login {
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        width: 32px !important;
-        height: 32px !important;
-        background: #f0f0f0 !important; /* Серый фон для гостя */
-        border-radius: 50% !important;
-        font-size: 0 !important; /* Скрываем текст "Войти" */
-        color: transparent !important;
-        position: relative !important;
-        transition: background 0.2s !important;
+    body .header-right .nav-login {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        background: #f0f0f0; 
+        border-radius: 50%;
+        font-size: 0; 
+        color: transparent;
+        position: relative;
+        transition: background 0.2s;
     }
 
-    /* Добавляем символ пользователя вместо текста */
-    .header-right .nav-login::before {
-        content: '👤' !important;
-        font-size: 18px !important;
-        color: #555 !important;
-        display: block !important;
+    body .header-right .nav-login::before {
+        content: '👤';
+        font-size: 18px;
+        color: #555;
+        display: block;
     }
 
-    .header-right .nav-login:hover {
-        background: #e0e0e0 !important;
+    body .header-right .nav-login:hover {
+        background: #e0e0e0;
     }
 
-/* Превращаем кнопку "Разместить объявление" в круглый "+" */
-    .btn.place-ad-btn {
-        position: relative !important;
-        font-size: 0 !important; 
-        color: transparent !important; /* Делаем оригинальный текст невидимым */
-        min-width: 32px !important;
-        width: 32px !important;
-        height: 32px !important;
-        padding: 0 !important;
-        border-radius: 50% !important;
-        overflow: hidden !important; /* Обрезаем всё, что пытается вылезти */
+    body .btn.place-ad-btn {
+        position: relative;
+        font-size: 0; 
+        color: transparent; 
+        min-width: 32px;
+        width: 32px;
+        height: 32px;
+        padding: 0;
+        border-radius: 50%;
+        overflow: hidden; 
     }
 
-    /* Жестко центрируем плюсик абсолютным позиционированием */
-    .btn.place-ad-btn::after {
-        content: '+' !important;
-        position: absolute !important;
-        top: 50% !important;
-        left: 50% !important;
-        transform: translate(-50%, -50%) !important;
-        font-size: 26px !important;
-        line-height: 1 !important;
-        color: #fff !important; /* Белый цвет плюсика */
+    body .btn.place-ad-btn::after {
+        content: '+';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 26px;
+        line-height: 1;
+        color: #fff; 
     }
 }

@@ -90,116 +90,121 @@ body.auth-page #app {
 
 
 @media (max-width: 768px) {
-    .auth-container {
-        width: 100% !important;
-        padding: 32px 24px !important; 
-        border-radius: 24px !important; 
-        margin: 0 auto !important;
-    }
-    .auth-header {
-        display: flex !important;
-        align-items: center !important;
-        margin-bottom: 30px !important;
-        position: relative !important;
-        justify-content: center !important;
+    body.auth-page .auth-container {
+        width: 100%;
+        padding: 32px 24px; 
+        border-radius: 24px; 
+        margin: 0 auto;
     }
 
-    .auth-header h2 {
-        font-size: 22px !important;
-        font-weight: 700 !important;
-        margin: 0 !important;
-        color: #222 !important;
-    }
-    .back-link {
-        position: absolute !important;
-        left: -8px !important; 
-        top: 50% !important;
-        transform: translateY(-50%) !important;
-        font-size: 24px !important;
-        padding: 8px !important; 
-        text-decoration: none !important;
-        color: #555 !important;
-        transition: color 0.2s !important;
-    }
-    .form-group {
-        margin-bottom: 20px !important;
+    body.auth-page .auth-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 30px;
+        position: relative;
+        justify-content: center;
     }
 
-    .form-group label {
-        font-size: 14px !important;
-        font-weight: 600 !important;
-        color: #444 !important;
-        margin-bottom: 8px !important;
-        display: block !important;
-        margin-left: 4px !important; 
+    body.auth-page .auth-header h2 {
+        font-size: 22px;
+        font-weight: 700;
+        margin: 0;
+        color: #222;
     }
 
-    .form-group input {
-        width: 100% !important;
-        height: 52px !important; 
-        padding: 0 16px !important;
-        font-size: 16px !important; 
-        border-radius: 16px !important; 
-        border: 1px solid #e0e0e0 !important;
-        background: #fafafa !important;
-        box-sizing: border-box !important;
-        transition: all 0.3s ease !important;
-    }
-    .form-group input:focus {
-        background: #fff !important;
-        border-color: #2bde8c !important;
-        box-shadow: 0 0 0 4px rgba(43, 222, 140, 0.15) !important;
-        outline: none !important;
-    }
-    .password-wrapper {
-        position: relative !important;
-        width: 100% !important;
+    body.auth-page .back-link {
+        position: absolute;
+        left: -8px; 
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 24px;
+        padding: 8px; 
+        text-decoration: none;
+        color: #555;
+        transition: color 0.2s;
     }
 
-    .password-wrapper input {
-        padding-right: 50px !important; 
+    body.auth-page .form-group {
+        margin-bottom: 20px;
     }
 
-    .eye-btn {
-        position: absolute !important;
-        right: 4px !important; 
-        top: 50% !important;
-        transform: translateY(-50%) !important;
-        height: 44px !important; 
-        width: 44px !important; 
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        background: transparent !important;
-        border: none !important;
-        border-radius: 12px !important;
+    body.auth-page .form-group label {
+        font-size: 14px;
+        font-weight: 600;
+        color: #444;
+        margin-bottom: 8px;
+        display: block;
+        margin-left: 4px; 
     }
 
-    .eye-btn img {
-        width: 22px !important;
-        height: 22px !important;
-        opacity: 0.5 !important;
-    }
-    .btn-block {
-        width: 100% !important;
-        height: 54px !important; 
-        font-size: 17px !important;
-        font-weight: 700 !important;
-        border-radius: 16px !important;
-        margin-top: 24px !important;
-        box-shadow: 0 6px 16px rgba(43, 222, 140, 0.25) !important; 
-        transition: transform 0.2s, box-shadow 0.2s !important;
+    body.auth-page .form-group input {
+        width: 100%;
+        height: 52px; 
+        padding: 0 16px;
+        font-size: 16px; 
+        border-radius: 16px; 
+        border: 1px solid #e0e0e0;
+        background: #fafafa;
+        box-sizing: border-box;
+        transition: all 0.3s ease;
     }
 
-    .btn-block:active {
-        transform: translateY(2px) !important;
-        box-shadow: 0 2px 8px rgba(43, 222, 140, 0.2) !important;
+    body.auth-page .form-group input:focus {
+        background: #fff;
+        border-color: #2bde8c;
+        box-shadow: 0 0 0 4px rgba(43, 222, 140, 0.15);
+        outline: none;
     }
 
-    /* 6. ПОДВАЛ */
-    .auth-footer {
-        margin-top: 30px !important;
-        padding-top: 20px !important;
-        font-size: 15px !important;
+    body.auth-page .password-wrapper {
+        position: relative;
+        width: 100%;
+    }
+
+    body.auth-page .password-wrapper input {
+        padding-right: 50px; 
+    }
+
+    body.auth-page .eye-btn {
+        position: absolute;
+        right: 4px; 
+        top: 50%;
+        transform: translateY(-50%);
+        height: 44px; 
+        width: 44px; 
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: transparent;
+        border: none;
+        border-radius: 12px;
+    }
+
+    body.auth-page .eye-btn img {
+        width: 22px;
+        height: 22px;
+        opacity: 0.5;
+    }
+
+    body.auth-page .btn-block {
+        width: 100%;
+        height: 54px; 
+        font-size: 17px;
+        font-weight: 700;
+        border-radius: 16px;
+        margin-top: 24px;
+        box-shadow: 0 6px 16px rgba(43, 222, 140, 0.25); 
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    body.auth-page .btn-block:active {
+        transform: translateY(2px);
+        box-shadow: 0 2px 8px rgba(43, 222, 140, 0.2);
+    }
+
+    body.auth-page .auth-footer {
+        margin-top: 30px;
+        padding-top: 20px;
+        font-size: 15px;
     }
 }

@@ -613,85 +613,87 @@ body .main-container {
 
 
 @media (max-width: 768px) {
-    .main-content {
-        padding-top: 140px !important; 
-        padding-left: 10px !important;
-        padding-right: 10px !important;
-        margin-top: 180px !important; 
+    body .main-content {
+        padding-top: 140px; 
+        padding-left: 10px;
+        padding-right: 10px;
+        margin-top: 180px; 
     }
 
-    .content-grid {
-        grid-template-columns: 1fr !important; 
+    body .content-grid {
+        grid-template-columns: 1fr; 
     }
 
-    .ad-column {
-        display: none !important;
-    }
-.cards-row {
-        display: grid !important;
-        grid-template-columns: repeat(2, 1fr) !important;
-        gap: 10px !important;
+    body .ad-column {
+        display: none;
     }
 
-    .category-card {
-        height: 100px !important; 
-        overflow: hidden !important; 
+    body .cards-row {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
     }
 
-    .category-card .card-title {
-        font-size: 14px !important; 
-        line-height: 1.1 !important;
-        top: 10px !important;
-        left: 10px !important;
-        right: 10px !important; 
+    body .category-card {
+        height: 100px; 
+        overflow: hidden; 
     }
 
-    .category-card img {
-        width: 100px !important;
-        bottom: -5px !important;
-        right: -10px !important; 
+    body .category-card .card-title {
+        font-size: 14px; 
+        line-height: 1.1;
+        top: 10px;
+        left: 10px;
+        right: 10px; 
     }
 
-    .recommendations-row {
-        display: grid !important;
-        grid-template-columns: repeat(2, 1fr) !important;
-        gap: 10px !important;
+    body .category-card img {
+        width: 100px;
+        bottom: -5px;
+        right: -10px; 
     }
 
-    .rec-card {
-        height: auto !important;
-        min-height: 240px !important;
+    body .recommendations-row {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
     }
 
-    .rec-card-image-container {
-        height: 130px !important; 
+    body .rec-card {
+        height: auto;
+        min-height: 240px;
     }
 
-    .rec-card-content {
-        padding: 8px !important;
+    body .rec-card-image-container {
+        height: 130px; 
     }
 
-    .rec-card-title {
-        font-size: 13px !important;
-        line-height: 1.2 !important;
-        margin-bottom: 4px !important;
-        display: -webkit-box !important;
-        -webkit-line-clamp: 2 !important;
-        -webkit-box-orient: vertical !important;
-        overflow: hidden !important;
+    body .rec-card-content {
+        padding: 8px;
     }
 
-    .rec-card-price {
-        font-size: 14px !important;
+    body .rec-card-title {
+        font-size: 13px;
+        line-height: 1.2;
+        margin-bottom: 4px;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
     }
 
-    .rec-card-location {
-        font-size: 11px !important;
+    body .rec-card-price {
+        font-size: 14px;
     }
-    .rec-card-fav {
-        width: 28px !important;
-        height: 28px !important;
-        top: 5px !important;
-        right: 5px !important;
+
+    body .rec-card-location {
+        font-size: 11px;
+    }
+
+    body .rec-card-fav {
+        width: 28px;
+        height: 28px;
+        top: 5px;
+        right: 5px;
     }
 }

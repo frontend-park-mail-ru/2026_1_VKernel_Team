@@ -170,11 +170,8 @@
     align-self: flex-start;
 }
 
-
-/* ========== АДАПТИВНОСТЬ: ЭЛЕМЕНТ СПИСКА ЧАТОВ ========== */
 @media (max-width: 768px) {
     .chat-list-item {
-        /* Меняем жесткую сетку на вертикальный Flex */
         display: flex !important;
         flex-direction: column !important;
         gap: 12px !important;
@@ -182,8 +179,6 @@
         width: 100% !important;
         box-sizing: border-box !important;
     }
-
-    /* 1. Пользователь */
     .chat-list-item__partner {
         width: 100% !important;
     }
@@ -192,8 +187,6 @@
         width: 40px !important;
         height: 40px !important;
     }
-
-    /* 2. Блок объявления (Сделаем его слегка выделенным на мобилке) */
     .chat-list-item__ad {
         background: #f9fafb !important;
         padding: 8px !important;
@@ -211,11 +204,9 @@
     .chat-list-item__ad-title {
         font-size: 13px !important;
     }
-
-    /* 3. Последнее сообщение и время */
     .chat-list-item__last {
         display: flex !important;
-        flex-direction: row !important; /* Выстраиваем в одну линию */
+        flex-direction: row !important; 
         justify-content: space-between !important;
         align-items: center !important;
         width: 100% !important;
@@ -223,16 +214,14 @@
     }
 
     .chat-list-item__last-text {
-        flex: 1 !important; /* Забирает все свободное место */
-        -webkit-line-clamp: 1 !important; /* На мобилке лучше оставить 1 строку сообщения */
+        flex: 1 !important; 
+        -webkit-line-clamp: 1 !important; 
     }
 
     .chat-list-item__last-time {
-        flex-shrink: 0 !important; /* Запрещаем сжиматься времени */
+        flex-shrink: 0 !important; 
         font-size: 11px !important;
     }
-
-    /* Точка непрочитанного сообщения */
     .chat-list-item__unread-dot {
         margin: 0 !important;
         flex-shrink: 0 !important;

@@ -690,86 +690,86 @@
 
 @media (max-width: 768px) {
     /* Заголовок */
-    .place-ad-page .page-header {
+    body .place-ad-page .page-header {
         flex-direction: column;
         align-items: flex-start;
         gap: 10px;
     }
 
-    .place-ad-page .page-header h1 {
+    body .place-ad-page .page-header h1 {
         font-size: 22px;
     }
 
     /* Карточки формы */
-    .place-ad-page .form-card-content {
+    body .place-ad-page .form-card-content {
         padding: 16px;
         gap: 10px;
     }
 
-    .place-ad-page .form-card-title {
+    body .place-ad-page .form-card-title {
         padding: 14px 20px;
         font-size: 16px;
     }
 
     /* Радио */
-    .place-ad-page .radio-group {
+    body .place-ad-page .radio-group {
         gap: 16px;
         flex-direction: column;
     }
 
     /* Характеристики */
-    .place-ad-page .dynamic-attribute {
+    body .place-ad-page .dynamic-attribute {
         flex-direction: column;
         gap: 10px;
     }
 
-    .place-ad-page .dynamic-attribute .remove-attr-btn {
+    body .place-ad-page .dynamic-attribute .remove-attr-btn {
         align-self: flex-end;
     }
 
     /* Фото */
-    .place-ad-page .photo-card,
-    .place-ad-page .photo-add-btn {
+    body .place-ad-page .photo-card,
+    body .place-ad-page .photo-add-btn {
         width: 90px;
         height: 90px;
     }
 
-    .place-ad-page .photo-remove-btn {
+    body .place-ad-page .photo-remove-btn {
         width: 22px;
         height: 22px;
         top: -6px;
         right: -6px;
     }
 
-    .place-ad-page .photo-remove-btn::before {
+    body .place-ad-page .photo-remove-btn::before {
         font-size: 14px;
     }
 
-    .place-ad-page .add-photo-icon {
+    body .place-ad-page .add-photo-icon {
         font-size: 24px;
     }
 
-    .place-ad-page .add-photo-text {
+    body .place-ad-page .add-photo-text {
         font-size: 10px;
     }
 
     /* Кнопки */
-    .place-ad-page .form-actions {
+    body .place-ad-page .form-actions {
         flex-direction: column;
     }
 
-    .place-ad-page .btn-cancel,
-    .place-ad-page .btn-clear-draft,
-    .place-ad-page .btn-draft,
-    .place-ad-page .btn-preview,
-    .place-ad-page .btn-submit {
+    body .place-ad-page .btn-cancel,
+    body .place-ad-page .btn-clear-draft,
+    body .place-ad-page .btn-draft,
+    body .place-ad-page .btn-preview,
+    body .place-ad-page .btn-submit {
         width: 100%;
         text-align: center;
     }
 
     /* Основная кнопка первой на мобилке */
-    .place-ad-page .btn-preview,
-    .place-ad-page .btn-submit {
+    body .place-ad-page .btn-preview,
+    body .place-ad-page .btn-submit {
         order: -1;
     }
 }

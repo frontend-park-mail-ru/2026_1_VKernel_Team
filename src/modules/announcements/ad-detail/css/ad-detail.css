@@ -563,126 +563,125 @@
 }
 
 @media (max-width: 768px) {
-    .ad-detail-page .search-section {
-        position: fixed !important; /* Возвращаем фиксацию */
-        top: 80px !important;      /* Высота твоего хедера */
-        left: 0 !important;
-        right: 0 !important;
-        z-index: 999 !important;
-        padding: 8px 10px !important;
-        background: white !important;
-        width: 100% !important;
-        margin: 0 !important;
-        border-radius: 0 0 12px 12px !important;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.1) !important;
+    /* 1. ПОИСК В ОДНУ СТРОКУ */
+    body .ad-detail-page .search-section {
+        position: fixed; 
+        top: 80px;      
+        left: 0;
+        right: 0;
+        z-index: 999;
+        padding: 8px 10px;
+        background: white;
+        width: 100%;
+        margin: 0;
+        border-radius: 0 0 12px 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        box-sizing: border-box;
     }
 
-    /* ПОИСК В ОДНУ СТРОКУ */
-    .ad-detail-page .search-row {
-        display: flex !important;
-        flex-direction: row !important; 
-        flex-wrap: nowrap !important;
-        align-items: center !important;
-        gap: 8px !important;
-        width: 100% !important;
+    body .ad-detail-page .search-row {
+        display: flex;
+        flex-direction: row; 
+        flex-wrap: nowrap;
+        align-items: center;
+        gap: 6px;
+        width: 100%;
+        height: auto;
     }
 
-    .ad-detail-page .search-row {
-        display: flex !important;
-        flex-direction: row !important; /* Оставляем в один ряд */
-        flex-wrap: nowrap !important;   /* Запрещаем перенос */
-        align-items: center !important;
-        gap: 6px !important;           /* Минимальные отступы */
-        height: auto !important;
+    body .ad-detail-page .brand {
+        min-width: 0;
+        flex-shrink: 1;
+        position: static;
+        height: auto;
     }
 
-    .ad-detail-page .brand {
-        min-width: 0 !important;
-        flex-shrink: 1 !important;
-        position: static !important;
-        height: auto !important;
+    body .ad-detail-page .logo {
+        position: static;
+        transform: none;
+        width: 80px; 
+        margin: 0;
     }
 
-    .ad-detail-page .logo {
-        position: static !important;
-        transform: none !important;
-        width: 80px !important; /* Уменьшаем лого, чтобы все влезло */
-        margin: 0 !important;
+    body .ad-detail-page .btn-categories {
+        display: flex;
+        height: 36px;
+        padding: 0 8px;
+        font-size: 11px;
+        white-space: nowrap;
+        flex-shrink: 0; 
     }
 
-    .ad-detail-page .btn-categories {
-        display: flex !important;
-        height: 36px !important;
-        padding: 0 8px !important;
-        font-size: 11px !important;
-        white-space: nowrap !important;
-        flex-shrink: 0 !important; /* Кнопка не должна сжиматься */
+    body .ad-detail-page .search-wrapper {
+        flex: 1; 
+        min-width: 0;
+        gap: 4px;
     }
 
-    .ad-detail-page .search-wrapper {
-        flex: 1 !important; /* Инпут забирает всё оставшееся место */
-        min-width: 0 !important;
-        gap: 4px !important;
+    body .ad-detail-page .search-input {
+        height: 36px;
+        font-size: 14px;
+        padding: 0 10px;
+        width: 100%;
+        box-sizing: border-box;
     }
 
-    .ad-detail-page .search-input {
-        height: 36px !important;
-        font-size: 14px !important;
-        padding: 0 10px !important;
-    }
-
-    .ad-detail-page .search-wrapper .btn {
-        padding: 0 10px !important;
-        height: 36px !important;
-        font-size: 13px !important;
+    body .ad-detail-page .search-wrapper .btn {
+        padding: 0 10px;
+        height: 36px;
+        font-size: 13px;
+        flex-shrink: 0;
     }
 
     /* 2. ПОРЯДОК: СНАЧАЛА MAIN-COLUMN, ПОТОМ ACTION-BLOCK */
-    .ad-detail-page .content-grid {
-        display: flex !important;
-        flex-direction: column !important;
-        gap: 15px !important;
+    body .ad-detail-page .content-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
     }
 
-    .ad-detail-page .main-column {
-        order: 1 !important; /* Теперь колонка с фото первая */
-        padding: 0 !important;
-        background: transparent !important;
-        box-shadow: none !important;
+    body .ad-detail-page .main-column {
+        order: 1; 
+        padding: 0;
+        background: transparent;
+        box-shadow: none;
+        display: flex;
+        flex-direction: column;
     }
 
     /* ФИКС ЗАГОЛОВКА: ставим в самый верх внутри колонки */
-    .ad-detail-page .ad-title-section {
-        order: -1 !important; /* Отрицательный порядок поднимает блок выше всех */
-        padding: 10px 0 !important;
-        margin: 0 !important;
+    body .ad-detail-page .ad-title-section {
+        order: -1; 
+        padding: 10px 0;
+        margin: 0;
     }
 
-    .ad-detail-page .ad-right {
-        order: 2 !important; /* Блок цены и кнопок идет вторым (под колонкой) */
-        position: static !important;
-        width: 100% !important;
+    body .ad-detail-page .ad-right {
+        order: 2; 
+        position: static;
+        width: 100%;
     }
 
     /* 3. ГАЛЕРЕЯ И ХАРАКТЕРИСТИКИ */
-    .ad-detail-page .ad-gallery-container {
-        flex-direction: column !important;
+    body .ad-detail-page .ad-gallery-container {
+        flex-direction: column;
     }
 
-    .ad-detail-page .ad-thumbnails-vertical {
-        flex-direction: row !important;
-        width: 100% !important;
-        overflow-x: auto !important;
-        padding: 10px 0 !important;
+    body .ad-detail-page .ad-thumbnails-vertical {
+        flex-direction: row;
+        width: 100%;
+        overflow-x: auto;
+        padding: 10px 0;
+        max-height: none;
     }
 
-    .ad-detail-page .thumbnail-vertical-wrapper {
-        width: 65px !important;
-        height: 65px !important;
-        flex-shrink: 0 !important;
+    body .ad-detail-page .thumbnail-vertical-wrapper {
+        width: 65px;
+        height: 65px;
+        flex-shrink: 0;
     }
 
-    .ad-detail-page .attributes-grid {
-        grid-template-columns: 1fr !important;
+    body .ad-detail-page .attributes-grid {
+        grid-template-columns: 1fr;
     }
 }

@@ -41,86 +41,74 @@
     gap: 0.5rem;
 }
 
-/* =========================================
-   МОБИЛЬНАЯ АДАПТИВКА БЛОКА ПОИСКА (Фикс наложений)
-   ========================================= */
-
-/* =========================================
-   МОБИЛЬНАЯ АДАПТИВКА БЛОКА ПОИСКА (FIX LOGO)
-   ========================================= */
-
 @media (max-width: 768px) {
-    
-    .search-row {
-        display: flex !important;
-        flex-direction: row !important;
-        flex-wrap: nowrap !important;
-        align-items: center !important;
-        gap: 8px !important;
-        height: auto !important;
-        padding: 0 !important;
+    body .search-row {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        align-items: center;
+        gap: 8px;
+        height: auto;
+        padding: 0;
     }
 
-    .brand {
-        flex-shrink: 0 !important;
-        min-width: 0 !important;
-        order: 1 !important;
-        /* Сбрасываем высоту контейнера, чтобы он не схлопывался */
-        height: auto !important; 
+    body .brand {
+        flex-shrink: 0;
+        min-width: 0;
+        order: 1;
+        height: auto; 
     }
 
-    .logo {
-        /* ВОЗВРАЩАЕМ В ПОТОК: это критично, чтобы лого было видно в ряду */
-        position: static !important; 
-        transform: none !important;
-        top: auto !important;
-        left: auto !important;
-        
-        width: 80px !important; 
-        height: auto !important;
-        display: block !important;
-        object-fit: contain !important;
+    body .logo {
+        position: static; 
+        transform: none;
+        top: auto;
+        left: auto;
+        width: 80px; 
+        height: auto;
+        display: block;
+        object-fit: contain;
     }
 
-    .search-wrapper {
-        flex: 1 !important;
-        min-width: 0 !important;
-        display: flex !important;
-        gap: 4px !important;
-        order: 2 !important;
+    body .search-wrapper {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        gap: 4px;
+        order: 2;
     }
 
-    .search-input {
-        width: 100% !important;
-        min-width: 0 !important;
-        height: 34px !important;
-        padding: 0 8px !important;
-        font-size: 14px !important;
-        border-radius: 6px !important;
+    body .search-input {
+        width: 100%;
+        min-width: 0;
+        height: 34px;
+        padding: 0 8px;
+        font-size: 14px;
+        border-radius: 6px;
     }
 
-    .search-wrapper .btn, 
-    .search-wrapper .place-ad-btn {
-        padding: 0 10px !important;
-        height: 34px !important;
-        font-size: 13px !important;
-        flex-shrink: 0 !important;
+    body .search-wrapper .btn, 
+    body .search-wrapper .place-ad-btn {
+        padding: 0 10px;
+        height: 34px;
+        font-size: 13px;
+        flex-shrink: 0;
     }
 
-    .geo {
-        flex-shrink: 0 !important;
-        display: flex !important;
-        align-items: center !important;
-        gap: 4px !important;
-        order: 3 !important;
+    body .geo {
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        order: 3;
     }
 
-    .geo .city {
-        display: inline !important;
-        font-size: 12px !important;
-        max-width: 60px !important; /* Немного ужали, чтобы точно всё влезло */
-        white-space: nowrap !important;
-        overflow: hidden !important;
-        text-overflow: ellipsis !important;
+    body .geo .city {
+        display: inline;
+        font-size: 12px;
+        max-width: 60px; 
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 }
