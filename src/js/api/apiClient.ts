@@ -5,6 +5,7 @@
 
 import { CONFIG } from '@/core/config';
 import { storage } from '@/utils/storage';
+import { eventBus } from '@/core/eventBus';
 import { networkStatus } from '@modules/common/offline/network/networkStatus';
 import type { ApiResponse } from '@/types';
 
@@ -214,6 +215,16 @@ export class ApiClient {
             // 502/503/504 от прокси = бэкенд недоступен → трактуем как офлайн
             if (response.status === 502 || response.status === 503 || response.status === 504) {
                 networkStatus.setOffline();
+            }
+
+            // Протух/отсутствует CSRF-токен → инициируем разлогин.
+            // Бэкенд (pkg/http/middleware/csrf.go) на mismatch отдаёт 400 с
+            // plain-text "Missing CSRF cookie" / "CSRF token mismatch".
+            if (response.status === 400) {
+                const errMsg = (data?.message || data?.error || '').toString().toLowerCase();
+                if (errMsg.includes('csrf')) {
+                    eventBus.emit('auth:csrf-expired');
+                }
             }
 
             return {

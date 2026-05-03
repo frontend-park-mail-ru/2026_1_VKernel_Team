@@ -44,11 +44,19 @@ window.addEventListener('message', (event: MessageEvent) => {
     }
 
     if (event.data?.type === 'support-widget-auth-changed') {
-        widgetAuth.isAuthenticated = !!event.data.isAuthenticated;
-        if (!event.data.isAuthenticated) {
+        const next = !!event.data.isAuthenticated;
+        if (next === widgetAuth.isAuthenticated) return;
+        widgetAuth.isAuthenticated = next;
+        if (!next) {
             storage.removeToken();
         }
         SupportWidgetController.navigate('list');
+    }
+
+    if (event.data?.type === 'support-widget-opened') {
+        // При открытии виджета перерисовываем текущую страницу;
+        // TicketListController сам решит, нужен ли свежий запрос (TTL-кэш).
+        SupportWidgetController.refresh();
     }
 });
 

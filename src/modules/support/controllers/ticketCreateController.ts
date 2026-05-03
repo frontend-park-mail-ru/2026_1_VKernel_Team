@@ -1,4 +1,5 @@
 import { supportApi } from '../api/supportApi';
+import { TicketListController } from './ticketListController';
 import { widgetAuth } from '../widgetAuth';
 
 import templateRaw from '../views/ticket-create.hbs?raw';
@@ -107,6 +108,7 @@ export const TicketCreateController = {
         const result = await supportApi.createTicket({ category, title, description });
 
         if (result.success) {
+            TicketListController.invalidate();
             this._onNavigate?.('list');
         } else {
             if (submitBtn) {

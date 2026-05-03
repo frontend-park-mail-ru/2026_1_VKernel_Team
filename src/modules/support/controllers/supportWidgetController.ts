@@ -43,6 +43,7 @@ export const SupportWidgetController = {
     navigate(page: string, data?: any): void {
         if (!this._contentEl) return;
         this._currentPage = page;
+        this._lastNavData = data ?? null;
 
         switch (page) {
             case 'list':
@@ -58,4 +59,11 @@ export const SupportWidgetController = {
                 break;
         }
     },
+
+    // Перерисовать текущую страницу (например, после открытия виджета).
+    refresh(): void {
+        this.navigate(this._currentPage, this._lastNavData ?? undefined);
+    },
+
+    _lastNavData: null as any,
 };
