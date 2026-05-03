@@ -145,84 +145,44 @@
     background: #fff1f0;
 }
 
-/* =========================================
-   МОБИЛЬНАЯ АДАПТИВКА САЙДБАРА ПРОФИЛЯ
-   ========================================= */
-
-/* =========================================
-   МОБИЛЬНАЯ АДАПТИВКА САЙДБАРА ПРОФИЛЯ
-   ========================================= */
 
 @media (max-width: 900px) {
-    /* 1. БАЗОВАЯ СЕТКА */
-    .profile-page-layout {
-        display: flex !important;
-        flex-direction: column !important;
-        gap: 15px !important;
-        width: 100% !important;
-        min-width: 0 !important; 
-        box-sizing: border-box !important;
+    body .profile-info-card {
+        padding: 15px;
+        box-shadow: none;
+        border: 1px solid #eee;
+        margin-bottom: 0;
+        width: 100%;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
     }
 
-    #sidebarContainer {
-        width: 100% !important;
-        min-width: 0 !important; 
-        display: flex !important;
-        flex-direction: column !important;
-        gap: 12px !important;
-        box-sizing: border-box !important;
+    body .profile-info-card__name-row {
+        margin-bottom: 0;
     }
 
-    /* 2. КАРТОЧКА ПОЛЬЗОВАТЕЛЯ */
-    .profile-info-card {
-        padding: 15px !important;
-        box-shadow: none !important;
-        border: 1px solid #eee !important;
-        margin-bottom: 0 !important;
-        width: 100% !important;
-        box-sizing: border-box !important;
-        display: flex !important;
-        flex-direction: column !important;
-        align-items: center !important;
-        gap: 8px !important;
+    body .profile-info-card__name {
+        font-size: 18px;
+        text-align: center;
+        word-break: break-word; 
     }
 
-    .profile-info-card__name-row {
-        margin-bottom: 0 !important;
+    body .profile-info-card__email {
+        font-size: 13px;
+        margin-bottom: 0;
+        text-align: center;
+        word-break: break-all; 
     }
 
-    .profile-info-card__name {
-        font-size: 18px !important;
-        text-align: center !important;
-        word-break: break-word !important; 
-    }
-
-    .profile-info-card__email {
-        font-size: 13px !important;
-        margin-bottom: 0 !important;
-        text-align: center !important;
-        word-break: break-all !important; 
-    }
-
-    .profile-info-card__meta {
-        flex-direction: row !important;
-        justify-content: space-around !important;
-        padding-top: 10px !important;
-        margin-top: 5px !important;
-        width: 100% !important;
-        box-sizing: border-box !important;
-    }
-
-    
-
-    .profile-content-section {
-        width: 100% !important;
-        flex: 1 !important; /* Позволяет блоку гибко заполнять пространство */
-        min-width: 0 !important; /* Защита от распирания таблицами или картинками внутри */
-        box-sizing: border-box !important;
-        padding: 12px !important; /* Уменьшили десктопный отступ 24px до 12px для экономии места на мобилке */
-        border-radius: 12px !important;
-        box-shadow: none !important;
-        border: 1px solid #eee !important;
+    body .profile-info-card__meta {
+        flex-direction: row;
+        justify-content: space-around;
+        padding-top: 10px;
+        margin-top: 5px;
+        width: 100%;
+        box-sizing: border-box;
     }
 }
