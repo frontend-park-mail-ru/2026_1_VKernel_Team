@@ -8,8 +8,8 @@ body .main-container {
 /* ========== ХЕДЕР ========== */
 .header {
     width: 100%;
-    height: 80px;
-    background: #6fffbc;
+    height: 40px;
+    background: #d6feeb;
     position: fixed;
     top: 0;
     left: 0;
@@ -53,7 +53,7 @@ body .main-container {
 }
 
 .nav-icon .nav-link:hover {
-    background: rgba(255, 255, 255, 1.0);
+    /* background: rgba(255, 255, 255, 1.0); */
     border-radius: 8px;
 }
 
@@ -85,6 +85,7 @@ body .main-container {
 
 .place-ad-btn {
     background: #2bc0de;
+    background: linear-gradient(135deg, #2bde8c, #2bc0de);
     color: #ffffff;
     padding: 0px 20px;
     height: 44px;
@@ -97,7 +98,6 @@ body .main-container {
 }
 
 .place-ad-btn:hover {
-    background: #24a9c7;
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
@@ -153,7 +153,7 @@ body .main-container {
     max-width: 1400px;
     margin: 0 auto;
     padding: 100px 20px;
-    margin-top: 80px;
+    margin-top: 60px;
 }
 
 .search-section {
@@ -165,7 +165,7 @@ body .main-container {
 
     /* Фиксация */
     position: fixed;
-    top: 80px;              /* сразу под хедером */
+    top: 40px;              /* сразу под хедером */
     left: 0;
     right: 0;
     z-index: 999;

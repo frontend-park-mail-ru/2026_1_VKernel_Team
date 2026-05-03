@@ -562,6 +562,23 @@
     transform: none;
 }
 
+
+.ad-detail-page .views {
+    max-width: 65%;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    overflow-wrap: normal;
+    word-break: normal;
+    justify-content: space-between;  
+}
+
+.ad-detail-page .views span {
+    overflow-wrap: normal !important;
+    word-break: normal !important;
+    white-space: nowrap !important;
+}
+
 @media (max-width: 768px) {
     .ad-detail-page .search-section {
         position: fixed !important; /* Возвращаем фиксацию */

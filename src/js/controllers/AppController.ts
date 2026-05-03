@@ -29,6 +29,8 @@ import { loadTemplates as loadChatDetailTemplates } from '@modules/chat/pages/ch
 import { unreadStore, UNREAD_CHANGED_EVENT } from '@modules/chat/unread-store';
 import { cartStore } from '@modules/cart/store';
 import { StatsController } from '@modules/support-admin/controllers/statsController';
+import { ProductSearchController, loadTemplates as loadProductSearchTemplates } from '@modules/product_search';
+import { SearchSectionComponent } from '@modules/common/components/search-section/search-section';
 
 import { store } from '@/core/store';
 import { eventBus } from '@/core/eventBus';
@@ -105,6 +107,7 @@ const registerHelpers = (Hbs: any) => {
             messages: 'Сообщения',
             purchases: 'Мои покупки',
             wallet: 'Кошелёк',
+            paid_services: 'Платные услуги',
             settings: 'Настройки',
         };
         return labels[tab] || tab;
@@ -171,11 +174,11 @@ export const AppController = {
         if (store.isAuthenticated) {
             await AdsController.syncFavorites();
         }
-        eventBus.on('app:navigate', (path: string) => {
-            if (path) {
-                this.navigateTo(path);
-            }
-        });
+        // eventBus.on('app:navigate', (path: string) => {
+        //     if (path) {
+        //         this.navigateTo(path);
+        //     }
+        // });
         window.addEventListener('app:route', () => {
             this.router();
         });
@@ -319,6 +322,7 @@ export const AppController = {
         this.templates['not-found'] = notFoundTpl;
         this.templates['user-profile'] = userProfileTpl;
         this.templates['ad-detail'] = adDetailTpl;
+        loadProductSearchTemplates();
     },
 
     async checkAuth(): Promise<void> {
@@ -392,7 +396,7 @@ export const AppController = {
         });
     },
 
-    router(): void {
+    async router(): Promise<void> {
         this.renderHeader();
         const path = window.location.pathname;
         const adMatch = path.match(/^\/ad\/(\d+)$/);
@@ -459,6 +463,22 @@ export const AppController = {
 
         if (path === '/support/stats') {
             StatsController.render();
+            return;
+        }
+
+        if (path.startsWith('/search')) {
+            const urlParams = new URLSearchParams(window.location.search);
+            const query = urlParams.get('query') || '';
+            const categoryId = urlParams.get('category_id') ? Number(urlParams.get('category_id')) : null;
+            
+            console.log('🔍 Роутер: поиск по запросу:', query, 'категория:', categoryId);
+            
+            await ProductSearchController.render(query, categoryId);
+
+            // Инициализация обработчиков поиска после рендера (можно вынести в отдельный метод)
+            setTimeout(() => {
+                SearchSectionComponent.initSearchHandlers();
+            }, 100);
             return;
         }
 

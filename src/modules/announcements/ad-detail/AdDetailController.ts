@@ -245,7 +245,8 @@ export class AdDetailController {
             const btn = backBtns[i];
             const handler = (e: Event) => {
                 e.preventDefault();
-                window.dispatchEvent(new CustomEvent('app:navigate', { detail: { path: '/' } }));
+                // window.dispatchEvent(new CustomEvent('app:navigate', { detail: { path: '/' } }));
+                window.location.href = '/';
             };
             btn.addEventListener('click', handler);
             this._handlers.set(`back-${i}`, handler);
@@ -344,9 +345,8 @@ export class AdDetailController {
                 e.stopPropagation();
 
                 if (!store.isAuthenticated) {
-                    window.dispatchEvent(
-                        new CustomEvent('app:navigate', { detail: { path: '/login' } }),
-                    );
+                    // window.dispatchEvent(new CustomEvent('app:navigate', { detail: { path: '/login' } }),);
+                    window.location.href = '/login';
                     return;
                 }
 
@@ -403,9 +403,8 @@ export class AdDetailController {
                 e.stopPropagation();
 
                 if (!store.isAuthenticated) {
-                    window.dispatchEvent(
-                        new CustomEvent('app:navigate', { detail: { path: '/login' } }),
-                    );
+                    // window.dispatchEvent(new CustomEvent('app:navigate', { detail: { path: '/login' } }),);
+                    window.location.href = '/login';
                     return;
                 }
 
@@ -446,9 +445,8 @@ export class AdDetailController {
         if (editBtn) {
             const handler = (e: Event) => {
                 e.preventDefault();
-                window.dispatchEvent(
-                    new CustomEvent('app:navigate', { detail: { path: `/edit-ad/${adId}` } }),
-                );
+                // window.dispatchEvent(new CustomEvent('app:navigate', { detail: { path: `/edit-ad/${adId}` } }),);
+                window.location.href = `/edit-ad/${adId}`;
             };
             editBtn.addEventListener('click', handler);
             this._handlers.set('editAd', handler);
@@ -466,9 +464,8 @@ export class AdDetailController {
                 e.stopPropagation();
 
                 if (!store.isAuthenticated) {
-                    window.dispatchEvent(
-                        new CustomEvent('app:navigate', { detail: { path: '/login' } }),
-                    );
+                    // window.dispatchEvent(new CustomEvent('app:navigate', { detail: { path: '/login' } }),);
+                    window.location.href = '/login';
                     return;
                 }
 
@@ -564,9 +561,11 @@ export class AdDetailController {
 
                 if (sellerId) {
                     if (isOwner) {
-                        eventBus.emit('app:navigate', '/profile');
+                        // eventBus.emit('app:navigate', '/profile');
+                        window.location.href = '/profile';
                     } else {
-                        eventBus.emit('app:navigate', `/seller/${sellerId}`);
+                        // eventBus.emit('app:navigate', `/seller/${sellerId}`);
+                        window.location.href = `/seller/${sellerId}`;
                     }
                 }
             };

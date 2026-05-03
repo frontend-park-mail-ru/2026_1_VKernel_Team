@@ -1,0 +1,123 @@
+<div class="main-container product-search-page">
+    <main class="main-content">
+        <!-- Поисковый блок -->
+        <div class="search-section">
+            <div class="search-row">
+                <div class="brand">
+                    <a href="/" data-nav="/">
+                        <img src="/images/logo/logo_clover2.jpeg" alt="Логотип" class="logo">
+                    </a>
+                </div>
+                <div class="search-wrapper">
+                    <input type="text" class="search-input" id="globalSearchInput" placeholder="Поиск объявлений..." value="{{query}}">
+                    <button class="btn place-ad-btn" id="globalSearchBtn">Найти</button>
+                </div>
+                <div class="geo">
+                    <span class="icon">📍</span>
+                    <span class="city">Москва</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-grid">
+            <!-- ЛЕВАЯ КОЛОНКА - ФИЛЬТРЫ -->
+            <aside class="filters-column">
+                <div class="filters-card">
+                    <h3 class="filters-title">Фильтры</h3>
+                    
+                    <!-- Фильтр по цене -->
+                    <div class="filter-section">
+                        <h4 class="filter-section-title">Цена, ₽</h4>
+                        <div class="price-inputs">
+                            <div class="price-input-wrapper">
+                                <input type="number" id="minPrice" class="filter-input price-input" placeholder="от" value="{{#if filters.minPrice}}{{filters.minPrice}}{{/if}}" min="0">
+                            </div>
+                            <span class="price-separator">—</span>
+                            <div class="price-input-wrapper">
+                                <input type="number" id="maxPrice" class="filter-input price-input" placeholder="до" value="{{#if filters.maxPrice}}{{filters.maxPrice}}{{/if}}" min="0">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Фильтр по состоянию -->
+                    <div class="filter-section">
+                        <h4 class="filter-section-title">Состояние</h4>
+                        <div class="condition-filter">
+                            <label class="condition-radio">
+                                <input type="radio" name="condition" value="all" {{#if (eq filters.condition 'all')}}checked{{/if}}>
+                                <span class="condition-radio-label">Все</span>
+                            </label>
+                            <label class="condition-radio">
+                                <input type="radio" name="condition" value="new" {{#if (eq filters.condition 'new')}}checked{{/if}}>
+                                <span class="condition-radio-label">Новый</span>
+                            </label>
+                            <label class="condition-radio">
+                                <input type="radio" name="condition" value="used" {{#if (eq filters.condition 'used')}}checked{{/if}}>
+                                <span class="condition-radio-label">Б/у</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- КНОПКА ПРИМЕНЕНИЯ ФИЛЬТРОВ -->
+                    <button class="apply-filters-btn" id="applyFiltersBtn">Применить фильтры</button>
+
+                    <!-- КНОПКА СБРОСА -->
+                    <button class="reset-filters-btn" id="resetFiltersBtn">Сбросить все фильтры</button>
+                </div>
+            </aside>
+
+            <!-- ПРАВАЯ КОЛОНКА - РЕЗУЛЬТАТЫ ПОИСКА -->
+            <div class="results-column">
+                <!-- Сортировка -->
+                <div class="sorting-bar">
+                    <div class="results-count">
+                        Найдено: <span class="count-number">{{totalCount}}</span> товаров
+                    </div>
+                    <div class="sorting-dropdown">
+                        <button class="sorting-trigger" id="sortingTrigger">
+                            <span id="sortingLabel">
+                                {{#if (eq sortOrder 'price_asc')}}Сначала дешёвые{{/if}}
+                                {{#if (eq sortOrder 'price_desc')}}Сначала дорогие{{/if}}
+                                {{#if (eq sortOrder 'default')}}По умолчанию{{/if}}
+                            </span>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="6 9 12 15 18 9"/>
+                            </svg>
+                        </button>
+                        <div class="sorting-menu" id="sortingMenu" style="display: none;">
+                            <div class="sorting-option" data-sort="default">По умолчанию</div>
+                            <div class="sorting-option" data-sort="price_asc">По цене: сначала дешёвые</div>
+                            <div class="sorting-option" data-sort="price_desc">По цене: сначала дорогие</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Результаты -->
+                {{#if isLoading}}
+                    <div class="search-loading">
+                        <div class="spinner"></div>
+                        <span>Загрузка...</span>
+                    </div>
+                {{else if error}}
+                    <div class="search-error">
+                        <span>⚠️</span>
+                        <p>{{error}}</p>
+                        <button class="retry-btn" id="retryBtn">Повторить попытку</button>
+                    </div>
+                {{else if results.length}}
+                    <div class="recommendations-row">
+                        {{#each results}}
+                            {{> common/components/ad-card/ad-card this showCartButton=true}}
+                        {{/each}}
+                    </div>
+                {{else}}
+                    <div class="search-empty">
+                        <span>🔍</span>
+                        <h3>Ничего не найдено</h3>
+                        <p>Попробуйте изменить параметры поиска</p>
+                    </div>
+                {{/if}}
+            </div>
+        </div>
+    </main>
+</div>

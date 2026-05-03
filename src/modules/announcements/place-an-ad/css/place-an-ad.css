@@ -549,7 +549,8 @@
 
 .place-ad-page .btn-preview {
     padding: 12px 28px;
-    background: linear-gradient(135deg, #4a90e2, #357abd);
+    /* background: linear-gradient(135deg, #4a90e2, #357abd); */
+    background: linear-gradient(135deg, #2bde8c, #2bc0de);
     color: white;
     border: none;
     border-radius: 10px;

@@ -24,7 +24,7 @@
 </div>
 
 <nav class="profile-nav">
-    {{#each (array 'ads' 'favorites' 'cart' 'messages' 'purchases' 'wallet' 'settings') as |tab|}}
+    {{#each (array 'ads' 'favorites' 'cart' 'messages' 'purchases' 'wallet' 'paid_services' 'settings') as |tab|}}
         <button
             class="profile-nav-item {{#eq ../currentTab tab}}active{{/eq}}"
             data-tab="{{tab}}"

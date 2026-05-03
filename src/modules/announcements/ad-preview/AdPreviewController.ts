@@ -29,9 +29,8 @@ export class AdPreviewController {
         this.draftData = await AdDraftService.get();
         if (!this.draftData) {
             uiActions.showError('Нет данных для предпросмотра');
-            window.dispatchEvent(
-                new CustomEvent('app:navigate', { detail: { path: '/place-ad' } }),
-            );
+            // window.dispatchEvent(new CustomEvent('app:navigate', { detail: { path: '/place-ad' } }),);
+            window.location.href = '/place-ad';
             return;
         }
 
@@ -149,9 +148,8 @@ export class AdPreviewController {
         if (backBtn) {
             const handler = (e: Event) => {
                 e.preventDefault();
-                window.dispatchEvent(
-                    new CustomEvent('app:navigate', { detail: { path: '/place-ad' } }),
-                );
+                // window.dispatchEvent(new CustomEvent('app:navigate', { detail: { path: '/place-ad' } }),);
+                window.location.href = '/place-ad';
             };
             backBtn.addEventListener('click', handler);
             this._handlers.set('back-to-edit', handler);
@@ -332,11 +330,8 @@ export class AdPreviewController {
                 await AdDraftService.clear();
 
                 const adId = result.data?.ad_id || result.data?.id;
-                window.dispatchEvent(
-                    new CustomEvent('app:navigate', {
-                        detail: { path: adId ? `/ad/${adId}` : '/profile' },
-                    }),
-                );
+                // window.dispatchEvent(new CustomEvent('app:navigate', {detail: { path: adId ? `/ad/${adId}` : '/profile' },}),);
+                window.location.href = adId ? `/ad/${adId}` : '/profile';
             } else {
                 NotificationComponent.show({
                     type: 'error',
@@ -375,7 +370,8 @@ export class AdPreviewController {
                 message: 'Объявление будет опубликовано при подключении к интернету',
                 duration: 5000,
             });
-            window.dispatchEvent(new CustomEvent('app:navigate', { detail: { path: '/' } }));
+            // window.dispatchEvent(new CustomEvent('app:navigate', { detail: { path: '/' } }));
+            window.location.href = '/';
         } catch {
             NotificationComponent.show({
                 type: 'error',
