@@ -63,7 +63,6 @@ export const AuthController = {
 
         if (result.isValid) {
             await authActions.checkAuth();
-            uiActions.showSuccess('Вход выполнен!');
             this.navigateTo('/');
         } else {
             this.showLoginError(result.error ?? 'Ошибка входа');
@@ -75,7 +74,6 @@ export const AuthController = {
 
         if (result.isValid) {
             await authActions.checkAuth();
-            uiActions.showSuccess('Регистрация успешна!');
             this.navigateTo('/');
         } else {
             if (result.fieldErrors && Object.keys(result.fieldErrors).length > 0) {
