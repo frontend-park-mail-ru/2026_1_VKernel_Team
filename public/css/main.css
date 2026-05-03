@@ -612,31 +612,21 @@ body .main-container {
 
 
 
-/* =========================================
-   МОБИЛЬНАЯ АДАПТИВКА ГЛАВНОЙ СТРАНИЦЫ
-   ========================================= */
-
-/* =========================================
-   МОБИЛЬНАЯ АДАПТИВКА ГЛАВНОЙ СТРАНИЦЫ (ФИНАЛ)
-   ========================================= */
 @media (max-width: 768px) {
-    /* --- БАЗА СТРАНИЦЫ --- */
     .main-content {
-        padding-top: 140px !important; /* Отступаем от поиска */
+        padding-top: 140px !important; 
         padding-left: 10px !important;
         padding-right: 10px !important;
-        margin-top: 180px !important; /* Отступаем от хедера */
+        margin-top: 180px !important; 
     }
 
     .content-grid {
-        grid-template-columns: 1fr !important; /* Убираем правую колонку с рекламой */
+        grid-template-columns: 1fr !important; 
     }
 
     .ad-column {
         display: none !important;
     }
-
-    /* --- КАТЕГОРИИ (2 КОЛОНКИ) --- */
 .cards-row {
         display: grid !important;
         grid-template-columns: repeat(2, 1fr) !important;
@@ -644,12 +634,12 @@ body .main-container {
     }
 
     .category-card {
-        height: 100px !important; /* Сделали карточку повыше (было 80px) */
+        height: 100px !important; 
         overflow: hidden !important; 
     }
 
     .category-card .card-title {
-        font-size: 14px !important; /* Чуть увеличили шрифт для баланса */
+        font-size: 14px !important; 
         line-height: 1.1 !important;
         top: 10px !important;
         left: 10px !important;
@@ -657,12 +647,11 @@ body .main-container {
     }
 
     .category-card img {
-        width: 100px !important; /* Увеличили саму фотку (было 70px) */
+        width: 100px !important;
         bottom: -5px !important;
-        right: -10px !important; /* Слегка сдвинули вправо, чтобы красиво обрезалась краем */
+        right: -10px !important; 
     }
 
-    /* --- ТОВАРЫ / РЕКОМЕНДАЦИИ (2 КОЛОНКИ) --- */
     .recommendations-row {
         display: grid !important;
         grid-template-columns: repeat(2, 1fr) !important;
@@ -675,7 +664,7 @@ body .main-container {
     }
 
     .rec-card-image-container {
-        height: 130px !important; /* Меньше места под фото, больше под текст */
+        height: 130px !important; 
     }
 
     .rec-card-content {
@@ -686,7 +675,6 @@ body .main-container {
         font-size: 13px !important;
         line-height: 1.2 !important;
         margin-bottom: 4px !important;
-        /* Жестко обрезаем длинные названия на 2 строки */
         display: -webkit-box !important;
         -webkit-line-clamp: 2 !important;
         -webkit-box-orient: vertical !important;
@@ -700,8 +688,6 @@ body .main-container {
     .rec-card-location {
         font-size: 11px !important;
     }
-
-    /* Иконка лайка на карточке товара */
     .rec-card-fav {
         width: 28px !important;
         height: 28px !important;

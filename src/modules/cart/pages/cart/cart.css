@@ -476,9 +476,7 @@
     color: #fff;
 }
 
-/* ========== АДАПТИВНОСТЬ: МОБИЛЬНАЯ КОРЗИНА (ФИНАЛ) ========== */
 @media (max-width: 768px) {
-    /* 1. ГЛОБАЛЬНЫЙ СБРОС */
     .main-content {
         padding: 0 !important;
         width: 100% !important;
@@ -498,8 +496,6 @@
         font-size: 22px !important;
         margin-bottom: 16px !important;
     }
-
-    /* 2. ЛЕЙАУТ */
     .cart-page .cart-layout {
         display: flex !important;
         flex-direction: column !important;
@@ -515,8 +511,6 @@
         flex-direction: column !important;
         gap: 16px !important;
     }
-
-    /* 3. КАРТОЧКИ ПРОДАВЦОВ */
     .cart-page .cart-seller-group, 
     .cart-page .cart-section,
     .cart-page .cart-payment {
@@ -544,21 +538,13 @@
         padding: 0 !important;
         display: block !important;
     }
-
-    /* -------------------------------------------
-       ТОВАРЫ: GRID-AREAS 
-       ------------------------------------------- */
-    
-    /* 🌟 CSS-МАГИЯ: "Растворяем" обертку кнопок, чтобы Grid увидел кнопки 🌟 */
     .cart-page .cart-item-actions {
         display: contents !important; 
     }
 
     .cart-page .cart-item {
         display: grid !important;
-        /* 3 колонки: Картинка (80px) | Центр (гибкий) | Крестик (32px) */
         grid-template-columns: 80px 1fr 32px !important; 
-        /* 3 строки: Название+Цена | Доставка | Кнопка сообщения */
         grid-template-areas: 
             "img info del"
             "img delivery delivery"
@@ -577,9 +563,8 @@
         padding-bottom: 0 !important;
     }
 
-    /* Назначаем элементы в их зоны */
     .cart-page .cart-item-image {
-        grid-area: img !important; /* Картинка слева на все 3 строки */
+        grid-area: img !important; 
         width: 80px !important; 
         height: 80px !important;
         border-radius: 8px !important;
@@ -590,7 +575,7 @@
     }
 
     .cart-page .cart-item-info {
-        grid-area: info !important; /* Название и цена сверху */
+        grid-area: info !important;
         display: flex !important;
         flex-direction: column !important;
         gap: 4px !important;
@@ -601,7 +586,7 @@
     }
 
     .cart-page .cart-item-delivery {
-        grid-area: delivery !important; /* Доставка посередине */
+        grid-area: delivery !important; 
         display: flex !important;
         flex-direction: column !important;
         gap: 2px !important;
@@ -609,8 +594,6 @@
         padding: 0 !important;
         width: 100% !important;
     }
-
-    /* Крестик удаления (Правый верхний угол) */
     .cart-page .cart-item-delete {
         grid-area: del !important; 
         background: transparent !important;
@@ -627,19 +610,16 @@
         box-shadow: none !important;
     }
 
-    /* 🌟 Кнопка "Написать продавцу" (Возвращаем ей зеленый десктопный дизайн) 🌟 */
     .cart-page .cart-item-message {
-        grid-area: msg !important; /* Встает в самый низ, растягивается на 2 колонки */
-        margin: 8px 0 0 0 !important; /* Отступ сверху от доставки */
+        grid-area: msg !important; 
+        margin: 8px 0 0 0 !important; 
         width: 100% !important;
-        height: 40px !important; /* Делаем удобной для пальца */
+        height: 40px !important; 
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
-        /* Наследуем background, color, border-radius из твоих десктопных стилей */
     }
 
-    /* Внутренние тексты */
     .cart-page .cart-item-title {
         font-size: 14px !important;
         font-weight: 500 !important;
@@ -679,8 +659,6 @@
         overflow: hidden !important;
         white-space: normal !important;
     }
-
-    /* 4. КАРТОЧКА ЗАКАЗА */
     .cart-page .cart-right {
         position: static !important; 
         width: 100% !important;
