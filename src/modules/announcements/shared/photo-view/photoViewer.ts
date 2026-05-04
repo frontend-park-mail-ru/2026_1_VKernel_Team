@@ -16,12 +16,12 @@ export class PhotoViewer {
      * Инициализация просмотрщика
      */
     static init(): void {
-        // Создаем HTML если его нет
         if (!this.overlay) {
             this.createViewer();
         }
 
-        // Навешиваем глобальные обработчики только один раз
+        // Глобальные обработчики навешиваем только один раз — иначе при повторном init
+        // получим дубли listeners на document/keydown
         if (!this.handlersAttached) {
             this.attachGlobalHandlers();
             this.handlersAttached = true;
@@ -65,20 +65,17 @@ export class PhotoViewer {
     private static attachGlobalHandlers(): void {
         if (!this.overlay) return;
 
-        // Закрытие по крестику
         const closeBtn = document.getElementById('photoViewerClose');
         if (closeBtn) {
             closeBtn.addEventListener('click', () => this.close());
         }
 
-        // Закрытие по клику на фон
         this.overlay.addEventListener('click', (e) => {
             if (e.target === this.overlay) {
                 this.close();
             }
         });
 
-        // Закрытие по Escape
         document.addEventListener('keydown', (e) => {
             if (this.overlay?.classList.contains('active')) {
                 if (e.key === 'Escape') {
@@ -91,14 +88,12 @@ export class PhotoViewer {
             }
         });
 
-        // Навигация
         const prevBtn = document.getElementById('photoViewerPrev');
         const nextBtn = document.getElementById('photoViewerNext');
 
         if (prevBtn) prevBtn.addEventListener('click', () => this.prev());
         if (nextBtn) nextBtn.addEventListener('click', () => this.next());
 
-        // Зум по клику на фото
         if (this.imageElement) {
             this.imageElement.addEventListener('click', () => this.toggleZoom());
         }
@@ -118,15 +113,13 @@ export class PhotoViewer {
         this.currentIndex = Math.max(0, Math.min(startIndex, photos.length - 1));
         this.isZoomed = false;
 
-        // Показываем первое фото
         this.updateImage();
         this.updateThumbnails();
         this.updateCounter();
 
-        // Показываем оверлей
         this.overlay?.classList.add('active');
 
-        // Блокируем скролл body
+        // Блокируем скролл body, пока открыт fullscreen-просмотр
         document.body.style.overflow = 'hidden';
     }
 
@@ -231,7 +224,6 @@ export class PhotoViewer {
             )
             .join('');
 
-        // Добавляем обработчики на миниатюры
         container.querySelectorAll('.photo-viewer-thumbnail').forEach((thumb) => {
             thumb.addEventListener('click', (e) => {
                 const index = (e.currentTarget as HTMLElement).dataset.index;

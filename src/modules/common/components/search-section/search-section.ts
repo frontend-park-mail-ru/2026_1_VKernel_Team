@@ -35,7 +35,6 @@ export const SearchSectionComponent = {
         const performSearch = () => {
             const query = searchInput.value.trim();
             if (query) {
-                console.log('🔍 Поиск по запросу:', query);
                 window.location.href = `/search?query=${encodeURIComponent(query)}`;
             }
         };

@@ -23,8 +23,6 @@ export const CartPaymentOptionsComponent = {
             radio.addEventListener('change', () => {
                 if (radio.checked) {
                     // TODO: обновить способ оплаты в store
-                    const paymentMethod = radio.value;
-                    console.log('Selected payment method:', paymentMethod);
                 }
             });
         });

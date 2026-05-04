@@ -13,11 +13,10 @@ import { chatActions } from '@modules/chat/actions';
 
 export const CartController = {
     async renderCart(): Promise<void> {
-        // Сначала показываем кешированные данные
+        // Сначала показываем кешированные данные, потом обновляем с сервера, чтобы UI не моргал пустой
         await cartActions.loadFromCache();
         this.renderFromState();
 
-        // Потом обновляем с сервера (не блокируя UI)
         if (networkStatus.isOnline) {
             await cartActions.loadCart();
             this.renderFromState();
@@ -74,7 +73,6 @@ export const CartController = {
     },
 
     attachEventListeners(): void {
-        // Удаление товара из корзины
         document.querySelectorAll('[data-delete-id]').forEach((btn) => {
             btn.addEventListener('click', async (e: Event) => {
                 e.preventDefault();
@@ -89,7 +87,6 @@ export const CartController = {
             });
         });
 
-        // Написать продавцу из карточки в корзине
         document.querySelectorAll('[data-message-seller-id]').forEach((btn) => {
             btn.addEventListener('click', async (e: Event) => {
                 e.preventDefault();
@@ -119,7 +116,6 @@ export const CartController = {
             });
         });
 
-        // Табы доставки
         document.querySelectorAll('.cart-delivery-tab').forEach((tab) => {
             tab.addEventListener('click', () => {
                 document.querySelectorAll('.cart-delivery-tab').forEach((t) => {

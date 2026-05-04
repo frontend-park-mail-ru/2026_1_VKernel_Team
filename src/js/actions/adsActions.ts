@@ -22,10 +22,9 @@ export const adsActions = {
                 return;
             }
         } catch {
-            // network error — try cache
+            // Сетевая ошибка — отдадим список из IndexedDB
         }
 
-        // Фолбек: загружаем из IndexedDB
         await this.loadAdsFromCache();
     },
 
@@ -48,7 +47,7 @@ export const adsActions = {
             const indexed = ads.map((ad, i) => ({ ...ad, _order: i }));
             await cloverDB.replaceAll(ADS_LIST_STORE, indexed);
         } catch {
-            // IndexedDB unavailable
+            // IndexedDB недоступна — кэш просто не запишется
         }
     },
 

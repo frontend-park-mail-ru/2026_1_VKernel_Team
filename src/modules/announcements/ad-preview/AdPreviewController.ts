@@ -30,7 +30,6 @@ export class AdPreviewController {
         this.draftData = await AdDraftService.get();
         if (!this.draftData) {
             uiActions.showError('Нет данных для предпросмотра');
-            // window.dispatchEvent(new CustomEvent('app:navigate', { detail: { path: '/place-ad' } }),);
             window.location.href = '/place-ad';
             return;
         }
@@ -87,10 +86,8 @@ export class AdPreviewController {
 
         const attributes: Array<{ name: string; value: string }> = [];
 
-        // Категорийные характеристики
         if (formData.category_characteristics && formData.category_characteristics.length > 0) {
             for (const char of formData.category_characteristics) {
-                // Ищем определение характеристики по ID
                 const definition = this.categoryCharacteristicsDefs.find(
                     (def) => def.id === char.category_characteristic_id,
                 );
@@ -104,7 +101,6 @@ export class AdPreviewController {
             }
         }
 
-        // Пользовательские характеристики
         if (formData.custom_characteristics && formData.custom_characteristics.length > 0) {
             for (const char of formData.custom_characteristics) {
                 if (char.name && char.value) {
@@ -149,7 +145,6 @@ export class AdPreviewController {
         if (backBtn) {
             const handler = (e: Event) => {
                 e.preventDefault();
-                // window.dispatchEvent(new CustomEvent('app:navigate', { detail: { path: '/place-ad' } }),);
                 window.location.href = '/place-ad';
             };
             backBtn.addEventListener('click', handler);
@@ -166,7 +161,7 @@ export class AdPreviewController {
             publishBtn.addEventListener('click', handler);
             this._handlers.set('publish-ad', handler);
         } else {
-            console.error('❌ Publish button NOT found in DOM');
+            console.error('Publish button not found in DOM');
         }
 
         const prevBtn = document.querySelector('[data-gallery-prev]');
@@ -228,13 +223,11 @@ export class AdPreviewController {
             this._handlers.set(`thumb-${index}`, handler);
         });
 
-        // Обработчик для открытия просмотрщика фото
         const mainPhoto = document.getElementById('mainPhoto');
         if (mainPhoto && this.draftData?.photoFiles) {
             const handler = async (e: Event) => {
                 e.preventDefault();
 
-                // Создаем превью для всех фото при первом клике
                 const previews = await this.createPhotoPreviews(this.draftData!.photoFiles);
 
                 import('@modules/announcements/shared/photo-view/photoViewer').then(
@@ -331,7 +324,6 @@ export class AdPreviewController {
                 await AdDraftService.clear();
 
                 const adId = result.data?.ad_id || result.data?.id;
-                // window.dispatchEvent(new CustomEvent('app:navigate', {detail: { path: adId ? `/ad/${adId}` : '/profile' },}),);
                 window.location.href = adId ? `/ad/${adId}` : '/profile';
             } else {
                 NotificationComponent.show({
@@ -371,7 +363,6 @@ export class AdPreviewController {
                 message: 'Объявление будет опубликовано при подключении к интернету',
                 duration: 5000,
             });
-            // window.dispatchEvent(new CustomEvent('app:navigate', { detail: { path: '/' } }));
             window.location.href = '/';
         } catch {
             NotificationComponent.show({

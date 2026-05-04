@@ -33,7 +33,6 @@ export const cartActions = {
             const result = await cartService.getCart();
 
             if (isNetworkError(result)) {
-                // network unavailable
                 cartStore.setState({ isLoading: false });
                 return;
             }
@@ -53,7 +52,6 @@ export const cartActions = {
                 });
             }
         } catch {
-            // network unavailable
             cartStore.setState({ isLoading: false });
         }
     },
@@ -64,18 +62,15 @@ export const cartActions = {
                 const result = await cartService.addToCart(productId);
 
                 if (result.success) {
-                    // network ok
                     await cartActions.loadCart();
                     return true;
                 }
 
-                if (isNetworkError(result)) {
-                    // network unavailable
-                } else {
+                if (!isNetworkError(result)) {
                     return false;
                 }
             } catch {
-                // network unavailable
+                // Сетевая ошибка — уйдём в офлайн-путь
             }
         }
 
@@ -112,15 +107,11 @@ export const cartActions = {
             try {
                 const result = await cartService.removeFromCart(productId);
 
-                if (isNetworkError(result)) {
-                    // network unavailable
-                } else {
-                    if (result.success)
-                        // network ok
-                        return result.success;
+                if (!isNetworkError(result) && result.success) {
+                    return result.success;
                 }
             } catch {
-                // network unavailable
+                // Сетевая ошибка — поставим операцию в очередь синхронизации
             }
         }
 
@@ -147,7 +138,7 @@ export const cartActions = {
                         }
                     }
                 } catch {
-                    // fallback to original data
+                    // Не удалось подтянуть актуальные данные — оставим карточку как есть
                 }
                 return item;
             }),
@@ -170,7 +161,6 @@ export const cartActions = {
             const result = await cartService.checkout();
 
             if (isNetworkError(result)) {
-                // network unavailable
                 NotificationComponent.show({
                     type: 'warning',
                     message: 'Оформление заказа недоступно без подключения к интернету',
@@ -190,7 +180,6 @@ export const cartActions = {
             });
             return false;
         } catch {
-            // network unavailable
             NotificationComponent.show({
                 type: 'warning',
                 message: 'Оформление заказа недоступно без подключения к интернету',

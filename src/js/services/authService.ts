@@ -65,7 +65,7 @@ const authService = {
         });
 
         if (result.success) {
-            // ИСПРАВЛЕНИЕ: Сохраняем токен, если бэкенд сразу авторизует после регистрации
+            // Бэкенд может сразу авторизовать после регистрации и вернуть токен
             const token = result.data?.token || result.data?.access_token;
             if (token) {
                 storage.setToken(token);
@@ -131,7 +131,6 @@ const authService = {
         });
 
         if (result.success) {
-            // ИСПРАВЛЕНИЕ: Сохраняем токен в localStorage
             const token = result.data?.token || result.data?.access_token;
             if (token) {
                 storage.setToken(token);
@@ -168,7 +167,6 @@ const authService = {
 
     async logout(): Promise<void> {
         await apiClient.post(API_ENDPOINTS.AUTH.LOGOUT, {});
-        // ИСПРАВЛЕНИЕ: Удаляем токен из хранилища при выходе
         storage.removeToken();
     },
 

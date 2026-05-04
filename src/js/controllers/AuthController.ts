@@ -13,11 +13,7 @@ export const AuthController = {
     _loginHandler: null as EventListener | null,
     _registerHandler: null as EventListener | null,
 
-    // Вспомогательный метод навигации без импорта AppController
     navigateTo(path: string): void {
-        // window.history.pushState({}, '', path);
-        // // Триггерим popstate, который уже слушает AppController для вызова router()
-        // window.dispatchEvent(new PopStateEvent('popstate'));
         window.location.href = path;
     },
 

@@ -1,4 +1,3 @@
-// src/js/types/handlebars.d.ts
 declare module '*.hbs' {
     /**
      * Прекомпилированный шаблон Handlebars

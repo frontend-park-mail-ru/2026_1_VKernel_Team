@@ -29,7 +29,10 @@ import { loadTemplates as loadChatDetailTemplates } from '@modules/chat/pages/ch
 import { unreadStore, UNREAD_CHANGED_EVENT } from '@modules/chat/unread-store';
 import { cartStore } from '@modules/cart/store';
 import { StatsController } from '@modules/support-admin/controllers/statsController';
-import { ProductSearchController, loadTemplates as loadProductSearchTemplates } from '@modules/product_search';
+import {
+    ProductSearchController,
+    loadTemplates as loadProductSearchTemplates,
+} from '@modules/product_search';
 import { SearchSectionComponent } from '@modules/common/components/search-section/search-section';
 
 import { store } from '@/core/store';
@@ -233,7 +236,6 @@ export const AppController = {
     },
 
     initSupportWidget(): void {
-        // Кнопка-триггер
         const triggerBtn = document.createElement('button');
         triggerBtn.className = 'support-trigger-btn';
         triggerBtn.id = 'support-trigger';
@@ -241,17 +243,14 @@ export const AppController = {
         triggerBtn.innerHTML = `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M11.95 18q.525 0 .888-.363.362-.362.362-.887 0-.525-.362-.888-.363-.362-.888-.362-.525 0-.887.362-.363.363-.363.888t.363.887q.362.363.887.363Zm-.9-3.85h1.85q0-.825.188-1.3.187-.475 1.062-1.3.65-.65 1.025-1.238.375-.587.375-1.362 0-1.35-.962-2.15Q13.625 6 12.1 6q-1.275 0-2.187.75-.913.75-1.213 1.8l1.65.65q.125-.45.525-.975.4-.525 1.175-.525.7 0 1.088.413.387.412.387.962 0 .5-.3.938-.3.437-.75.887-.8.75-1.063 1.375-.262.625-.262 1.875ZM12 22q-2.075 0-3.9-.787-1.825-.788-3.175-2.138-1.35-1.35-2.137-3.175Q2 14.075 2 12t.788-3.9q.787-1.825 2.137-3.175 1.35-1.35 3.175-2.138Q9.925 2 12 2t3.9.787q1.825.788 3.175 2.138 1.35 1.35 2.137 3.175Q22 9.925 22 12t-.788 3.9q-.787 1.825-2.137 3.175-1.35 1.35-3.175 2.137Q14.075 22 12 22Z"/></svg>`;
         document.body.appendChild(triggerBtn);
 
-        // Wrapper для ресайза
         const wrapper = document.createElement('div');
         wrapper.id = 'support-iframe-wrapper';
         wrapper.className = 'support-iframe-wrapper';
 
-        // Resize handle
         const resizeHandle = document.createElement('div');
         resizeHandle.className = 'support-resize-handle';
         wrapper.appendChild(resizeHandle);
 
-        // Iframe
         const iframe = document.createElement('iframe');
         iframe.id = 'support-iframe';
         iframe.className = 'support-iframe';
@@ -260,7 +259,6 @@ export const AppController = {
 
         document.body.appendChild(wrapper);
 
-        // Toggle по клику
         triggerBtn.addEventListener('click', () => {
             const isOpen = wrapper.classList.toggle('support-iframe-wrapper--open');
             if (isOpen) {
@@ -273,7 +271,6 @@ export const AppController = {
             }
         });
 
-        // Отправляем токен и статус авторизации при загрузке iframe
         iframe.addEventListener('load', () => {
             const token = storage.getToken();
             if (token) {
@@ -285,7 +282,7 @@ export const AppController = {
             );
         });
 
-        // При фактической смене isAuthenticated (а не на каждый setState) — обновить виджет
+        // Реагируем только на фактическую смену isAuthenticated, а не на каждый setState
         let lastAuth = store.isAuthenticated;
         store.subscribe((state) => {
             if (state.isAuthenticated === lastAuth) return;
@@ -301,14 +298,12 @@ export const AppController = {
             );
         });
 
-        // Слушаем сообщение о закрытии от iframe
         window.addEventListener('message', (event: MessageEvent) => {
             if (event.data?.type === 'support-widget-close') {
                 wrapper.classList.remove('support-iframe-wrapper--open');
             }
         });
 
-        // Resize logic
         let isResizing = false;
         let startX = 0;
         let startY = 0;
@@ -413,7 +408,6 @@ export const AppController = {
         const user = store.user;
         const role = user?.role;
 
-        // Объединили данные из обеих веток!
         container.innerHTML = this._headerCompiled!({
             isAuthenticated: store.isAuthenticated,
             user,
@@ -467,7 +461,6 @@ export const AppController = {
             return;
         }
 
-        // Защита маршрутов из ветки main (объединенная)
         const chatDetailMatch = path.match(/^\/chats\/(\d+)$/);
         const isChatsListPath = path === '/chats';
         if (
@@ -497,13 +490,12 @@ export const AppController = {
         if (path.startsWith('/search')) {
             const urlParams = new URLSearchParams(window.location.search);
             const query = urlParams.get('query') || '';
-            const categoryId = urlParams.get('category_id') ? Number(urlParams.get('category_id')) : null;
-            
-            console.log('🔍 Роутер: поиск по запросу:', query, 'категория:', categoryId);
-            
+            const categoryId = urlParams.get('category_id')
+                ? Number(urlParams.get('category_id'))
+                : null;
+
             await ProductSearchController.render(query, categoryId);
 
-            // Инициализация обработчиков поиска после рендера (можно вынести в отдельный метод)
             setTimeout(() => {
                 SearchSectionComponent.initSearchHandlers();
             }, 100);

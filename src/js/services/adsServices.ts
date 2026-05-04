@@ -71,19 +71,18 @@ const adsService = {
      * Возвращает актуальное количество просмотров
      */
     async recordView(id: number | string): Promise<number | null> {
-        // Делаем запрос через apiClient, но с дополнительным заголовком
+        // X-Device-ID нужен бэкенду, чтобы дедуплицировать просмотры от одного устройства
         const result = await apiClient.post<{ views_count: number }>(
-            API_ENDPOINTS.ADS.VIEW(id), 
-            {}, 
-            { 'X-Device-ID': getDeviceId() }  // ← добавляем заголовок
+            API_ENDPOINTS.ADS.VIEW(id),
+            {},
+            { 'X-Device-ID': getDeviceId() },
         );
-        
+
         if (result.success && result.data) {
-            console.log('📊 Views count from server:', result.data.views_count);
             return result.data.views_count;
         }
         return null;
-    }
+    },
 };
 
 export { adsService };
