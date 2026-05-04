@@ -62,11 +62,32 @@
 }
 
 @media (max-width: 900px) {
-    .seller-page-layout {
+    body .seller-page-layout {
         grid-template-columns: 1fr;
+        gap: 16px;
     }
 
-    .seller-sidebar {
+    body .seller-sidebar {
         order: -1;
+    }
+
+    body .seller-ads-section {
+        padding: 16px;
+    }
+
+    body .seller-ads-title {
+        font-size: 20px;
+    }
+
+    body .seller-ads-section .recommendations-row {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    body .seller-ad-banner {
+        display: none; 
     }
 }

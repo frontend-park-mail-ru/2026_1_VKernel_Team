@@ -85,3 +85,126 @@ body.auth-page #app {
 .profile-actions {
     text-align: center;
 }
+
+
+
+
+@media (max-width: 768px) {
+    body.auth-page .auth-container {
+        width: 100%;
+        padding: 32px 24px; 
+        border-radius: 24px; 
+        margin: 0 auto;
+    }
+
+    body.auth-page .auth-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 30px;
+        position: relative;
+        justify-content: center;
+    }
+
+    body.auth-page .auth-header h2 {
+        font-size: 22px;
+        font-weight: 700;
+        margin: 0;
+        color: #222;
+    }
+
+    body.auth-page .back-link {
+        position: absolute;
+        left: -8px; 
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 24px;
+        padding: 8px; 
+        text-decoration: none;
+        color: #555;
+        transition: color 0.2s;
+    }
+
+    body.auth-page .form-group {
+        margin-bottom: 20px;
+    }
+
+    body.auth-page .form-group label {
+        font-size: 14px;
+        font-weight: 600;
+        color: #444;
+        margin-bottom: 8px;
+        display: block;
+        margin-left: 4px; 
+    }
+
+    body.auth-page .form-group input {
+        width: 100%;
+        height: 52px; 
+        padding: 0 16px;
+        font-size: 16px; 
+        border-radius: 16px; 
+        border: 1px solid #e0e0e0;
+        background: #fafafa;
+        box-sizing: border-box;
+        transition: all 0.3s ease;
+    }
+
+    body.auth-page .form-group input:focus {
+        background: #fff;
+        border-color: #2bde8c;
+        box-shadow: 0 0 0 4px rgba(43, 222, 140, 0.15);
+        outline: none;
+    }
+
+    body.auth-page .password-wrapper {
+        position: relative;
+        width: 100%;
+    }
+
+    body.auth-page .password-wrapper input {
+        padding-right: 50px; 
+    }
+
+    body.auth-page .eye-btn {
+        position: absolute;
+        right: 4px; 
+        top: 50%;
+        transform: translateY(-50%);
+        height: 44px; 
+        width: 44px; 
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: transparent;
+        border: none;
+        border-radius: 12px;
+    }
+
+    body.auth-page .eye-btn img {
+        width: 22px;
+        height: 22px;
+        opacity: 0.5;
+    }
+
+    body.auth-page .btn-block {
+        width: 100%;
+        height: 54px; 
+        font-size: 17px;
+        font-weight: 700;
+        border-radius: 16px;
+        margin-top: 24px;
+        box-shadow: 0 6px 16px rgba(43, 222, 140, 0.25); 
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    body.auth-page .btn-block:active {
+        transform: translateY(2px);
+        box-shadow: 0 2px 8px rgba(43, 222, 140, 0.2);
+    }
+
+    body.auth-page .auth-footer {
+        margin-top: 30px;
+        padding-top: 20px;
+        font-size: 15px;
+    }
+}

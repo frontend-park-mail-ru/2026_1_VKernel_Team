@@ -14,8 +14,47 @@
     min-height: 500px;
 }
 
+
+
 @media (max-width: 900px) {
-    .profile-page-layout {
+    body .profile-page-layout {
         grid-template-columns: 1fr;
+        gap: 15px;
+        margin-top: 10px;
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        min-width: 0; 
+        box-sizing: border-box;
+    }
+    
+    body .profile-content-section {
+        padding: 15px;
+        border-radius: 12px; 
+        box-shadow: none; 
+        min-height: auto;
+        border: 1px solid #eee; 
+        width: 100%;
+        flex: 1; 
+        min-width: 0; 
+        box-sizing: border-box;
+    }
+
+    body #sidebarContainer {
+        width: 100%;
+        min-width: 0; 
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        box-sizing: border-box;
+        overflow-x: auto; 
+        white-space: nowrap; 
+        -webkit-overflow-scrolling: touch; 
+        padding-bottom: 5px;
+    }
+    
+    body #sidebarContainer::-webkit-scrollbar {
+        height: 0px;
+        background: transparent;
     }
 }

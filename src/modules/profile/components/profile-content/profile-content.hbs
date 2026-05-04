@@ -8,7 +8,7 @@
             Активные ({{activeAdsCount}})
         </button>
         <button class="profile-ad-tab" data-profile-ad-tab="archived">
-            Завершённые ({{archivedAdsCount}})
+            Неактивные ({{archivedAdsCount}})
         </button>
     </div>
 
@@ -34,7 +34,7 @@
                 {{/each}}
             </div>
         {{else}}
-            <p class="profile-ads-empty">Нет завершённых объявлений</p>
+            <p class="profile-ads-empty">Нет неактивных объявлений</p>
         {{/if}}
     </div>
   {{/if}}
@@ -90,6 +90,13 @@
         <p class="profile-ads-empty">У вас пока нет покупок</p>
     {{/if}}
   {{/if}}
+
+{{#if (eq currentTab 'paid_services')}}
+    <h2 class="profile-section-title">Платные услуги</h2>
+    <div class="paid-services-container">
+        <p style="display: flex; justify-content: center;">Здесь будет содержимое платных услуг</p>
+    </div>
+{{/if}}
 
   {{#if (eq currentTab 'wallet')}}
     <p class="profile-section-placeholder">Кошелёк — в разработке</p>

@@ -169,3 +169,61 @@
     margin-top: 4px;
     align-self: flex-start;
 }
+
+@media (max-width: 768px) {
+    .chat-list-item {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 12px !important;
+        padding: 12px !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+    }
+    .chat-list-item__partner {
+        width: 100% !important;
+    }
+
+    .chat-list-item__avatar {
+        width: 40px !important;
+        height: 40px !important;
+    }
+    .chat-list-item__ad {
+        background: #f9fafb !important;
+        padding: 8px !important;
+        border-radius: 8px !important;
+        border: 1px solid #f0f0f0 !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+    .chat-list-item__ad-photo {
+        width: 50px !important;
+        height: 50px !important;
+    }
+
+    .chat-list-item__ad-title {
+        font-size: 13px !important;
+    }
+    .chat-list-item__last {
+        display: flex !important;
+        flex-direction: row !important; 
+        justify-content: space-between !important;
+        align-items: center !important;
+        width: 100% !important;
+        gap: 10px !important;
+    }
+
+    .chat-list-item__last-text {
+        flex: 1 !important; 
+        -webkit-line-clamp: 1 !important; 
+    }
+
+    .chat-list-item__last-time {
+        flex-shrink: 0 !important; 
+        font-size: 11px !important;
+    }
+    .chat-list-item__unread-dot {
+        margin: 0 !important;
+        flex-shrink: 0 !important;
+    }
+}

@@ -20,9 +20,10 @@
                     <input 
                         type="text" 
                         class="search-input" 
+                        id="globalSearchInput"
                         placeholder="Поиск объявлений..."
                     >
-                    <button class="btn place-ad-btn">Найти</button>
+                    <button class="btn place-ad-btn" id="globalSearchBtn">Найти</button>
                 </div>
             </div>
         </div>
@@ -72,6 +73,11 @@
                     </div>
                 </div>
 
+                <div class="views">
+                    <span>Размещено: {{formattedDate}}</span>
+                    <span>Просмотры: {{views_count}}</span>
+                </div>
+
                 <!-- ОПИСАНИЕ ТОВАРА -->
                 <div class="ad-description-section">
                     <h2 class="section-title">Описание</h2>
@@ -106,7 +112,12 @@
                         {{!-- <span class="location-icon">📍</span> --}}
                         <div class="location-details">
                             <div class="location-address">{{location}}</div>
-                            <div class="seller-name">Продавец: {{sellerName}}</div>
+                            <div class="seller-name" 
+                                data-action="go-to-seller" 
+                                data-seller-id="{{sellerId}}" 
+                                data-is-owner="{{isOwner}}"
+                                style="cursor: pointer;">Продавец: <a>{{sellerName}}</a>
+                            </div>
                             <div class="seller-since">Зарегистрирован: {{sellerSince}}</div>
                         </div>
                     </div>

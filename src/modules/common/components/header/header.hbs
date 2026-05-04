@@ -2,16 +2,6 @@
     <div class="header-content">
         <div class="header-left">
             <div class="nav-icon">
-                <a href="#" class="nav-link">
-                    <span class="icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <line x1="12" y1="1" x2="12" y2="23" />
-                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-                        </svg></span>
-                    <span class="nav-text">Платные услуги</span>
-                </a>
-            </div>
-            <div class="nav-icon">
                 <a href="/chats" class="nav-link nav-link--with-badge" data-nav="/chats">
                     <span class="icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -20,7 +10,7 @@
                         </svg></span>
                     <span class="nav-text">Сообщения</span>
                     {{#if (gt unreadChatsCount 0)}}
-                    <span class="nav-badge">{{unreadChatsCount}}</span>
+                        <span class="nav-badge">{{unreadChatsCount}}</span>
                     {{/if}}
                 </a>
             </div>
@@ -35,7 +25,7 @@
                     </span>
                     <span class="nav-text">Избранное</span>
                     {{#if (gt favoritesCount 0)}}
-                    <span class="nav-badge">{{favoritesCount}}</span>
+                        <span class="nav-badge">{{favoritesCount}}</span>
                     {{/if}}
                 </a>
             </div>
@@ -49,7 +39,7 @@
                         </svg></span>
                     <span class="nav-text">Корзина</span>
                     {{#if (gt cartCount 0)}}
-                    <span class="nav-badge">{{cartCount}}</span>
+                        <span class="nav-badge">{{cartCount}}</span>
                     {{/if}}
                 </a>
             </div>
@@ -69,12 +59,18 @@
         </div>
         <div class="header-right">
             {{#if isAuthenticated}}
-            <button class="btn place-ad-btn" data-nav="/place-ad">Разместить объявление</button>
+            {{!-- <button class="btn place-ad-btn" data-nav="/place-ad">Разместить объявление</button> --}}
+            <a class="announcements nav-link" data-nav="/place-ad">
+                <span class="nav-text">+ Разместить объявление</span>
+            </a>
             <a href="/profile" data-nav="/profile">
                 <img src="{{avatarUrl user.avatar user.avatar_path}}" alt="Аватар" class="avatar">
             </a>
             {{else}}
-            <button class="btn place-ad-btn" data-nav="/login">Разместить объявление</button>
+            {{!-- <button class="btn place-ad-btn" data-nav="/login">Разместить объявление</button> --}}
+            <a class="announcements nav-link" data-nav="/login">
+                <span class="nav-text">+ Разместить объявление</span>
+            </a>
             <p>
                 <a href="#" class="nav-login" data-nav="/login">Войти</a>
             </p>

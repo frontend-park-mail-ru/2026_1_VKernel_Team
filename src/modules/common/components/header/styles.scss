@@ -7,6 +7,10 @@
     justify-content: space-between;
     align-items: center;
     gap: 1rem;
+    max-width: 1400px; /* Ограничиваем ширину на огромных экранах */
+    margin: 0 auto; /* Центрируем шапку */
+    padding: 0 20px; /* Делаем безопасные отступы по краям */
+    box-sizing: border-box;
 }
 
 .header-left,
@@ -14,11 +18,14 @@
     display: flex;
     align-items: center;
     gap: 1rem;
+    margin-top: 3px;
+    flex-shrink: 0; /* Строго запрещаем этим блокам сплющиваться */
 }
 
 .nav-icon {
     display: inline-flex;
     align-items: center;
+    flex-shrink: 0; /* Запрещаем сжиматься отдельным пунктам меню */
 }
 
 .nav-link {
@@ -27,6 +34,8 @@
     gap: 0.5rem;
     color: inherit;
     text-decoration: none;
+    cursor: pointer;
+    white-space: nowrap; /* Запрещаем тексту ломаться и переноситься на новую строку */
 }
 
 .nav-icon .icon {
@@ -44,11 +53,11 @@
 }
 
 .header-right .avatar {
-    width: 50px;
-    height: 50px;
+    width: 30px;
+    height: 30px;
     border-radius: 50%;
+    flex-shrink: 0; /* Аватарка всегда должна быть круглой, а не овальной */
 }
-
 
 .nav-link:hover,
 .nav-link.active {
@@ -67,4 +76,191 @@
     border-radius: 12px;
     font-size: 12px;
     font-weight: bold;
+}
+
+.announcements:hover {
+    text-decoration: underline;
+    text-decoration-skip-ink: none;
+    text-underline-offset: 2px;
+    text-decoration-thickness: 0.1px;
+}
+
+/* =========================================
+   БРОНЕБОЙНАЯ АДАПТИВКА ШАПКИ (360x800)
+   ========================================= */
+
+@media (max-width: 1100px) {
+    .header-content {
+        padding: 0 10px;
+        gap: 5px; 
+    }
+    .header-left,
+    .header-right {
+        gap: 5px; 
+        min-width: 0; 
+    }
+    .header-left .logo {
+        width: 120px; 
+    }
+
+    .nav-icon .nav-link {
+        padding: 6px 4px; 
+        gap: 4px;
+    }
+
+    .nav-icon .nav-text {
+        font-size: 12px; 
+    }
+
+    .header-right .avatar {
+        width: 36px; 
+        height: 36px;
+        flex-shrink: 0; 
+    }
+
+    .place-ad-btn {
+        padding: 0 8px;
+        font-size: 12px;
+        height: 34px;
+        white-space: nowrap;
+    }
+}
+
+@media (max-width: 768px) {
+    body .header-content {
+        padding: 8px 10px;
+        justify-content: space-between;
+        width: 100%;
+    }
+
+    body .header-left {
+        display: flex; 
+        flex: 1;
+        gap: 15px;
+        visibility: visible;
+        opacity: 1;
+    }
+
+    body .nav-icon, 
+    body .nav-icon .nav-link {
+        display: flex;
+        align-items: center;
+        flex-shrink: 0;
+    }
+
+    body .nav-icon .icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 20px;
+        height: 20px;
+        min-width: 20px;
+        margin-right: 0;
+    }
+
+    body .nav-icon .icon svg {
+        width: 100%;
+        height: 100%;
+        display: block;
+    }
+
+    body .nav-icon .nav-text {
+        display: none;
+    }
+
+    body .nav-link--with-badge .nav-badge {
+        position: absolute;
+        top: -6px;
+        right: -8px;
+        font-size: 10px;
+        padding: 2px 4px;
+        min-width: 14px;
+        line-height: 1;
+        margin-left: 0;
+    }
+
+    body .header-right {
+        display: flex;
+        flex-shrink: 0;
+        gap: 12px;
+    }
+
+    body .header-right .avatar {
+        width: 32px;
+        height: 32px;
+        flex-shrink: 0;
+    }
+
+    body .header-right .nav-login {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        background: #f0f0f0; 
+        border-radius: 50%;
+        font-size: 0; 
+        color: transparent;
+        position: relative;
+        transition: background 0.2s;
+    }
+
+    body .header-right .nav-login::before {
+        content: '👤';
+        font-size: 18px;
+        color: #555;
+        display: block;
+    }
+
+    body .header-right .nav-login:hover {
+        background: #e0e0e0;
+    }
+
+    body .btn.place-ad-btn {
+        position: relative;
+        font-size: 0; 
+        color: transparent; 
+        min-width: 32px;
+        width: 32px;
+        height: 32px;
+        padding: 0;
+        border-radius: 50%;
+        overflow: hidden; 
+    }
+
+    body .btn.place-ad-btn::after {
+        content: '+';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 26px;
+        line-height: 1;
+        color: #fff; 
+    }
+
+    .announcements.nav-link {
+        font-size: 0;              // Скрываем исходный текст
+        color: transparent;
+        position: relative;
+        padding: 0 80px 0 0;
+        height: 32px;
+        
+        // Добавляем новый текст через псевдоэлемент
+        &::before {
+            content: '+ Объявление';
+            font-size: 12px;
+            font-weight: 500;
+            color: #333;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            white-space: nowrap;
+        }
+        
+        &:hover {
+            background: #e0e0e0;
+        }
+    }
 }

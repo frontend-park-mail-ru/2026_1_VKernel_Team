@@ -32,3 +32,87 @@
     flex-direction: column;
     gap: 12px;
 }
+@media (max-width: 768px) {
+    /* Оболочка страницы */
+    body .chat-list-page {
+        padding: 10px 10px 40px;
+    }
+
+    body .chat-list-page__title {
+        font-size: 22px;
+        margin-bottom: 16px;
+    }
+
+    body .chat-list-page__empty {
+        padding: 30px 16px;
+    }
+    
+    body .chat-list-page__empty p {
+        font-size: 14px;
+    }
+
+    body .chat-list-page__items {
+        gap: 8px;
+    }
+
+    /* Элемент списка (chat-list-item) */
+    body .chat-list-item {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        padding: 12px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    body .chat-list-item__partner {
+        width: 100%;
+    }
+
+    body .chat-list-item__avatar {
+        width: 40px;
+        height: 40px;
+    }
+
+    body .chat-list-item__ad {
+        background: #f9fafb;
+        padding: 8px;
+        border-radius: 8px;
+        border: 1px solid #f0f0f0;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    body .chat-list-item__ad-photo {
+        width: 50px;
+        height: 50px;
+    }
+
+    body .chat-list-item__ad-title {
+        font-size: 13px;
+    }
+
+    body .chat-list-item__last {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        gap: 10px;
+    }
+
+    body .chat-list-item__last-text {
+        flex: 1;
+        -webkit-line-clamp: 1;
+    }
+
+    body .chat-list-item__last-time {
+        flex-shrink: 0;
+        font-size: 11px;
+    }
+
+    body .chat-list-item__unread-dot {
+        margin: 0;
+        flex-shrink: 0;
+    }
+}

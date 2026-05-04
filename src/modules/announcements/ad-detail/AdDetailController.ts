@@ -14,6 +14,7 @@ import { uiActions } from '@/actions/uiActions';
 import { cloverDB } from '@modules/common/offline/db/indexedDB';
 import { networkStatus } from '@modules/common/offline/network/networkStatus';
 import type { Ad } from '@/types';
+import { eventBus } from '@/core/eventBus';
 
 const AD_DETAIL_STORE = 'ads';
 
@@ -56,6 +57,19 @@ export class AdDetailController {
                 // Кэшируем объявление для offline-доступа
                 this.currentAd = result.data;
                 await this.cacheAd(result.data);
+
+                // Фиксируем просмотр (асинхронно, не блокируем UI)
+                adsService.recordView(adId).then((updatedViews) => {
+                    if (updatedViews !== null && this.currentAd) {
+                        // Обновляем отображаемое количество просмотров
+                        this.currentAd.views_count = updatedViews;
+                        const viewsElement = document.querySelector('.ad-detail-page .views span:last-child');
+                        if (viewsElement) {
+                            viewsElement.textContent = `Просмотры: ${updatedViews}`;
+                        }
+                    }
+                });
+
                 const adData = await this.prepareAdData(result.data);
                 app.innerHTML = adDetailTpl(adData);
                 this.attachEventListeners();
@@ -245,7 +259,8 @@ export class AdDetailController {
             const btn = backBtns[i];
             const handler = (e: Event) => {
                 e.preventDefault();
-                window.dispatchEvent(new CustomEvent('app:navigate', { detail: { path: '/' } }));
+                // window.dispatchEvent(new CustomEvent('app:navigate', { detail: { path: '/' } }));
+                window.location.href = '/';
             };
             btn.addEventListener('click', handler);
             this._handlers.set(`back-${i}`, handler);
@@ -344,9 +359,8 @@ export class AdDetailController {
                 e.stopPropagation();
 
                 if (!store.isAuthenticated) {
-                    window.dispatchEvent(
-                        new CustomEvent('app:navigate', { detail: { path: '/login' } }),
-                    );
+                    // window.dispatchEvent(new CustomEvent('app:navigate', { detail: { path: '/login' } }),);
+                    window.location.href = '/login';
                     return;
                 }
 
@@ -403,9 +417,8 @@ export class AdDetailController {
                 e.stopPropagation();
 
                 if (!store.isAuthenticated) {
-                    window.dispatchEvent(
-                        new CustomEvent('app:navigate', { detail: { path: '/login' } }),
-                    );
+                    // window.dispatchEvent(new CustomEvent('app:navigate', { detail: { path: '/login' } }),);
+                    window.location.href = '/login';
                     return;
                 }
 
@@ -446,9 +459,8 @@ export class AdDetailController {
         if (editBtn) {
             const handler = (e: Event) => {
                 e.preventDefault();
-                window.dispatchEvent(
-                    new CustomEvent('app:navigate', { detail: { path: `/edit-ad/${adId}` } }),
-                );
+                // window.dispatchEvent(new CustomEvent('app:navigate', { detail: { path: `/edit-ad/${adId}` } }),);
+                window.location.href = `/edit-ad/${adId}`;
             };
             editBtn.addEventListener('click', handler);
             this._handlers.set('editAd', handler);
@@ -466,9 +478,8 @@ export class AdDetailController {
                 e.stopPropagation();
 
                 if (!store.isAuthenticated) {
-                    window.dispatchEvent(
-                        new CustomEvent('app:navigate', { detail: { path: '/login' } }),
-                    );
+                    // window.dispatchEvent(new CustomEvent('app:navigate', { detail: { path: '/login' } }),);
+                    window.location.href = '/login';
                     return;
                 }
 
@@ -564,17 +575,11 @@ export class AdDetailController {
 
                 if (sellerId) {
                     if (isOwner) {
-                        // Если это своё объявление - идём в личный профиль
-                        window.dispatchEvent(
-                            new CustomEvent('app:navigate', { detail: { path: '/profile' } }),
-                        );
+                        // eventBus.emit('app:navigate', '/profile');
+                        window.location.href = '/profile';
                     } else {
-                        // Если чужое - на страницу продавца
-                        window.dispatchEvent(
-                            new CustomEvent('app:navigate', {
-                                detail: { path: `/seller/${sellerId}` },
-                            }),
-                        );
+                        // eventBus.emit('app:navigate', `/seller/${sellerId}`);
+                        window.location.href = `/seller/${sellerId}`;
                     }
                 }
             };

@@ -9,8 +9,13 @@ export const SearchSectionComponent = {
             <img src="/images/logo/logo_clover2.jpeg" alt="Логотип" class="logo" data-nav="/">
         </div>
         <div class="search-wrapper">
-            <input type="text" class="search-input" placeholder="Поиск объявлений...">
-            <button class="btn place-ad-btn">Найти</button>
+            <input 
+                type="text" 
+                class="search-input" 
+                id="globalSearchInput"
+                placeholder="Поиск объявлений..."
+            >
+            <button class="btn place-ad-btn" id="globalSearchBtn">Найти</button>
         </div>
         <div class="geo">
             <span class="icon">📍</span>
@@ -19,5 +24,28 @@ export const SearchSectionComponent = {
     </div>
 </div>
         `.trim();
+    },
+
+    initSearchHandlers(): void {
+        const searchInput = document.getElementById('globalSearchInput') as HTMLInputElement;
+        const searchBtn = document.getElementById('globalSearchBtn') as HTMLButtonElement;
+
+        if (!searchInput || !searchBtn) return;
+
+        const performSearch = () => {
+            const query = searchInput.value.trim();
+            if (query) {
+                console.log('🔍 Поиск по запросу:', query);
+                window.location.href = `/search?query=${encodeURIComponent(query)}`;
+            }
+        };
+
+        searchBtn.addEventListener('click', performSearch);
+        searchInput.addEventListener('keypress', (e: KeyboardEvent) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                performSearch();
+            }
+        });
     },
 };

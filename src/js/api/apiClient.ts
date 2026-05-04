@@ -25,6 +25,7 @@ export const API_ENDPOINTS = {
         UPDATE: (id: number | string) => `/ads/${id}`,
         DELETE: (id: number | string) => `/ads/${id}`,
         CLOSE: (id: number | string) => `/ads/${id}/close`,
+        VIEW: (id: number | string) => `/ads/${id}/view`,
     },
     USERS: {
         PROFILE: '/profile',

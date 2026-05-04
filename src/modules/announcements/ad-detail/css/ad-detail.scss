@@ -563,55 +563,142 @@
 }
 
 
+.ad-detail-page .views {
+    max-width: 65%;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    overflow-wrap: normal;
+    word-break: normal;
+    justify-content: space-between;  
+}
 
-
-
-
-
+.ad-detail-page .views span {
+    overflow-wrap: normal !important;
+    word-break: normal !important;
+    white-space: nowrap !important;
+}
 
 @media (max-width: 768px) {
-    .ad-detail-page .ad-gallery-container {
+    /* 1. ПОИСК В ОДНУ СТРОКУ */
+    body .ad-detail-page .search-section {
+        position: fixed; 
+        top: 40px;      
+        left: 0;
+        right: 0;
+        z-index: 999;
+        padding: 8px 10px;
+        background: white;
+        width: 100%;
+        margin: 0;
+        border-radius: 0 0 12px 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        box-sizing: border-box;
+    }
+
+    body .ad-detail-page .search-row {
+        display: flex;
+        flex-direction: row; 
+        flex-wrap: nowrap;
+        align-items: center;
+        gap: 6px;
+        width: 100%;
+        height: auto;
+    }
+
+    body .ad-detail-page .brand {
+        min-width: 0;
+        flex-shrink: 1;
+        position: static;
+        height: auto;
+    }
+
+    body .ad-detail-page .logo {
+        position: static;
+        transform: none;
+        width: 80px; 
+        margin: 0;
+    }
+
+    body .ad-detail-page .btn-categories {
+        display: flex;
+        height: 36px;
+        padding: 0 8px;
+        font-size: 11px;
+        white-space: nowrap;
+        flex-shrink: 0; 
+    }
+
+    body .ad-detail-page .search-wrapper {
+        flex: 1; 
+        min-width: 0;
+        gap: 4px;
+    }
+
+    body .ad-detail-page .search-input {
+        height: 36px;
+        font-size: 14px;
+        padding: 0 10px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    body .ad-detail-page .search-wrapper .btn {
+        padding: 0 10px;
+        height: 36px;
+        font-size: 13px;
+        flex-shrink: 0;
+    }
+
+    /* 2. ПОРЯДОК: СНАЧАЛА MAIN-COLUMN, ПОТОМ ACTION-BLOCK */
+    body .ad-detail-page .content-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    body .ad-detail-page .main-column {
+        order: 1; 
+        padding: 0;
+        background: transparent;
+        box-shadow: none;
+        display: flex;
         flex-direction: column;
     }
 
-    .ad-detail-page .ad-main-photo-wrapper {
-        flex: 0 0 100%;
-        aspect-ratio: 4 / 3;
+    /* ФИКС ЗАГОЛОВКА: ставим в самый верх внутри колонки */
+    body .ad-detail-page .ad-title-section {
+        order: -1; 
+        padding: 10px 0;
+        margin: 0;
     }
 
-    .ad-detail-page .ad-thumbnails-vertical {
-        flex: 0 0 auto;
+    body .ad-detail-page .ad-right {
+        order: 2; 
+        position: static;
+        width: 100%;
+    }
+
+    /* 3. ГАЛЕРЕЯ И ХАРАКТЕРИСТИКИ */
+    body .ad-detail-page .ad-gallery-container {
+        flex-direction: column;
+    }
+
+    body .ad-detail-page .ad-thumbnails-vertical {
         flex-direction: row;
         width: 100%;
         overflow-x: auto;
-        overflow-y: hidden;
+        padding: 10px 0;
         max-height: none;
-        gap: 10px;
-        padding-bottom: 8px;
     }
 
-    .ad-detail-page .thumbnail-vertical-wrapper {
-        width: 80px;
+    body .ad-detail-page .thumbnail-vertical-wrapper {
+        width: 65px;
+        height: 65px;
         flex-shrink: 0;
-        aspect-ratio: 1;
     }
 
-    .ad-detail-page .attributes-grid {
+    body .ad-detail-page .attributes-grid {
         grid-template-columns: 1fr;
-    }
-
-    .ad-detail-page .ad-title {
-        font-size: 22px;
-    }
-
-    .ad-detail-page .btn-categories {
-        padding: 0 12px;
-        font-size: 12px;
-    }
-
-    .ad-detail-page .gallery-nav {
-        width: 32px;
-        height: 32px;
-        font-size: 18px;
     }
 }

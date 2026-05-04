@@ -1,8 +1,3 @@
-/**
- * Контроллер объявлений
- * Отображает список объявлений и управляет взаимодействием
- */
-
 import { adsActions } from '@/actions/adsActions';
 import { eventBus } from '@/core/eventBus';
 import { store } from '@/core/store';
@@ -13,6 +8,30 @@ import { PROFILE_CONFIG } from '@modules/profile/config';
 import { ADS_SELECTORS } from '@/types/adsConstants';
 
 declare const Handlebars: any;
+
+// Маппинг названий категорий на ID (нужно сверить с вашей БД)
+const CATEGORY_ID_MAP: Record<string, number> = {
+    'Авто': 21,
+    'Недвижимость': 2,
+    'Работа': 22,
+    'Одежда, обувь, аксессуары': 11,
+    'Хобби и отдых': 4,
+    'Животные': 16,
+    'Электроника': 1,
+    'Для дома и дачи': 17,
+    'Запчасти': 18,
+    'Товары для детей': 23,
+    'Красота и здоровье': 15,
+    'Музыка': 5,
+    'Ремонт': 6,
+    'Туризм': 7,
+    'Техника для дома': 8,
+    'Игрушки': 9,
+    'Настольные игры': 10,
+    'Книги': 14,
+    'Спорт': 19,
+    'Канцелярия': 20,
+};
 
 export const AdsController = {
     templates: {} as Record<string, HandlebarsTemplateFunction>,
@@ -82,13 +101,55 @@ export const AdsController = {
     },
 
     attachMainEventListeners(): void {
+        // Обработка кликов по кнопкам избранного
         document
             .querySelectorAll(ADS_SELECTORS.FAVORITE_BTN)
             .forEach((btn) => btn.addEventListener('click', this.handleFavoriteClick.bind(this)));
 
+        // Обработка кликов по карточкам товаров
         document
             .querySelectorAll(ADS_SELECTORS.CARD)
             .forEach((card) => card.addEventListener('click', this.handleCardClick.bind(this)));
+
+        // ===== НОВОЕ: Обработка кликов по категориям =====
+        const categoryCards = document.querySelectorAll('.category-card');
+        categoryCards.forEach((card) => {
+            // Удаляем старый обработчик, если есть, чтобы не дублировать
+            card.removeEventListener('click', this.handleCategoryClick);
+            card.addEventListener('click', this.handleCategoryClick);
+        });
+    },
+
+    handleCategoryClick(e: Event): void {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const card = e.currentTarget as HTMLElement;
+        const titleElement = card.querySelector('.card-title');
+        let categoryTitle = titleElement?.textContent?.trim() || '';
+        
+        // Обработка кнопки "Все категории"
+        if (categoryTitle === 'Все категории' || categoryTitle === 'Все<br>категории') {
+            console.log('Все категории - пока ничего не делаем');
+            return;
+        }
+        
+        // Очищаем от стрелочки, если есть
+        categoryTitle = categoryTitle.replace(/→/g, '').trim();
+        
+        // Получаем ID категории из маппинга
+        const categoryId = CATEGORY_ID_MAP[categoryTitle];
+        
+        let searchUrl = `/search?query=${encodeURIComponent(categoryTitle)}`;
+        if (categoryId) {
+            searchUrl += `&category_id=${categoryId}`;
+        }
+        
+        console.log(`🔍 Поиск по категории: ${categoryTitle} (ID: ${categoryId || 'не указан'})`);
+        console.log(`🔗 Переход на: ${searchUrl}`);
+        
+        // ПРЯМОЙ ПЕРЕХОД, минуя событие
+        window.location.href = searchUrl;
     },
 
     async handleFavoriteClick(e: Event): Promise<void> {
@@ -173,7 +234,8 @@ export const AdsController = {
         const adId = card.dataset.id;
 
         if (adId) {
-            eventBus.emit('app:navigate', `/ad/${adId}`);
+            // eventBus.emit('app:navigate', `/ad/${adId}`);
+            window.location.href = `/ad/${adId}`;
         }
     },
 

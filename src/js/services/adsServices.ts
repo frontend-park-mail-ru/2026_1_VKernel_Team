@@ -6,6 +6,7 @@
 import { apiClient, API_ENDPOINTS } from '@/api/apiClient';
 import { CONFIG } from '@/core/config';
 import type { Ad, ApiResponse } from '@/types';
+import { getDeviceId } from '@/utils/deviceId';
 
 /**
  * Объект с методами для работы с объявлениями
@@ -64,6 +65,25 @@ const adsService = {
             date: ad.created_at ? new Date(ad.created_at).toLocaleDateString('ru-RU') : '',
         };
     },
+
+    /**
+     * Фиксирует просмотр объявления
+     * Возвращает актуальное количество просмотров
+     */
+    async recordView(id: number | string): Promise<number | null> {
+        // Делаем запрос через apiClient, но с дополнительным заголовком
+        const result = await apiClient.post<{ views_count: number }>(
+            API_ENDPOINTS.ADS.VIEW(id), 
+            {}, 
+            { 'X-Device-ID': getDeviceId() }  // ← добавляем заголовок
+        );
+        
+        if (result.success && result.data) {
+            console.log('📊 Views count from server:', result.data.views_count);
+            return result.data.views_count;
+        }
+        return null;
+    }
 };
 
 export { adsService };

@@ -1,0 +1,369 @@
+/* ========== СТРАНИЦА ПОИСКА ========== */
+
+.product-search-page {
+    width: 100%;
+    min-height: 100vh;
+}
+
+.product-search-page .main-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 100px 20px;
+    margin-top: 60px;
+}
+
+/* ========== СЕТКА: ЛЕВАЯ КОЛОНКА (ФИЛЬТРЫ) + ПРАВАЯ (РЕЗУЛЬТАТЫ) ========== */
+
+.product-search-page .content-grid {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 24px;
+    margin-top: 20px;
+}
+
+/* ========== ЛЕВАЯ КОЛОНКА - ФИЛЬТРЫ (КАК САЙДБАР В ПРОФИЛЕ) ========== */
+
+.product-search-page .filters-column {
+    position: sticky;
+    top: 110px;
+    align-self: flex-start;
+}
+
+.product-search-page .filters-card {
+    background: white;
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e9ecef;
+}
+
+.product-search-page .filters-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+    margin: 0 0 16px 0;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.product-search-page .filter-section {
+    margin-bottom: 24px;
+}
+
+.product-search-page .filter-section-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #495057;
+    margin: 0 0 12px 0;
+}
+
+/* Фильтр по цене */
+.product-search-page .price-filter {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.product-search-page .price-inputs {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.product-search-page .price-input-wrapper {
+    position: relative;
+    flex: 1;
+}
+
+.product-search-page .price-input-currency {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 14px;
+    color: #999;
+}
+
+.product-search-page .price-input {
+    width: 100%;
+    padding: 10px 12px 10px 28px;
+    border: 1.5px solid #e0e0e0;
+    border-radius: 10px;
+    font-size: 14px;
+    transition: all 0.2s;
+    box-sizing: border-box;
+}
+
+.product-search-page .price-input:focus {
+    outline: none;
+    border-color: #2bde8c;
+    box-shadow: 0 0 0 3px rgba(43, 222, 140, 0.1);
+}
+
+.product-search-page .price-separator {
+    color: #999;
+    font-size: 14px;
+}
+
+/* Кнопка применения фильтров */
+.product-search-page .apply-filters-btn {
+    width: 100%;
+    padding: 12px;
+    background: linear-gradient(135deg, #2bde8c, #2bc0de);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: 12px;
+}
+
+.product-search-page .apply-filters-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(43, 222, 140, 0.3);
+}
+
+
+/* Фильтр по состоянию */
+.product-search-page .condition-filter {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.product-search-page .condition-radio {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #495057;
+}
+
+.product-search-page .condition-radio input[type="radio"] {
+    width: 16px;
+    height: 16px;
+    margin: 0;
+    cursor: pointer;
+    accent-color: #2bde8c;
+}
+
+.product-search-page .condition-radio-label {
+    cursor: pointer;
+}
+
+/* Кнопка сброса */
+.product-search-page .reset-filters-btn {
+    width: 100%;
+    padding: 10px;
+    background: none;
+    border: 1.5px solid #ff6b6b;
+    border-radius: 10px;
+    color: #ff6b6b;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.product-search-page .reset-filters-btn:hover {
+    background: #fff5f5;
+    border-color: #ee5253;
+    color: #ee5253;
+}
+
+/* ========== ПРАВАЯ КОЛОНКА - РЕЗУЛЬТАТЫ ПОИСКА ========== */
+
+.product-search-page .results-column {
+    min-width: 0;
+}
+
+/* Сортировка */
+.product-search-page .sorting-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 12px 0;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.product-search-page .results-count {
+    font-size: 14px;
+    color: #6c757d;
+}
+
+.product-search-page .count-number {
+    font-weight: 700;
+    color: #2bde8c;
+    font-size: 16px;
+}
+
+.product-search-page .sorting-dropdown {
+    position: relative;
+}
+
+.product-search-page .sorting-trigger {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: white;
+    border: 1.5px solid #e0e0e0;
+    border-radius: 10px;
+    font-size: 14px;
+    color: #495057;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.product-search-page .sorting-trigger:hover {
+    border-color: #2bde8c;
+    background: #f8f9fa;
+}
+
+.product-search-page .sorting-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 4px;
+    min-width: 220px;
+    background: white;
+    border: 1px solid #e9ecef;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    z-index: 100;
+    overflow: hidden;
+}
+
+.product-search-page .sorting-option {
+    padding: 10px 16px;
+    font-size: 14px;
+    color: #495057;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.product-search-page .sorting-option:hover {
+    background: #f8f9fa;
+    color: #2bde8c;
+}
+
+/* ========== СЕТКА КАРТОЧЕК ТОВАРОВ (4 В РЯД) ========== */
+
+.product-search-page .recommendations-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+}
+
+/* Состояния загрузки, ошибки, пусто */
+.product-search-page .search-loading {
+    text-align: center;
+    padding: 60px 20px;
+    color: #6c757d;
+    font-size: 16px;
+}
+
+.product-search-page .search-error {
+    text-align: center;
+    padding: 60px 20px;
+    color: #ee5253;
+    font-size: 16px;
+}
+
+.product-search-page .search-empty {
+    text-align: center;
+    padding: 60px 20px;
+    color: #999;
+    font-size: 16px;
+}
+
+
+/* ========== ХЛЕБНЫЕ КРОШКИ ========== */
+
+.breadcrumbs {
+    padding: 12px 0 16px 0;
+    margin-bottom: 8px;
+    font-size: 13px;
+    color: #888;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.breadcrumbs__link {
+    color: #888;
+    text-decoration: none;
+    transition: color 0.2s;
+    
+    &:hover {
+        color: #2bde8c;
+    }
+}
+
+.breadcrumbs__separator {
+    margin: 0 6px;
+    color: #ccc;
+    font-size: 12px;
+}
+
+.breadcrumbs__current {
+    color: #333;
+    font-weight: 500;
+}
+
+/* ========== АДАПТИВ ДЛЯ МОБИЛЬНЫХ УСТРОЙСТВ ========== */
+
+@media (max-width: 1024px) {
+    .product-search-page .recommendations-row {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .product-search-page .main-content {
+        padding: 80px 15px 40px;
+    }
+
+    .product-search-page .content-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .product-search-page .filters-column {
+        position: static;
+    }
+
+    .product-search-page .recommendations-row {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+
+    .product-search-page .sorting-bar {
+        flex-direction: column;
+        gap: 12px;
+        align-items: flex-start;
+    }
+
+        .breadcrumbs {
+        padding: 10px 0 12px 0;
+        font-size: 12px;
+        overflow-x: auto;
+        white-space: nowrap;
+        
+        &::-webkit-scrollbar {
+            display: none;
+        }
+    }
+    
+    .breadcrumbs__separator {
+        margin: 0 4px;
+    }
+}
+
+@media (max-width: 480px) {
+    .product-search-page .recommendations-row {
+        grid-template-columns: 1fr;
+    }
+}

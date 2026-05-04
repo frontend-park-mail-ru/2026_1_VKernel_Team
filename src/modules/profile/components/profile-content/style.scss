@@ -126,3 +126,31 @@
     color: #e53935;
     transform: scale(1.08);
 }
+
+@media (max-width: 768px) {
+    body .profile-section-title {
+        font-size: 20px;
+    }
+    body .profile-ad-tabs {
+        overflow-x: auto;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 2px;
+        margin-bottom: 16px;
+    }
+    
+    body .profile-ad-tabs::-webkit-scrollbar {
+        height: 0px;
+        background: transparent;
+    }
+
+    body .profile-ad-tab {
+        font-size: 14px;
+        padding: 10px 16px;
+    }
+
+    body .profile-tab-content .recommendations-row {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+}
