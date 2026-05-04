@@ -180,30 +180,30 @@ export const AppController = {
             }
         });
 
-        // // Часть кода диспатчит навигацию через CustomEvent на window
-        // // (например, AdDetailController при клике на продавца). Прокидываем в eventBus.
-        // window.addEventListener('app:navigate', ((e: CustomEvent) => {
-        //     const path = e.detail?.path;
-        //     if (typeof path === 'string' && path) {
-        //         this.navigateTo(path);
-        //     }
-        // }) as EventListener);
+        // Часть кода диспатчит навигацию через CustomEvent на window
+        // (например, AdDetailController при клике на продавца). Прокидываем в eventBus.
+        window.addEventListener('app:navigate', ((e: CustomEvent) => {
+            const path = e.detail?.path;
+            if (typeof path === 'string' && path) {
+                this.navigateTo(path);
+            }
+        }) as EventListener);
 
-        // let csrfExpiredHandling = false;
-        // eventBus.on('auth:csrf-expired', async () => {
-        //     if (csrfExpiredHandling) return;
-        //     if (!store.isAuthenticated) return;
-        //     csrfExpiredHandling = true;
-        //     try {
-        //         await authActions.logout();
-        //     } catch {
-        //         store.setState({ isAuthenticated: false, user: null });
-        //     }
-        //     storage.removeToken();
-        //     uiActions.showError('Сессия истекла, войдите заново');
-        //     this.navigateTo('/login');
-        //     csrfExpiredHandling = false;
-        // });
+        let csrfExpiredHandling = false;
+        eventBus.on('auth:csrf-expired', async () => {
+            if (csrfExpiredHandling) return;
+            if (!store.isAuthenticated) return;
+            csrfExpiredHandling = true;
+            try {
+                await authActions.logout();
+            } catch {
+                store.setState({ isAuthenticated: false, user: null });
+            }
+            storage.removeToken();
+            uiActions.showError('Сессия истекла, войдите заново');
+            this.navigateTo('/login');
+            csrfExpiredHandling = false;
+        });
 
         window.addEventListener('app:route', () => {
             this.router();

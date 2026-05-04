@@ -67,7 +67,10 @@
                 <img src="{{avatarUrl user.avatar user.avatar_path}}" alt="Аватар" class="avatar">
             </a>
             {{else}}
-            <button class="btn place-ad-btn" data-nav="/login">Разместить объявление</button>
+            {{!-- <button class="btn place-ad-btn" data-nav="/login">Разместить объявление</button> --}}
+            <a class="announcements nav-link" data-nav="/login">
+                <span class="nav-text">+ Разместить объявление</span>
+            </a>
             <p>
                 <a href="#" class="nav-login" data-nav="/login">Войти</a>
             </p>

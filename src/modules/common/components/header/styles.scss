@@ -238,4 +238,29 @@
         line-height: 1;
         color: #fff; 
     }
+
+    .announcements.nav-link {
+        font-size: 0;              // Скрываем исходный текст
+        color: transparent;
+        position: relative;
+        padding: 0 80px 0 0;
+        height: 32px;
+        
+        // Добавляем новый текст через псевдоэлемент
+        &::before {
+            content: '+ Объявление';
+            font-size: 12px;
+            font-weight: 500;
+            color: #333;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            white-space: nowrap;
+        }
+        
+        &:hover {
+            background: #e0e0e0;
+        }
+    }
 }

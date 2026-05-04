@@ -773,4 +773,13 @@
     body .place-ad-page .btn-submit {
         order: -1;
     }
+
+    body .place-ad-page .btn-categories {
+        display: flex;
+        height: 36px;
+        padding: 0 8px;
+        font-size: 11px;
+        white-space: nowrap;
+        flex-shrink: 0; 
+    }
 }

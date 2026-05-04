@@ -647,7 +647,7 @@ body .main-container {
     .main-container .main-content {
         padding-left: 10px;
         padding-right: 10px;
-        margin-top: 180px; 
+        margin-top: 100px; 
     }
 
     .main-container .content-grid {
@@ -735,5 +735,31 @@ body .main-container {
         height: 28px;
         top: 5px;
         right: 5px;
+    }
+
+        // Уменьшаем высоту поисковой строки
+    .search-section {
+        padding: 8px 12px;        // Уменьшаем паддинги
+        top: 40px;
+        width: 100%;
+    }
+
+    .search-row {
+        gap: 6px;
+    }
+
+    .logo {
+        width: 100px;             // Увеличиваем эмблему (было 80px)
+    }
+
+    // Убираем геолокацию на мобилке
+    .geo {
+        display: none;
+    }
+
+    // Корректируем карточки категорий
+    .cards-row {
+        margin-top: 10px;         // Добавляем небольшой отступ сверху
+        gap: 8px;
     }
 }

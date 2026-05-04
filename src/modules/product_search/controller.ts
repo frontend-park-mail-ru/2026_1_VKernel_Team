@@ -4,6 +4,7 @@ import { uiActions } from '@/actions/uiActions';
 import { productSearchService } from './service';
 import { productSearchStore } from './store';
 import { getTemplate } from '.';
+import { categoryService } from '@/services/categoryService';
 import type { SearchFilters, SortOrder } from './types';
 
 export const ProductSearchController = {
@@ -160,10 +161,18 @@ export const ProductSearchController = {
 
         const state = productSearchStore.getState();
 
+        // Получаем имя категории, если поиск был по категории
+        let categoryName = null;
+        if (state.filters.category_id) {
+            // Здесь нужно получить имя категории из кэша или стора
+            categoryName = this.getCategoryNameById(state.filters.category_id);
+        }
+
         app.innerHTML = template({
             isAuthenticated: store.isAuthenticated,
             user: store.user,
             query: state.query,
+            categoryName: categoryName,
             filters: state.filters,
             sortOrder: state.sortOrder,
             results: state.results,
@@ -179,6 +188,13 @@ export const ProductSearchController = {
             this.initFavoriteHandlers();
             this.initCartButtons();
         }, 100);
+    },
+
+    // Вспомогательный метод для получения имени категории
+    getCategoryNameById(categoryId: number): string | null {
+        const categories = categoryService.getCachedCategories();
+        const category = categories?.find(c => c.id === categoryId);
+        return category?.name || null;
     },
 
     initCardClickHandlers(): void {

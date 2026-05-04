@@ -19,6 +19,18 @@
             </div>
         </div>
 
+        <!-- ХЛЕБНЫЕ КРОШКИ -->
+        <div class="breadcrumbs">
+            <a href="/" class="breadcrumbs__link" data-nav="/">Главная</a>
+            {{#if categoryName}}
+                <span class="breadcrumbs__separator">→</span>
+                <span class="breadcrumbs__current">{{categoryName}}</span>
+            {{else if query}}
+                <span class="breadcrumbs__separator">→</span>
+                <span class="breadcrumbs__current">Поиск: "{{query}}"</span>
+            {{/if}}
+        </div>
+
         <div class="content-grid">
             <!-- ЛЕВАЯ КОЛОНКА - ФИЛЬТРЫ -->
             <aside class="filters-column">
