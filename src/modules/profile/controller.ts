@@ -107,7 +107,6 @@ export const ProfileController = {
         this.isInitialized = false;
     },
 
-    // Состояния данных профиля
     userAds: [] as any[],
     userPurchases: [] as PurchaseItem[],
     userFavorites: [] as any[],
@@ -138,7 +137,6 @@ export const ProfileController = {
         this.attachEventListeners();
     },
 
-    // Новый метод загрузки избранного
     async loadUserFavorites(): Promise<void> {
         try {
             const result = await apiClient.get<any>(PROFILE_CONFIG.API.GET_FAVORITES);
@@ -152,8 +150,8 @@ export const ProfileController = {
                 } else if (Array.isArray(result.data.data)) {
                     favoritesArray = result.data.data;
                 } else if (typeof result.data === 'object') {
-                    // Если бэкенд завернул в странный ключ (типа additionalProp1)
-                    // Ищем первый попавшийся массив внутри объекта
+                    // Бэкенд иногда заворачивает массив в произвольный ключ (например, additionalProp1) —
+                    // берём первый попавшийся массив внутри объекта.
                     const arrays = Object.values(result.data).filter(Array.isArray);
                     if (arrays.length > 0) {
                         favoritesArray = arrays[0] as any[];
@@ -183,7 +181,7 @@ export const ProfileController = {
         const template = this.templates['profile-page'];
         if (!app || !template) return;
 
-        // Рендерим профиль из кэшированных данных (localStorage) сразу
+        // Сначала рендерим из кэшированных данных, чтобы не показывать пустую страницу
         const user = store.user || { name: 'Пользователь', avatar_path: '' };
         app.innerHTML = template({
             user: user,
@@ -199,11 +197,9 @@ export const ProfileController = {
 
         this.renderAll();
 
-        // Подгружаем свежие данные с сервера
         this.loadUserAds();
         this.loadProfileData();
 
-        // Если открыли профиль сразу на вкладке избранного (при роутинге)
         if (this.currentTab === 'favorites') {
             this.loadUserFavorites();
         }
@@ -298,7 +294,7 @@ export const ProfileController = {
         if (ProfileContent?.init) ProfileContent.init();
         if (EditNameModal?.init) EditNameModal.init();
         if (CloseAdModal?.init) CloseAdModal.init();
-        if (FavoriteCard?.init) FavoriteCard.init(); // Инициализация кликов для карточек избранного
+        if (FavoriteCard?.init) FavoriteCard.init();
     },
 
     async loadProfileData(): Promise<void> {

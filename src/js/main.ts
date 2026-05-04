@@ -3,14 +3,12 @@
  * @module main
  */
 
-// === Глобальные стили ===
 import '@styles/base.scss';
 import '@styles/components.scss';
 import '@styles/auth.scss';
 import '@styles/main.scss';
 import '@styles/footer.scss';
 
-// === Side-effect модули (инициализация) ===
 import '@/utils/storage';
 import '@/validators/authValidator';
 import '@/services/authService';
@@ -19,7 +17,6 @@ import '@modules/cart/init';
 import '@/api/apiClient';
 import '@modules/product_search';
 
-// === Offline infrastructure ===
 import { registerServiceWorker } from '@modules/common/offline/service-worker/sw-register';
 import { cloverDB } from '@modules/common/offline/db/indexedDB';
 import { syncManager } from '@modules/common/offline/sync/syncManager';
@@ -28,14 +25,11 @@ import { registerAdSyncHandler } from '@modules/announcements/sync-handler';
 import { registerAvatarSyncHandler, getCachedAvatarDataUrl } from '@modules/profile/sync-handler';
 import { initGlobalSearch } from '@modules/common/components/search-section/search_init';
 
-// === Точка входа: AppController вместо устаревшего App ===
 import { AppController } from '@/controllers/AppController';
 import { store } from '@/core/store';
 
-// === Регистрация Service Worker ===
 registerServiceWorker();
 
-// === Инициализация ===
 document.addEventListener('DOMContentLoaded', async () => {
     try {
         await cloverDB.open('clover-db', 5, [

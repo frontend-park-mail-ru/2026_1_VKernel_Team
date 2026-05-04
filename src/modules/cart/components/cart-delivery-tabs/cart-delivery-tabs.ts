@@ -27,8 +27,6 @@ export const CartDeliveryTabsComponent = {
                 tab.classList.add('active');
 
                 // TODO: обновить способ доставки в store
-                const deliveryType = tab.dataset.delivery;
-                console.log('Selected delivery type:', deliveryType);
             });
         });
     },

@@ -46,33 +46,26 @@ process.on('unhandledRejection', (reason) => {
     console.error('Необработанный reject:', reason);
 });
 
-//function handleApiProxy(req, res, pathname)
 function handleApiProxy(req, res) {
-    // Указываем адрес боевого бэкенда на сервере
     const targetUrl = new URL(req.url, BASE_URL);
 
-    // Формируем настройки для внутреннего запроса от Node.js к бэкенду
     const options = {
         hostname: targetUrl.hostname,
         port: targetUrl.port,
-        path: targetUrl.pathname + targetUrl.search, // Сохраняем пути и параметры (например, ?limit=10)
-        method: req.method, // Сохраняем оригинальный метод (GET, POST и т.д.)
+        path: targetUrl.pathname + targetUrl.search,
+        method: req.method,
         headers: {
-            ...req.headers, // Пробрасываем все заголовки от браузера (включая куки!)
-            host: targetUrl.host, // Подменяем host, чтобы бэкенд не отклонил запрос
+            ...req.headers,
+            // Подменяем host на хост бэкенда, иначе он отклонит запрос
+            host: targetUrl.host,
         },
     };
 
-    // Создаем HTTP-запрос к бэкенду
     const proxyReq = http.request(options, (proxyRes) => {
-        // Как только бэкенд ответил, пробрасываем его статус и заголовки обратно в браузер.
         res.writeHead(proxyRes.statusCode, proxyRes.headers);
-
-        // Потоково передаем тело ответа от бэкенда клиенту (браузеру)
         proxyRes.pipe(res, { end: true });
     });
 
-    // Обрабатываем ситуации, когда бэкенд недоступен
     proxyReq.on('error', (err) => {
         console.error('Ошибка проксирования на бэкенд:', err.message);
         if (!res.headersSent) {
@@ -81,7 +74,6 @@ function handleApiProxy(req, res) {
         }
     });
 
-    // Потоково передаем тело оригинального запроса на бэкенд
     req.pipe(proxyReq, { end: true });
 }
 
@@ -108,7 +100,6 @@ const server = http.createServer(async (req, res) => {
             return;
         }
 
-        // Перехватываем все запросы, которые фронтенд отправляет на /api/v1
         if (pathname.startsWith('/api/v1')) {
             handleApiProxy(req, res, pathname);
             return;

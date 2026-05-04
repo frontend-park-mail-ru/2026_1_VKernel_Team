@@ -32,10 +32,18 @@ export function initOfflineIndicator(): void {
 
     update(networkStatus.isOnline);
 
+    let wasOffline = !networkStatus.isOnline;
+
     networkStatus.subscribe((isOnline) => {
         update(isOnline);
 
-        if (isOnline) {
+        if (!isOnline) {
+            wasOffline = true;
+            return;
+        }
+
+        if (wasOffline) {
+            wasOffline = false;
             NotificationComponent.show({
                 type: 'success',
                 message: 'Подключение восстановлено',

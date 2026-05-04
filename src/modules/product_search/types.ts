@@ -1,10 +1,8 @@
-// src/modules/product_search/types.ts
-
 export interface SearchFilters {
     minPrice: number | null;
     maxPrice: number | null;
     condition: 'all' | 'new' | 'used';
-    category_id: number | null;  // Добавляем фильтр по категории
+    category_id: number | null; // Добавляем фильтр по категории
 }
 
 export type SortOrder = 'default' | 'price_asc' | 'price_desc';

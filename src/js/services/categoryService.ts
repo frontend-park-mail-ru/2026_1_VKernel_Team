@@ -27,15 +27,14 @@ export const categoryService = {
                 try {
                     localStorage.setItem(CATEGORIES_CACHE_KEY, JSON.stringify(result.data));
                 } catch {
-                    /* quota exceeded */
+                    // localStorage может быть переполнен или заблокирован
                 }
                 return result.data;
             }
         } catch {
-            // network error
+            // Сетевая ошибка — пойдём в фолбек
         }
 
-        // Фолбек: сначала из localStorage, потом hardcoded
         const cached = this.getCachedCategories();
         if (cached) return cached;
 
@@ -56,20 +55,19 @@ export const categoryService = {
                 try {
                     localStorage.setItem(CHARS_CACHE_PREFIX + categoryId, JSON.stringify(sorted));
                 } catch {
-                    /* quota exceeded */
+                    // localStorage может быть переполнен или заблокирован
                 }
                 return sorted;
             }
         } catch {
-            // network error
+            // Сетевая ошибка — пойдём в фолбек из localStorage
         }
 
-        // Фолбек из localStorage
         try {
             const cached = localStorage.getItem(CHARS_CACHE_PREFIX + categoryId);
             if (cached) return JSON.parse(cached);
         } catch {
-            /* parse error */
+            // Невалидный JSON или недоступный localStorage
         }
 
         return [];
@@ -80,7 +78,7 @@ export const categoryService = {
             const cached = localStorage.getItem(CATEGORIES_CACHE_KEY);
             if (cached) return JSON.parse(cached);
         } catch {
-            /* parse error */
+            // Невалидный JSON или недоступный localStorage
         }
         return null;
     },

@@ -54,16 +54,16 @@ export class AdDetailController {
             const result = await adsService.getAdById(adId);
 
             if (result.success && result.data) {
-                // Кэшируем объявление для offline-доступа
                 this.currentAd = result.data;
                 await this.cacheAd(result.data);
 
-                // Фиксируем просмотр (асинхронно, не блокируем UI)
+                // Фиксируем просмотр асинхронно, чтобы не блокировать UI
                 adsService.recordView(adId).then((updatedViews) => {
                     if (updatedViews !== null && this.currentAd) {
-                        // Обновляем отображаемое количество просмотров
                         this.currentAd.views_count = updatedViews;
-                        const viewsElement = document.querySelector('.ad-detail-page .views span:last-child');
+                        const viewsElement = document.querySelector(
+                            '.ad-detail-page .views span:last-child',
+                        );
                         if (viewsElement) {
                             viewsElement.textContent = `Просмотры: ${updatedViews}`;
                         }
@@ -89,7 +89,7 @@ export class AdDetailController {
 
             await this.showNotFound();
         } catch (error) {
-            // Попытка отдать из кэша при любой ошибке
+            // Фолбек: при любой ошибке пробуем отдать из IndexedDB-кэша
             const cached = await this.getCachedAd(adId);
             if (cached) {
                 this.currentAd = cached;
@@ -147,7 +147,6 @@ export class AdDetailController {
 
         const attributes: Array<{ name: string; value: string }> = [];
 
-        //  Категорийные характеристики
         if (ad.category_characteristics && ad.category_characteristics.length > 0) {
             for (const char of ad.category_characteristics) {
                 attributes.push({
@@ -157,7 +156,6 @@ export class AdDetailController {
             }
         }
 
-        // Пользовательские характеристики
         if (ad.custom_characteristics && ad.custom_characteristics.length > 0) {
             for (const char of ad.custom_characteristics) {
                 attributes.push({
@@ -167,7 +165,6 @@ export class AdDetailController {
             }
         }
 
-        // Получаем данные продавца через sellerService
         let sellerData = null;
         const sellerId = adAny.seller_id;
 
@@ -182,7 +179,6 @@ export class AdDetailController {
             }
         }
 
-        // Формируем звезды рейтинга
         const rating = sellerData?.rating || adAny.seller_rating || 0;
         const fullStars = Math.floor(rating);
         const hasHalfStar = rating % 1 >= 0.5;
@@ -220,10 +216,9 @@ export class AdDetailController {
                   : 'неизвестно',
             attributes: attributes,
 
-            // Для правого блока
             sellerId: sellerId,
             sellerName: sellerData?.name || adAny.seller_name || 'Продавец',
-            sellerAvatar: sellerData?.avatarUrl || '/images/logo/avatar.jpeg', // заглушка
+            sellerAvatar: sellerData?.avatarUrl || '/images/logo/avatar.jpeg',
             sellerRating: rating,
             sellerStars: sellerStars,
             user: store.user,
@@ -252,14 +247,12 @@ export class AdDetailController {
     private static attachEventListeners(): void {
         this.currentPhotoIndex = 0;
 
-        // Сохраняем adId в локальную переменную для использования в обработчиках
         const adId = this.adId;
         const backBtns = document.querySelectorAll('[data-action="back"]');
         for (let i = 0; i < backBtns.length; i++) {
             const btn = backBtns[i];
             const handler = (e: Event) => {
                 e.preventDefault();
-                // window.dispatchEvent(new CustomEvent('app:navigate', { detail: { path: '/' } }));
                 window.location.href = '/';
             };
             btn.addEventListener('click', handler);
@@ -347,7 +340,6 @@ export class AdDetailController {
             this._handlers.set('openPhotoViewer', handler);
         }
 
-        // ===== КНОПКА "В КОРЗИНУ" (с обновлением состояния) =====
         const cartBtn = document.querySelector('[data-action="add-to-cart"]');
         if (cartBtn) {
             if (this._handlers.has('addToCart')) {
@@ -359,7 +351,6 @@ export class AdDetailController {
                 e.stopPropagation();
 
                 if (!store.isAuthenticated) {
-                    // window.dispatchEvent(new CustomEvent('app:navigate', { detail: { path: '/login' } }),);
                     window.location.href = '/login';
                     return;
                 }
@@ -405,7 +396,6 @@ export class AdDetailController {
             this._handlers.set('addToCart', handler);
         }
 
-        // ===== КНОПКА "НАПИСАТЬ ПРОДАВЦУ" =====
         const messageBtn = document.querySelector('[data-action="message-seller"]');
         if (messageBtn) {
             if (this._handlers.has('messageSeller')) {
@@ -417,7 +407,6 @@ export class AdDetailController {
                 e.stopPropagation();
 
                 if (!store.isAuthenticated) {
-                    // window.dispatchEvent(new CustomEvent('app:navigate', { detail: { path: '/login' } }),);
                     window.location.href = '/login';
                     return;
                 }
@@ -454,19 +443,16 @@ export class AdDetailController {
             this._handlers.set('messageSeller', handler);
         }
 
-        // ===== КНОПКА "РЕДАКТИРОВАТЬ" (для владельца) =====
         const editBtn = document.querySelector('[data-action="edit-ad"]');
         if (editBtn) {
             const handler = (e: Event) => {
                 e.preventDefault();
-                // window.dispatchEvent(new CustomEvent('app:navigate', { detail: { path: `/edit-ad/${adId}` } }),);
                 window.location.href = `/edit-ad/${adId}`;
             };
             editBtn.addEventListener('click', handler);
             this._handlers.set('editAd', handler);
         }
 
-        // ===== КНОПКА "В ИЗБРАННОЕ" =====
         const favoriteBtn = document.querySelector('[data-action="add-to-favorites"]');
         if (favoriteBtn) {
             if (this._handlers.has('addToFavorites')) {
@@ -478,7 +464,6 @@ export class AdDetailController {
                 e.stopPropagation();
 
                 if (!store.isAuthenticated) {
-                    // window.dispatchEvent(new CustomEvent('app:navigate', { detail: { path: '/login' } }),);
                     window.location.href = '/login';
                     return;
                 }
@@ -564,7 +549,6 @@ export class AdDetailController {
             this._handlers.set('addToFavorites', handler);
         }
 
-        // ===== ПЕРЕХОД НА СТРАНИЦУ ПРОДАВЦА (по клику на аватар или имя) =====
         const sellerSelectors = document.querySelectorAll('[data-action="go-to-seller"]');
         sellerSelectors.forEach((element) => {
             const handler = (e: Event) => {
@@ -575,10 +559,8 @@ export class AdDetailController {
 
                 if (sellerId) {
                     if (isOwner) {
-                        // eventBus.emit('app:navigate', '/profile');
                         window.location.href = '/profile';
                     } else {
-                        // eventBus.emit('app:navigate', `/seller/${sellerId}`);
                         window.location.href = `/seller/${sellerId}`;
                     }
                 }
@@ -593,7 +575,6 @@ export class AdDetailController {
         const ad = this.currentAd as any;
 
         if (ad) {
-            // Берём данные из объекта, а не из DOM
             let imagePath = '/images/default-ad.jpg';
             if (ad.photos && ad.photos.length > 0) {
                 const photo = ad.photos[0];
@@ -613,7 +594,7 @@ export class AdDetailController {
             };
         }
 
-        // Фолбек на DOM если объект недоступен
+        // Фолбек: достаём данные из DOM, если объект ad недоступен
         const title = document.querySelector('.ad-title')?.textContent?.trim() || '';
         const priceText = document.querySelector('.current-price')?.textContent?.trim() || '';
         const price = priceText.toLowerCase().includes('бесплатно')

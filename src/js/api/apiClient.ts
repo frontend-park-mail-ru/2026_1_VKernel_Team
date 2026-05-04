@@ -122,12 +122,6 @@ export class ApiClient {
         body: any = null,
         customHeaders: Record<string, string> = {},
     ): Promise<ApiResponse<T>> {
-        // Улучшенное логирование, чтобы в консоли было видно, когда летит FormData
-        console.log(
-            `API Request: ${method} ${API_URL}${endpoint}`,
-            body instanceof FormData ? '[FormData File]' : body,
-        );
-
         const headers: Record<string, string> = {
             ...customHeaders,
         };
@@ -167,7 +161,7 @@ export class ApiClient {
         }
 
         const controller = new AbortController();
-        const timeoutMs = body instanceof FormData ? 30000 : 2000;
+        const timeoutMs = body instanceof FormData ? 30000 : 15000;
         const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
         config.signal = controller.signal;
 
@@ -236,8 +230,13 @@ export class ApiClient {
             };
         } catch (error) {
             clearTimeout(timeoutId);
-            // fetch выбросил исключение — сеть недоступна
-            networkStatus.setOffline();
+            // fetch выбросил исключение — сеть недоступна.
+            // Переключаем приложение в офлайн только если браузер явно сообщает,
+            // что сети нет, иначе единичный таймаут будет ложно переводить UI
+            // в offline-режим и сразу же показывать «Подключение восстановлено».
+            if (!navigator.onLine) {
+                networkStatus.setOffline();
+            }
             return {
                 success: false,
                 error: 'Не удалось соединиться с сервером',

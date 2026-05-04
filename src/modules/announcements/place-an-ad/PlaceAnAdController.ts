@@ -36,10 +36,8 @@ export class PlaceAnAdController {
     private static photoFiles: File[] = [];
     private static photoPreviews: string[] = [];
 
-    // Динамические характеристики (custom_characteristics)
     private static dynamicAttributes: DynamicAttribute[] = [];
 
-    // Категорийные характеристики
     private static categoryCharacteristicsDefs: CategoryCharacteristic[] = [];
     private static categoryCharacteristicsValues: Map<number, string> = new Map();
 
@@ -47,11 +45,9 @@ export class PlaceAnAdController {
     private static readonly ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
     private static readonly MAX_CUSTOM_CHARS = 10;
 
-    // Режим редактирования
     private static editingAdId: string | null = null;
     private static existingPhotos: string[] = [];
 
-    // Флаги для защиты от двойных вызовов
     private static isRendering: boolean = false;
     private static isRestoring: boolean = false;
 
@@ -71,7 +67,6 @@ export class PlaceAnAdController {
 
         try {
             if (!store.isAuthenticated) {
-                // window.dispatchEvent(new CustomEvent('app:navigate', { detail: { path: '/login' } }),);
                 window.location.href = '/login';
                 uiActions.showError('Пожалуйста, войдите в систему');
                 return;
@@ -130,7 +125,6 @@ export class PlaceAnAdController {
 
             if (!result.success || !result.data) {
                 uiActions.showError('Не удалось загрузить объявление');
-                // window.dispatchEvent(new CustomEvent('app:navigate', { detail: { path: '/profile' } }),);
                 window.location.href = '/profile';
                 return;
             }
@@ -677,7 +671,6 @@ export class PlaceAnAdController {
                 if (!this.editingAdId) await AdDraftService.clear();
                 this.clearAllData();
                 NotificationComponent.show({ type: 'success', message: 'Успешно сохранено!' });
-                // window.dispatchEvent(new CustomEvent('app:navigate', {detail: { path: adId ? `/ad/${adId}` : '/profile' },}),);
                 window.location.href = adId ? `/ad/${adId}` : '/profile';
             } else {
                 NotificationComponent.show({
@@ -714,7 +707,6 @@ export class PlaceAnAdController {
                 message: 'Будет опубликовано при подключении к сети',
                 duration: 5000,
             });
-            // window.dispatchEvent(new CustomEvent('app:navigate', { detail: { path: '/' } }));
             window.location.href = '/';
         } catch (error) {
             NotificationComponent.show({ type: 'error', message: 'Не удалось сохранить оффлайн' });
@@ -735,7 +727,6 @@ export class PlaceAnAdController {
         this.hideCancelModal();
         await AdDraftService.clear();
         this.clearAllData();
-        // window.dispatchEvent(new CustomEvent('app:navigate', { detail: { path: '/' } }));
         window.location.href = '/';
     }
 
@@ -774,41 +765,16 @@ export class PlaceAnAdController {
         NotificationComponent.show({ type: 'success', message: 'Черновик очищен' });
     }
 
-    // private static async handlePreview(): Promise<void> {
-    //     if (!this.validateAndShowErrors()) return;
-
-    //     window.dispatchEvent(new CustomEvent('app:loading', { detail: { show: true } }));
-    //     try {
-    //         const formData = this.collectFormData();
-    //         await AdDraftService.save(formData, this.photoFiles);
-    //         window.dispatchEvent(
-    //             new CustomEvent('app:navigate', { detail: { path: '/ad-preview' } }),
-    //         );
-    //     } catch (error) {
-    //         console.error('Preview error:', error);
-    //         uiActions.showError('Не удалось создать предпросмотр');
-    //     } finally {
-    //         window.dispatchEvent(new CustomEvent('app:loading', { detail: { show: false } }));
-    //     }
-    // }
-
     private static async handlePreview(): Promise<void> {
-        console.log('🔍 handlePreview вызван');
-        console.log('🔍 validateAndShowErrors:', this.validateAndShowErrors());
-            // Проверяем валидацию перед предпросмотром
         if (!this.validateAndShowErrors()) {
-            console.log('❌ Валидация не пройдена');
             return;
         }
-        console.log('✅ Валидация пройдена, сохраняем черновик...');
         window.dispatchEvent(new CustomEvent('app:loading', { detail: { show: true } }));
         try {
             const formData = this.collectFormData();
             await AdDraftService.save(formData, this.photoFiles);
-            
-            // ПРЯМОЙ ПЕРЕХОД, а не через событие
+
             window.location.href = '/ad-preview';
-            
         } catch (error) {
             console.error('Preview error:', error);
             uiActions.showError('Не удалось создать предпросмотр');
@@ -883,10 +849,8 @@ export class PlaceAnAdController {
             btn.addEventListener('click', (e) => {
                 e.preventDefault();
                 if (this.editingAdId) {
-                    // window.dispatchEvent(new CustomEvent('app:navigate', {detail: { path: `/ad/${this.editingAdId}` },}),);
                     window.location.href = `/ad/${this.editingAdId}`;
                 } else {
-                    // window.dispatchEvent(new CustomEvent('app:navigate', { detail: { path: '/' } }),);
                     window.location.href = '/';
                 }
             }),

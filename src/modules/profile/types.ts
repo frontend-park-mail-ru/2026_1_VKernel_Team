@@ -14,12 +14,12 @@ export type AdFilter = 'all' | 'active' | 'completed' | 'inactive' | 'drafts';
 
 /** Основная структура данных пользователя */
 export interface UserProfile {
-    id: number; // Если бэкенд отдаёт строку (UUID), замени на string
+    id: number;
     name: string;
     email?: string;
     phone?: string;
     avatar_url?: string;
-    avatar_path?: string; // Для обратной совместимости
+    avatar_path?: string;
     rating: number;
     reviews_count: number;
     ads_count: number;
@@ -29,7 +29,7 @@ export interface UserProfile {
     created_at: string;
     is_verified?: boolean;
     balance?: number;
-    [key: string]: unknown; // Безопасный fallback для доп. полей
+    [key: string]: unknown;
 }
 
 /** Карточка объявления в сетке профиля */
