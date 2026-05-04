@@ -57,6 +57,19 @@ export class AdDetailController {
                 // Кэшируем объявление для offline-доступа
                 this.currentAd = result.data;
                 await this.cacheAd(result.data);
+
+                // Фиксируем просмотр (асинхронно, не блокируем UI)
+                adsService.recordView(adId).then((updatedViews) => {
+                    if (updatedViews !== null && this.currentAd) {
+                        // Обновляем отображаемое количество просмотров
+                        this.currentAd.views_count = updatedViews;
+                        const viewsElement = document.querySelector('.ad-detail-page .views span:last-child');
+                        if (viewsElement) {
+                            viewsElement.textContent = `Просмотры: ${updatedViews}`;
+                        }
+                    }
+                });
+
                 const adData = await this.prepareAdData(result.data);
                 app.innerHTML = adDetailTpl(adData);
                 this.attachEventListeners();
