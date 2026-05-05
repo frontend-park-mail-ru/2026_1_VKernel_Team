@@ -16,7 +16,8 @@
       "@validators/*": ["./src/js/validators/*"],
       "@utils/*": ["./src/js/utils/*"],
       "@types": ["./src/js/types"],
-      "@modules/*": ["./src/modules/*"]
+      "@modules/*": ["./src/modules/*"],
+      "@assets/*": ["./src/assets/*"]
     },
 
     "outDir": "./dist",

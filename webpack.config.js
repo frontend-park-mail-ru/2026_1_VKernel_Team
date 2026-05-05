@@ -12,10 +12,12 @@ const __dirname = path.dirname(__filename);
 const envPath = path.resolve(__dirname, '.env');
 const envVars = {};
 if (fs.existsSync(envPath)) {
-    fs.readFileSync(envPath, 'utf-8').split('\n').forEach((line) => {
-        const match = line.match(/^\s*([\w.-]+)\s*=\s*(.*)?\s*$/);
-        if (match) envVars[match[1]] = (match[2] || '').replace(/^['"]|['"]$/g, '');
-    });
+    fs.readFileSync(envPath, 'utf-8')
+        .split('\n')
+        .forEach((line) => {
+            const match = line.match(/^\s*([\w.-]+)\s*=\s*(.*)?\s*$/);
+            if (match) envVars[match[1]] = (match[2] || '').replace(/^['"]|['"]$/g, '');
+        });
 }
 
 export default (env, argv) => {
@@ -52,8 +54,10 @@ export default (env, argv) => {
             rules: [
                 { test: /\.tsx?$/, use: 'ts-loader', exclude: /node_modules/ },
                 { test: /\.s?css$/i, use: ['style-loader', 'css-loader', 'sass-loader'] },
+                { test: /\.svg$/i, resourceQuery: /raw/, type: 'asset/source' },
                 {
                     test: /\.(png|jpe?g|gif|svg|webp)$/i,
+                    resourceQuery: { not: [/raw/] },
                     type: 'asset/resource',
                     generator: { filename: 'images/[hash][ext][query]' },
                 },
@@ -79,7 +83,7 @@ export default (env, argv) => {
                             'gt',
                             'concat',
                             'array',
-                            'iconForTab',
+                            'icon',
                             'labelForTab',
                             'ifAuthenticated',
                             'avatarUrl',
@@ -95,7 +99,9 @@ export default (env, argv) => {
         },
         plugins: [
             new webpack.DefinePlugin({
-                'process.env.BASE_URL': JSON.stringify(envVars.BASE_URL || 'http://clover-go.ru:8000'),
+                'process.env.BASE_URL': JSON.stringify(
+                    envVars.BASE_URL || 'http://clover-go.ru:8000',
+                ),
             }),
             new HtmlWebpackPlugin({
                 template: './public/index.html',
@@ -132,6 +138,7 @@ export default (env, argv) => {
                 '@types': path.resolve(__dirname, 'src/js/types'),
                 '@templates': path.resolve(__dirname, 'src/templates'),
                 '@modules': path.resolve(__dirname, 'src/modules'),
+                '@assets': path.resolve(__dirname, 'src/assets'),
                 handlebars$: 'handlebars/dist/handlebars.js',
             },
         },
