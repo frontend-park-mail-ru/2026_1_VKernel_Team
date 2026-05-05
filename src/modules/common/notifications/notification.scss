@@ -69,3 +69,16 @@
 .notification__close:hover {
     opacity: 1;
 }
+
+@media (max-width: 480px) {
+    #notification-container {
+        top: 12px;
+        right: 12px;
+        left: 12px;
+        max-width: none;
+    }
+    .notification {
+        font-size: 14px;
+        padding: 12px 14px;
+    }
+}

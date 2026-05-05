@@ -53,10 +53,11 @@
 /* ========== ТАБЫ ДОСТАВКИ ========== */
 .cart-delivery-tabs {
     display: flex;
-    gap: 0;
+    gap: 4px;
+    flex-wrap: wrap;
     border: 1px solid #e0e0e0;
     border-radius: 8px;
-    overflow: hidden;
+    padding: 4px;
 }
 
 .cart-delivery-tab {

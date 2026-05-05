@@ -103,4 +103,25 @@ h2 {
     #app {
         padding: 0 10px;
     }
+
+    h1 {
+        font-size: 1.8em;
+        margin-bottom: 8px;
+    }
+
+    h2 {
+        font-size: 1.4em;
+        margin-bottom: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    h1 {
+        font-size: 1.5em;
+    }
+
+    h2 {
+        font-size: 1.25em;
+        margin-bottom: 16px;
+    }
 }
