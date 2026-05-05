@@ -724,11 +724,13 @@ export class PlaceAnAdController {
         if (modal) modal.style.display = 'none';
     }
 
+    /**
+     * Подтверждение в модалке. Сейчас модалка обслуживает только сценарий
+     * «Очистить черновик» — выходим тут же на очистку формы.
+     */
     private static async handleCancelConfirm(): Promise<void> {
         this.hideCancelModal();
-        await AdDraftService.clear();
-        this.clearAllData();
-        window.location.href = '/';
+        await this.handleClearDraft();
     }
 
     private static async handleSaveDraft(): Promise<void> {
@@ -830,9 +832,6 @@ export class PlaceAnAdController {
             ?.addEventListener('click', () => this.addDynamicAttribute());
         document
             .getElementById('clearDraftBtn')
-            ?.addEventListener('click', () => this.handleClearDraft());
-        document
-            .getElementById('cancelAdBtn')
             ?.addEventListener('click', () => this.showCancelModal());
 
         const cancelModal = document.getElementById('cancelAdModal');

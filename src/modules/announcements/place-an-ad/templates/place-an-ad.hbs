@@ -166,26 +166,25 @@
 
                     <!-- Кнопки формы -->
                     <div class="form-actions">
-                        <button type="button" class="btn-cancel" id="cancelAdBtn">Отмена</button>
                         {{#if isEditing}}
-                            <button type="button" class="btn-preview" id="saveEditBtn">Сохранить изменения</button>
+                            <button type="button" class="btn-form btn-form--primary" id="saveEditBtn">Сохранить изменения</button>
                         {{else}}
-                            <button type="button" class="btn-clear-draft" id="clearDraftBtn">Очистить черновик</button>
-                            <button type="button" class="btn-draft" id="saveDraftBtn">Сохранить в черновик</button>
-                            <button type="button" class="btn-preview" id="previewBtn">Посмотреть результат</button>
+                            <button type="button" class="btn-form btn-form--ghost" id="clearDraftBtn">Очистить черновик</button>
+                            <button type="button" class="btn-form btn-form--secondary" id="saveDraftBtn">Сохранить черновик</button>
+                            <button type="button" class="btn-form btn-form--primary" id="previewBtn">Посмотреть результат</button>
                         {{/if}}
                     </div>
                 </form>
             </div>
             
-            <!-- Модалка подтверждения отмены -->
+            <!-- Модалка подтверждения очистки черновика -->
             <div id="cancelAdModal" class="modal-overlay" style="display: none;">
                 <div class="modal-content">
-                    <h3>Отменить создание</h3>
-                    <p class="cancel-ad-modal__description">Вы уверены? Все введённые данные и черновик будут удалены.</p>
+                    <h3>Очистить черновик</h3>
+                    <p class="cancel-ad-modal__description">Все заполненные поля и сохранённый черновик будут удалены. Это действие нельзя отменить.</p>
                     <div class="modal-actions">
-                        <button type="button" class="btn btn-secondary" id="cancelAdModalClose">Вернуться</button>
-                        <button type="button" class="btn btn-danger" id="cancelAdModalConfirm">Удалить и выйти</button>
+                        <button type="button" class="btn btn-secondary" id="cancelAdModalClose">Отмена</button>
+                        <button type="button" class="btn btn-danger" id="cancelAdModalConfirm">Очистить</button>
                     </div>
                 </div>
             </div>

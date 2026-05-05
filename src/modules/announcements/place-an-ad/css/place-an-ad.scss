@@ -502,82 +502,98 @@
 
 /* ========== КНОПКИ ФОРМЫ ========== */
 
+/* === Унифицированные кнопки формы === */
+
 .place-ad-page .form-actions {
     display: flex;
-    gap: 16px;
+    gap: 12px;
     justify-content: flex-end;
+    align-items: center;
+    flex-wrap: wrap;
     margin-top: 10px;
     padding-top: 24px;
     border-top: 1px solid #e9ecef;
 }
 
-.place-ad-page .btn-cancel {
-    padding: 12px 28px;
-    background: #f8f9fa;
-    border: 2px solid #e0e0e0;
+.place-ad-page .btn-form {
+    height: 48px;
+    padding: 0 24px;
     border-radius: 10px;
-    font-size: 16px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background 0.2s, border-color 0.2s;
-    color: #495057;
-}
-
-.place-ad-page .btn-cancel:hover {
-    background: #e9ecef;
-    border-color: #ced4da;
-}
-
-.place-ad-page .btn-clear-draft {
-    padding: 12px 28px;
-    background: #f8f9fa;
-    border: 2px solid #ff6b6b;
-    border-radius: 10px;
-    font-size: 16px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background 0.2s, transform 0.2s;
-    color: #ee5253;
-}
-
-.place-ad-page .btn-clear-draft:hover {
-    background: #fff5f5;
-    transform: translateY(-2px);
-}
-
-.place-ad-page .btn-draft {
-    padding: 12px 28px;
-    background: #f8f9fa;
-    border: 2px solid #ffc107;
-    border-radius: 10px;
-    font-size: 16px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background 0.2s, transform 0.2s;
-    color: #856404;
-}
-
-.place-ad-page .btn-draft:hover {
-    background: #fff3cd;
-    transform: translateY(-2px);
-}
-
-.place-ad-page .btn-preview {
-    padding: 12px 28px;
-    /* background: linear-gradient(135deg, #4a90e2, #357abd); */
-    background: linear-gradient(135deg, #2bde8c, #2bc0de);
-    color: white;
-    border: none;
-    border-radius: 10px;
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 600;
+    line-height: 1;
     cursor: pointer;
-    transition: transform 0.2s, box-shadow 0.2s;
+    border: 1.5px solid transparent;
+    background: transparent;
+    transition:
+        background 0.18s ease,
+        border-color 0.18s ease,
+        color 0.18s ease,
+        box-shadow 0.18s ease,
+        transform 0.18s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
 }
 
-.place-ad-page .btn-preview:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(74, 144, 226, 0.3);
+.place-ad-page .btn-form:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(43, 222, 140, 0.25);
+}
+
+.place-ad-page .btn-form--primary {
+    background: #2bde8c;
+    color: #fff;
+}
+
+.place-ad-page .btn-form--primary:hover {
+    background: #25c47b;
+    box-shadow: 0 4px 12px rgba(43, 222, 140, 0.25);
+    transform: translateY(-1px);
+}
+
+.place-ad-page .btn-form--secondary {
+    border-color: #2bde8c;
+    color: #2bde8c;
+}
+
+.place-ad-page .btn-form--secondary:hover {
+    background: #e9fcf3;
+}
+
+.place-ad-page .btn-form--ghost {
+    color: #6c757d;
+    font-weight: 500;
+    margin-right: auto; /* прижимаем «Очистить» к левому краю строки */
+    padding: 0 12px;
+}
+
+.place-ad-page .btn-form--ghost:hover {
+    color: #ee5253;
+    background: #fff5f5;
+}
+
+@media (max-width: 480px) {
+    .place-ad-page .form-actions {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+    }
+    .place-ad-page .btn-form {
+        width: 100%;
+        height: 46px;
+    }
+    .place-ad-page .btn-form--ghost {
+        margin-right: 0;
+        order: 3; /* «Очистить» уезжает в самый низ */
+    }
+    .place-ad-page .btn-form--secondary {
+        order: 2;
+    }
+    .place-ad-page .btn-form--primary {
+        order: 1;
+    }
 }
 
 .place-ad-page .btn-submit {
@@ -832,19 +848,9 @@
         flex-direction: column;
     }
 
-    body .place-ad-page .btn-cancel,
-    body .place-ad-page .btn-clear-draft,
-    body .place-ad-page .btn-draft,
-    body .place-ad-page .btn-preview,
     body .place-ad-page .btn-submit {
         width: 100%;
         text-align: center;
-    }
-
-    /* Основная кнопка первой на мобилке */
-    body .place-ad-page .btn-preview,
-    body .place-ad-page .btn-submit {
-        order: -1;
     }
 
     body .place-ad-page .btn-categories {
