@@ -9,11 +9,12 @@
                     </a>
                 </div>
                 <div class="search-wrapper">
-                    <input type="text" class="search-input" id="globalSearchInput" placeholder="Поиск объявлений..." value="{{query}}">
-                    <button class="btn place-ad-btn" id="globalSearchBtn">Найти</button>
+                    <input type="text" class="search-input" id="globalSearchInput" placeholder="Поиск объявлений..." value="{{query}}" autocomplete="off" aria-label="Поиск объявлений">
+                    <button class="btn place-ad-btn" id="globalSearchBtn" aria-label="Найти">Найти</button>
+                    <div class="search-suggestions" id="globalSearchSuggestions" hidden role="listbox"></div>
                 </div>
                 <div class="geo">
-                    <span class="icon">📍</span>
+                    <span class="icon">{{{icon "pin"}}}</span>
                     <span class="city">Москва</span>
                 </div>
             </div>
@@ -23,10 +24,10 @@
         <div class="breadcrumbs">
             <a href="/" class="breadcrumbs__link" data-nav="/">Главная</a>
             {{#if categoryName}}
-                <span class="breadcrumbs__separator">→</span>
+                <span class="breadcrumbs__separator">{{{icon "chevron-right"}}}</span>
                 <span class="breadcrumbs__current">{{categoryName}}</span>
             {{else if query}}
-                <span class="breadcrumbs__separator">→</span>
+                <span class="breadcrumbs__separator">{{{icon "chevron-right"}}}</span>
                 <span class="breadcrumbs__current">Поиск: "{{query}}"</span>
             {{/if}}
         </div>
@@ -112,7 +113,7 @@
                     </div>
                 {{else if error}}
                     <div class="search-error">
-                        <span>⚠️</span>
+                        <span class="search-error__icon">{{{icon "warning"}}}</span>
                         <p>{{error}}</p>
                         <button class="retry-btn" id="retryBtn">Повторить попытку</button>
                     </div>
@@ -124,7 +125,7 @@
                     </div>
                 {{else}}
                     <div class="search-empty">
-                        <span>🔍</span>
+                        <span class="search-empty__icon">{{{icon "search"}}}</span>
                         <h3>Ничего не найдено</h3>
                         <p>Попробуйте изменить параметры поиска</p>
                     </div>

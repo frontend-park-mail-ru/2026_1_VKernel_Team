@@ -26,6 +26,7 @@
     align-items: center;
     gap: 0.75rem;
     flex: 1;
+    position: relative;
 }
 
 .search-input {
@@ -39,6 +40,96 @@
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
+
+    .icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: #2bde8c;
+
+        svg {
+            width: 18px;
+            height: 18px;
+        }
+    }
+}
+
+/* ----- Search suggestions dropdown ----- */
+.search-suggestions {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+    z-index: 1000;
+    max-height: 360px;
+    overflow-y: auto;
+    padding: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+
+    &[hidden] {
+        display: none;
+    }
+
+    &__empty {
+        padding: 14px 16px;
+        color: #888;
+        font-size: 14px;
+        text-align: center;
+    }
+
+    &__item {
+        display: grid;
+        grid-template-columns: 44px 1fr auto;
+        align-items: center;
+        gap: 12px;
+        padding: 8px 10px;
+        background: transparent;
+        border: 1px solid transparent;
+        border-radius: 8px;
+        cursor: pointer;
+        text-align: left;
+        font-family: inherit;
+        font-size: 14px;
+        color: #222;
+        transition:
+            background 0.15s,
+            border-color 0.15s;
+        min-height: 56px;
+
+        &:hover,
+        &.is-active {
+            background: #f4fbf6;
+            border-color: #cdebd9;
+            outline: none;
+        }
+    }
+
+    &__image {
+        width: 44px;
+        height: 44px;
+        border-radius: 6px;
+        object-fit: cover;
+        background: #f0f0f0;
+    }
+
+    &__title {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-weight: 500;
+    }
+
+    &__price {
+        color: #555;
+        font-size: 13px;
+        white-space: nowrap;
+    }
 }
 
 @media (max-width: 768px) {
@@ -73,29 +164,34 @@
     body .btn-categories {
         order: 2;
         flex-shrink: 0;
-        width: 36px;
-        height: 36px;
+        width: 44px;
+        height: 44px;
+        min-width: 44px;
         padding: 0;
         background: #f5f5f5;
         border: 1px solid #ddd;
         border-radius: 8px;
         font-size: 0;
         text-indent: -9999px;
-        font-size: 0;
         position: relative;
-        
+
         &::before {
-            content: '☰';
+            content: '';
             position: absolute;
             top: 50%;
             left: 50%;
+            width: 20px;
+            height: 14px;
             transform: translate(-50%, -50%);
-            font-size: 20px;
-            font-weight: 300;
-            color: #555;
-            text-indent: 0;  
+            background-color: #555;
+            mask: linear-gradient(currentColor 0 0) top/100% 2px no-repeat,
+                linear-gradient(currentColor 0 0) center/100% 2px no-repeat,
+                linear-gradient(currentColor 0 0) bottom/100% 2px no-repeat;
+            -webkit-mask: linear-gradient(currentColor 0 0) top/100% 2px no-repeat,
+                linear-gradient(currentColor 0 0) center/100% 2px no-repeat,
+                linear-gradient(currentColor 0 0) bottom/100% 2px no-repeat;
         }
-        
+
         &::after {
             display: none;
         }
@@ -118,44 +214,40 @@
         border-radius: 6px;
     }
 
-    body .search-wrapper .btn, 
+    body .search-wrapper .btn,
     body .search-wrapper .place-ad-btn {
         position: relative;
-        width: 34px;
-        height: 34px;
-        min-width: 34px;
+        width: 44px;
+        height: 44px;
+        min-width: 44px;
         padding: 0;
         border-radius: 50%;
         background: #f0f0f0;
         border: 1px solid #ddd;
         flex-shrink: 0;
-        
-        // Скрываем весь текст и псевдоэлементы
+
         font-size: 0;
         color: transparent;
         text-indent: -9999px;
         white-space: nowrap;
-        
-        &::before,
-        &::after {
-            display: none !important;
-            content: none !important;
-        }
-        
-        // Добавляем лупу заново
+
         &::before {
-            display: block !important;
-            content: '🔍' !important;
+            content: '';
             position: absolute;
             top: 50%;
             left: 50%;
+            width: 20px;
+            height: 20px;
             transform: translate(-50%, -50%);
-            font-size: 16px;
-            color: #555;
-            text-indent: 0;
-            white-space: normal;
+            background-color: #555;
+            -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'><circle cx='11' cy='11' r='8'/><line x1='21' y1='21' x2='16.65' y2='16.65'/></svg>") center/contain no-repeat;
+            mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'><circle cx='11' cy='11' r='8'/><line x1='21' y1='21' x2='16.65' y2='16.65'/></svg>") center/contain no-repeat;
         }
-        
+
+        &::after {
+            display: none !important;
+        }
+
         &:hover {
             background: #e0e0e0;
         }
