@@ -43,7 +43,16 @@ export const ProductSearchController = {
     async performSearch(): Promise<void> {
         const state = productSearchStore.getState();
 
-        if (!state.query || state.query.trim() === '') {
+        // Раньше при пустом query сразу выходили — но теперь поиск может
+        // идти только по фильтрам (category_id), без текстового запроса.
+        const hasFilters = !!(
+            state.filters.category_id ||
+            (state.filters.minPrice && state.filters.minPrice > 0) ||
+            (state.filters.maxPrice && state.filters.maxPrice > 0) ||
+            (state.filters.condition && state.filters.condition !== 'all')
+        );
+        const trimmedQuery = (state.query || '').trim();
+        if (!trimmedQuery && !hasFilters) {
             productSearchStore.setState({
                 results: [],
                 totalCount: 0,
