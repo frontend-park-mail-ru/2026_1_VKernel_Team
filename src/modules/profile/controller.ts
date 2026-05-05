@@ -20,6 +20,7 @@ import { CONFIG } from '@/core/config';
 import { purchasesStore } from '@modules/profile/purchases-store';
 import { cartService } from '@modules/cart/service';
 import { cartStore } from '@modules/cart/store';
+import { CartButtonComponent } from '@modules/cart/components/cart-button/cart-button';
 import type { PurchaseItem } from '@modules/profile/purchases-store';
 import { unreadStore, UNREAD_CHANGED_EVENT } from '@modules/chat/unread-store';
 
@@ -295,6 +296,10 @@ export const ProfileController = {
         if (EditNameModal?.init) EditNameModal.init();
         if (CloseAdModal?.init) CloseAdModal.init();
         if (FavoriteCard?.init) FavoriteCard.init();
+        // На вкладках с карточками рендерится partial cart-button — нужно
+        // подключить его обработчики (добавление в корзину со страницы
+        // «Избранное», «Мои покупки», «Объявления»).
+        CartButtonComponent.initAll();
     },
 
     async loadProfileData(): Promise<void> {
