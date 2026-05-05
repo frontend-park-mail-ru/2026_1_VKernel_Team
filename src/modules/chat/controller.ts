@@ -104,7 +104,7 @@ export const ChatController = {
                 app.innerHTML = `
                     <div class="chat-detail-page" style="padding:80px 0;text-align:center;">
                         <p>${result.error || 'Чат не найден'}</p>
-                        <a href="/chats" data-nav="/chats">← К списку чатов</a>
+                        <a href="/chats" data-nav="/chats">К списку чатов</a>
                     </div>`;
                 return;
             }

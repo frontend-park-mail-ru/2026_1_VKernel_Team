@@ -1,6 +1,7 @@
 import { apiClient, API_ENDPOINTS } from '@/api/apiClient';
 import { CONFIG } from '@/core/config';
 import { SELLER_API_ENDPOINTS } from '@modules/seller-page/config';
+import { renderStarsHTML } from '@/utils/icons';
 import type { SellerProfile, SellerAd, FormattedSellerProfile } from './types';
 
 const STATIC_BACKEND = CONFIG.API.BASE_URL;
@@ -83,9 +84,7 @@ const sellerService = {
         const avatarUrl = this.getAvatarUrl(profile.avatar_path);
 
         const rating = profile.rating ?? 0;
-        const fullStars = Math.round(rating);
-        const displayStars = Math.min(fullStars, 5);
-        const ratingStars = '&#9733;'.repeat(displayStars) + '&#9734;'.repeat(5 - displayStars);
+        const ratingStars = renderStarsHTML(rating);
 
         const reviewCount = profile.reviews_count ?? 0;
         const reviewSuffix = this.getReviewSuffix(reviewCount);

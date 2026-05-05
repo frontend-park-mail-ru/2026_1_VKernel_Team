@@ -274,11 +274,26 @@
     font-size: 16px;
 }
 
+.product-search-page .search-error__icon svg {
+    width: 48px;
+    height: 48px;
+    display: block;
+    margin: 0 auto 12px;
+}
+
 .product-search-page .search-empty {
     text-align: center;
     padding: 60px 20px;
     color: #999;
     font-size: 16px;
+}
+
+.product-search-page .search-empty__icon svg {
+    width: 48px;
+    height: 48px;
+    display: block;
+    margin: 0 auto 12px;
+    color: #bbb;
 }
 
 

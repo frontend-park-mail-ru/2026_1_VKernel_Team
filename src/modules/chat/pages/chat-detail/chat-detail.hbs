@@ -3,7 +3,7 @@
 
     <main class="main-content">
         <div class="chat-detail-page">
-            <a class="chat-detail-page__back" href="/chats" data-nav="/chats">← К списку чатов</a>
+            <a class="chat-detail-page__back" href="/chats" data-nav="/chats"><span class="chat-detail-page__back-icon">{{{icon "arrow-left"}}}</span><span>К списку чатов</span></a>
 
             <div class="chat-detail-page__header">
                 <a class="chat-detail-page__partner"
@@ -15,7 +15,7 @@
                          alt="{{partner.name}}">
                     <div class="chat-detail-page__partner-info">
                         <span class="chat-detail-page__partner-name">{{partner.name}}</span>
-                        <span class="chat-detail-page__partner-hint">Перейти в профиль →</span>
+                        <span class="chat-detail-page__partner-hint">Перейти в профиль <span class="chat-detail-page__partner-hint-icon">{{{icon "arrow-right"}}}</span></span>
                     </div>
                 </a>
 
