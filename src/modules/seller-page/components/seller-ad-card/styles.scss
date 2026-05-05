@@ -121,8 +121,16 @@
 }
 
 .location-icon {
-    font-size: 12px;
     flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    color: #888;
+
+    svg {
+        width: 12px;
+        height: 12px;
+        display: block;
+    }
 }
 
 .rec-card-cart {

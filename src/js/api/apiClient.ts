@@ -81,6 +81,57 @@ export class ApiClient {
     }
 
     /**
+     * Если ответ 400 c сообщением про CSRF и метод mutating — один раз пытается
+     * прогреть сессию и повторить запрос. Возвращает ApiResponse при успешном
+     * retry, иначе null (вызывающий продолжит обычную обработку).
+     */
+    private async _maybeRetryCsrf(
+        status: number,
+        data: any,
+        method: string,
+        endpoint: string,
+        body: any,
+        customHeaders: Record<string, string>,
+    ): Promise<ApiResponse | null> {
+        if (status !== 400) return null;
+        const errMsg = (data?.message || data?.error || '').toString().toLowerCase();
+        if (!errMsg.includes('csrf')) return null;
+
+        console.warn('[CSRF] Missing/mismatch CSRF cookie, attempting warm-up');
+        const isMutating =
+            method === 'POST' || method === 'PUT' || method === 'PATCH' || method === 'DELETE';
+
+        if (isMutating && !customHeaders['X-Csrf-Retry']) {
+            const warmed = await this._warmUpCsrf();
+            if (warmed) {
+                return this.request(endpoint, method, body, {
+                    ...customHeaders,
+                    'X-Csrf-Retry': '1',
+                });
+            }
+        }
+        eventBus.emit('auth:csrf-expired');
+        return null;
+    }
+
+    /**
+     * Делает один GET-запрос на /profile, чтобы бэкенд переустановил CSRF-cookie.
+     * Используется как «warm-up» при ошибке Missing/mismatch CSRF cookie.
+     * Возвращает true, если после запроса cookie csrf_token присутствует.
+     */
+    private async _warmUpCsrf(): Promise<boolean> {
+        try {
+            await fetch(`${API_URL}${API_ENDPOINTS.USERS.PROFILE}`, {
+                method: 'GET',
+                credentials: 'include',
+            });
+        } catch {
+            // Сетевые ошибки игнорируем — проверим cookie ниже
+        }
+        return getCookie('csrf_token') !== null;
+    }
+
+    /**
      * Обрабатывает 401 ошибку и повторяет запрос после рефреша
      */
     private async _handleUnauthorizedResponse(
@@ -212,15 +263,18 @@ export class ApiClient {
                 networkStatus.setOffline();
             }
 
-            // Протух/отсутствует CSRF-токен → инициируем разлогин.
-            // Бэкенд (pkg/http/middleware/csrf.go) на mismatch отдаёт 400 с
-            // plain-text "Missing CSRF cookie" / "CSRF token mismatch".
-            if (response.status === 400) {
-                const errMsg = (data?.message || data?.error || '').toString().toLowerCase();
-                if (errMsg.includes('csrf')) {
-                    eventBus.emit('auth:csrf-expired');
-                }
-            }
+            // Протух/отсутствует CSRF-токен → пробуем «прогреть» сессию ещё раз
+            // (один GET, который должен переустановить cookie на бэкенде),
+            // и только при повторной неудаче эмитим csrf-expired.
+            const csrfRetry = await this._maybeRetryCsrf(
+                response.status,
+                data,
+                method,
+                endpoint,
+                body,
+                customHeaders,
+            );
+            if (csrfRetry) return csrfRetry as ApiResponse<T>;
 
             return {
                 success: false,

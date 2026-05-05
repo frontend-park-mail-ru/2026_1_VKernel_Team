@@ -6,6 +6,7 @@ import { uiActions } from '@/actions/uiActions';
 import type { Ad, HandlebarsTemplateFunction } from '@/types';
 import { PROFILE_CONFIG } from '@modules/profile/config';
 import { ADS_SELECTORS } from '@/types/adsConstants';
+import { saveReturnTo } from '@/utils/returnTo';
 
 declare const Handlebars: any;
 
@@ -70,6 +71,11 @@ export const AdsController = {
 
         eventBus.emit('page:adsRendered');
         this.attachMainEventListeners();
+
+        // Подключаем глобальный поиск с подсказками
+        import('@modules/common/components/search-section/search-section').then(
+            ({ SearchSectionComponent }) => SearchSectionComponent.initSearchHandlers(),
+        );
     },
 
     formatAdCard(ad: any) {
@@ -118,27 +124,31 @@ export const AdsController = {
     },
 
     handleCategoryClick(e: Event): void {
-        e.preventDefault();
-        e.stopPropagation();
-
         const card = e.currentTarget as HTMLElement;
-        const titleElement = card.querySelector('.card-title');
-        let categoryTitle = titleElement?.textContent?.trim() || '';
 
-        if (categoryTitle === 'Все категории' || categoryTitle === 'Все<br>категории') {
+        // Карточка "Все категории" обрабатывается через глобальный
+        // [data-action="show-categories"] — открывает модалку. Здесь ничего не делаем.
+        if (card.classList.contains('all-categories')) {
             return;
         }
 
-        categoryTitle = categoryTitle.replace(/→/g, '').trim();
+        e.preventDefault();
+        e.stopPropagation();
+
+        const titleElement = card.querySelector('.card-title');
+        let categoryTitle = titleElement?.textContent?.trim() || '';
+        categoryTitle = categoryTitle.replace(/→/g, '').replace(/\s+/g, ' ').trim();
 
         const categoryId = CATEGORY_ID_MAP[categoryTitle];
 
-        let searchUrl = `/search?query=${encodeURIComponent(categoryTitle)}`;
+        let searchUrl: string;
         if (categoryId) {
-            searchUrl += `&category_id=${categoryId}`;
+            searchUrl = `/search?category_id=${categoryId}`;
+        } else {
+            searchUrl = `/search?query=${encodeURIComponent(categoryTitle)}`;
         }
 
-        window.location.href = searchUrl;
+        eventBus.emit('app:navigate', searchUrl);
     },
 
     async handleFavoriteClick(e: Event): Promise<void> {
@@ -146,6 +156,7 @@ export const AdsController = {
         e.stopPropagation();
 
         if (!store.isAuthenticated) {
+            saveReturnTo();
             eventBus.emit('app:navigate', '/login');
             return;
         }

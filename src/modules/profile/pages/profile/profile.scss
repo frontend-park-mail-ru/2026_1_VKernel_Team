@@ -42,19 +42,13 @@
 
     body #sidebarContainer {
         width: 100%;
-        min-width: 0; 
+        min-width: 0;
         display: flex;
         flex-direction: column;
         gap: 12px;
         box-sizing: border-box;
-        overflow-x: auto; 
-        white-space: nowrap; 
-        -webkit-overflow-scrolling: touch; 
+        overflow-x: visible;
+        white-space: normal;
         padding-bottom: 5px;
-    }
-    
-    body #sidebarContainer::-webkit-scrollbar {
-        height: 0px;
-        background: transparent;
     }
 }

@@ -49,8 +49,8 @@
                                 id="mainPhoto"
                             >
                             {{#if hasMultiplePhotos}}
-                            <button class="gallery-nav prev" data-gallery-prev>‹</button>
-                            <button class="gallery-nav next" data-gallery-next>›</button>
+                            <button class="gallery-nav prev" data-gallery-prev aria-label="Предыдущее">{{{icon "chevron-left"}}}</button>
+                            <button class="gallery-nav next" data-gallery-next aria-label="Следующее">{{{icon "chevron-right"}}}</button>
                             {{/if}}
                         </div>
                         
@@ -112,7 +112,7 @@
                 </div>
 
                 <div class="preview-actions">
-                    <button type="button" class="btn-back-edit" data-action="back-to-edit">← Назад к редактированию</button>
+                    <button type="button" class="btn-back-edit" data-action="back-to-edit"><span class="btn-back-edit__icon">{{{icon "arrow-left"}}}</span><span>Назад к редактированию</span></button>
                     <button type="button" class="btn-publish-final" data-action="publish-ad">Опубликовать объявление</button>
                 </div>
             </div>

@@ -276,36 +276,43 @@ input.error {
     box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
 }
 
-/* Стили для кнопки с картинкой */
+/* Стили кнопки показа/скрытия пароля */
 .eye-btn {
     position: absolute;
-    right: 15px; /* Отступ от правого края */
+    right: 8px;
     top: 50%;
     transform: translateY(-50%);
     background: none;
     border: none;
-    padding: 0;
+    padding: 8px;
     cursor: pointer;
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    opacity: 0.5;
-    transition: opacity 0.3s;
+    justify-content: center;
+    opacity: 0.65;
+    transition: opacity 0.2s, background 0.2s;
+    border-radius: 8px;
+    width: 44px;
+    height: 44px;
+    color: #555;
 }
 
 .eye-btn:hover {
     opacity: 1;
+    background: rgba(0, 0, 0, 0.04);
 }
 
-.eye-btn img {
-    width: 22px; /* Размер иконки под ваш шрифт 16px */
-    height: auto;
+.eye-btn img,
+.eye-btn svg,
+.eye-btn [data-eye-state] svg {
+    width: 22px;
+    height: 22px;
     display: block;
 }
 
-/* Если у инпута рядом есть класс .error, делаем иконку краснее */
-input.error + .eye-btn img {
-    filter: sepia(1) saturate(5) hue-rotate(-50deg); 
-    opacity: 0.8;
+input.error + .eye-btn {
+    color: #ee5253;
+    opacity: 0.85;
 }
 
 

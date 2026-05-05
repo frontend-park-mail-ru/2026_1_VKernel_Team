@@ -57,7 +57,15 @@
 
 .profile-info-card__rating-star {
     color: #f5c518;
-    font-size: 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    svg {
+        width: 18px;
+        height: 18px;
+        display: block;
+    }
 }
 
 .profile-info-card__rating-value {

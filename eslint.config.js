@@ -45,7 +45,7 @@ export default [
         },
         rules: {
             'no-console': 'off',
-            
+
             'max-depth': ['error', 4],
             'max-nested-callbacks': ['error', 3],
         },

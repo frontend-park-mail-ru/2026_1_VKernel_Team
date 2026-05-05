@@ -34,7 +34,7 @@
     <div class="chat-list-item__last">
         {{#if last_message}}
             <span class="chat-list-item__last-text {{#if isOrderPreview}}chat-list-item__last-text--order{{/if}}">
-                {{#if isOrderPreview}}🛍 {{/if}}{{lastMessagePreview}}
+                {{#if isOrderPreview}}<span class="chat-list-item__last-icon">{{{icon "bag"}}}</span> {{/if}}{{lastMessagePreview}}
             </span>
             <span class="chat-list-item__last-time">{{lastMessageTime}}</span>
         {{else}}

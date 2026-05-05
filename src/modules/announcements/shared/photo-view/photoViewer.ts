@@ -3,6 +3,7 @@
  */
 
 import './css/photo-viewer.scss';
+import { getIcon } from '@/utils/icons';
 
 export class PhotoViewer {
     private static overlay: HTMLElement | null = null;
@@ -35,13 +36,13 @@ export class PhotoViewer {
         const viewerHTML = `
             <div class="photo-viewer-overlay" id="photoViewerOverlay">
                 <div class="photo-viewer-container">
-                    <button class="photo-viewer-close" id="photoViewerClose">×</button>
-                    
+                    <button class="photo-viewer-close" id="photoViewerClose" aria-label="Закрыть">×</button>
+
                     <div class="photo-viewer-main">
                         <img src="" alt="Просмотр фото" class="photo-viewer-image" id="photoViewerImage">
-                        
-                        <button class="photo-viewer-nav photo-viewer-prev" id="photoViewerPrev">‹</button>
-                        <button class="photo-viewer-nav photo-viewer-next" id="photoViewerNext">›</button>
+
+                        <button class="photo-viewer-nav photo-viewer-prev" id="photoViewerPrev" aria-label="Предыдущее">${getIcon('chevron-left')}</button>
+                        <button class="photo-viewer-nav photo-viewer-next" id="photoViewerNext" aria-label="Следующее">${getIcon('chevron-right')}</button>
                     </div>
                     
                     <div class="photo-viewer-footer">

@@ -33,7 +33,7 @@ export const FavoriteCard = {
     async handleFavoriteClick(e: Event, favBtn: HTMLButtonElement): Promise<void> {
         e.preventDefault();
         e.stopPropagation();
-        
+
         const adId = Number(favBtn.getAttribute('data-remove-fav-id'));
         if (!adId || this._processingIds.has(adId)) return;
 
@@ -51,11 +51,11 @@ export const FavoriteCard = {
             }
 
             uiActions.showSuccess('Удалено из избранного');
-            
+
             const newFavorites = new Set(store.favoriteIds);
             newFavorites.delete(adId);
             store.setState({ favoriteIds: newFavorites });
-            
+
             const card = favBtn.closest('.rec-card') as HTMLElement | null;
             if (!card) return;
 
@@ -63,7 +63,6 @@ export const FavoriteCard = {
             setTimeout(() => {
                 eventBus.emit('profile:favorite-removed', adId);
             }, 300);
-            
         } catch (error) {
             console.error('Error removing favorite:', error);
             uiActions.showError('Не удалось удалить из избранного');
@@ -81,5 +80,5 @@ export const FavoriteCard = {
         const adId = card.getAttribute('data-id');
         if (!adId) return;
         eventBus.emit('app:navigate', `/ad/${adId}`);
-    }
+    },
 };

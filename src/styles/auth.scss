@@ -114,14 +114,25 @@ body.auth-page #app {
 
     body.auth-page .back-link {
         position: absolute;
-        left: -8px; 
+        left: -8px;
         top: 50%;
         transform: translateY(-50%);
-        font-size: 24px;
-        padding: 8px; 
+        padding: 10px;
         text-decoration: none;
         color: #555;
-        transition: color 0.2s;
+        transition: color 0.2s, background 0.2s;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+    }
+    body.auth-page .back-link:hover {
+        background: rgba(0, 0, 0, 0.04);
+    }
+    body.auth-page .back-link svg {
+        width: 22px;
+        height: 22px;
+        display: block;
     }
 
     body.auth-page .form-group {
@@ -180,10 +191,12 @@ body.auth-page #app {
         border-radius: 12px;
     }
 
-    body.auth-page .eye-btn img {
+    body.auth-page .eye-btn img,
+    body.auth-page .eye-btn svg,
+    body.auth-page .eye-btn [data-eye-state] svg {
         width: 22px;
         height: 22px;
-        opacity: 0.5;
+        opacity: 0.7;
     }
 
     body.auth-page .btn-block {

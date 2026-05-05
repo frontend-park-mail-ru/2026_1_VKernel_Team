@@ -29,7 +29,7 @@ body .main-container {
 
 .header-left {
     display: flex;
-    gap: 0px;
+    gap: 12px;
     align-items: center;
 }
 
@@ -388,13 +388,16 @@ body .main-container {
 }
 
 .category-card.all-categories .card-title::after {
-    content: '→';
-    font-size: 25px;
-    font-weight: 700;
-    color: #495057;
+    content: '';
+    width: 18px;
+    height: 18px;
+    background-color: #495057;
+    -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><line x1='5' y1='12' x2='19' y2='12'/><polyline points='12 5 19 12 12 19'/></svg>") center/contain no-repeat;
+    mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><line x1='5' y1='12' x2='19' y2='12'/><polyline points='12 5 19 12 12 19'/></svg>") center/contain no-repeat;
     opacity: 0;
     transform: translateX(-5px);
     transition: opacity 0.2s, transform 0.2s;
+    display: inline-block;
 }
 
 .category-card.all-categories:hover {
@@ -519,8 +522,16 @@ body .main-container {
 }
 
 .location-icon {
-    font-size: 12px;
     flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    color: #888;
+
+    svg {
+        width: 12px;
+        height: 12px;
+        display: block;
+    }
 }
 
 .rec-card-footer-actions {
@@ -647,11 +658,11 @@ body .main-container {
     .main-container .main-content {
         padding-left: 10px;
         padding-right: 10px;
-        margin-top: 100px; 
+        margin-top: 100px;
     }
 
     .main-container .content-grid {
-        grid-template-columns: 1fr; 
+        grid-template-columns: 1fr;
     }
 
     .main-container .ad-column {
@@ -659,28 +670,32 @@ body .main-container {
     }
     .main-container .cards-row {
         display: grid;
-        grid-template-columns: repeat(3, 1fr); 
-        gap: 8px; 
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
     }
 
     .main-container .category-card {
-        height: 75px; 
-        overflow: hidden; 
+        height: 80px;
+        overflow: hidden;
         border-radius: 8px;
     }
 
     .main-container .category-card .card-title {
-        font-size: 11px; 
-        line-height: 1.1;
+        font-size: 12px;
+        line-height: 1.15;
         top: 6px;
         left: 6px;
-        right: 6px; 
+        right: 6px;
+        max-width: calc(100% - 12px);
+        white-space: normal;
+        word-break: break-word;
+        hyphens: auto;
     }
 
     .main-container .category-card img {
-        width: 100px; 
+        width: 90px;
         bottom: -5px;
-        right: -5px; 
+        right: -5px;
     }
     .main-container .category-card.all-categories .card-title {
         font-size: 12px;
@@ -761,5 +776,40 @@ body .main-container {
     .cards-row {
         margin-top: 10px;         // Добавляем небольшой отступ сверху
         gap: 8px;
+    }
+}
+
+@media (max-width: 480px) {
+    .main-container .cards-row {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .main-container .category-card {
+        height: 96px;
+    }
+
+    .main-container .category-card .card-title {
+        font-size: 14px;
+    }
+
+    .main-container .category-card img {
+        width: 90px;
+    }
+
+    .main-container .recommendations-row {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+    }
+
+    .main-container .rec-card-title {
+        font-size: 13px;
+    }
+
+    .main-container .rec-card-price {
+        font-size: 14px;
+    }
+
+    .main-container .rec-card-image-container {
+        height: 110px;
     }
 }

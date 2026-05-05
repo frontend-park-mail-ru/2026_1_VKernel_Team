@@ -17,6 +17,7 @@ import { adsService } from '@/services/adsServices';
 import { apiClient, API_ENDPOINTS } from '@/api/apiClient';
 import { CONFIG } from '@/core/config';
 import { AdValidator } from '@/validators/adValidator';
+import { ICONS } from '@/utils/icons';
 import '@modules/common/components/modal/modal.scss';
 import type {
     Category,
@@ -511,7 +512,7 @@ export class PlaceAnAdController {
             <div class="dynamic-attribute" data-attr-index="${index}">
                 <input type="text" class="form-input attr-name" placeholder="Название" value="${this.escapeHtml(attr.name)}" data-attr-name="${index}">
                 <input type="text" class="form-input attr-value" placeholder="Значение" value="${this.escapeHtml(attr.value)}" data-attr-value="${index}">
-                <button type="button" class="remove-attr-btn" data-index="${index}">✕</button>
+                <button type="button" class="remove-attr-btn" data-index="${index}" aria-label="Удалить характеристику">${ICONS.close}</button>
             </div>`,
             )
             .join('');
@@ -723,11 +724,13 @@ export class PlaceAnAdController {
         if (modal) modal.style.display = 'none';
     }
 
+    /**
+     * Подтверждение в модалке. Сейчас модалка обслуживает только сценарий
+     * «Очистить черновик» — выходим тут же на очистку формы.
+     */
     private static async handleCancelConfirm(): Promise<void> {
         this.hideCancelModal();
-        await AdDraftService.clear();
-        this.clearAllData();
-        window.location.href = '/';
+        await this.handleClearDraft();
     }
 
     private static async handleSaveDraft(): Promise<void> {
@@ -829,9 +832,6 @@ export class PlaceAnAdController {
             ?.addEventListener('click', () => this.addDynamicAttribute());
         document
             .getElementById('clearDraftBtn')
-            ?.addEventListener('click', () => this.handleClearDraft());
-        document
-            .getElementById('cancelAdBtn')
             ?.addEventListener('click', () => this.showCancelModal());
 
         const cancelModal = document.getElementById('cancelAdModal');

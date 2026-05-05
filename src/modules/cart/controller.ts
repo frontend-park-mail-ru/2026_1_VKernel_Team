@@ -10,6 +10,7 @@ import { store } from '@/core/store';
 import { networkStatus } from '@modules/common/offline/network/networkStatus';
 import { getTemplate } from '@modules/cart/pages/cart/cart';
 import { chatActions } from '@modules/chat/actions';
+import { ICONS } from '@/utils/icons';
 
 export const CartController = {
     async renderCart(): Promise<void> {
@@ -128,7 +129,7 @@ export const CartController = {
                 if (!tab.querySelector('.cart-tab-check')) {
                     const check = document.createElement('span');
                     check.className = 'cart-tab-check';
-                    check.textContent = '✓';
+                    check.innerHTML = ICONS.check;
                     tab.prepend(check);
                 }
             });

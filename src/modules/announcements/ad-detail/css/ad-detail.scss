@@ -25,13 +25,16 @@
 }
 
 .ad-detail-page .btn-categories::after {
-    content: '→';
-    font-size: 18px;
-    font-weight: 700;
-    color: #495057;
+    content: '';
+    width: 16px;
+    height: 16px;
+    background-color: #495057;
+    -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><line x1='5' y1='12' x2='19' y2='12'/><polyline points='12 5 19 12 12 19'/></svg>") center/contain no-repeat;
+    mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><line x1='5' y1='12' x2='19' y2='12'/><polyline points='12 5 19 12 12 19'/></svg>") center/contain no-repeat;
     opacity: 0;
     transform: translateX(-5px);
     transition: opacity 0.2s, transform 0.2s;
+    display: inline-block;
 }
 
 .ad-detail-page .btn-categories:hover::after {
@@ -98,24 +101,34 @@
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.55);
     color: white;
     border: none;
-    width: 40px;
-    height: 40px;
+    width: 44px;
+    height: 44px;
     border-radius: 50%;
-    font-size: 24px;
     cursor: pointer;
-    transition: all 0.3s;
+    transition:
+        background 0.2s,
+        box-shadow 0.2s;
     z-index: 10;
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
+    padding: 0;
+    line-height: 0;
+
+    & svg {
+        width: 22px;
+        height: 22px;
+        display: block;
+        stroke-width: 2.4;
+    }
 }
 
 .ad-detail-page .gallery-nav:hover {
     background: rgba(0, 0, 0, 0.8);
-    transform: translateY(-50%) scale(1.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
 }
 
 .ad-detail-page .gallery-nav.prev {
@@ -164,7 +177,7 @@
 
 .ad-detail-page .thumbnail-vertical-wrapper:hover {
     border-color: #2bde8c;
-    transform: translateX(-2px);
+    box-shadow: 0 2px 8px rgba(43, 222, 140, 0.25);
 }
 
 .ad-detail-page .thumbnail-vertical {
@@ -267,7 +280,15 @@
 }
 
 .ad-detail-page .location-icon {
-    font-size: 24px;
+    display: inline-flex;
+    align-items: center;
+    color: #2bde8c;
+
+    svg {
+        width: 22px;
+        height: 22px;
+        display: block;
+    }
 }
 
 .ad-detail-page .location-details {
@@ -287,18 +308,29 @@
 }
 
 .ad-detail-page .back-btn {
-    width: 104px;
     background: none;
     border: none;
     font-size: 16px;
     color: #6c757d;
     cursor: pointer;
-    padding: 11px 16px 5px 16px;
+    padding: 8px 14px;
     border-radius: 8px;
     transition: all 0.3s;
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    gap: 5px;
+    gap: 6px;
+    min-height: 44px;
+
+    .back-btn__icon {
+        display: inline-flex;
+        align-items: center;
+
+        svg {
+            width: 18px;
+            height: 18px;
+            display: block;
+        }
+    }
 }
 
 .ad-detail-page .back-btn:hover {
@@ -522,9 +554,16 @@
     /* ЗВЕЗДЫ */
     .ad-detail-page .stars {
         color: #f5c518;
-        font-size: 14px;
-        letter-spacing: 1px;
+        display: inline-flex;
+        align-items: center;
+        gap: 1px;
         white-space: nowrap;
+
+        svg {
+            width: 14px;
+            height: 14px;
+            display: block;
+        }
     }
 
     /* ЦИФРА РЕЙТИНГА */
@@ -568,15 +607,29 @@
     width: 100%;
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
+    gap: 4px 16px;
     overflow-wrap: normal;
     word-break: normal;
-    justify-content: space-between;  
+    justify-content: space-between;
 }
 
 .ad-detail-page .views span {
     overflow-wrap: normal !important;
     word-break: normal !important;
     white-space: nowrap !important;
+}
+
+@media (max-width: 768px) {
+    .ad-detail-page .views {
+        max-width: 100%;
+        gap: 4px 12px;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+    }
+    .ad-detail-page .views span {
+        white-space: normal !important;
+    }
 }
 
 @media (max-width: 768px) {

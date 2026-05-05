@@ -3,7 +3,7 @@
 
     <div class="profile-info-card__name-row">
         <h2 class="profile-info-card__name">{{user.name}}</h2>
-        <button class="profile-info-card__edit-btn" data-action="open-edit-name" title="Изменить имя">✎</button>
+        <button class="profile-info-card__edit-btn" data-action="open-edit-name" title="Изменить имя" aria-label="Изменить имя">{{{icon "edit"}}}</button>
     </div>
 
     {{#if user.email}}
@@ -11,7 +11,7 @@
     {{/if}}
 
     <div class="profile-info-card__rating">
-        <span class="profile-info-card__rating-star">★</span>
+        <span class="profile-info-card__rating-star">{{{icon "star-filled"}}}</span>
         <span class="profile-info-card__rating-value">{{#if user.rating}}{{user.rating}}{{else}}0{{/if}}</span>
     </div>
 

@@ -1,6 +1,6 @@
 <div class="auth-container">
     <div class="auth-header">
-        <a href="#" class="back-link" data-nav="/">←</a>
+        <a href="#" class="back-link" data-action="back" aria-label="Назад">{{{icon "arrow-left"}}}</a>
         <h2>Регистрация</h2>
     </div>
 
@@ -38,8 +38,8 @@
                     placeholder="Минимум 8 символов"
                     required
                 >
-                <button type="button" id="togglePassword" class="eye-btn">
-                    <img src="images/icons/Eye-off.jpeg" id="eyeIcon" alt="Показать пароль">
+                <button type="button" id="togglePassword" class="eye-btn" aria-label="Показать пароль">
+                    <span id="eyeIcon" data-eye-state="off">{{{icon "eye-off"}}}</span>
                 </button>
             </div>
         </div>
@@ -54,8 +54,8 @@
                     placeholder="Повторите пароль"
                     required
                 >
-                <button type="button" id="toggleConfirmPassword" class="eye-btn">
-                    <img src="images/icons/Eye-off.jpeg" id="eyeIconConfirm" alt="Показать пароль">
+                <button type="button" id="toggleConfirmPassword" class="eye-btn" aria-label="Показать пароль">
+                    <span id="eyeIconConfirm" data-eye-state="off">{{{icon "eye-off"}}}</span>
                 </button>
             </div>
         </div>

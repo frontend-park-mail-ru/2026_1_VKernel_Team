@@ -28,12 +28,14 @@ import { loadTemplates as loadChatListTemplates } from '@modules/chat/pages/chat
 import { loadTemplates as loadChatDetailTemplates } from '@modules/chat/pages/chat-detail/chat-detail';
 import { unreadStore, UNREAD_CHANGED_EVENT } from '@modules/chat/unread-store';
 import { cartStore } from '@modules/cart/store';
+import { cartActions } from '@modules/cart/actions';
 import { StatsController } from '@modules/support-admin/controllers/statsController';
 import {
     ProductSearchController,
     loadTemplates as loadProductSearchTemplates,
 } from '@modules/product_search';
 import { SearchSectionComponent } from '@modules/common/components/search-section/search-section';
+import { CategoriesModal } from '@modules/common/components/categories-modal/categories-modal';
 
 import { store } from '@/core/store';
 import { eventBus } from '@/core/eventBus';
@@ -41,12 +43,14 @@ import { uiActions } from '@/actions/uiActions';
 import type { HandlebarsTemplateFunction, TemplateName, UIConstants } from '@/types';
 import { authActions } from '@/actions/authActions';
 import { storage } from '@/utils/storage';
+import { saveReturnTo } from '@/utils/returnTo';
 import { CONFIG } from '@/core/config';
 import { initOfflineIndicator } from '@modules/common/offline/offline-indicator';
 import '@modules/support/styles/support.scss';
 
 import * as HandlebarsFull from 'handlebars';
 import * as HandlebarsRuntime from 'handlebars/dist/handlebars.runtime.js';
+import { ICONS } from '@/utils/icons';
 
 const registerHelpers = (Hbs: any) => {
     if (!Hbs || !Hbs.registerHelper || Hbs.helpers?.avatarUrl) {
@@ -55,6 +59,11 @@ const registerHelpers = (Hbs: any) => {
 
     Hbs.registerHelper('formatPrice', (price: number) => {
         return price === 0 ? 'Бесплатно' : `${price} ₽`;
+    });
+
+    Hbs.registerHelper('icon', function (name: string) {
+        const svg = ICONS[name] || '';
+        return new Hbs.SafeString(svg);
     });
 
     Hbs.registerHelper('ifAuthenticated', function (this: any, options: any) {
@@ -175,7 +184,10 @@ export const AppController = {
 
         await this.checkAuth().catch(() => {});
         if (store.isAuthenticated) {
-            await AdsController.syncFavorites();
+            await Promise.all([
+                AdsController.syncFavorites(),
+                cartActions.loadCart().catch(() => {}),
+            ]);
         }
         eventBus.on('app:navigate', (path: string) => {
             if (path) {
@@ -372,7 +384,11 @@ export const AppController = {
             this._lastAuthState = state.isAuthenticated;
             this._lastAvatarPath = currentAvatar;
             this.renderHeader();
-            if (loggedIn) unreadStore.refreshCountFromServer();
+            if (loggedIn) {
+                unreadStore.refreshCountFromServer();
+                cartActions.loadCart().catch(() => {});
+                AdsController.syncFavorites().catch(() => {});
+            }
             if (state.isAuthenticated === false) unreadStore.reset();
         }
         if (state.favoriteIds.size !== this._lastFavoritesCount) {
@@ -467,6 +483,7 @@ export const AppController = {
             !store.isAuthenticated &&
             (path === '/profile' || path === '/cart' || isChatsListPath || chatDetailMatch)
         ) {
+            saveReturnTo();
             this.navigateTo('/login');
             return;
         }
@@ -530,6 +547,14 @@ export const AppController = {
             default:
                 this.renderNotFound();
         }
+
+        // Подключаем глобальный поиск с подсказками на любой странице,
+        // где отрендерена .search-section
+        setTimeout(() => {
+            if (document.getElementById('globalSearchInput')) {
+                SearchSectionComponent.initSearchHandlers();
+            }
+        }, 100);
     },
 
     navigateTo(path: string): void {
@@ -581,12 +606,20 @@ export const AppController = {
 
             const actionElement = target.closest('[data-action]');
             if (actionElement) {
-                e.preventDefault();
                 const action = (actionElement as HTMLElement).dataset.action;
                 if (action === 'logout') {
+                    e.preventDefault();
                     AuthController.handleLogout();
+                } else if (action === 'show-categories') {
+                    e.preventDefault();
+                    CategoriesModal.open();
                 } else if (action === 'back') {
-                    this.navigateTo('/');
+                    e.preventDefault();
+                    if (window.history.length > 1) {
+                        window.history.back();
+                    } else {
+                        this.navigateTo('/');
+                    }
                 }
                 return;
             }

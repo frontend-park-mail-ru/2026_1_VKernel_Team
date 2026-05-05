@@ -15,6 +15,7 @@ import { cloverDB } from '@modules/common/offline/db/indexedDB';
 import { networkStatus } from '@modules/common/offline/network/networkStatus';
 import type { Ad } from '@/types';
 import { eventBus } from '@/core/eventBus';
+import { renderStarsHTML } from '@/utils/icons';
 
 const AD_DETAIL_STORE = 'ads';
 
@@ -180,11 +181,7 @@ export class AdDetailController {
         }
 
         const rating = sellerData?.rating || adAny.seller_rating || 0;
-        const fullStars = Math.floor(rating);
-        const hasHalfStar = rating % 1 >= 0.5;
-        const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
-        const sellerStars =
-            '★'.repeat(fullStars) + (hasHalfStar ? '½' : '') + '☆'.repeat(emptyStars);
+        const sellerStars = renderStarsHTML(rating);
         return {
             id: ad.id,
             title: ad.title || 'Без названия',
@@ -351,6 +348,8 @@ export class AdDetailController {
                 e.stopPropagation();
 
                 if (!store.isAuthenticated) {
+                    const { saveReturnTo } = await import('@/utils/returnTo');
+                    saveReturnTo();
                     window.location.href = '/login';
                     return;
                 }
@@ -361,10 +360,19 @@ export class AdDetailController {
                 }
 
                 const btn = cartBtn as HTMLButtonElement;
-                const originalText = btn.innerHTML;
 
-                btn.innerHTML = '⏳ ...';
+                // Если товар уже в корзине — редирект на /cart, без запроса.
+                if (btn.classList.contains('in-cart')) {
+                    window.dispatchEvent(
+                        new CustomEvent('app:navigate', { detail: { path: '/cart' } }),
+                    );
+                    return;
+                }
+
+                if (btn.dataset.cartLoading === '1') return;
+                btn.dataset.cartLoading = '1';
                 btn.disabled = true;
+                btn.classList.add('loading');
 
                 try {
                     const { cartActions } = await import('@modules/cart/actions');
@@ -377,18 +385,17 @@ export class AdDetailController {
                                 ? 'Товар добавлен в корзину'
                                 : 'Товар добавлен в корзину (синхронизируется при подключении)',
                         );
-                        btn.innerHTML = '✓ В корзине';
-                        btn.classList.add('in-cart');
+                        AdDetailController.setCartButtonInCart(btn, true);
                     } else {
                         uiActions.showError('Не удалось добавить товар');
-                        btn.innerHTML = originalText;
                     }
                 } catch (error) {
                     console.error('Error adding to cart:', error);
                     uiActions.showError('Не удалось добавить товар в корзину');
-                    btn.innerHTML = originalText;
                 } finally {
                     btn.disabled = false;
+                    btn.classList.remove('loading');
+                    delete btn.dataset.cartLoading;
                 }
             };
 
@@ -476,13 +483,13 @@ export class AdDetailController {
                 const isFavorite = store.favoriteIds.has(Number(adId));
 
                 // Optimistic UI: toggle immediately
-                const heartIcon = btn.querySelector('.heart-icon');
+                const heartIcon = btn.querySelector('.heart-icon') as SVGElement | null;
                 if (!isFavorite) {
                     btn.classList.add('active');
-                    if (heartIcon) heartIcon.innerHTML = '♥';
+                    heartIcon?.setAttribute('fill', 'currentColor');
                 } else {
                     btn.classList.remove('active');
-                    if (heartIcon) heartIcon.innerHTML = '♡';
+                    heartIcon?.setAttribute('fill', 'none');
                 }
                 const newFavorites = new Set(store.favoriteIds);
                 if (isFavorite) {
@@ -507,10 +514,10 @@ export class AdDetailController {
                         // Revert on failure
                         if (isFavorite) {
                             btn.classList.add('active');
-                            if (heartIcon) heartIcon.innerHTML = '♥';
+                            heartIcon?.setAttribute('fill', 'currentColor');
                         } else {
                             btn.classList.remove('active');
-                            if (heartIcon) heartIcon.innerHTML = '♡';
+                            heartIcon?.setAttribute('fill', 'none');
                         }
                         const revertFavorites = new Set(store.favoriteIds);
                         if (isFavorite) {
@@ -526,10 +533,10 @@ export class AdDetailController {
                     // Revert on error
                     if (isFavorite) {
                         btn.classList.add('active');
-                        if (heartIcon) heartIcon.innerHTML = '♥';
+                        heartIcon?.setAttribute('fill', 'currentColor');
                     } else {
                         btn.classList.remove('active');
-                        if (heartIcon) heartIcon.innerHTML = '♡';
+                        heartIcon?.setAttribute('fill', 'none');
                     }
                     const revertFavorites = new Set(store.favoriteIds);
                     if (isFavorite) {
@@ -635,22 +642,38 @@ export class AdDetailController {
     }
 
     /**
-     * Обновляет состояние кнопки "В корзину" в зависимости от того, есть ли товар в корзине
+     * Обновляет состояние кнопки "В корзину" в зависимости от того, есть ли товар в корзине.
+     * Меняет только текст в .cart-btn-label и класс .in-cart, не трогает data-* атрибуты.
      */
     private static async updateCartButtonState(productId: number): Promise<void> {
         const cartBtn = document.querySelector('[data-action="add-to-cart"]') as HTMLButtonElement;
         if (!cartBtn) return;
 
         const isInCart = await this.checkIfInCart(productId);
+        AdDetailController.setCartButtonInCart(cartBtn, isInCart);
+        cartBtn.disabled = false;
+    }
 
-        if (isInCart) {
-            cartBtn.innerHTML = '✓ В корзине';
-            cartBtn.classList.add('in-cart');
-            cartBtn.disabled = false;
+    /**
+     * Безопасно меняет состояние кнопки добавления в корзину: только класс и текст label.
+     */
+    static setCartButtonInCart(btn: HTMLButtonElement, inCart: boolean): void {
+        let label = btn.querySelector('.cart-btn-label') as HTMLElement | null;
+        if (!label) {
+            // Шаблоны до фикса — миграция: заворачиваем существующий текст в span
+            const existing = btn.textContent?.trim() || '';
+            btn.textContent = '';
+            label = document.createElement('span');
+            label.className = 'cart-btn-label';
+            label.textContent = existing;
+            btn.appendChild(label);
+        }
+        if (inCart) {
+            btn.classList.add('in-cart');
+            label.textContent = 'В корзине';
         } else {
-            cartBtn.innerHTML = 'Добавить в корзину';
-            cartBtn.classList.remove('in-cart');
-            cartBtn.disabled = false;
+            btn.classList.remove('in-cart');
+            label.textContent = 'Добавить в корзину';
         }
     }
     private static navigateGallery(direction: number): void {
