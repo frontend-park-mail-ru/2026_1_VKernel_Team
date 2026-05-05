@@ -9,7 +9,7 @@ export interface AppState {
     currentPage: string;
     error: string | null;
     isLoading: boolean;
-    favoriteIds: Set<number>; 
+    favoriteIds: Set<number>;
 }
 
 class Store {
@@ -20,7 +20,7 @@ class Store {
         currentPage: 'main-page',
         error: null,
         isLoading: false,
-        favoriteIds: new Set<number>(), 
+        favoriteIds: new Set<number>(),
     };
 
     private eventBus: EventBus;
@@ -66,7 +66,7 @@ class Store {
     get isLoading(): boolean {
         return this.state.isLoading;
     }
-    get favoriteIds(): Set<number> { 
+    get favoriteIds(): Set<number> {
         return this.state.favoriteIds;
     }
 }
