@@ -5,6 +5,14 @@ import { getTemplate } from '@modules/seller-page/pages/seller-page/seller-page'
 import { CartButtonComponent } from '@modules/cart/components/cart-button/cart-button';
 import { cartActions } from '@modules/cart/actions';
 import { cartStore } from '@modules/cart/store';
+import { AdsController } from '@/controllers/AdsController';
+import { ADS_SELECTORS } from '@/types/adsConstants';
+
+const enrichWithFavorite = (ads: any[]): any[] =>
+    ads.map((ad) => ({
+        ...ad,
+        isFavorite: store.favoriteIds.has(Number(ad.id)),
+    }));
 
 export const SellerPageController = {
     async renderSellerPage(sellerId: string): Promise<void> {
@@ -27,14 +35,17 @@ export const SellerPageController = {
         const isOwner = store.isAuthenticated && store.user?.id === state.profile.id;
         const showCartButton = store.isAuthenticated && !isOwner;
 
+        const activeAds = enrichWithFavorite(state.activeAds);
+        const closedAds = enrichWithFavorite(state.closedAds);
+
         app.innerHTML = template({
             isAuthenticated: store.isAuthenticated,
             user: store.user,
             seller: state.profile,
-            activeAds: state.activeAds,
-            closedAds: state.closedAds,
-            activeAdsCount: state.activeAds.length,
-            closedAdsCount: state.closedAds.length,
+            activeAds,
+            closedAds,
+            activeAdsCount: activeAds.length,
+            closedAdsCount: closedAds.length,
             showCartButton,
         });
 
@@ -68,6 +79,11 @@ export const SellerPageController = {
                     }
                 });
             });
+        });
+
+        // Подключаем избранное (переиспользуем готовый handler из AdsController).
+        document.querySelectorAll(ADS_SELECTORS.FAVORITE_BTN).forEach((btn) => {
+            btn.addEventListener('click', AdsController.handleFavoriteClick.bind(AdsController));
         });
     },
 };

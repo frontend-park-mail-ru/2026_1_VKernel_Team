@@ -34,7 +34,7 @@
             <div class="main-column">
                 <!-- Название товара -->
                 <div class="ad-title-section">
-                    <button class="back-btn" data-action="back">← Назад</button>
+                    <button class="back-btn" data-action="back"><span class="back-btn__icon">{{{icon "arrow-left"}}}</span><span>Назад</span></button>
                     <h1 class="ad-title">{{title}}</h1>
                 </div>
 
@@ -50,8 +50,8 @@
                                 id="mainPhoto"
                             >
                             {{#if hasMultiplePhotos}}
-                            <button class="gallery-nav prev" data-gallery-prev>‹</button>
-                            <button class="gallery-nav next" data-gallery-next>›</button>
+                            <button class="gallery-nav prev" data-gallery-prev aria-label="Предыдущее фото">{{{icon "chevron-left"}}}</button>
+                            <button class="gallery-nav next" data-gallery-next aria-label="Следующее фото">{{{icon "chevron-right"}}}</button>
                             {{/if}}
                         </div>
                         
@@ -136,8 +136,8 @@
                                 <div class="old-price">{{oldPrice}} ₽</div>
                             {{/if}}
                         </div>
-                        <button class="favorite-circle-btn {{#if isFavorite}}active{{/if}}" data-action="add-to-favorites" title="В избранное">
-                            <span class="heart-icon">{{#if isFavorite}}♥{{else}}♡{{/if}}</span>
+                        <button class="favorite-circle-btn {{#if isFavorite}}active{{/if}}" data-action="add-to-favorites" title="В избранное" aria-label="В избранное">
+                            <svg class="heart-icon" width="22" height="22" viewBox="0 0 24 24" fill="{{#if isFavorite}}currentColor{{else}}none{{/if}}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
                         </button>
                     </div>
 
@@ -149,8 +149,8 @@
                         </button>
                         {{else}}
                         {{#unless isClosed}}
-                        <button class="action-btn cart-btn" data-action="add-to-cart">
-                            Добавить в корзину
+                        <button class="action-btn cart-btn" data-action="add-to-cart" data-cart-add="{{id}}">
+                            <span class="cart-btn-label">Добавить в корзину</span>
                         </button>
                         <button class="action-btn buy-btn" data-action="message-seller">
                             Написать продавцу
@@ -173,7 +173,7 @@
                                 <span class="rating-value">{{sellerRating}}</span>
                             </div>
                             <button class="all-reviews-btn" data-action="all-reviews" data-seller-id="{{sellerId}}">
-                                Все отзывы →
+                                <span>Все отзывы</span><span class="all-reviews-btn__icon">{{{icon "arrow-right"}}}</span>
                             </button>
                         </div>
                     </div>
