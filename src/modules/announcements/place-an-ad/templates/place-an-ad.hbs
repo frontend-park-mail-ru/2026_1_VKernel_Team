@@ -29,7 +29,7 @@
         <div class="content-grid">
             <div class="main-column">
                 <div class="page-header">
-                    <button class="back-btn" data-action="back">← Назад</button>
+                    <button class="back-btn" data-action="back"><span class="back-btn__icon">{{{icon "arrow-left"}}}</span><span>Назад</span></button>
                     <h1>{{#if isEditing}}Редактировать объявление{{else}}Разместить объявление{{/if}}</h1>
                 </div>
 
@@ -46,7 +46,7 @@
                                     </div>
                                 </div>
                                 <div class="photos-hint">
-                                    <span>📷</span> Можно добавить до 10 фотографий. Первое фото будет обложкой объявления.
+                                    <span class="photos-hint__icon">{{{icon "camera"}}}</span> Можно добавить до 10 фотографий. Первое фото будет обложкой объявления.
                                 </div>
                             </div>
                         </div>
@@ -193,19 +193,19 @@
             <!-- Правая колонка с подсказками -->
             <div class="ad-column">
                 <div class="tips-section">
-                    <h3>📋 Советы по размещению</h3>
-                    <ul>
+                    <h3 class="tips-section__title"><span class="tips-section__icon">{{{icon "warning"}}}</span><span>Советы по размещению</span></h3>
+                    <ul class="tips-list">
                         <li>Добавьте качественные фото товара</li>
                         <li>Укажите реальную цену</li>
                         <li>Подробно опишите состояние</li>
                         <li>Проверьте контактные данные</li>
                     </ul>
                 </div>
-                
+
                 <div class="tips-section">
-                    <h3>✅ Что получит покупатель</h3>
-                    <ul>
-                        <li>Четкое понимание состояния товара</li>
+                    <h3 class="tips-section__title"><span class="tips-section__icon tips-section__icon--success">{{{icon "check"}}}</span><span>Что получит покупатель</span></h3>
+                    <ul class="tips-list">
+                        <li>Чёткое понимание состояния товара</li>
                         <li>Доверие к продавцу</li>
                         <li>Быстрый ответ на вопросы</li>
                     </ul>

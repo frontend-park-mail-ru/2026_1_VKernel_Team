@@ -28,13 +28,16 @@
 }
 
 .place-ad-page .btn-categories::after {
-    content: '→';
-    font-size: 18px;
-    font-weight: 700;
-    color: #495057;
+    content: '';
+    width: 16px;
+    height: 16px;
+    background-color: #495057;
+    -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><line x1='5' y1='12' x2='19' y2='12'/><polyline points='12 5 19 12 12 19'/></svg>") center/contain no-repeat;
+    mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><line x1='5' y1='12' x2='19' y2='12'/><polyline points='12 5 19 12 12 19'/></svg>") center/contain no-repeat;
     opacity: 0;
     transform: translateX(-5px);
     transition: opacity 0.2s, transform 0.2s;
+    display: inline-block;
 }
 
 .place-ad-page .btn-categories:hover::after {
@@ -69,9 +72,21 @@
     padding: 8px 16px;
     border-radius: 8px;
     transition: all 0.3s;
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    gap: 5px;
+    gap: 6px;
+    min-height: 44px;
+
+    .back-btn__icon {
+        display: inline-flex;
+        align-items: center;
+
+        svg {
+            width: 18px;
+            height: 18px;
+            display: block;
+        }
+    }
 }
 
 .place-ad-page .back-btn:hover {
@@ -423,7 +438,7 @@
 .place-ad-page #dynamicAttributesContainer {
     display: flex;
     flex-direction: column;
-    gap: 0;
+    gap: 12px;
 }
 
 .place-ad-page .btn-add-attribute {
@@ -605,27 +620,85 @@
     border: 1px solid #e0f0e5;
 }
 
-.place-ad-page .tips-section h3 {
-    font-size: 16px;
-    color: #2bde8c;
-    margin-bottom: 15px;
-    font-weight: 600;
+.place-ad-page .tips-section + .tips-section {
+    margin-top: 16px;
 }
 
-.place-ad-page .tips-section ul {
+.place-ad-page .tips-section__title,
+.place-ad-page .tips-section h3 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 16px;
+    color: #2bde8c;
+    margin: 0 0 14px;
+    font-weight: 600;
+    line-height: 1.3;
+}
+
+.place-ad-page .tips-section__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    color: #ff9800;
+    flex-shrink: 0;
+}
+
+.place-ad-page .tips-section__icon--success {
+    color: #2bde8c;
+}
+
+.place-ad-page .tips-section__icon svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.place-ad-page .tips-section ul,
+.place-ad-page .tips-list {
     margin: 0;
-    padding-left: 20px;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
 .place-ad-page .tips-section li {
-    margin-bottom: 10px;
     color: #495057;
     line-height: 1.5;
     font-size: 14px;
+    position: relative;
+    padding-left: 20px;
+    margin: 0;
 }
 
-.place-ad-page .tips-section li:last-child {
-    margin-bottom: 0;
+.place-ad-page .tips-section li::before {
+    content: '';
+    position: absolute;
+    left: 4px;
+    top: 9px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #2bde8c;
+}
+
+@media (max-width: 768px) {
+    .place-ad-page .tips-section {
+        padding: 16px;
+    }
+    .place-ad-page .tips-section__title,
+    .place-ad-page .tips-section h3 {
+        font-size: 15px;
+        margin-bottom: 12px;
+    }
+    .place-ad-page .tips-section li {
+        font-size: 14px;
+        line-height: 1.5;
+    }
 }
 
 /* ========== ОШИБКИ ВАЛИДАЦИИ ========== */
