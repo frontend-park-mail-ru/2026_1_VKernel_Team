@@ -1,10 +1,13 @@
 /**
- * Сервис подсказок поиска. Запрашивает существующий endpoint /ads
- * с query-параметром, ограничивает выдачу 8 элементами.
+ * Сервис подсказок поиска. Запрашивает существующий endpoint /ads,
+ * затем фильтрует результат на клиенте по вхождению query в title —
+ * backend сейчас игнорирует параметр query и отдаёт все объявления,
+ * поэтому без клиентской фильтрации dropdown показывал всё подряд.
  */
 
 import { apiClient, API_ENDPOINTS } from '@/api/apiClient';
 import { CONFIG } from '@/core/config';
+import { store } from '@/core/store';
 
 export interface SuggestItem {
     id: number;
@@ -35,12 +38,33 @@ const pickImage = (ad: any): string => {
     return buildImageUrl(typeof candidate === 'string' ? candidate.trim() : '');
 };
 
+const FETCH_LIMIT = 80;
+
+const matches = (haystack: string, needle: string): boolean =>
+    haystack.toLowerCase().includes(needle.toLowerCase());
+
 export const searchSuggestService = {
     async search(query: string, limit = 8): Promise<SuggestItem[]> {
         const trimmed = query.trim();
         if (trimmed.length < 1) return [];
 
-        const url = `${API_ENDPOINTS.ADS.GET_ALL}?query=${encodeURIComponent(trimmed)}&limit=${limit}`;
+        // Сначала пробуем уже загруженный список с главной — это даёт мгновенный отклик.
+        const cached = (store.ads as any[]) || [];
+        if (cached.length > 0) {
+            const filtered = cached
+                .filter((ad) => ad?.title && matches(String(ad.title), trimmed))
+                .slice(0, limit)
+                .map((ad: any) => ({
+                    id: Number(ad.id),
+                    title: String(ad.title),
+                    image: pickImage(ad),
+                    price: Number(ad.price || 0),
+                }))
+                .filter((item) => item.id && item.title);
+            if (filtered.length > 0) return filtered;
+        }
+
+        const url = `${API_ENDPOINTS.ADS.GET_ALL}?query=${encodeURIComponent(trimmed)}&limit=${FETCH_LIMIT}`;
         const result = await apiClient.get<any>(url);
         if (!result.success || !result.data) return [];
 
@@ -54,11 +78,11 @@ export const searchSuggestService = {
                 : [];
 
         return list
-            .filter(Boolean)
+            .filter((ad) => ad && ad.title && matches(String(ad.title), trimmed))
             .slice(0, limit)
             .map((ad: any) => ({
                 id: Number(ad.id),
-                title: String(ad.title || ad.name || ''),
+                title: String(ad.title),
                 image: pickImage(ad),
                 price: Number(ad.price || 0),
             }))
