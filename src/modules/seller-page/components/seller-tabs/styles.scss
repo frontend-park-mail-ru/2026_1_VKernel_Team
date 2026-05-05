@@ -35,3 +35,11 @@
     height: 2px;
     background: #2bde8c;
 }
+
+@media (max-width: 480px) {
+    .seller-tab {
+        padding: 10px 14px;
+        font-size: 14px;
+        white-space: nowrap;
+    }
+}

@@ -82,3 +82,28 @@
 .seller-meta-item strong {
     color: #333;
 }
+
+.seller-rating-stars svg {
+    width: 18px;
+    height: 18px;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+@media (max-width: 480px) {
+    .seller-info-card {
+        padding: 18px;
+    }
+    .seller-avatar-wrapper {
+        width: 110px;
+        height: 110px;
+        margin-bottom: 12px;
+    }
+    .seller-name {
+        font-size: 18px;
+    }
+    .seller-rating-stars svg {
+        width: 16px;
+        height: 16px;
+    }
+}
