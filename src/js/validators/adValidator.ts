@@ -11,6 +11,7 @@ export interface AdValidationResult {
 export const AdValidator = {
     TITLE_MIN_LENGTH: 3,
     TITLE_MAX_LENGTH: 100,
+    DESCRIPTION_MIN_LENGTH: 10,
     DESCRIPTION_MAX_LENGTH: 5000,
     MAX_PRICE: 999_999_999,
 
@@ -40,6 +41,9 @@ export const AdValidator = {
     validateDescription(description: string): string | null {
         const trimmed = description.trim();
         if (!trimmed) return 'Добавьте описание объявления';
+        if (trimmed.length < this.DESCRIPTION_MIN_LENGTH) {
+            return `Описание должно содержать минимум ${this.DESCRIPTION_MIN_LENGTH} символов`;
+        }
         if (trimmed.length > this.DESCRIPTION_MAX_LENGTH) {
             return `Описание не должно превышать ${this.DESCRIPTION_MAX_LENGTH} символов`;
         }

@@ -1,8 +1,12 @@
 import { authActions } from '@/actions/authActions';
 import { store } from '@/core/store';
 import { uiActions } from '@/actions/uiActions';
+import { consumeReturnTo } from '@/utils/returnTo';
+import { AuthValidator } from '@/validators/authValidator';
 import type { HandlebarsTemplateFunction } from '@/types';
 declare const Handlebars: any;
+
+const LIVE_VALIDATION_DEBOUNCE_MS = 250;
 
 export const AuthController = {
     templates: {} as Record<string, HandlebarsTemplateFunction>,
@@ -32,6 +36,7 @@ export const AuthController = {
 
         this.attachLoginListeners();
         this.initPasswordToggles();
+        this.attachLiveValidation('login');
     },
 
     async showRegister(
@@ -53,6 +58,83 @@ export const AuthController = {
 
         this.attachRegisterListeners();
         this.initPasswordToggles();
+        this.attachLiveValidation('register');
+    },
+
+    /**
+     * Подключает «живую» валидацию: ошибки появляются прямо при наборе,
+     * без ожидания submit'а. Использует debounce, чтобы не дёргать на каждый символ.
+     */
+    attachLiveValidation(form: 'login' | 'register'): void {
+        const fields: { id: string; validate: (v: string, ctx?: any) => string | null }[] =
+            form === 'register'
+                ? [
+                      { id: 'name', validate: (v) => AuthValidator.validateName(v) },
+                      { id: 'email', validate: (v) => AuthValidator.validateEmail(v) },
+                      { id: 'password', validate: (v) => AuthValidator.validatePassword(v) },
+                      {
+                          id: 'confirm-password',
+                          validate: (v) => {
+                              const pwd =
+                                  (document.getElementById('password') as HTMLInputElement)
+                                      ?.value || '';
+                              return v === pwd ? null : 'Пароли не совпадают';
+                          },
+                      },
+                  ]
+                : [
+                      { id: 'email', validate: (v) => AuthValidator.validateEmail(v) },
+                      { id: 'password', validate: (v) => AuthValidator.validatePassword(v) },
+                  ];
+
+        fields.forEach((field) => {
+            const input = document.getElementById(field.id) as HTMLInputElement | null;
+            if (!input) return;
+
+            let timer: ReturnType<typeof setTimeout> | null = null;
+            const runValidation = () => {
+                const value = input.value;
+                if (!value) {
+                    this.clearFieldErrorAt(input);
+                    return;
+                }
+                const err = field.validate(value);
+                if (err) {
+                    this.setFieldErrorAt(input, err);
+                } else {
+                    this.clearFieldErrorAt(input);
+                }
+            };
+
+            input.addEventListener('input', () => {
+                if (timer) clearTimeout(timer);
+                timer = setTimeout(runValidation, LIVE_VALIDATION_DEBOUNCE_MS);
+            });
+            input.addEventListener('blur', runValidation);
+        });
+    },
+
+    setFieldErrorAt(input: HTMLElement, message: string): void {
+        input.classList.add('error');
+        input.classList.add('is-invalid');
+        const group = input.closest('.form-group');
+        if (!group) return;
+        let errEl = group.querySelector('.field-error') as HTMLElement | null;
+        if (!errEl) {
+            errEl = document.createElement('div');
+            errEl.className = 'field-error';
+            group.appendChild(errEl);
+        }
+        errEl.textContent = message;
+    },
+
+    clearFieldErrorAt(input: HTMLElement): void {
+        input.classList.remove('error');
+        input.classList.remove('is-invalid');
+        const group = input.closest('.form-group');
+        if (!group) return;
+        const errEl = group.querySelector('.field-error');
+        if (errEl) errEl.remove();
     },
 
     async handleLoginSubmit(email: string, password: string): Promise<void> {
@@ -60,7 +142,8 @@ export const AuthController = {
 
         if (result.isValid) {
             await authActions.checkAuth();
-            this.navigateTo('/');
+            const returnTo = consumeReturnTo();
+            this.navigateTo(returnTo || '/');
         } else {
             this.showLoginError(result.error ?? 'Ошибка входа');
         }
@@ -71,7 +154,8 @@ export const AuthController = {
 
         if (result.isValid) {
             await authActions.checkAuth();
-            this.navigateTo('/');
+            const returnTo = consumeReturnTo();
+            this.navigateTo(returnTo || '/');
         } else {
             if (result.fieldErrors && Object.keys(result.fieldErrors).length > 0) {
                 this.showFieldErrors(result.fieldErrors);
@@ -91,24 +175,27 @@ export const AuthController = {
         const toggles = document.querySelectorAll('#togglePassword, #toggleConfirmPassword');
         toggles.forEach((toggleBtn) => {
             const btn = toggleBtn as HTMLButtonElement;
-            const eyeIcon = btn.querySelector('img') as HTMLImageElement;
             const wrapper = btn.closest('.password-wrapper');
-            const input = wrapper?.querySelector('input[type="password"]') as HTMLInputElement;
+            const input = wrapper?.querySelector(
+                'input[type="password"], input[type="text"]',
+            ) as HTMLInputElement | null;
+            const iconHost = btn.querySelector('[data-eye-state]') as HTMLElement | null;
+            if (!input || !iconHost) return;
 
-            if (input && eyeIcon) {
-                const newBtn = btn.cloneNode(true) as HTMLButtonElement;
-                btn.parentNode?.replaceChild(newBtn, btn);
-                const newEyeIcon = newBtn.querySelector('img') as HTMLImageElement;
+            const newBtn = btn.cloneNode(true) as HTMLButtonElement;
+            btn.parentNode?.replaceChild(newBtn, btn);
+            const newIconHost = newBtn.querySelector('[data-eye-state]') as HTMLElement | null;
 
-                newBtn.addEventListener('click', () => {
-                    const isPassword = input.type === 'password';
-                    input.type = isPassword ? 'text' : 'password';
-                    newEyeIcon.src = isPassword
-                        ? this.UI_CONSTANTS.EYE_OPEN
-                        : this.UI_CONSTANTS.EYE_CLOSED;
-                    newEyeIcon.alt = isPassword ? 'Скрыть пароль' : 'Показать пароль';
-                });
-            }
+            newBtn.addEventListener('click', async () => {
+                const { ICONS } = await import('@/utils/icons');
+                const isPassword = input.type === 'password';
+                input.type = isPassword ? 'text' : 'password';
+                if (newIconHost) {
+                    newIconHost.dataset.eyeState = isPassword ? 'on' : 'off';
+                    newIconHost.innerHTML = isPassword ? ICONS.eye : ICONS['eye-off'];
+                }
+                newBtn.setAttribute('aria-label', isPassword ? 'Скрыть пароль' : 'Показать пароль');
+            });
         });
     },
 

@@ -15,11 +15,23 @@ const API_ENDPOINTS = {
 const CATEGORIES_CACHE_KEY = 'clover_categories';
 const CHARS_CACHE_PREFIX = 'clover_cat_chars_';
 
+// На текущий момент бэкенд возвращает 404 для /categories и
+// /categories/:id/characteristics. Чтобы не засорять network tab битыми
+// запросами, отключаем сетевой вызов после первой 404 в рамках сессии.
+let _categoriesEndpointDisabled = false;
+let _charsEndpointDisabled = false;
+
 export const categoryService = {
     /**
-     * Получение всех категорий (с кэшированием в localStorage)
+     * Получение всех категорий (с кэшированием в localStorage).
+     * Если backend ещё не реализовал /categories — возвращаем фолбэк
+     * без сетевых попыток до перезагрузки страницы.
      */
     async getAllCategories(): Promise<Category[]> {
+        if (_categoriesEndpointDisabled) {
+            return this.getCachedCategories() || this.getFallbackCategories();
+        }
+
         try {
             const result = await apiClient.get<Category[]>(API_ENDPOINTS.CATEGORIES.GET_ALL);
 
@@ -30,6 +42,10 @@ export const categoryService = {
                     // localStorage может быть переполнен или заблокирован
                 }
                 return result.data;
+            }
+
+            if (result.status === 404) {
+                _categoriesEndpointDisabled = true;
             }
         } catch {
             // Сетевая ошибка — пойдём в фолбек
@@ -42,9 +58,21 @@ export const categoryService = {
     },
 
     /**
-     * Получение характеристик категории (с кэшированием)
+     * Получение характеристик категории (с кэшированием).
      */
     async getCategoryCharacteristics(categoryId: number): Promise<CategoryCharacteristic[]> {
+        const readCache = (): CategoryCharacteristic[] => {
+            try {
+                const cached = localStorage.getItem(CHARS_CACHE_PREFIX + categoryId);
+                if (cached) return JSON.parse(cached);
+            } catch {
+                // Невалидный JSON или недоступный localStorage
+            }
+            return [];
+        };
+
+        if (_charsEndpointDisabled) return readCache();
+
         try {
             const result = await apiClient.get<CategoryCharacteristic[]>(
                 API_ENDPOINTS.CATEGORIES.GET_CHARACTERISTICS(categoryId),
@@ -59,18 +87,15 @@ export const categoryService = {
                 }
                 return sorted;
             }
+
+            if (result.status === 404) {
+                _charsEndpointDisabled = true;
+            }
         } catch {
             // Сетевая ошибка — пойдём в фолбек из localStorage
         }
 
-        try {
-            const cached = localStorage.getItem(CHARS_CACHE_PREFIX + categoryId);
-            if (cached) return JSON.parse(cached);
-        } catch {
-            // Невалидный JSON или недоступный localStorage
-        }
-
-        return [];
+        return readCache();
     },
 
     getCachedCategories(): Category[] | null {
