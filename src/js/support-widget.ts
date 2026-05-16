@@ -39,7 +39,6 @@ window.addEventListener('message', (event: MessageEvent) => {
         const token = event.data.token;
         if (token) {
             storage.setToken(token);
-            widgetAuth.isAuthenticated = true;
         }
     }
 
