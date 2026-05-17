@@ -1,64 +1,38 @@
 # Переменные
 APP_NAME=clover-frontend
+PORT=80
 SERVER_PATH=server/server.js
 
-# Куда копируется dist/ на проде (этот же путь монтируется в gateway-nginx через
-# FRONTEND_DIST_PATH в deployments/docker-compose.yaml бэкенд-репозитория).
-DEPLOY_DIR ?= /var/www/clover
+.PHONY: restart pull build clean check-port
 
-.PHONY: help dev pull clean install build deploy reload-nginx
+# Главная команда для полного цикла обновления и перезапуска
+restart: pull clean build
+	@echo "🚀 Starting app with PM2..."
+	# Запускаем через pm2 от обычного пользователя (после setcap)
+	pm2 start $(SERVER_PATH) --name $(APP_NAME)
+	@echo "✅ Restarted and updated successfully!"
 
-help:
-	@echo "Цели:"
-	@echo "  make dev            — локальный dev-стек (webpack watch + Node-прокси) под PM2"
-	@echo "  make build          — production-сборка в dist/ (минификация, gzip, brotli, image-opt)"
-	@echo "  make deploy         — pull + install + build + rsync dist → $(DEPLOY_DIR) + reload gateway"
-	@echo "  make reload-nginx   — горячая перезагрузка gateway-контейнера"
-	@echo "  make clean          — остановить PM2 и очистить dist/"
-
-# ─────────────────────────────────────────────────────────────────────
-# DEV — webpack watch + Node-сервер-прокси под PM2 (для разработки на локалке)
-# ─────────────────────────────────────────────────────────────────────
-dev: install
-	@echo "🚀 Starting dev stack (webpack watch + Node proxy) under PM2..."
-	pm2 start npm --name $(APP_NAME) -- start
-
-# ─────────────────────────────────────────────────────────────────────
-# PROD — собрать статику и положить в общий volume, который читает gateway-nginx
-# ─────────────────────────────────────────────────────────────────────
-deploy: pull install build
-	@echo "📤 Deploying dist/ to $(DEPLOY_DIR)..."
-	@if [ ! -d "$(DEPLOY_DIR)" ]; then \
-		echo "ℹ️  Creating $(DEPLOY_DIR) (sudo)"; \
-		sudo mkdir -p $(DEPLOY_DIR); \
-		sudo chown -R $$(id -u):$$(id -g) $(DEPLOY_DIR); \
-	fi
-	rsync -a --delete dist/ $(DEPLOY_DIR)/
-	@$(MAKE) reload-nginx
-	@echo "✅ Frontend deployed."
-
-reload-nginx:
-	@echo "🔁 Reloading gateway nginx..."
-	@if docker ps --format '{{.Names}}' | grep -q '^gateway$$'; then \
-		docker exec gateway nginx -t && docker exec gateway nginx -s reload; \
-	else \
-		echo "⚠️  gateway container is not running — skipped reload"; \
-	fi
-
+# 1. Затягиваем свежий код из GitHub
 pull:
 	@echo "📥 Pulling latest changes from git..."
 	git pull
 
-install:
-	@echo "📦 Installing dependencies..."
-	npm install
-
-build:
-	@echo "🛠 Building production bundle..."
-	npm run build:prod
-
+# 2. Очистка порта и старых процессов
 clean:
 	@echo "🧹 Cleaning up..."
 	-pm2 delete $(APP_NAME)
-	rm -rf dist
-	@echo "✨ Clean."
+	-sudo fuser -k $(PORT)/tcp
+	@echo "✨ Port $(PORT) is free."
+
+# 3. Установка зависимостей, аудит и сборка
+build:
+	@echo "📦 Installing dependencies and auditing..."
+	# Если права не позволяют иначе, используем sudo здесь
+	sudo npm install
+	sudo npm audit fix --force
+	@echo "🛠 Building frontend..."
+	sudo npm run build
+
+# Проверка состояния порта
+check-port:
+	sudo lsof -i :$(PORT)
