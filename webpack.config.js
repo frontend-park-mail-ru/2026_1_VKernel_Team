@@ -4,6 +4,12 @@ import { fileURLToPath } from 'url';
 import webpack from 'webpack';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
+import MiniCssExtractPlugin from 'mini-css-extract-plugin';
+import CssMinimizerPlugin from 'css-minimizer-webpack-plugin';
+import TerserPlugin from 'terser-webpack-plugin';
+import CompressionPlugin from 'compression-webpack-plugin';
+import ImageMinimizerPlugin from 'image-minimizer-webpack-plugin';
+import zlib from 'zlib';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -22,6 +28,83 @@ if (fs.existsSync(envPath)) {
 
 export default (env, argv) => {
     const isDevelopment = argv?.mode === 'development';
+    const isProduction = !isDevelopment;
+
+    const cssLoader = isProduction
+        ? { loader: MiniCssExtractPlugin.loader }
+        : { loader: 'style-loader' };
+
+    const plugins = [
+        new webpack.DefinePlugin({
+            'process.env.BASE_URL': JSON.stringify(envVars.BASE_URL || ''),
+        }),
+        new HtmlWebpackPlugin({
+            template: './public/index.html',
+            filename: 'index.html',
+            inject: 'body',
+            chunks: ['app'],
+            minify: isProduction && {
+                collapseWhitespace: true,
+                removeComments: true,
+                removeRedundantAttributes: true,
+                useShortDoctype: true,
+                minifyCSS: true,
+                minifyJS: true,
+            },
+        }),
+        new HtmlWebpackPlugin({
+            template: './public/support-widget.html',
+            filename: 'support-widget.html',
+            inject: 'body',
+            chunks: ['support-widget'],
+            minify: isProduction && {
+                collapseWhitespace: true,
+                removeComments: true,
+                removeRedundantAttributes: true,
+                useShortDoctype: true,
+                minifyCSS: true,
+                minifyJS: true,
+            },
+        }),
+        new CopyWebpackPlugin({
+            patterns: [
+                { from: 'public/images', to: 'images', noErrorOnMissing: true },
+                { from: 'public/site', to: 'site', noErrorOnMissing: true },
+                { from: 'public/sw.js', to: 'sw.js' },
+            ],
+        }),
+    ];
+
+    if (isProduction) {
+        plugins.push(
+            new MiniCssExtractPlugin({
+                filename: 'css/[name].[contenthash:8].css',
+                chunkFilename: 'css/[id].[contenthash:8].css',
+            }),
+            // Pre-compressed .gz рядом с ассетами — nginx раздаёт через gzip_static.
+            new CompressionPlugin({
+                filename: '[path][base].gz',
+                algorithm: 'gzip',
+                test: /\.(js|css|html|svg|json|ico|woff2?|ttf|eot|map)$/,
+                threshold: 1024,
+                minRatio: 0.9,
+            }),
+            // Pre-compressed .br рядом с ассетами — nginx раздаёт через brotli_static,
+            // если собран с ngx_brotli. Иначе файлы просто лежат без вреда.
+            new CompressionPlugin({
+                filename: '[path][base].br',
+                algorithm: 'brotliCompress',
+                test: /\.(js|css|html|svg|json|ico|woff2?|ttf|eot|map)$/,
+                threshold: 1024,
+                minRatio: 0.9,
+                compressionOptions: {
+                    params: {
+                        [zlib.constants.BROTLI_PARAM_QUALITY]: 11,
+                    },
+                },
+            }),
+        );
+    }
 
     return {
         entry: {
@@ -30,7 +113,9 @@ export default (env, argv) => {
         },
         output: {
             path: path.resolve(__dirname, 'dist'),
-            filename: 'js/[name].[contenthash].js',
+            filename: 'js/[name].[contenthash:8].js',
+            chunkFilename: 'js/[name].[contenthash:8].chunk.js',
+            assetModuleFilename: 'images/[hash][ext][query]',
             clean: true,
             publicPath: '/',
         },
@@ -53,7 +138,10 @@ export default (env, argv) => {
         module: {
             rules: [
                 { test: /\.tsx?$/, use: 'ts-loader', exclude: /node_modules/ },
-                { test: /\.s?css$/i, use: ['style-loader', 'css-loader', 'sass-loader'] },
+                {
+                    test: /\.s?css$/i,
+                    use: [cssLoader, 'css-loader', 'sass-loader'],
+                },
                 { test: /\.svg$/i, resourceQuery: /raw/, type: 'asset/source' },
                 {
                     test: /\.(png|jpe?g|gif|svg|webp)$/i,
@@ -97,32 +185,45 @@ export default (env, argv) => {
                 },
             ],
         },
-        plugins: [
-            new webpack.DefinePlugin({
-                'process.env.BASE_URL': JSON.stringify(
-                    envVars.BASE_URL || 'http://clover-go.ru:8000',
-                ),
-            }),
-            new HtmlWebpackPlugin({
-                template: './public/index.html',
-                filename: 'index.html',
-                inject: 'body',
-                chunks: ['app'],
-            }),
-            new HtmlWebpackPlugin({
-                template: './public/support-widget.html',
-                filename: 'support-widget.html',
-                inject: 'body',
-                chunks: ['support-widget'],
-            }),
-            new CopyWebpackPlugin({
-                patterns: [
-                    { from: 'public/images', to: 'images', noErrorOnMissing: true },
-                    { from: 'public/site', to: 'site', noErrorOnMissing: true },
-                    { from: 'public/sw.js', to: 'sw.js' },
-                ],
-            }),
-        ],
+        plugins,
+        optimization: {
+            minimize: isProduction,
+            minimizer: [
+                new TerserPlugin({
+                    parallel: true,
+                    terserOptions: {
+                        format: { comments: false },
+                        compress: { drop_console: false, passes: 2 },
+                    },
+                    extractComments: false,
+                }),
+                new CssMinimizerPlugin(),
+                new ImageMinimizerPlugin({
+                    minimizer: {
+                        implementation: ImageMinimizerPlugin.sharpMinify,
+                        options: {
+                            encodeOptions: {
+                                jpeg: { quality: 78, mozjpeg: true },
+                                png: { quality: 80, compressionLevel: 9 },
+                                webp: { quality: 80 },
+                            },
+                        },
+                    },
+                    generator: [
+                        {
+                            type: 'asset',
+                            implementation: ImageMinimizerPlugin.svgoMinify,
+                            options: {
+                                encodeOptions: {
+                                    multipass: true,
+                                    plugins: ['preset-default'],
+                                },
+                            },
+                        },
+                    ],
+                }),
+            ],
+        },
         resolve: {
             extensions: ['.ts', '.tsx', '.js', '.hbs', '.scss', '.css'],
             alias: {
