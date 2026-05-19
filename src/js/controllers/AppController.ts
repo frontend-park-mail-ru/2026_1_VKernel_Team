@@ -266,7 +266,7 @@ export const AppController = {
         const iframe = document.createElement('iframe');
         iframe.id = 'support-iframe';
         iframe.className = 'support-iframe';
-        iframe.src = '/support-widget';
+        iframe.src = '/support-widget.html';
         wrapper.appendChild(iframe);
 
         document.body.appendChild(wrapper);
