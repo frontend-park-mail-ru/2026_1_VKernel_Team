@@ -4,11 +4,12 @@ import { fileURLToPath } from 'url';
 import webpack from 'webpack';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
+import MiniCssExtractPlugin from 'mini-css-extract-plugin';
+import CssMinimizerPlugin from 'css-minimizer-webpack-plugin';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Читаем .env без dotenv, чтобы не загрязнять stdout (ломает pipe в dep-gen)
 const envPath = path.resolve(__dirname, '.env');
 const envVars = {};
 if (fs.existsSync(envPath)) {
@@ -53,7 +54,14 @@ export default (env, argv) => {
         module: {
             rules: [
                 { test: /\.tsx?$/, use: 'ts-loader', exclude: /node_modules/ },
-                { test: /\.s?css$/i, use: ['style-loader', 'css-loader', 'sass-loader'] },
+                { 
+                    test: /\.s?css$/i, 
+                    use: [
+                        isDevelopment ? 'style-loader' : MiniCssExtractPlugin.loader,
+                        'css-loader',
+                        'sass-loader'
+                    ] 
+                },
                 { test: /\.svg$/i, resourceQuery: /raw/, type: 'asset/source' },
                 {
                     test: /\.(png|jpe?g|gif|svg|webp)$/i,
@@ -71,22 +79,9 @@ export default (env, argv) => {
                         esModule: true,
                         runtime: 'handlebars/dist/handlebars.runtime.js',
                         knownHelpers: [
-                            'if',
-                            'unless',
-                            'each',
-                            'with',
-                            'log',
-                            'lookup',
-                            'formatPrice',
-                            'formatDate',
-                            'eq',
-                            'gt',
-                            'concat',
-                            'array',
-                            'icon',
-                            'labelForTab',
-                            'ifAuthenticated',
-                            'avatarUrl',
+                            'if', 'unless', 'each', 'with', 'log', 'lookup',
+                            'formatPrice', 'formatDate', 'eq', 'gt', 'concat',
+                            'array', 'icon', 'labelForTab', 'ifAuthenticated', 'avatarUrl'
                         ],
                         partialDirs: [
                             path.resolve(__dirname, 'src'),
@@ -97,10 +92,11 @@ export default (env, argv) => {
                 },
             ],
         },
+        
         plugins: [
             new webpack.DefinePlugin({
                 'process.env.BASE_URL': JSON.stringify(
-                    envVars.BASE_URL || 'http://clover-go.ru:8000',
+                    envVars.BASE_URL || 'http://clover-go.ru:8000'
                 ),
             }),
             new HtmlWebpackPlugin({
@@ -108,12 +104,34 @@ export default (env, argv) => {
                 filename: 'index.html',
                 inject: 'body',
                 chunks: ['app'],
+                minify: isDevelopment ? false : {
+                    removeComments: true,
+                    collapseWhitespace: true,
+                    removeRedundantAttributes: true,
+                    useShortDoctype: true,
+                    removeEmptyAttributes: true,
+                    removeStyleLinkTypeAttributes: true,
+                    keepClosingSlash: true,
+                    minifyJS: true,
+                    minifyCSS: true,
+                },
             }),
             new HtmlWebpackPlugin({
                 template: './public/support-widget.html',
                 filename: 'support-widget.html',
                 inject: 'body',
                 chunks: ['support-widget'],
+                minify: isDevelopment ? false : {
+                    removeComments: true,
+                    collapseWhitespace: true,
+                    removeRedundantAttributes: true,
+                    useShortDoctype: true,
+                    removeEmptyAttributes: true,
+                    removeStyleLinkTypeAttributes: true,
+                    keepClosingSlash: true,
+                    minifyJS: true,
+                    minifyCSS: true,
+                },
             }),
             new CopyWebpackPlugin({
                 patterns: [
@@ -122,7 +140,51 @@ export default (env, argv) => {
                     { from: 'public/sw.js', to: 'sw.js' },
                 ],
             }),
+            new MiniCssExtractPlugin({
+                filename: 'css/[name].[contenthash].css',
+                chunkFilename: 'css/[id].[contenthash].css',
+            }),
         ],
+        
+        optimization: {
+            minimize: !isDevelopment,
+            minimizer: [
+                new CssMinimizerPlugin({
+                    parallel: true,
+                    minimizerOptions: {
+                        preset: [
+                            'default',
+                            {
+                                discardComments: { removeAll: true },
+                                normalizeWhitespace: true,
+                                colormin: true,
+                                reduceIdents: false,
+                                zindex: false,
+                            },
+                        ],
+                    },
+                }),
+            ],
+            splitChunks: {
+                chunks: 'all',
+                cacheGroups: {
+                    vendor: {
+                        test: /[\\/]node_modules[\\/]/,
+                        name: 'vendors',
+                        chunks: 'all',
+                        priority: 10,
+                    },
+                    common: {
+                        name: 'common',
+                        minChunks: 2,
+                        chunks: 'all',
+                        priority: 5,
+                        reuseExistingChunk: true,
+                    },
+                },
+            },
+        },
+
         resolve: {
             extensions: ['.ts', '.tsx', '.js', '.hbs', '.scss', '.css'],
             alias: {
