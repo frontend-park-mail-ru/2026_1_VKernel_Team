@@ -1,4 +1,10 @@
-declare const process: { env: { BASE_URL?: string } };
+declare const process: {
+    env: {
+        BASE_URL?: string;
+        YANDEX_JSAPI_KEY?: string;
+        YANDEX_SUGGEST_KEY?: string;
+    };
+};
 
 /**
  * Файл с настройками приложения
@@ -31,6 +37,10 @@ const CONFIG = {
     APP: {
         NAME: 'Клевер',
         VERSION: '1.0.0',
+    },
+    YANDEX: {
+        JSAPI_KEY: process.env.YANDEX_JSAPI_KEY || '',
+        SUGGEST_KEY: process.env.YANDEX_SUGGEST_KEY || '',
     },
 };
 
