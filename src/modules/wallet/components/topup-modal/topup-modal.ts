@@ -47,6 +47,21 @@ export const TopupModal = {
                 });
             }
         });
+
+        const input = document.getElementById('topupAmountInput') as HTMLInputElement;
+        if (input) {
+            input.addEventListener('input', () => {
+                modal.querySelectorAll('.topup-quick-btn').forEach((btn) => {
+                    btn.classList.remove('active');
+                });
+            });
+        }
+
+        modal.addEventListener('mousedown', (e) => {
+            if (e.target === modal) {
+                this.close();
+            }
+        });
     },
 
     open(): void {

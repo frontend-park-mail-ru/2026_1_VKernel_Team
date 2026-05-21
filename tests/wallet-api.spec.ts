@@ -40,7 +40,9 @@ test.describe('Кошелёк', () => {
         await expect(page.locator('[data-action="open-topup"]')).toBeVisible();
     });
 
-    test('модалка пополнения: быстрые суммы и закрытие', async ({ authedPage: page }) => {
+    test('модалка пополнения: быстрые суммы, ручной ввод, закрытие', async ({
+        authedPage: page,
+    }) => {
         await page.goto('/profile?tab=wallet');
         await page.waitForSelector('.wallet-balance-card');
 
@@ -48,10 +50,23 @@ test.describe('Кошелёк', () => {
         await expect(page.locator('#topupModal')).toBeVisible();
 
         await page.click('[data-quick-amount="500"]');
-        const inputValue = await page.locator('#topupAmountInput').inputValue();
-        expect(inputValue).toBe('500');
+        expect(await page.locator('#topupAmountInput').inputValue()).toBe('500');
+        await expect(page.locator('[data-quick-amount="500"]')).toHaveClass(/active/);
 
-        await page.click('[data-action="close-topup"]');
+        await page.click('[data-quick-amount="100"]');
+        expect(await page.locator('#topupAmountInput').inputValue()).toBe('100');
+        await expect(page.locator('[data-quick-amount="100"]')).toHaveClass(/active/);
+        await expect(page.locator('[data-quick-amount="500"]')).not.toHaveClass(/active/);
+
+        await page.fill('#topupAmountInput', '250');
+        await expect(page.locator('[data-quick-amount="100"]')).not.toHaveClass(/active/);
+
+        await page.click('.modal-close');
+        await expect(page.locator('#topupModal')).not.toBeVisible();
+
+        await page.click('[data-action="open-topup"]');
+        await expect(page.locator('#topupModal')).toBeVisible();
+        await page.click('#topupModal', { position: { x: 5, y: 5 } });
         await expect(page.locator('#topupModal')).not.toBeVisible();
     });
 

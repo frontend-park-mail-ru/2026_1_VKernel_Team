@@ -1,5 +1,23 @@
 .topup-modal-content {
     max-width: 400px;
+    position: relative;
+}
+
+.modal-close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #999;
+    line-height: 1;
+    padding: 4px 8px;
+
+    &:hover {
+        color: #333;
+    }
 }
 
 .topup-quick-amounts {
