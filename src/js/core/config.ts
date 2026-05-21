@@ -3,6 +3,7 @@ declare const process: {
         BASE_URL?: string;
         YANDEX_JSAPI_KEY?: string;
         YANDEX_SUGGEST_KEY?: string;
+        YANDEX_GEOCODER_KEY?: string;
     };
 };
 
@@ -41,6 +42,8 @@ const CONFIG = {
     YANDEX: {
         JSAPI_KEY: process.env.YANDEX_JSAPI_KEY || '',
         SUGGEST_KEY: process.env.YANDEX_SUGGEST_KEY || '',
+        // HTTP Geocoder API; если отдельный ключ не задан — используем SUGGEST_KEY.
+        GEOCODER_KEY: process.env.YANDEX_GEOCODER_KEY || process.env.YANDEX_SUGGEST_KEY || '',
     },
 };
 
