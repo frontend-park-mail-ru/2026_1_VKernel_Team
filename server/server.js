@@ -62,8 +62,6 @@ function handleApiProxy(req, res) {
         },
     };
 
-    console.log({ options });
-
     const proxyReq = https.request(options, (proxyRes) => {
         res.writeHead(proxyRes.statusCode, proxyRes.headers);
         proxyRes.pipe(res, { end: true });

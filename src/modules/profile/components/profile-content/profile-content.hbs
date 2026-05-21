@@ -99,7 +99,7 @@
 {{/if}}
 
   {{#if (eq currentTab 'wallet')}}
-    <p class="profile-section-placeholder">Кошелёк — в разработке</p>
+    {{> wallet/components/wallet-tab/wallet-tab }}
   {{/if}}
 
   {{#if (eq currentTab 'settings')}}

@@ -13,6 +13,10 @@ import { ProfileContent } from '@modules/profile/components/profile-content/prof
 import { EditNameModal } from '@modules/profile/components/edit-name-modal/edit-name-modal';
 import { CloseAdModal } from '@modules/profile/components/close-ad-modal/close-ad-modal';
 import { FavoriteCard } from '@modules/profile/components/favorite-card/favorite-card';
+import { TopupModal } from '@modules/wallet/components/topup-modal/topup-modal';
+import { WalletTab } from '@modules/wallet/components/wallet-tab/wallet-tab';
+import { walletStore } from '@modules/wallet/store';
+import { walletService } from '@modules/wallet/service';
 import { PROFILE_CONFIG } from '@modules/profile/config';
 
 import { apiClient, API_ENDPOINTS } from '@/api/apiClient';
@@ -193,7 +197,9 @@ export const ProfileController = {
         const modalContainer = document.createElement('div');
         modalContainer.id = 'modal-root';
         modalContainer.innerHTML =
-            EditNameModal.getTemplate()({ user }) + CloseAdModal.getTemplate()({});
+            EditNameModal.getTemplate()({ user }) +
+            CloseAdModal.getTemplate()({}) +
+            TopupModal.getTemplate()({});
         app.appendChild(modalContainer);
 
         this.renderAll();
@@ -203,6 +209,9 @@ export const ProfileController = {
 
         if (this.currentTab === 'favorites') {
             this.loadUserFavorites();
+        }
+        if (this.currentTab === 'wallet') {
+            this.loadWalletData();
         }
     },
 
@@ -249,6 +258,7 @@ export const ProfileController = {
             purchases: this.formatPurchases(this.userPurchases),
             favorites: this.userFavorites,
             isAuthenticated: store.isAuthenticated,
+            ...WalletTab.buildTemplateData(walletStore.getState()),
         });
     },
 
@@ -284,6 +294,8 @@ export const ProfileController = {
             this.loadUserPurchases();
         } else if (tab === 'favorites') {
             this.loadUserFavorites();
+        } else if (tab === 'wallet') {
+            this.loadWalletData();
         }
 
         this.renderAll();
@@ -296,6 +308,8 @@ export const ProfileController = {
         if (EditNameModal?.init) EditNameModal.init();
         if (CloseAdModal?.init) CloseAdModal.init();
         if (FavoriteCard?.init) FavoriteCard.init();
+        if (TopupModal?.init) TopupModal.init();
+        if (WalletTab?.init) WalletTab.init();
         // На вкладках с карточками рендерится partial cart-button — нужно
         // подключить его обработчики (добавление в корзину со страницы
         // «Избранное», «Мои покупки», «Объявления»).
@@ -322,5 +336,26 @@ export const ProfileController = {
         } catch (err) {
             uiActions.showError('Ошибка при выходе');
         }
+    },
+
+    async loadWalletData(): Promise<void> {
+        await walletStore.loadFromCache();
+        const balanceRes = await walletService.getBalance();
+        if (balanceRes.success && balanceRes.data) {
+            walletStore.setState({
+                balance: balanceRes.data.balance,
+                currency: balanceRes.data.currency,
+                isLoading: false,
+            });
+        }
+        const txRes = await walletService.getTransactions(20);
+        if (txRes.success && txRes.data) {
+            walletStore.setState({
+                transactions: txRes.data.items,
+                nextCursor: txRes.data.next_cursor ?? null,
+            });
+        }
+        this.rerenderTab(store.user as UserProfile);
+        this.attachEventListeners();
     },
 };
