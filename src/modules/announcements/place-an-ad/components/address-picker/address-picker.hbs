@@ -1,0 +1,17 @@
+<div class="address-picker">
+    <div class="address-picker__input-wrapper">
+        <input
+            type="text"
+            id="location"
+            class="form-input address-picker__input"
+            placeholder="Например, Москва, м. Тверская"
+            autocomplete="off"
+            spellcheck="false"
+        >
+        <input type="hidden" id="location_lat" value="">
+        <input type="hidden" id="location_lon" value="">
+        <ul class="address-picker__suggest" hidden></ul>
+    </div>
+    <div class="input-hint">Начните вводить адрес — подскажем варианты</div>
+    <div class="address-picker__map" aria-label="Карта с выбранным адресом"></div>
+</div>

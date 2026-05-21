@@ -102,6 +102,8 @@ export default (env, argv) => {
                 'process.env.BASE_URL': JSON.stringify(
                     envVars.BASE_URL || 'http://clover-go.ru:8000',
                 ),
+                'process.env.YANDEX_JSAPI_KEY': JSON.stringify(envVars.YANDEX_JSAPI_KEY || ''),
+                'process.env.YANDEX_SUGGEST_KEY': JSON.stringify(envVars.YANDEX_SUGGEST_KEY || ''),
             }),
             new HtmlWebpackPlugin({
                 template: './public/index.html',

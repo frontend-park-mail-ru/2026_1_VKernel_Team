@@ -18,6 +18,7 @@ import { apiClient, API_ENDPOINTS } from '@/api/apiClient';
 import { CONFIG } from '@/core/config';
 import { AdValidator } from '@/validators/adValidator';
 import { ICONS } from '@/utils/icons';
+import { AddressPicker } from './components/address-picker/AddressPicker';
 import '@modules/common/components/modal/modal.scss';
 import type {
     Category,
@@ -51,6 +52,8 @@ export class PlaceAnAdController {
 
     private static isRendering: boolean = false;
     private static isRestoring: boolean = false;
+
+    private static addressPicker: AddressPicker | null = null;
 
     static async render(adId?: string): Promise<void> {
         if (this.isRendering) return;
@@ -93,6 +96,7 @@ export class PlaceAnAdController {
             };
 
             app.innerHTML = placeAnAdTpl(templateData);
+            this.initAddressPicker();
             this.attachEventListeners();
 
             if (editingId) {
@@ -120,6 +124,21 @@ export class PlaceAnAdController {
         this.editingAdId = null;
     }
 
+    private static initAddressPicker(): void {
+        // Старый инстанс держал listener на document — отрываем его перед заменой DOM
+        if (this.addressPicker) {
+            this.addressPicker.destroy();
+            this.addressPicker = null;
+        }
+        const root = document.querySelector<HTMLElement>('.address-picker');
+        if (!root) return;
+        try {
+            this.addressPicker = new AddressPicker(root);
+        } catch (err) {
+            console.warn('Failed to init AddressPicker', err);
+        }
+    }
+
     private static async loadAdForEditing(adId: string): Promise<void> {
         try {
             const result = await adsService.getAdById(adId);
@@ -144,6 +163,11 @@ export class PlaceAnAdController {
             if (priceInput) priceInput.value = String(ad.price || 0);
             if (descriptionTextarea) descriptionTextarea.value = ad.description || '';
             if (locationInput) locationInput.value = ad.location || '';
+            this.addressPicker?.setValue({
+                text: ad.location || '',
+                lat: ad.lat ?? null,
+                lon: ad.lon ?? null,
+            });
 
             if (ad.category_id && categorySelect) {
                 categorySelect.value = String(ad.category_id);
@@ -196,6 +220,11 @@ export class PlaceAnAdController {
             if (priceInput) priceInput.value = String(draft.formData.price || 0);
             if (descriptionTextarea) descriptionTextarea.value = draft.formData.description || '';
             if (locationInput) locationInput.value = draft.formData.location || '';
+            this.addressPicker?.setValue({
+                text: draft.formData.location || '',
+                lat: draft.formData.lat ?? null,
+                lon: draft.formData.lon ?? null,
+            });
 
             if (draft.formData.category_id && categorySelect) {
                 categorySelect.value = String(draft.formData.category_id);
@@ -569,6 +598,8 @@ export class PlaceAnAdController {
             .filter((attr) => attr.name.trim() && attr.value.trim())
             .map((attr) => ({ name: attr.name.trim(), value: attr.value.trim() }));
 
+        const address = this.addressPicker?.getValue();
+
         return {
             category_id: parseInt(categorySelect?.value || '0'),
             title: titleInput?.value.trim() || '',
@@ -576,6 +607,8 @@ export class PlaceAnAdController {
             price: parseInt(priceInput?.value || '0'),
             status: 'active',
             location: locationInput?.value.trim() || '',
+            lat: address?.lat ?? undefined,
+            lon: address?.lon ?? undefined,
             category_characteristics:
                 categoryCharacteristics.length > 0 ? categoryCharacteristics : undefined,
             custom_characteristics:
@@ -759,6 +792,7 @@ export class PlaceAnAdController {
         if (priceInput) priceInput.value = '0';
         if (descriptionTextarea) descriptionTextarea.value = '';
         if (locationInput) locationInput.value = '';
+        this.addressPicker?.clear();
 
         this.renderCategoryCharacteristicsForm();
         this.renderDynamicAttributes();
@@ -859,6 +893,10 @@ export class PlaceAnAdController {
 
     static cleanup(): void {
         if (this.isRendering) return;
+        if (this.addressPicker) {
+            this.addressPicker.destroy();
+            this.addressPicker = null;
+        }
         this.clearAllData();
     }
 
