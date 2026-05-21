@@ -76,6 +76,77 @@ export interface SearchResult {
     };
 }
 
+export interface GeocodeResult {
+    coords: [number, number]; // [lon, lat]
+    text: string;
+}
+
+interface GeocoderApiResponse {
+    response?: {
+        GeoObjectCollection?: {
+            featureMember?: Array<{
+                GeoObject?: {
+                    name?: string;
+                    Point?: { pos?: string };
+                    metaDataProperty?: {
+                        GeocoderMetaData?: { text?: string; AddressDetails?: unknown };
+                    };
+                };
+            }>;
+        };
+    };
+}
+
+/**
+ * Прямой геокод (адрес → координаты).
+ * Использует HTTP Geocoder API. Ключ берётся из CONFIG.YANDEX.GEOCODER_KEY.
+ */
+export async function geocodeForward(address: string): Promise<GeocodeResult | null> {
+    return geocodeRequest(address);
+}
+
+/**
+ * Обратный геокод (координаты → адрес).
+ * Координаты в формате [lon, lat] — Yandex принимает их именно так.
+ */
+export async function geocodeReverse(coords: [number, number]): Promise<GeocodeResult | null> {
+    return geocodeRequest(`${coords[0]},${coords[1]}`);
+}
+
+async function geocodeRequest(geocode: string): Promise<GeocodeResult | null> {
+    const apikey = CONFIG.YANDEX.GEOCODER_KEY;
+    if (!apikey) {
+        console.warn('Yandex geocoder: GEOCODER_KEY is not configured');
+        return null;
+    }
+
+    const url = new URL('https://geocode-maps.yandex.ru/1.x/');
+    url.searchParams.set('apikey', apikey);
+    url.searchParams.set('format', 'json');
+    url.searchParams.set('lang', 'ru_RU');
+    url.searchParams.set('results', '1');
+    url.searchParams.set('geocode', geocode);
+
+    const response = await fetch(url.toString());
+    if (!response.ok) {
+        console.warn('Yandex geocoder: HTTP', response.status);
+        return null;
+    }
+
+    const data = (await response.json()) as GeocoderApiResponse;
+    const obj = data.response?.GeoObjectCollection?.featureMember?.[0]?.GeoObject;
+    const pos = obj?.Point?.pos;
+    if (!pos) return null;
+
+    const [lonStr, latStr] = pos.split(' ');
+    const lon = parseFloat(lonStr);
+    const lat = parseFloat(latStr);
+    if (!Number.isFinite(lon) || !Number.isFinite(lat)) return null;
+
+    const text = obj?.metaDataProperty?.GeocoderMetaData?.text ?? obj?.name ?? '';
+    return { coords: [lon, lat], text };
+}
+
 let loadPromise: Promise<YMaps3> | null = null;
 
 /**

@@ -1,23 +1,19 @@
 /**
  * Компонент выбора адреса с Яндекс-саджестом и интерактивной картой.
  *
- * Поток:
- * 1. Пользователь вводит адрес — `ymaps3.suggest` отдаёт подсказки (требуется Suggest API ключ).
- * 2. Клик по саджесту — текст подставляется в инпут. Координаты не запрашиваем —
- *    `ymaps3.search` в v3 живёт в отдельном пакете, и пока его не используем,
- *    чтобы не плодить зависимости. Адрес для бэка уходит строкой.
- * 3. Карта показывается всегда. Пользователь кликает по карте — туда ставится
- *    draggable-метка, координаты сохраняются в hidden inputs (`#location_lat`,
- *    `#location_lon`). Метку можно перетащить — координаты обновляются.
+ * Двусторонний геокодинг через HTTP Geocoder API:
+ * - Подсказка/ввод адреса → forward-геокод → ставим метку и центрируем карту.
+ * - Клик по карте или drag метки → reverse-геокод → подставляем адрес в инпут.
  *
- * Когда подымется бэкенд-эндпоинт `/api/v1/geocode` — добавим прямой/обратный
- * геокод и автоматическую установку метки по выбранному саджесту.
+ * Гонки гасятся монотонным счётчиком — применяем только результат последнего запроса.
  */
 
 import './address-picker.scss';
 import { CONFIG } from '@core/config';
 import {
     loadYandexMaps,
+    geocodeForward,
+    geocodeReverse,
     type YMaps3,
     type YMapInstance,
     type YMapMarkerInstance,
@@ -54,6 +50,13 @@ export class AddressPicker {
     private suggestTimer: number | null = null;
     private mapLoadPromise: Promise<void> | null = null;
     private destroyed = false;
+
+    // Счётчики для подавления гонок: применяем только результат последнего запроса.
+    private forwardGeocodeSeq = 0;
+    private reverseGeocodeSeq = 0;
+
+    // Когда сами правим input.value (после reverse-геокода), не хотим показывать суджест.
+    private isSettingInputProgrammatically = false;
 
     private onDocumentClick = (e: MouseEvent): void => {
         if (!this.root.contains(e.target as Node)) {
@@ -137,12 +140,23 @@ export class AddressPicker {
 
     private attachInputListeners(): void {
         this.input.addEventListener('input', () => {
+            if (this.isSettingInputProgrammatically) return;
+            // Пользователь снова правит адрес вручную — старые координаты больше не соответствуют.
+            this.latInput.value = '';
+            this.lonInput.value = '';
             this.scheduleSuggest(this.input.value);
         });
         this.input.addEventListener('focus', () => {
             if (this.suggestItems.length) this.renderSuggest();
         });
         this.input.addEventListener('keydown', (e) => this.handleInputKeydown(e));
+        // Enter без выбора из суджеста — попытаемся геокодировать то, что введено.
+        this.input.addEventListener('change', () => {
+            const text = this.input.value.trim();
+            if (text && !this.latInput.value) {
+                void this.forwardGeocodeAndPlace(text);
+            }
+        });
     }
 
     private scheduleSuggest(query: string): void {
@@ -243,8 +257,57 @@ export class AddressPicker {
         if (!item) return;
 
         const text = [item.title?.text, item.subtitle?.text].filter(Boolean).join(', ');
-        this.input.value = text;
+        this.setInputText(text);
         this.hideSuggest();
+        void this.forwardGeocodeAndPlace(text);
+    }
+
+    /**
+     * Прямой геокод: ищет координаты по тексту адреса и ставит метку.
+     * Гонки гасит счётчик forwardGeocodeSeq — применяем только последний запрос.
+     */
+    private async forwardGeocodeAndPlace(text: string): Promise<void> {
+        const seq = ++this.forwardGeocodeSeq;
+        try {
+            const result = await geocodeForward(text);
+            if (this.destroyed || seq !== this.forwardGeocodeSeq || !result) return;
+
+            this.latInput.value = String(result.coords[1]);
+            this.lonInput.value = String(result.coords[0]);
+            await this.applyMarker(result.coords, MARKER_ZOOM);
+        } catch (err) {
+            console.warn('AddressPicker: forward geocode failed', err);
+        }
+    }
+
+    /**
+     * Обратный геокод: по координатам подставляет адрес в инпут.
+     * Гонки гасит счётчик reverseGeocodeSeq.
+     */
+    private async reverseGeocodeAndFill(coords: [number, number]): Promise<void> {
+        const seq = ++this.reverseGeocodeSeq;
+        try {
+            const result = await geocodeReverse(coords);
+            if (this.destroyed || seq !== this.reverseGeocodeSeq || !result?.text) return;
+
+            this.setInputText(result.text);
+        } catch (err) {
+            console.warn('AddressPicker: reverse geocode failed', err);
+        }
+    }
+
+    /**
+     * Программная установка адреса: не триггерит ни саджест, ни обнуление координат,
+     * но событие 'input' диспатчится, чтобы внешний autoSaveDraft сработал.
+     */
+    private setInputText(text: string): void {
+        this.isSettingInputProgrammatically = true;
+        try {
+            this.input.value = text;
+            this.input.dispatchEvent(new Event('input', { bubbles: true }));
+        } finally {
+            this.isSettingInputProgrammatically = false;
+        }
     }
 
     private async ensureSdk(): Promise<YMaps3> {
@@ -278,6 +341,7 @@ export class AddressPicker {
                         this.latInput.value = String(coords[1]);
                         this.lonInput.value = String(coords[0]);
                         void this.applyMarker(coords);
+                        void this.reverseGeocodeAndFill(coords);
                     },
                 }),
             );
@@ -315,6 +379,7 @@ export class AddressPicker {
                 onDragEnd: (newCoords) => {
                     this.latInput.value = String(newCoords[1]);
                     this.lonInput.value = String(newCoords[0]);
+                    void this.reverseGeocodeAndFill(newCoords);
                 },
             },
             el,
