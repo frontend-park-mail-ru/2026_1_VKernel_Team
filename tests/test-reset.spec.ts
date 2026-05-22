@@ -1,9 +1,5 @@
 import { test as base, expect } from '@playwright/test';
-import fs from 'fs';
-import { createAdWithPhoto } from './helpers';
-
-const accounts = JSON.parse(fs.readFileSync('test-accounts.json', 'utf-8'));
-const { email, password } = accounts[0];
+import { createAdWithPhoto, loginAndSaveState } from './helpers';
 
 const test = base.extend<{ authedPage: import('@playwright/test').Page }>({
     authedPage: async ({ browser }, use) => {
@@ -19,13 +15,8 @@ test.describe('Сброс тестового аккаунта через /api/v1
         const context = await browser.newContext();
         const page = await context.newPage();
 
-        await page.goto('/login');
-        await page.locator('input[type="email"]').first().fill(email);
-        await page.locator('input[type="password"]').first().fill(password);
-        await page.click('button:has-text("Войти")');
-        await page.waitForURL('**/', { timeout: 15000 });
+        await loginAndSaveState(page, '/tmp/test-reset-auth.json', 0);
 
-        await context.storageState({ path: '/tmp/test-reset-auth.json' });
         await context.close();
     });
 

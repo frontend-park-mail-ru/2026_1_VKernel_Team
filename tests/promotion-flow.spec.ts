@@ -1,5 +1,5 @@
 import { test as base, expect } from '@playwright/test';
-import { createAdWithPhoto } from './helpers';
+import { createAdWithPhoto, loginAndSaveState } from './helpers';
 
 const test = base.extend<{ authedPage: import('@playwright/test').Page }>({
     authedPage: async ({ browser }, use) => {
@@ -19,24 +19,13 @@ test.describe('Сценарий платного продвижения', () => 
         const context = await browser.newContext();
         page = await context.newPage();
 
-        const email = `promo-flow-${Date.now()}@test.com`;
-        const password = 'Test1234!';
-
-        await page.goto('/register');
-        await page.fill('input[placeholder="Введите имя"]', 'Promo Flow');
-        await page.locator('input[type="email"]').first().fill(email);
-        await page.locator('input[type="password"]').first().fill(password);
-        await page.locator('input[type="password"]').last().fill(password);
-        await page.click('button:has-text("Зарегистрироваться")');
-        await page.waitForURL('**/', { timeout: 15000 });
+        await loginAndSaveState(page, '/tmp/promo-flow-auth.json', 3);
 
         await createAdWithPhoto(page, {
             title: 'Объявление для полного сценария',
             description: 'Описание тестового объявления для сценария',
             price: 1000,
         });
-
-        await context.storageState({ path: '/tmp/promo-flow-auth.json' });
     });
 
     async function topupWallet(amount = 500) {
