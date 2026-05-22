@@ -144,6 +144,26 @@ const registerHelpers = (Hbs: any) => {
         };
         return labels[type] || type;
     });
+
+    Hbs.registerHelper('timeLeft', function (expiresAt: string) {
+        if (!expiresAt) return '';
+        const diff = new Date(expiresAt).getTime() - Date.now();
+        if (diff <= 0) return 'Истекло';
+        const minutes = Math.floor(diff / 60000);
+        const hours = Math.floor(minutes / 60);
+        const days = Math.floor(hours / 24);
+        if (days > 0) {
+            const rem = hours % 24;
+            return rem > 0 ? `${days} дн. ${rem} ч.` : `${days} дн.`;
+        }
+        if (hours > 0) return `${hours} ч.`;
+        return `${minutes} мин.`;
+    });
+
+    Hbs.registerHelper('isExpired', function (expiresAt: string) {
+        if (!expiresAt) return true;
+        return new Date(expiresAt).getTime() < Date.now();
+    });
 };
 
 export const AppController = {

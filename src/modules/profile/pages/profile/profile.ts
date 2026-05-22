@@ -8,6 +8,7 @@ import { ProfileContent } from '@modules/profile/components/profile-content/prof
 import { WalletTab } from '@modules/wallet/components/wallet-tab/wallet-tab';
 import { TopupModal } from '@modules/wallet/components/topup-modal/topup-modal';
 import { PromoteModal } from '@modules/promotion/components/promote-modal/promote-modal';
+import { PromoHistoryTab } from '@modules/promotion/components/history-tab/history-tab';
 import modalTemplate from '@modules/common/components/modal/modal.hbs';
 import type { HandlebarsTemplateFunction } from '@/types';
 
@@ -37,6 +38,10 @@ export function loadTemplates(): void {
         Handlebars.registerPartial(
             'promotion/components/promote-modal/promote-modal',
             PromoteModal.getTemplate(),
+        );
+        Handlebars.registerPartial(
+            'promotion/components/history-tab/history-tab',
+            PromoHistoryTab.getTemplate(),
         );
         Handlebars.registerPartial('common/components/modal/modal', modalTemplate);
     } catch (error) {

@@ -446,6 +446,11 @@ body .main-container {
     box-shadow: 0 8px 20px rgba(0,0,0,0.12);
 }
 
+.rec-card--highlighted {
+    border: 2px solid #f9a825;
+    box-shadow: 0 4px 16px rgba(249, 168, 37, 0.25);
+}
+
 .rec-card-image-container {
     position: relative;
     width: 100%;

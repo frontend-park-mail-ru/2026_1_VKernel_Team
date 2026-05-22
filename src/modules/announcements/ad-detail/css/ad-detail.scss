@@ -755,3 +755,54 @@
         grid-template-columns: 1fr;
     }
 }
+
+.ad-promotion-section {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid #e9ecef;
+}
+
+.ad-promotion-title {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #333;
+}
+
+.ad-promotion-empty {
+    font-size: 13px;
+    color: #999;
+    margin-bottom: 8px;
+}
+
+.ad-promotion-item {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 10px;
+    margin-bottom: 6px;
+    margin-right: 4px;
+}
+
+.ad-promotion-item--boost {
+    background: #e3f2fd;
+    color: #1565c0;
+}
+
+.ad-promotion-item--highlight {
+    background: #fff8e1;
+    color: #f57f17;
+}
+
+.ad-detail-page .promote-btn {
+    background: #fff8e1;
+    color: #f57f17;
+    border: 1px solid #f9a825;
+    margin-top: 4px;
+}
+
+.ad-detail-page .promote-btn:hover {
+    background: #f9a825;
+    color: #fff;
+}

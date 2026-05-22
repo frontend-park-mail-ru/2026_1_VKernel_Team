@@ -92,10 +92,7 @@
   {{/if}}
 
 {{#if (eq currentTab 'paid_services')}}
-    <h2 class="profile-section-title">Платные услуги</h2>
-    <div class="paid-services-container">
-        <p style="display: flex; justify-content: center;">Здесь будет содержимое платных услуг</p>
-    </div>
+    {{> promotion/components/history-tab/history-tab }}
 {{/if}}
 
   {{#if (eq currentTab 'wallet')}}
