@@ -1,6 +1,9 @@
 .modal-overlay {
     position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
     background: rgba(0, 0, 0, 0.5);
     display: flex;
     align-items: center;
@@ -15,6 +18,7 @@
     width: 400px;
     max-width: 90%;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    position: relative;
 }
 
 .modal-content h3 {
@@ -23,8 +27,34 @@
     color: #333;
 }
 
+.modal-close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #999;
+    line-height: 1;
+    padding: 4px 8px;
+
+    &:hover {
+        color: #333;
+    }
+}
+
 .modal-actions {
     display: flex;
     justify-content: flex-end;
     gap: 12px;
+}
+
+.modal-input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+    box-sizing: border-box;
 }

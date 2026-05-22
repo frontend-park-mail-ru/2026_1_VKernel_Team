@@ -101,6 +101,15 @@ test.describe('Кошелёк', () => {
         await expect(page.locator('#topupModal')).toBeVisible();
         await page.click('#topupModal', { position: { x: 5, y: 5 } });
         await expect(page.locator('#topupModal')).not.toBeVisible();
+
+        await page.click('[data-action="open-topup"]');
+        await page.fill('#topupCardNumber', '1234567890123456');
+        await page.fill('#topupCardExpiry', '12/28');
+        await page.fill('#topupCardCvv', '123');
+        await page.click('[data-action="go-to-step2"]');
+
+        await page.click('#topupModal', { position: { x: 5, y: 5 } });
+        await expect(page.locator('#topupModal')).not.toBeVisible();
     });
 
     test('пополнение увеличивает баланс и добавляет транзакцию', async ({ authedPage: page }) => {

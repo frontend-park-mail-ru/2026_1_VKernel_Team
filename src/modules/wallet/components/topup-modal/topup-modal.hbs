@@ -1,41 +1,37 @@
-<div id="topupModal" class="modal-overlay" style="display: none;">
-    <div class="modal-content topup-modal-content">
-        <button class="modal-close" data-action="close-topup">&times;</button>
-
-        <div class="topup-step" id="topupStep1">
-            <h3>Данные карты</h3>
-            <div class="topup-card-form">
-                <div class="topup-field">
-                    <input type="text" id="topupCardNumber" class="modal-input" placeholder="0000 0000 0000 0000" maxlength="23" inputmode="numeric" autocomplete="off">
-                </div>
-                <div class="topup-field-row">
-                    <div class="topup-field topup-field--half">
-                        <input type="text" id="topupCardExpiry" class="modal-input" placeholder="ММ/ГГ" maxlength="5" inputmode="numeric" autocomplete="off">
-                    </div>
-                    <div class="topup-field topup-field--half">
-                        <input type="text" id="topupCardCvv" class="modal-input" placeholder="CVV/CVC" maxlength="3" inputmode="numeric" autocomplete="off">
-                    </div>
-                </div>
-            </div>
-            <p class="topup-error" id="topupCardError" style="display: none;"></p>
-            <div class="modal-actions">
-                <button class="btn btn-primary" data-action="go-to-step2">Далее</button>
-            </div>
+{{#> common/components/modal/modal id="topupModal" modifier="topup-modal-content"}}
+<div class="topup-step" id="topupStep1">
+    <h3>Данные карты</h3>
+    <div class="topup-card-form">
+        <div class="topup-field">
+            <input type="text" id="topupCardNumber" class="modal-input" placeholder="0000 0000 0000 0000" maxlength="23" inputmode="numeric" autocomplete="off">
         </div>
-
-        <div class="topup-step" id="topupStep2" style="display: none;">
-            <h3>Сумма пополнения</h3>
-            <div class="topup-quick-amounts">
-                <button class="topup-quick-btn" data-quick-amount="100">100 ₽</button>
-                <button class="topup-quick-btn" data-quick-amount="500">500 ₽</button>
-                <button class="topup-quick-btn" data-quick-amount="1000">1 000 ₽</button>
+        <div class="topup-field-row">
+            <div class="topup-field topup-field--half">
+                <input type="text" id="topupCardExpiry" class="modal-input" placeholder="ММ/ГГ" maxlength="5" inputmode="numeric" autocomplete="off">
             </div>
-            <input type="number" id="topupAmountInput" class="modal-input" placeholder="Сумма, ₽" min="1">
-            <p class="topup-error" id="topupError" style="display: none;"></p>
-            <div class="modal-actions">
-                <button class="btn btn-secondary" data-action="go-to-step1">Назад</button>
-                <button class="btn btn-primary" data-action="confirm-topup">Пополнить</button>
+            <div class="topup-field topup-field--half">
+                <input type="text" id="topupCardCvv" class="modal-input" placeholder="CVV/CVC" maxlength="3" inputmode="numeric" autocomplete="off">
             </div>
         </div>
     </div>
+    <p class="topup-error" id="topupCardError" style="display: none;"></p>
+    <div class="modal-actions">
+        <button class="btn btn-primary" data-action="go-to-step2">Далее</button>
+    </div>
 </div>
+
+<div class="topup-step" id="topupStep2" style="display: none;">
+    <h3>Сумма пополнения</h3>
+    <div class="topup-quick-amounts">
+        <button class="topup-quick-btn" data-quick-amount="100">100 ₽</button>
+        <button class="topup-quick-btn" data-quick-amount="500">500 ₽</button>
+        <button class="topup-quick-btn" data-quick-amount="1000">1 000 ₽</button>
+    </div>
+    <input type="number" id="topupAmountInput" class="modal-input" placeholder="Сумма, ₽" min="1">
+    <p class="topup-error" id="topupError" style="display: none;"></p>
+    <div class="modal-actions">
+        <button class="btn btn-secondary" data-action="go-to-step1">Назад</button>
+        <button class="btn btn-primary" data-action="confirm-topup">Пополнить</button>
+    </div>
+</div>
+{{/common/components/modal/modal}}

@@ -1,6 +1,6 @@
 import template from '@modules/wallet/components/topup-modal/topup-modal.hbs';
-import '@modules/common/components/modal/modal.scss';
 import '@modules/wallet/components/topup-modal/topup-modal.scss';
+import { createBaseModal } from '@modules/common/components/modal/modal';
 import { walletService } from '@modules/wallet/service';
 import { walletStore } from '@modules/wallet/store';
 import { uiActions } from '@/actions/uiActions';
@@ -44,6 +44,8 @@ function validateCardFields(): { valid: boolean; error: string } {
     return { valid: true, error: '' };
 }
 
+const base = createBaseModal({ id: 'topupModal' });
+
 export const TopupModal = {
     _boundElement: null as HTMLElement | null,
     _idempotencyKey: '',
@@ -53,17 +55,14 @@ export const TopupModal = {
     },
 
     init(): void {
-        const modal = document.getElementById('topupModal');
+        const modal = base.getElement();
         if (!modal || modal === this._boundElement) return;
         this._boundElement = modal;
 
+        base.bindBaseEvents(() => this.close());
+
         modal.addEventListener('click', (e) => {
             const target = e.target as HTMLElement;
-
-            if (target.closest('[data-action="close-topup"]')) {
-                this.close();
-                return;
-            }
 
             if (target.closest('[data-action="go-to-step2"]')) {
                 this.goToStep2();
@@ -129,17 +128,11 @@ export const TopupModal = {
                 });
             });
         }
-
-        modal.addEventListener('mousedown', (e) => {
-            if (e.target === modal) {
-                this.close();
-            }
-        });
     },
 
     open(): void {
         this._idempotencyKey = crypto.randomUUID();
-        const modal = document.getElementById('topupModal');
+        const modal = base.getElement();
         if (modal) {
             const cardNumber = document.getElementById('topupCardNumber') as HTMLInputElement;
             const expiry = document.getElementById('topupCardExpiry') as HTMLInputElement;
@@ -160,13 +153,12 @@ export const TopupModal = {
             });
 
             this.showStep(1);
-            modal.style.display = 'flex';
+            base.open();
         }
     },
 
     close(): void {
-        const modal = document.getElementById('topupModal');
-        if (modal) modal.style.display = 'none';
+        base.close();
     },
 
     showStep(step: number): void {
