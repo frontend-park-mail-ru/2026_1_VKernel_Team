@@ -1,4 +1,5 @@
 import { test as base, expect } from '@playwright/test';
+import { createAdWithPhoto } from './helpers';
 
 const test = base.extend<{ authedPage: import('@playwright/test').Page }>({
     authedPage: async ({ browser }, use) => {
@@ -25,38 +26,10 @@ test.describe('Продвижение объявления', () => {
         await page.click('button:has-text("Зарегистрироваться")');
         await page.waitForURL('**/', { timeout: 15000 });
 
-        await page.evaluate(async () => {
-            async function warmUpCsrf() {
-                await fetch('/api/v1/profile', { method: 'GET', credentials: 'include' });
-                const value = `; ${document.cookie}`;
-                const parts = value.split(`; csrf_token=`);
-                return parts.length === 2 ? parts.pop()!.split(';').shift() : null;
-            }
-
-            const csrfToken = await warmUpCsrf();
-            if (!csrfToken) return { ok: false, error: 'no csrf token' };
-
-            const formData = new FormData();
-            formData.append(
-                'data',
-                JSON.stringify({
-                    category_id: 1,
-                    title: 'Тестовое объявление для продвижения',
-                    description: 'Описание тестового объявления',
-                    price: 1000,
-                    status: 'active',
-                    location: 'Москва',
-                }),
-            );
-
-            const res = await fetch('/api/v1/ads', {
-                method: 'POST',
-                body: formData,
-                credentials: 'include',
-                headers: { 'X-CSRF-Token': csrfToken },
-            });
-
-            const text = await res.text();
+        await createAdWithPhoto(page, {
+            title: 'Тестовое объявление для продвижения',
+            description: 'Описание тестового объявления',
+            price: 1000,
         });
 
         await context.storageState({ path: '/tmp/promo-auth.json' });
