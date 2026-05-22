@@ -59,6 +59,7 @@ export const TopupModal = {
         if (!modal || modal === this._boundElement) return;
         this._boundElement = modal;
 
+        base.resetBound();
         base.bindBaseEvents(() => this.close());
 
         modal.addEventListener('click', (e) => {
