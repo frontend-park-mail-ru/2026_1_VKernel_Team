@@ -20,6 +20,23 @@
     }
 }
 
+.topup-card-form {
+    margin-bottom: 8px;
+}
+
+.topup-field {
+    margin-bottom: 12px;
+}
+
+.topup-field-row {
+    display: flex;
+    gap: 12px;
+}
+
+.topup-field--half {
+    flex: 1;
+}
+
 .topup-quick-amounts {
     display: flex;
     gap: 8px;

@@ -6,6 +6,44 @@ import { walletStore } from '@modules/wallet/store';
 import { uiActions } from '@/actions/uiActions';
 import { eventBus } from '@/core/eventBus';
 
+function formatCardNumber(value: string): string {
+    const digits = value.replace(/\D/g, '').slice(0, 19);
+    return digits.replace(/(\d{4})(?=\d)/g, '$1 ');
+}
+
+function formatExpiry(value: string): string {
+    const digits = value.replace(/\D/g, '').slice(0, 4);
+    if (digits.length >= 3) {
+        return digits.slice(0, 2) + '/' + digits.slice(2);
+    }
+    return digits;
+}
+
+function validateCardFields(): { valid: boolean; error: string } {
+    const cardNumber =
+        (document.getElementById('topupCardNumber') as HTMLInputElement)?.value.replace(
+            /\s/g,
+            '',
+        ) || '';
+    const expiry = (document.getElementById('topupCardExpiry') as HTMLInputElement)?.value || '';
+    const cvv = (document.getElementById('topupCardCvv') as HTMLInputElement)?.value || '';
+
+    if (cardNumber.length < 16 || cardNumber.length > 19) {
+        return { valid: false, error: 'Номер карты: 16–19 цифр' };
+    }
+    if (!/^\d{2}\/\d{2}$/.test(expiry)) {
+        return { valid: false, error: 'Срок действия: ММ/ГГ' };
+    }
+    const month = parseInt(expiry.slice(0, 2), 10);
+    if (month < 1 || month > 12) {
+        return { valid: false, error: 'Месяц: 01–12' };
+    }
+    if (!/^\d{3}$/.test(cvv)) {
+        return { valid: false, error: 'CVV/CVC: 3 цифры' };
+    }
+    return { valid: true, error: '' };
+}
+
 export const TopupModal = {
     _boundElement: null as HTMLElement | null,
     _idempotencyKey: '',
@@ -24,6 +62,16 @@ export const TopupModal = {
 
             if (target.closest('[data-action="close-topup"]')) {
                 this.close();
+                return;
+            }
+
+            if (target.closest('[data-action="go-to-step2"]')) {
+                this.goToStep2();
+                return;
+            }
+
+            if (target.closest('[data-action="go-to-step1"]')) {
+                this.goToStep1();
                 return;
             }
 
@@ -48,9 +96,34 @@ export const TopupModal = {
             }
         });
 
-        const input = document.getElementById('topupAmountInput') as HTMLInputElement;
-        if (input) {
-            input.addEventListener('input', () => {
+        const cardNumberInput = document.getElementById('topupCardNumber') as HTMLInputElement;
+        if (cardNumberInput) {
+            cardNumberInput.addEventListener('input', () => {
+                const pos = cardNumberInput.selectionStart || 0;
+                const before = cardNumberInput.value;
+                cardNumberInput.value = formatCardNumber(cardNumberInput.value);
+                const diff = cardNumberInput.value.length - before.length;
+                cardNumberInput.setSelectionRange(pos + diff, pos + diff);
+            });
+        }
+
+        const expiryInput = document.getElementById('topupCardExpiry') as HTMLInputElement;
+        if (expiryInput) {
+            expiryInput.addEventListener('input', () => {
+                expiryInput.value = formatExpiry(expiryInput.value);
+            });
+        }
+
+        const cvvInput = document.getElementById('topupCardCvv') as HTMLInputElement;
+        if (cvvInput) {
+            cvvInput.addEventListener('input', () => {
+                cvvInput.value = cvvInput.value.replace(/\D/g, '').slice(0, 3);
+            });
+        }
+
+        const amountInput = document.getElementById('topupAmountInput') as HTMLInputElement;
+        if (amountInput) {
+            amountInput.addEventListener('input', () => {
                 modal.querySelectorAll('.topup-quick-btn').forEach((btn) => {
                     btn.classList.remove('active');
                 });
@@ -68,13 +141,25 @@ export const TopupModal = {
         this._idempotencyKey = crypto.randomUUID();
         const modal = document.getElementById('topupModal');
         if (modal) {
-            const input = document.getElementById('topupAmountInput') as HTMLInputElement;
-            if (input) input.value = '';
+            const cardNumber = document.getElementById('topupCardNumber') as HTMLInputElement;
+            const expiry = document.getElementById('topupCardExpiry') as HTMLInputElement;
+            const cvv = document.getElementById('topupCardCvv') as HTMLInputElement;
+            const amountInput = document.getElementById('topupAmountInput') as HTMLInputElement;
+            if (cardNumber) cardNumber.value = '';
+            if (expiry) expiry.value = '';
+            if (cvv) cvv.value = '';
+            if (amountInput) amountInput.value = '';
+
+            const cardError = document.getElementById('topupCardError');
+            if (cardError) cardError.style.display = 'none';
             const error = document.getElementById('topupError');
             if (error) error.style.display = 'none';
+
             modal.querySelectorAll('.topup-quick-btn').forEach((btn) => {
                 btn.classList.remove('active');
             });
+
+            this.showStep(1);
             modal.style.display = 'flex';
         }
     },
@@ -82,6 +167,32 @@ export const TopupModal = {
     close(): void {
         const modal = document.getElementById('topupModal');
         if (modal) modal.style.display = 'none';
+    },
+
+    showStep(step: number): void {
+        const step1 = document.getElementById('topupStep1');
+        const step2 = document.getElementById('topupStep2');
+        if (step1) step1.style.display = step === 1 ? '' : 'none';
+        if (step2) step2.style.display = step === 2 ? '' : 'none';
+    },
+
+    goToStep2(): void {
+        const validation = validateCardFields();
+        if (!validation.valid) {
+            const errorEl = document.getElementById('topupCardError');
+            if (errorEl) {
+                errorEl.textContent = validation.error;
+                errorEl.style.display = 'block';
+            }
+            return;
+        }
+        const cardError = document.getElementById('topupCardError');
+        if (cardError) cardError.style.display = 'none';
+        this.showStep(2);
+    },
+
+    goToStep1(): void {
+        this.showStep(1);
     },
 
     async handleConfirm(): Promise<void> {
