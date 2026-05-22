@@ -25,16 +25,49 @@ test.describe('Продвижение объявления', () => {
         await page.click('button:has-text("Зарегистрироваться")');
         await page.waitForURL('**/', { timeout: 15000 });
 
+        await page.evaluate(async () => {
+            async function warmUpCsrf() {
+                await fetch('/api/v1/profile', { method: 'GET', credentials: 'include' });
+                const value = `; ${document.cookie}`;
+                const parts = value.split(`; csrf_token=`);
+                return parts.length === 2 ? parts.pop()!.split(';').shift() : null;
+            }
+
+            const csrfToken = await warmUpCsrf();
+            if (!csrfToken) return { ok: false, error: 'no csrf token' };
+
+            const formData = new FormData();
+            formData.append(
+                'data',
+                JSON.stringify({
+                    category_id: 1,
+                    title: 'Тестовое объявление для продвижения',
+                    description: 'Описание тестового объявления',
+                    price: 1000,
+                    status: 'active',
+                    location: 'Москва',
+                }),
+            );
+
+            const res = await fetch('/api/v1/ads', {
+                method: 'POST',
+                body: formData,
+                credentials: 'include',
+                headers: { 'X-CSRF-Token': csrfToken },
+            });
+
+            const text = await res.text();
+        });
+
         await context.storageState({ path: '/tmp/promo-auth.json' });
         await context.close();
     });
 
-    async function openPromoteModal(page: any) {
-        await page.goto('/profile?tab=wallet');
-        await page.waitForSelector('.wallet-balance-card');
-        await page.evaluate(async () => {
-            await (window as any).__PromoteModal.open(1);
-        });
+    async function openPromoteModal(page: import('@playwright/test').Page) {
+        await page.goto('/profile');
+        await page.waitForSelector('.profile-tab-content');
+        await page.waitForSelector('.rec-card-promote', { timeout: 15000 });
+        await page.click('.rec-card-promote');
         await expect(page.locator('#promoteModal')).toBeVisible({ timeout: 10000 });
     }
 
@@ -91,13 +124,33 @@ test.describe('Продвижение объявления', () => {
         await page.click('[data-action="confirm-topup"]');
         await expect(page.locator('#topupModal')).not.toBeVisible({ timeout: 10000 });
 
-        await page.evaluate(async () => {
-            await (window as any).__PromoteModal.open(1);
-        });
+        await page.goto('/profile');
+        await page.waitForSelector('.profile-tab-content');
+        await page.waitForSelector('.rec-card-promote', { timeout: 15000 });
+
+        await page.click('.rec-card-promote');
         await expect(page.locator('#promoteModal')).toBeVisible({ timeout: 10000 });
 
         await page.click('#promoteModal [data-plan-code="boost_1d"]');
         await page.click('#promoteModal [data-action="go-to-step2"]');
+
+        const adId = await page.locator('.rec-card').first().getAttribute('data-id');
+        if (adId) {
+            await page.evaluate(async (id) => {
+                await fetch('/api/v1/profile', { method: 'GET', credentials: 'include' });
+                const value = `; ${document.cookie}`;
+                const parts = value.split(`; csrf_token=`);
+                const csrfToken = parts.length === 2 ? parts.pop()!.split(';').shift() : null;
+                if (csrfToken) {
+                    await fetch(`/api/v1/ads/${id}`, {
+                        method: 'DELETE',
+                        credentials: 'include',
+                        headers: { 'X-CSRF-Token': csrfToken },
+                    });
+                }
+            }, adId);
+        }
+
         await page.click('[data-action="confirm-promote"]');
 
         await expect(page.locator('#promoteConfirmError')).toBeVisible({ timeout: 10000 });
