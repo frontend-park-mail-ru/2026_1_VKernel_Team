@@ -7,6 +7,8 @@ import { ProfileSidebar } from '@modules/profile/components/profile-sidebar/prof
 import { ProfileContent } from '@modules/profile/components/profile-content/profile-content';
 import { WalletTab } from '@modules/wallet/components/wallet-tab/wallet-tab';
 import { TopupModal } from '@modules/wallet/components/topup-modal/topup-modal';
+import { PromoteModal } from '@modules/promotion/components/promote-modal/promote-modal';
+import modalTemplate from '@modules/common/components/modal/modal.hbs';
 import type { HandlebarsTemplateFunction } from '@/types';
 
 declare const Handlebars: any;
@@ -32,6 +34,11 @@ export function loadTemplates(): void {
             'wallet/components/topup-modal/topup-modal',
             TopupModal.getTemplate(),
         );
+        Handlebars.registerPartial(
+            'promotion/components/promote-modal/promote-modal',
+            PromoteModal.getTemplate(),
+        );
+        Handlebars.registerPartial('common/components/modal/modal', modalTemplate);
     } catch (error) {
         console.error('Failed to load profile templates:', error);
     }

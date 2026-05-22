@@ -1,0 +1,93 @@
+.promote-modal-content {
+    max-width: 440px;
+}
+
+.promote-group {
+    margin-bottom: 16px;
+}
+
+.promote-group-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #666;
+    margin: 0 0 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.promote-plans {
+    display: flex;
+    gap: 8px;
+}
+
+.promote-plan-btn {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 12px 8px;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    background: #fff;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:hover {
+        border-color: #4caf50;
+        background: #f1f8f1;
+    }
+
+    &.active {
+        border-color: #4caf50;
+        background: #e8f5e9;
+    }
+}
+
+.promote-plan-name {
+    font-size: 15px;
+    font-weight: 600;
+    color: #333;
+}
+
+.promote-plan-price {
+    font-size: 13px;
+    color: #666;
+    margin-top: 4px;
+}
+
+.promote-balance {
+    font-size: 14px;
+    color: #888;
+    margin-bottom: 12px;
+}
+
+.promote-balance-value {
+    font-weight: 600;
+    color: #333;
+}
+
+.promote-confirm-info {
+    margin: 12px 0;
+    font-size: 15px;
+    color: #333;
+}
+
+.promote-confirm-info p {
+    margin: 4px 0;
+}
+
+.promote-confirm-info strong {
+    color: #111;
+}
+
+.promote-error {
+    color: #d32f2f;
+    font-size: 13px;
+    margin: 4px 0 0;
+}
+
+.promote-loading {
+    color: #888;
+    text-align: center;
+    padding: 24px 0;
+}
