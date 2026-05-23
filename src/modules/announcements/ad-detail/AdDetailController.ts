@@ -16,6 +16,8 @@ import { networkStatus } from '@modules/common/offline/network/networkStatus';
 import type { Ad } from '@/types';
 import { eventBus } from '@/core/eventBus';
 import { renderStarsHTML } from '@/utils/icons';
+import { PromoteModal } from '@modules/promotion/components/promote-modal/promote-modal';
+import { promotionService } from '@modules/promotion/service';
 
 const AD_DETAIL_STORE = 'ads';
 
@@ -460,6 +462,19 @@ export class AdDetailController {
             this._handlers.set('editAd', handler);
         }
 
+        const promoteBtn = document.querySelector('[data-action="promote-ad"]');
+        if (promoteBtn) {
+            const handler = (e: Event) => {
+                e.preventDefault();
+                const promoteAdId = (promoteBtn as HTMLElement).dataset.promoteAdId;
+                if (promoteAdId) PromoteModal.open(promoteAdId);
+            };
+            promoteBtn.addEventListener('click', handler);
+            this._handlers.set('promoteAd', handler);
+
+            this.loadAdPromotionStatus(adId);
+        }
+
         const favoriteBtn = document.querySelector('[data-action="add-to-favorites"]');
         if (favoriteBtn) {
             if (this._handlers.has('addToFavorites')) {
@@ -733,5 +748,23 @@ export class AdDetailController {
         this._handlers.clear();
         this.currentPhotoIndex = 0;
         this.allPhotosArray = [];
+    }
+
+    private static async loadAdPromotionStatus(adId: string): Promise<void> {
+        const statusEl = document.getElementById('adPromotionStatus');
+        if (!statusEl) return;
+
+        const res = await promotionService.getAdPromotions(adId);
+        if (!res.success || !res.data || res.data.length === 0) {
+            statusEl.innerHTML = '<p class="ad-promotion-empty">Нет активных продвижений</p>';
+            return;
+        }
+
+        const items = res.data.map((p: any) => {
+            const label = p.kind === 'boost' ? 'Поднятие' : 'Выделение';
+            return `<span class="ad-promotion-item ad-promotion-item--${p.kind}">${label}: ещё ${Handlebars.helpers.timeLeft(p.expires_at)}</span>`;
+        });
+
+        statusEl.innerHTML = items.join('');
     }
 }

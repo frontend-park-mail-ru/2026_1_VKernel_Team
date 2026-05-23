@@ -15,6 +15,7 @@ import { CloseAdModal } from '@modules/profile/components/close-ad-modal/close-a
 import { FavoriteCard } from '@modules/profile/components/favorite-card/favorite-card';
 import { TopupModal } from '@modules/wallet/components/topup-modal/topup-modal';
 import { WalletTab } from '@modules/wallet/components/wallet-tab/wallet-tab';
+import { PromoHistoryTab } from '@modules/promotion/components/history-tab/history-tab';
 import { walletStore } from '@modules/wallet/store';
 import { walletService } from '@modules/wallet/service';
 import { PROFILE_CONFIG } from '@modules/profile/config';
@@ -213,6 +214,9 @@ export const ProfileController = {
         if (this.currentTab === 'wallet') {
             this.loadWalletData();
         }
+        if (this.currentTab === 'paid_services') {
+            this.loadPromoHistory();
+        }
     },
 
     renderAll(): void {
@@ -259,6 +263,7 @@ export const ProfileController = {
             favorites: this.userFavorites,
             isAuthenticated: store.isAuthenticated,
             ...WalletTab.buildTemplateData(walletStore.getState()),
+            ...PromoHistoryTab.buildTemplateData(),
         });
     },
 
@@ -296,6 +301,8 @@ export const ProfileController = {
             this.loadUserFavorites();
         } else if (tab === 'wallet') {
             this.loadWalletData();
+        } else if (tab === 'paid_services') {
+            this.loadPromoHistory();
         }
 
         this.renderAll();
@@ -310,6 +317,7 @@ export const ProfileController = {
         if (FavoriteCard?.init) FavoriteCard.init();
         if (TopupModal?.init) TopupModal.init();
         if (WalletTab?.init) WalletTab.init();
+        if (PromoHistoryTab?.init) PromoHistoryTab.init();
         // На вкладках с карточками рендерится partial cart-button — нужно
         // подключить его обработчики (добавление в корзину со страницы
         // «Избранное», «Мои покупки», «Объявления»).
@@ -326,6 +334,11 @@ export const ProfileController = {
         } catch (err) {
             console.error('Ошибка загрузки профиля:', err);
         }
+    },
+
+    async loadPromoHistory(): Promise<void> {
+        await PromoHistoryTab.loadHistory();
+        this.attachEventListeners();
     },
 
     async handleLogout(): Promise<void> {

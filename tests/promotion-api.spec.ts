@@ -1,4 +1,5 @@
 import { test as base, expect } from '@playwright/test';
+import { createAdWithPhoto, loginAndSaveState } from './helpers';
 
 const test = base.extend<{ authedPage: import('@playwright/test').Page }>({
     authedPage: async ({ browser }, use) => {
@@ -14,52 +15,14 @@ test.describe('Продвижение объявления', () => {
         const context = await browser.newContext();
         const page = await context.newPage();
 
-        const email = `promo-test-${Date.now()}@test.com`;
-        const password = 'Test1234!';
+        await loginAndSaveState(page, '/tmp/promo-auth.json', 2);
 
-        await page.goto('/register');
-        await page.fill('input[placeholder="Введите имя"]', 'Promo Test');
-        await page.locator('input[type="email"]').first().fill(email);
-        await page.locator('input[type="password"]').first().fill(password);
-        await page.locator('input[type="password"]').last().fill(password);
-        await page.click('button:has-text("Зарегистрироваться")');
-        await page.waitForURL('**/', { timeout: 15000 });
-
-        await page.evaluate(async () => {
-            async function warmUpCsrf() {
-                await fetch('/api/v1/profile', { method: 'GET', credentials: 'include' });
-                const value = `; ${document.cookie}`;
-                const parts = value.split(`; csrf_token=`);
-                return parts.length === 2 ? parts.pop()!.split(';').shift() : null;
-            }
-
-            const csrfToken = await warmUpCsrf();
-            if (!csrfToken) return { ok: false, error: 'no csrf token' };
-
-            const formData = new FormData();
-            formData.append(
-                'data',
-                JSON.stringify({
-                    category_id: 1,
-                    title: 'Тестовое объявление для продвижения',
-                    description: 'Описание тестового объявления',
-                    price: 1000,
-                    status: 'active',
-                    location: 'Москва',
-                }),
-            );
-
-            const res = await fetch('/api/v1/ads', {
-                method: 'POST',
-                body: formData,
-                credentials: 'include',
-                headers: { 'X-CSRF-Token': csrfToken },
-            });
-
-            const text = await res.text();
+        await createAdWithPhoto(page, {
+            title: 'Тестовое объявление для продвижения',
+            description: 'Описание тестового объявления',
+            price: 1000,
         });
 
-        await context.storageState({ path: '/tmp/promo-auth.json' });
         await context.close();
     });
 

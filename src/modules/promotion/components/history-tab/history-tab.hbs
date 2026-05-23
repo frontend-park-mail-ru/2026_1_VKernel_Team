@@ -1,0 +1,26 @@
+<h2 class="profile-section-title">История продвижений</h2>
+
+{{#if items.length}}
+<ul class="promo-history-list">
+    {{#each items}}
+    <li class="promo-history-item">
+        <span class="promo-history-badge promo-history-badge--{{this.kind}}">
+            {{#if (eq this.kind 'boost')}}Поднятие{{else}}Выделение{{/if}}
+        </span>
+        <span class="promo-history-info">
+            <a href="/ad/{{this.product_id}}" data-nav="/ad/{{this.product_id}}">Объявление #{{this.product_id}}</a>
+            <span class="promo-history-plan">{{this.plan_code}}</span>
+        </span>
+        <span class="promo-history-price">−{{this.price_paid}} ₽</span>
+        <span class="promo-history-expires {{#if (isExpired this.expires_at)}}promo-history-expires--expired{{/if}}">
+            {{timeLeft this.expires_at}}
+        </span>
+    </li>
+    {{/each}}
+</ul>
+{{#if nextCursor}}
+<button class="btn btn-secondary promo-history-load-more" data-action="load-more-promo-history">Загрузить ещё</button>
+{{/if}}
+{{else}}
+<p class="promo-history-empty">У вас пока нет продвижений</p>
+{{/if}}

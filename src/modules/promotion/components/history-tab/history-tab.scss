@@ -1,0 +1,80 @@
+.promo-history-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.promo-history-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.promo-history-badge {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 10px;
+    white-space: nowrap;
+}
+
+.promo-history-badge--boost {
+    background: #e3f2fd;
+    color: #1565c0;
+}
+
+.promo-history-badge--highlight {
+    background: #fff8e1;
+    color: #f57f17;
+}
+
+.promo-history-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.promo-history-info a {
+    color: #333;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.promo-history-info a:hover {
+    text-decoration: underline;
+}
+
+.promo-history-plan {
+    font-size: 12px;
+    color: #999;
+}
+
+.promo-history-price {
+    font-weight: 600;
+    color: #e53935;
+    white-space: nowrap;
+}
+
+.promo-history-expires {
+    font-size: 13px;
+    color: #4caf50;
+    white-space: nowrap;
+}
+
+.promo-history-expires--expired {
+    color: #999;
+}
+
+.promo-history-empty {
+    color: #999;
+    text-align: center;
+    padding: 32px 0;
+}
+
+.promo-history-load-more {
+    display: block;
+    margin: 16px auto 0;
+}

@@ -4,6 +4,7 @@
 
 Маркетплейс объявлений (classifieds). SPA без фреймворка, роутинг и состояние написаны вручную.
 
+- **Тестовые аккаунты:** `test-accounts.json` (в gitignore)
 - **Прод:** https://clover-go.ru/
 - **Бэкенд:** https://github.com/go-park-mail-ru/2026_1_VKernelTeam
 - **Фронтенд:** https://github.com/frontend-park-mail-ru/2026_1_VKernel_Team
@@ -193,6 +194,8 @@ Webpack читает `.env` вручную (без dotenv). DefinePlugin вне�
 - Не писать отдельный тест «X отображается», если есть тест «взаимодействие с X работает» — совмещать в одном
 - Авторизация: `beforeAll` через UI, `storageState` в файл, далее fixture `authedPage` с этим состоянием
 - Не логиниться через UI в каждом тесте — использовать сохранённую сессию
+- Аккаунты для автотестов: email с префиксом `clover-tester` (например `clover-tester-wallet@test.com`)
+- После тестов вызывать `POST /api/v1/test/reset` для очистки тестового аккаунта
 
 ## Верстка модалок
 
