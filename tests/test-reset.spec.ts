@@ -1,5 +1,5 @@
 import { test as base, expect } from '@playwright/test';
-import { createAdWithPhoto, loginAndSaveState } from './helpers';
+import { createAdWithPhoto, loginAndSaveState, resetAccount } from './helpers';
 
 const test = base.extend<{ authedPage: import('@playwright/test').Page }>({
     authedPage: async ({ browser }, use) => {
@@ -17,6 +17,13 @@ test.describe('Сброс тестового аккаунта через /api/v1
 
         await loginAndSaveState(page, '/tmp/test-reset-auth.json', 0);
 
+        await context.close();
+    });
+
+    test.afterAll(async ({ browser }) => {
+        const context = await browser.newContext({ storageState: '/tmp/test-reset-auth.json' });
+        const page = await context.newPage();
+        await resetAccount(page);
         await context.close();
     });
 
@@ -41,22 +48,7 @@ test.describe('Сброс тестового аккаунта через /api/v1
         await page.click('[data-action="confirm-topup"]');
         await expect(page.locator('#topupModal')).not.toBeVisible({ timeout: 10000 });
 
-        const resetRes = await page.evaluate(async () => {
-            await fetch('/api/v1/profile', { method: 'GET', credentials: 'include' });
-            const value = `; ${document.cookie}`;
-            const parts = value.split(`; csrf_token=`);
-            const csrfToken = parts.length === 2 ? parts.pop()!.split(';').shift() : null;
-            if (!csrfToken) throw new Error('no csrf');
-
-            const res = await fetch('/api/v1/test/reset', {
-                method: 'POST',
-                credentials: 'include',
-                headers: { 'X-CSRF-Token': csrfToken },
-            });
-            return { ok: res.ok, status: res.status, body: await res.text() };
-        });
-
-        expect(resetRes.ok).toBeTruthy();
+        await resetAccount(page);
 
         await page.goto('/profile?tab=wallet');
         await page.waitForSelector('.wallet-balance-card');

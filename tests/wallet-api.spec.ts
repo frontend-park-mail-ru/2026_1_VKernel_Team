@@ -1,5 +1,5 @@
 import { test as base, expect } from '@playwright/test';
-import { loginAndSaveState } from './helpers';
+import { loginAndSaveState, resetAccount } from './helpers';
 
 const test = base.extend<{ authedPage: import('@playwright/test').Page }>({
     authedPage: async ({ browser }, use) => {
@@ -17,6 +17,13 @@ test.describe('Кошелёк', () => {
 
         await loginAndSaveState(page, '/tmp/wallet-auth.json', 1);
 
+        await context.close();
+    });
+
+    test.afterAll(async ({ browser }) => {
+        const context = await browser.newContext({ storageState: '/tmp/wallet-auth.json' });
+        const page = await context.newPage();
+        await resetAccount(page);
         await context.close();
     });
 

@@ -1,5 +1,5 @@
 import { test as base, expect } from '@playwright/test';
-import { createAdWithPhoto, loginAndSaveState } from './helpers';
+import { createAdWithPhoto, loginAndSaveState, resetAccount } from './helpers';
 
 const test = base.extend<{ authedPage: import('@playwright/test').Page }>({
     authedPage: async ({ browser }, use) => {
@@ -26,6 +26,10 @@ test.describe('Сценарий платного продвижения', () => 
             description: 'Описание тестового объявления для сценария',
             price: 1000,
         });
+    });
+
+    test.afterAll(async () => {
+        if (page) await resetAccount(page);
     });
 
     async function topupWallet(amount = 500) {

@@ -1,5 +1,5 @@
 import { test as base, expect } from '@playwright/test';
-import { createAdWithPhoto, loginAndSaveState } from './helpers';
+import { createAdWithPhoto, loginAndSaveState, resetAccount } from './helpers';
 
 const test = base.extend<{ authedPage: import('@playwright/test').Page }>({
     authedPage: async ({ browser }, use) => {
@@ -23,6 +23,13 @@ test.describe('Продвижение объявления', () => {
             price: 1000,
         });
 
+        await context.close();
+    });
+
+    test.afterAll(async ({ browser }) => {
+        const context = await browser.newContext({ storageState: '/tmp/promo-auth.json' });
+        const page = await context.newPage();
+        await resetAccount(page);
         await context.close();
     });
 
