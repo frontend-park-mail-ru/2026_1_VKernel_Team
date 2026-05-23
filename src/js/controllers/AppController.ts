@@ -135,6 +135,15 @@ const registerHelpers = (Hbs: any) => {
         }
         return date.toLocaleDateString('ru-RU');
     });
+
+    Hbs.registerHelper('formatTxType', function (type: string) {
+        const labels: Record<string, string> = {
+            topup: 'Пополнение',
+            promotion_charge: 'Списание',
+            refund: 'Возврат',
+        };
+        return labels[type] || type;
+    });
 };
 
 export const AppController = {

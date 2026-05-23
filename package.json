@@ -10,7 +10,9 @@
     "dev": "node --watch server/server.js",
     "watch": "webpack --mode development --watch",
     "build": "webpack --mode production",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "npx playwright test",
+    "test:local": "BASE_URL=http://localhost:80 npx playwright test",
+    "test:prod": "BASE_URL=https://clover-go.ru npx playwright test",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "dep-gen": "npx depcruise src --webpack-config webpack.config.js --output-type dot",
@@ -49,6 +51,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@playwright/test": "^1.60.0",
     "@types/handlebars": "^4.0.40",
     "@types/node": "^25.5.0",
     "concurrently": "^9.2.1",

@@ -1,0 +1,91 @@
+import '@modules/wallet/components/wallet-tab/wallet-tab.scss';
+import template from '@modules/wallet/components/wallet-tab/wallet-tab.hbs';
+import { walletService } from '@modules/wallet/service';
+import { walletStore } from '@modules/wallet/store';
+import { TopupModal } from '@modules/wallet/components/topup-modal/topup-modal';
+import { uiActions } from '@/actions/uiActions';
+import { eventBus } from '@/core/eventBus';
+
+declare const Handlebars: any;
+
+export const WalletTab = {
+    _boundElement: null as HTMLElement | null,
+    _unsubscribers: [] as Array<() => void>,
+
+    getTemplate() {
+        return template;
+    },
+
+    init(): void {
+        const openTopupBtn = document.querySelector('[data-action="open-topup"]');
+        if (!openTopupBtn) return;
+        const content = openTopupBtn.closest('.profile-tab-content') as HTMLElement | null;
+        if (!content) return;
+        if (content === this._boundElement) return;
+        this._boundElement = content;
+
+        TopupModal.init();
+
+        this._unsubscribers.forEach((unsub) => unsub());
+        this._unsubscribers = [];
+        this._unsubscribers.push(
+            eventBus.on('wallet:updated', () => {
+                this.rerender();
+            }),
+        );
+
+        content.closest('.profile-tab-content')?.addEventListener('click', (e) => {
+            const target = e.target as HTMLElement;
+
+            if (target.closest('[data-action="open-topup"]')) {
+                TopupModal.open();
+                return;
+            }
+
+            if (target.closest('[data-action="wallet-load-more"]')) {
+                this.loadMore();
+            }
+        });
+    },
+
+    rerender(): void {
+        const contentEl = document.getElementById('tabContent');
+        if (!contentEl) return;
+
+        const state = walletStore.getState();
+        const templateData = this.buildTemplateData(state);
+        contentEl.innerHTML = template(templateData);
+        this._boundElement = null;
+        this.init();
+        TopupModal.init();
+    },
+
+    buildTemplateData(state: ReturnType<typeof walletStore.getState>) {
+        return {
+            formattedBalance:
+                state.balance === 0 ? '0 ₽' : `${state.balance.toLocaleString('ru-RU')} ₽`,
+            transactions: state.transactions.map((tx) => ({
+                ...tx,
+                formattedAmount:
+                    tx.type === 'topup'
+                        ? `+${tx.amount.toLocaleString('ru-RU')} ₽`
+                        : `−${Math.abs(tx.amount).toLocaleString('ru-RU')} ₽`,
+            })),
+            nextCursor: state.nextCursor,
+        };
+    },
+
+    async loadMore(): Promise<void> {
+        const state = walletStore.getState();
+        if (!state.nextCursor) return;
+
+        const res = await walletService.getTransactions(20, state.nextCursor);
+        if (res.success && res.data) {
+            walletStore.setState({
+                transactions: [...state.transactions, ...res.data.items],
+                nextCursor: res.data.next_cursor ?? null,
+            });
+            this.rerender();
+        }
+    },
+};

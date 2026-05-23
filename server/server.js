@@ -1,5 +1,6 @@
 'use strict';
 import http from 'node:http';
+import https from 'node:https';
 import fs from 'node:fs';
 import path from 'node:path';
 import url from 'node:url';
@@ -10,7 +11,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 dotenv.config({ path: path.join(__dirname, '..', '.env') });
 const PORT = process.env.PORT || 80;
-const BASE_URL = process.env.BASE_URL || 'http://clover-go.ru:8000';
+const BASE_URL = process.env.BASE_URL || 'http://clover-go.ru';
 const PUBLIC_DIR = path.join(__dirname, '..', process.env.PUBLIC_DIR || 'dist');
 
 const MIME_TYPES = {
@@ -61,7 +62,7 @@ function handleApiProxy(req, res) {
         },
     };
 
-    const proxyReq = http.request(options, (proxyRes) => {
+    const proxyReq = https.request(options, (proxyRes) => {
         res.writeHead(proxyRes.statusCode, proxyRes.headers);
         proxyRes.pipe(res, { end: true });
     });

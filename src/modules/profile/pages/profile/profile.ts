@@ -5,27 +5,33 @@ import { SearchSectionComponent } from '@modules/common/components/search-sectio
 import { ProfileAvatar } from '@modules/profile/components/profile-avatar/profile-avatar';
 import { ProfileSidebar } from '@modules/profile/components/profile-sidebar/profile-sidebar';
 import { ProfileContent } from '@modules/profile/components/profile-content/profile-content';
+import { WalletTab } from '@modules/wallet/components/wallet-tab/wallet-tab';
+import { TopupModal } from '@modules/wallet/components/topup-modal/topup-modal';
 import type { HandlebarsTemplateFunction } from '@/types';
 
 declare const Handlebars: any;
 
 let compiledTemplate: HandlebarsTemplateFunction | null = null;
 
-/**
- * Загрузка шаблонов и регистрация всех подкомпонентов профиля
- */
 export function loadTemplates(): void {
     try {
         compiledTemplate = template;
 
-        // Общие компоненты
         Handlebars.registerPartial('header', HeaderComponent.getTemplate());
         Handlebars.registerPartial('search-section', SearchSectionComponent.getTemplate());
 
-        // Подкомпоненты профиля (регистрация как partials)
         Handlebars.registerPartial('profile-avatar', ProfileAvatar.getTemplate());
         Handlebars.registerPartial('profile-sidebar', ProfileSidebar.getTemplate());
         Handlebars.registerPartial('profile-content', ProfileContent.getTemplate());
+
+        Handlebars.registerPartial(
+            'wallet/components/wallet-tab/wallet-tab',
+            WalletTab.getTemplate(),
+        );
+        Handlebars.registerPartial(
+            'wallet/components/topup-modal/topup-modal',
+            TopupModal.getTemplate(),
+        );
     } catch (error) {
         console.error('Failed to load profile templates:', error);
     }
