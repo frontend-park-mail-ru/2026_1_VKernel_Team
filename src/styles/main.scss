@@ -303,6 +303,12 @@ body .main-container {
     word-break: break-word;
 }
 
+.categories-section {
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* А это маленькое расстояние между самими рядами карточек */
+}
+
 .ad-column {
     background: #f8f9fa;
     border-radius: 12px;
@@ -374,6 +380,7 @@ body .main-container {
     align-items: center;
     justify-content: center;
     transition: all 0.2s;
+    padding-left: 10px;
 }
 
 .category-card.all-categories .card-title {
@@ -698,7 +705,7 @@ body .main-container {
     }
 
     .main-container .category-card img {
-        width: 90px;
+        width: 130px;
         bottom: -5px;
         right: -5px;
     }
@@ -798,7 +805,7 @@ body .main-container {
     }
 
     .main-container .category-card img {
-        width: 90px;
+        width: 130px;
     }
 
     .main-container .recommendations-row {
