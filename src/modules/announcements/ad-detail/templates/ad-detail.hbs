@@ -147,6 +147,13 @@
                         <button class="action-btn edit-btn" data-action="edit-ad" data-ad-id="{{id}}">
                             Редактировать
                         </button>
+                        <div class="ad-promotion-section">
+                            <h3 class="ad-promotion-title">Продвижение</h3>
+                            <div id="adPromotionStatus"></div>
+                            <button class="action-btn promote-btn" data-action="promote-ad" data-promote-ad-id="{{id}}">
+                                Продвигать
+                            </button>
+                        </div>
                         {{else}}
                         {{#unless isClosed}}
                         <button class="action-btn cart-btn" data-action="add-to-cart" data-cart-add="{{id}}">

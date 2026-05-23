@@ -1,6 +1,7 @@
 import '@modules/profile/components/profile-content/style.scss';
 import template from '@modules/profile/components/profile-content/profile-content.hbs';
 import { CloseAdModal } from '@modules/profile/components/close-ad-modal/close-ad-modal';
+import { PromoteModal } from '@modules/promotion/components/promote-modal/promote-modal';
 import { eventBus } from '@/core/eventBus';
 
 export const ProfileContent = {
@@ -43,6 +44,15 @@ export const ProfileContent = {
                 return;
             }
 
+            // Кнопка продвижения объявления
+            const promoteBtn = target.closest('.rec-card-promote') as HTMLElement | null;
+            if (promoteBtn) {
+                e.stopPropagation();
+                const adId = promoteBtn.getAttribute('data-promote-id');
+                if (adId) PromoteModal.open(adId);
+                return;
+            }
+
             // Кнопка редактирования
             const editBtn = target.closest('.rec-card-edit') as HTMLElement | null;
             if (editBtn) {
@@ -62,7 +72,8 @@ export const ProfileContent = {
                 !target.closest('.rec-card-fav') &&
                 !target.closest('.rec-card-cart') &&
                 !target.closest('.rec-card-edit') &&
-                !target.closest('.rec-card-close')
+                !target.closest('.rec-card-close') &&
+                !target.closest('.rec-card-promote')
             ) {
                 const adId = card.getAttribute('data-id');
                 if (adId) {

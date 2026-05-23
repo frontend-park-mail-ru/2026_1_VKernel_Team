@@ -158,6 +158,20 @@ export const TopupModal = {
         }
     },
 
+    openWithAmount(amount: number): void {
+        this.open();
+
+        const modal = base.getElement();
+        if (modal) {
+            this.showStep(2);
+            const amountInput = document.getElementById('topupAmountInput') as HTMLInputElement;
+            if (amountInput) amountInput.value = String(amount);
+            modal.querySelectorAll('.topup-quick-btn').forEach((btn) => {
+                btn.classList.remove('active');
+            });
+        }
+    },
+
     close(): void {
         base.close();
     },

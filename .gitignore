@@ -7,4 +7,5 @@ npm-debug.log*
 dist
 CLAUDE.md
 cache/
+test-accounts.json
 test-results/

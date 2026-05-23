@@ -1,4 +1,5 @@
 import { test as base, expect } from '@playwright/test';
+import { loginAndSaveState } from './helpers';
 
 const test = base.extend<{ authedPage: import('@playwright/test').Page }>({
     authedPage: async ({ browser }, use) => {
@@ -14,18 +15,8 @@ test.describe('Кошелёк', () => {
         const context = await browser.newContext();
         const page = await context.newPage();
 
-        const email = `wallet-test-${Date.now()}@test.com`;
-        const password = 'Test1234!';
+        await loginAndSaveState(page, '/tmp/wallet-auth.json', 1);
 
-        await page.goto('/register');
-        await page.fill('input[placeholder="Введите имя"]', 'Wallet Test');
-        await page.locator('input[type="email"]').first().fill(email);
-        await page.locator('input[type="password"]').first().fill(password);
-        await page.locator('input[type="password"]').last().fill(password);
-        await page.click('button:has-text("Зарегистрироваться")');
-        await page.waitForURL('**/', { timeout: 15000 });
-
-        await context.storageState({ path: '/tmp/wallet-auth.json' });
         await context.close();
     });
 
