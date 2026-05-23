@@ -148,4 +148,24 @@ test.describe('Кошелёк', () => {
         await expect(page.locator('#topupError')).toBeVisible();
         await expect(page.locator('#topupModal')).toBeVisible();
     });
+
+    test('кнопка пополнить открывает модалку после успешного пополнения', async ({
+        authedPage: page,
+    }) => {
+        await page.goto('/profile?tab=wallet');
+        await page.waitForSelector('.wallet-balance-card');
+
+        await page.click('[data-action="open-topup"]');
+        await page.fill('#topupCardNumber', '1234567890123456');
+        await page.fill('#topupCardExpiry', '12/28');
+        await page.fill('#topupCardCvv', '123');
+        await page.click('[data-action="go-to-step2"]');
+        await page.click('[data-quick-amount="100"]');
+        await page.click('[data-action="confirm-topup"]');
+        await expect(page.locator('#topupModal')).not.toBeVisible({ timeout: 10000 });
+
+        await page.click('[data-action="open-topup"]');
+        await expect(page.locator('#topupModal')).toBeVisible({ timeout: 10000 });
+        await expect(page.locator('#topupStep1')).toBeVisible();
+    });
 });
