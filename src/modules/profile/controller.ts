@@ -16,6 +16,8 @@ import { FavoriteCard } from '@modules/profile/components/favorite-card/favorite
 import { TopupModal } from '@modules/wallet/components/topup-modal/topup-modal';
 import { WalletTab } from '@modules/wallet/components/wallet-tab/wallet-tab';
 import { PromoHistoryTab } from '@modules/promotion/components/history-tab/history-tab';
+import { promotionService } from '@modules/promotion/service';
+import type { ActivePromotion } from '@modules/promotion/types';
 import { walletStore } from '@modules/wallet/store';
 import { walletService } from '@modules/wallet/service';
 import { PROFILE_CONFIG } from '@modules/profile/config';
@@ -72,6 +74,25 @@ function formatAdCard(ad: UserAd) {
                 : ad.description
             : '',
     };
+}
+
+function formatTimeLeft(expiresAt: string): string {
+    const ms = new Date(expiresAt).getTime() - Date.now();
+    if (ms <= 0) return 'завершено';
+    const totalHours = Math.floor(ms / 3600000);
+    const days = Math.floor(totalHours / 24);
+    const hours = totalHours % 24;
+    const parts: string[] = [];
+    if (days > 0) {
+        const word = days === 1 ? 'день' : days < 5 ? 'дня' : 'дней';
+        parts.push(`${days} ${word}`);
+    }
+    if (hours > 0) {
+        const word = hours === 1 ? 'час' : hours < 5 ? 'часа' : 'часов';
+        parts.push(`${hours} ${word}`);
+    }
+    if (parts.length === 0) parts.push('менее часа');
+    return `ещё ${parts.join(' ')}`;
 }
 
 export const ProfileController = {
@@ -136,12 +157,57 @@ export const ProfileController = {
             );
             if (result.success && result.data?.ads) {
                 this.userAds = result.data.ads.map((ad: UserAd) => formatAdCard(ad));
+                this.loadAdPromotions();
                 this.rerenderTab(store.user as UserProfile);
                 this.attachEventListeners();
             }
         } catch (error) {
             console.error('Failed to load user ads:', error);
             this.userAds = [];
+        }
+    },
+
+    async loadAdPromotions(): Promise<void> {
+        const adIds = this.userAds
+            .filter((ad) => ad.status !== 'archived' && ad.status !== 'sold')
+            .map((ad) => Number(ad.id));
+        if (adIds.length === 0) return;
+
+        const results = await Promise.allSettled(
+            adIds.map((id) => promotionService.getAdPromotions(id)),
+        );
+
+        let hasActivePromo = false;
+        results.forEach((res, i) => {
+            if (res.status !== 'fulfilled' || !res.value.success || !res.value.data) return;
+            const promotions: ActivePromotion[] = res.value.data;
+            const adId = adIds[i];
+            const ad = this.userAds.find((a) => Number(a.id) === adId);
+            if (!ad) return;
+
+            const now = Date.now();
+            const activeBoost = promotions.find(
+                (p) => p.kind === 'boost' && new Date(p.expires_at).getTime() > now,
+            );
+            const activeHighlight = promotions.find(
+                (p) => p.kind === 'highlight' && new Date(p.expires_at).getTime() > now,
+            );
+
+            ad.is_boosted = !!activeBoost;
+            ad.is_highlighted = !!activeHighlight;
+            ad.boost_time_left = activeBoost ? formatTimeLeft(activeBoost.expires_at) : '';
+            ad.boost_expires_at = activeBoost ? activeBoost.expires_at : '';
+            ad.highlight_time_left = activeHighlight
+                ? formatTimeLeft(activeHighlight.expires_at)
+                : '';
+            ad.highlight_expires_at = activeHighlight ? activeHighlight.expires_at : '';
+
+            if (activeBoost || activeHighlight) hasActivePromo = true;
+        });
+
+        if (hasActivePromo) {
+            this.rerenderTab(store.user as UserProfile);
+            this.attachEventListeners();
         }
     },
 
