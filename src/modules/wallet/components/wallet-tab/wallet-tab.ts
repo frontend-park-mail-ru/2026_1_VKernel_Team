@@ -32,7 +32,9 @@ export const WalletTab = {
             this._eventBusSubscribed = true;
             this._unsubscribers.push(
                 eventBus.on('wallet:updated', () => {
-                    this.rerender();
+                    if (this._boundElement) {
+                        this.rerender();
+                    }
                 }),
             );
         }

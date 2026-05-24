@@ -40,6 +40,7 @@ import { CategoriesModal } from '@modules/common/components/categories-modal/cat
 import { store } from '@/core/store';
 import { eventBus } from '@/core/eventBus';
 import { uiActions } from '@/actions/uiActions';
+import { walletStore } from '@modules/wallet/store';
 import type { HandlebarsTemplateFunction, TemplateName, UIConstants } from '@/types';
 import { authActions } from '@/actions/authActions';
 import { storage } from '@/utils/storage';
@@ -216,6 +217,7 @@ export const AppController = {
             await Promise.all([
                 AdsController.syncFavorites(),
                 cartActions.loadCart().catch(() => {}),
+                walletStore.fetchBalance().catch(() => {}),
             ]);
         }
         eventBus.on('app:navigate', (path: string) => {
@@ -417,6 +419,7 @@ export const AppController = {
                 unreadStore.refreshCountFromServer();
                 cartActions.loadCart().catch(() => {});
                 AdsController.syncFavorites().catch(() => {});
+                walletStore.fetchBalance().catch(() => {});
             }
             if (state.isAuthenticated === false) unreadStore.reset();
         }

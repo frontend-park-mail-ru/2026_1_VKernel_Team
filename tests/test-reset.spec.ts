@@ -52,8 +52,7 @@ test.describe('Сброс тестового аккаунта через /api/v1
 
         await page.goto('/profile?tab=wallet');
         await page.waitForSelector('.wallet-balance-card');
-        const balanceAfter = await page.locator('.wallet-balance-value').textContent();
-        expect(balanceAfter).toBe('0 ₽');
+        await expect(page.locator('.wallet-balance-value')).toHaveText('0 ₽', { timeout: 10000 });
 
         await page.goto('/profile');
         await page.waitForSelector('.profile-tab-content');

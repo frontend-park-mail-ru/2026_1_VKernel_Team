@@ -41,8 +41,8 @@ test.describe('Сценарий платного продвижения', () => 
         await page.fill('#topupCardCvv', '123');
         await page.click('#topupModal [data-action="go-to-step2"]');
         await page.waitForSelector('#topupStep2', { state: 'visible' });
-        await page.click(`[data-quick-amount="${amount}"]`);
-        await page.click('[data-action="confirm-topup"]');
+        await page.click(`#topupModal [data-quick-amount="${amount}"]`);
+        await page.click('#topupModal [data-action="confirm-topup"]');
         await expect(page.locator('#topupModal')).not.toBeVisible({ timeout: 10000 });
     }
 
