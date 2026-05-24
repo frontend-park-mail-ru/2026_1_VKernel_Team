@@ -162,6 +162,11 @@ export const SellerPageController = {
         document.querySelectorAll(ADS_SELECTORS.FAVORITE_BTN).forEach((btn) => {
             btn.addEventListener('click', AdsController.handleFavoriteClick.bind(AdsController));
         });
+
+        document.querySelectorAll(ADS_SELECTORS.CARD).forEach((card) => {
+            card.addEventListener('click', AdsController.handleCardClick.bind(AdsController));
+            (card as HTMLElement).style.cursor = 'pointer';
+        });
     },
 
     activateReviewsTab(): void {
