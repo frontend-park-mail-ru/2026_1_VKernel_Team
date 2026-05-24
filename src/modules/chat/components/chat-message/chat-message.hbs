@@ -1,3 +1,12 @@
+{{#if isSystem}}
+    <div class="chat-message chat-message--system" data-message-id="{{id}}">
+        <div class="chat-message__system-bubble">
+            <div class="chat-message__system-label">Сообщение от администрации</div>
+            <div class="chat-message__system-text">{{text}}</div>
+            <span class="chat-message__time">{{formattedTime}}</span>
+        </div>
+    </div>
+{{else}}
 {{#if isOrder}}
     <div class="chat-message chat-message--order" data-message-id="{{id}}">
         <span class="chat-message__order-icon">{{{icon "bag"}}}</span>
@@ -19,4 +28,5 @@
             <span class="chat-message__time">{{formattedTime}}</span>
         </div>
     </div>
+{{/if}}
 {{/if}}

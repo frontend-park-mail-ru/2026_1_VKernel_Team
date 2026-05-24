@@ -1,0 +1,30 @@
+<div class="main-container">
+    <main class="main-content">
+        {{> search-section}}
+
+        <div class="moderation-page">
+            <div class="moderation-page__header">
+                <h1 class="moderation-page__title">Модерация объявлений</h1>
+                <label class="moderation-page__settings">
+                    <span class="moderation-page__settings-label">
+                        {{#if enabled}}Модерация включена{{else}}Модерация выключена{{/if}}
+                    </span>
+                    <span class="moderation-toggle">
+                        <input type="checkbox" id="moderationToggle" {{#if enabled}}checked{{/if}}>
+                        <span class="moderation-toggle__slider"></span>
+                    </span>
+                </label>
+            </div>
+
+            <div class="moderation-queue" id="moderationQueue">
+                {{#if ads.length}}
+                    {{#each ads}}
+                        {{> moderation/components/moderation-queue-item/moderation-queue-item this}}
+                    {{/each}}
+                {{else}}
+                    <div class="moderation-queue__empty">Очередь модерации пуста</div>
+                {{/if}}
+            </div>
+        </div>
+    </main>
+</div>

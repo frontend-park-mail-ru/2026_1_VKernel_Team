@@ -41,6 +41,14 @@ export const API_ENDPOINTS = {
         CONFIRM: (id: number | string) => `/chats/${id}/confirm`,
         CREATE_ORDER: (adId: number | string) => `/ads/${adId}/order`,
     },
+    MODERATION: {
+        SETTINGS: '/admin/moderation/settings',
+        QUEUE: '/admin/moderation/queue',
+        APPROVE: (id: number | string) => `/admin/moderation/ads/${id}/approve`,
+        REJECT: (id: number | string) => `/admin/moderation/ads/${id}/reject`,
+        ADMIN_DELETE: (id: number | string) => `/ads/${id}/admin`,
+        PENDING_ADS: (userId: number | string) => `/users/${userId}/ads?tab=pending`,
+    },
 };
 
 const getCookie = (name: string): string | null => {

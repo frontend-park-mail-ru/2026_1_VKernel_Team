@@ -2,6 +2,7 @@ import { apiClient, API_ENDPOINTS } from '@/api/apiClient';
 import { CONFIG } from '@/core/config';
 import { SELLER_API_ENDPOINTS } from '@modules/seller-page/config';
 import { renderStarsHTML } from '@/utils/icons';
+import { store } from '@/core/store';
 import type { SellerProfile, SellerAd, FormattedSellerProfile } from './types';
 
 const STATIC_BACKEND = CONFIG.API.BASE_URL;
@@ -119,6 +120,7 @@ const sellerService = {
             }
         }
 
+        const adAny = ad as any;
         return {
             ...ad,
             formattedPrice: this.formatPrice(ad.price),
@@ -126,6 +128,10 @@ const sellerService = {
             views: ad.views_count || 0,
             location: ad.location || 'Москва',
             createdDate: ad.created_at ? new Date(ad.created_at).toLocaleDateString('ru-RU') : '',
+            showAdminDelete:
+                store.isAuthenticated &&
+                store.user?.role === 'admin' &&
+                store.user?.id !== adAny.seller_id,
         };
     },
 };
