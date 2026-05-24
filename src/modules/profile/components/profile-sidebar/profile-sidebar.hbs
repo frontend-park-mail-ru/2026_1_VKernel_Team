@@ -1,27 +1,35 @@
 <div class="profile-info-card">
+    <div class="profile-info-card__main">
+        <div class="profile-info-card__section">
+            <div class="profile-info-card__name-row">
+                <h2 class="profile-info-card__name">{{user.name}}</h2>
+                <button class="profile-info-card__edit-btn" data-action="open-edit-name" title="Изменить имя" aria-label="Изменить имя">{{{icon "edit"}}}</button>
+            </div>
+            {{#if user.email}}
+                <p class="profile-info-card__email">{{user.email}}</p>
+            {{/if}}
+        </div>
+
+        <div class="profile-info-card__section">
+            <span class="profile-info-card__stat">
+                <span class="profile-info-card__rating-star">{{{icon "star-filled"}}}</span>
+                Рейтинг: <strong>{{#if user.rating}}{{user.rating}}{{else}}0{{/if}}</strong>
+            </span>
+            {{#if totalAdsCount}}
+                <span class="profile-info-card__stat">
+                    Объявлений: <strong>{{totalAdsCount}}</strong>
+                </span>
+            {{/if}}
+        </div>
+
+        <div class="profile-info-card__section">
+            <span class="profile-info-card__balance">Баланс: <strong>{{#if walletBalance}}{{walletBalance}} ₽{{else}}0 ₽{{/if}}</strong></span>
+        </div>
+
+        <span class="profile-info-card__date">На Клевере с {{formatDateOnly user.created_at}}</span>
+    </div>
+
     {{> profile/components/profile-avatar/profile-avatar user=user }}
-
-    <div class="profile-info-card__name-row">
-        <h2 class="profile-info-card__name">{{user.name}}</h2>
-        <button class="profile-info-card__edit-btn" data-action="open-edit-name" title="Изменить имя" aria-label="Изменить имя">{{{icon "edit"}}}</button>
-    </div>
-
-    {{#if user.email}}
-        <p class="profile-info-card__email">{{user.email}}</p>
-    {{/if}}
-
-    <div class="profile-info-card__rating">
-        <span class="profile-info-card__rating-star">{{{icon "star-filled"}}}</span>
-        <span class="profile-info-card__rating-value">{{#if user.rating}}{{user.rating}}{{else}}0{{/if}}</span>
-    </div>
-
-    <div class="profile-info-card__meta">
-        <p class="profile-info-card__meta-item">На Клевере с {{formatDate user.created_at}}</p>
-        {{#if totalAdsCount}}
-            <p class="profile-info-card__meta-item">Объявлений: <strong>{{totalAdsCount}}</strong></p>
-        {{/if}}
-        <p class="profile-info-card__balance">Баланс: <strong>{{#if walletBalance}}{{walletBalance}} ₽{{else}}0 ₽{{/if}}</strong></p>
-    </div>
 </div>
 
 <nav class="profile-nav">
@@ -36,7 +44,6 @@
                     <span class="nav-badge">{{lookup ../user (concat tab '_count')}}</span>
                 {{/if}}
             {{/if}}
-            
         </button>
     {{/each}}
 

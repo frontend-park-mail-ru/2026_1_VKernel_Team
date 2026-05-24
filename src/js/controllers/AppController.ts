@@ -141,6 +141,13 @@ const registerHelpers = (Hbs: any) => {
         );
     });
 
+    Hbs.registerHelper('formatDateOnly', function (dateString: string) {
+        if (!dateString) return '—';
+        const date = new Date(dateString);
+        if (isNaN(date.getTime())) return '—';
+        return date.toLocaleDateString('ru-RU');
+    });
+
     Hbs.registerHelper('formatTxType', function (type: string) {
         const labels: Record<string, string> = {
             topup: 'Пополнение',
