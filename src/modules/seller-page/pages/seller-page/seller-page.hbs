@@ -16,7 +16,7 @@
             <section class="seller-ads-section">
                 <h2 class="seller-ads-title">Объявления продавца</h2>
 
-                {{> seller-tabs activeAdsCount=activeAdsCount closedAdsCount=closedAdsCount}}
+                {{> seller-tabs activeAdsCount=activeAdsCount closedAdsCount=closedAdsCount reviewsCount=reviewsCount}}
 
                 <div class="seller-tab-content" data-tab-content="active">
                     {{#if activeAds.length}}
@@ -40,6 +40,16 @@
                     {{else}}
                         <p class="seller-ads-empty">У продавца нет завершённых объявлений</p>
                     {{/if}}
+                </div>
+
+                <div class="seller-tab-content seller-tab-content--hidden" data-tab-content="reviews">
+                    <div class="seller-reviews-layout">
+                        <div class="seller-reviews-layout__summary" id="sellerReviewsSummary"></div>
+                        <div class="seller-reviews-layout__list">
+                            <div id="sellerReviewsCta"></div>
+                            <div id="sellerReviewsList"></div>
+                        </div>
+                    </div>
                 </div>
             </section>
         </div>

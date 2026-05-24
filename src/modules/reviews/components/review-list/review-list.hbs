@@ -1,0 +1,31 @@
+{{!-- ctx: reviews [FormattedReview], hasMore, isLoading, isLoadingMore, isEmpty, showActions, showReceiver --}}
+<div class="review-list" data-review-list>
+    {{#if isLoading}}
+        <div class="review-list__skeleton">
+            <div class="review-list__skeleton-card"></div>
+            <div class="review-list__skeleton-card"></div>
+            <div class="review-list__skeleton-card"></div>
+        </div>
+    {{else if isEmpty}}
+        <div class="review-list__empty">
+            <span class="review-list__empty-icon">{{{icon "inbox"}}}</span>
+            <p class="review-list__empty-title">{{emptyTitle}}</p>
+            <p class="review-list__empty-hint">{{emptyHint}}</p>
+        </div>
+    {{else}}
+        <div class="review-list__items">
+            {{#each reviews}}
+                {{> reviews/components/review-card/review-card
+                    review=this
+                    showActions=../showActions
+                    showReceiver=../showReceiver
+                    receiverName=this.receiverName}}
+            {{/each}}
+        </div>
+        {{#if hasMore}}
+            <button class="review-list__more" type="button" data-action="reviews-load-more" {{#if isLoadingMore}}disabled{{/if}}>
+                {{#if isLoadingMore}}Загрузка…{{else}}Показать ещё{{/if}}
+            </button>
+        {{/if}}
+    {{/if}}
+</div>

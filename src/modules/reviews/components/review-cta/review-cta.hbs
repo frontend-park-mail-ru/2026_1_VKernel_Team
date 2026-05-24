@@ -1,0 +1,33 @@
+{{!-- ctx: hasReview, review (FormattedReview|null), canSubmit, adId, sellerId --}}
+<section class="review-cta" data-review-cta>
+    {{#if hasReview}}
+        <div class="review-cta__own">
+            <div class="review-cta__own-head">
+                <h3 class="review-cta__title">Ваш отзыв</h3>
+                <span class="review-cta__stars" aria-label="Оценка {{review.rating}} из 5">
+                    {{{review.ratingStars}}}
+                </span>
+            </div>
+            <p class="review-cta__own-text">{{review.content}}</p>
+            <div class="review-cta__own-actions">
+                <button class="review-cta__btn review-cta__btn--ghost" type="button" data-action="review-edit-own" data-review-id="{{review.id}}">
+                    Изменить
+                </button>
+                <button class="review-cta__btn review-cta__btn--danger" type="button" data-action="review-delete-own" data-review-id="{{review.id}}">
+                    Удалить
+                </button>
+            </div>
+        </div>
+    {{else if canSubmit}}
+        <div class="review-cta__invite">
+            <div class="review-cta__invite-icon" aria-hidden="true">{{{icon "star-filled"}}}</div>
+            <div class="review-cta__invite-body">
+                <h3 class="review-cta__title">Купили этот товар?</h3>
+                <p class="review-cta__subtitle">Поделитесь впечатлением о товаре и продавце</p>
+            </div>
+            <button class="review-cta__btn review-cta__btn--primary" type="button" data-action="review-open-modal" data-ad-id="{{adId}}" data-seller-id="{{sellerId}}">
+                Оставить отзыв
+            </button>
+        </div>
+    {{/if}}
+</section>

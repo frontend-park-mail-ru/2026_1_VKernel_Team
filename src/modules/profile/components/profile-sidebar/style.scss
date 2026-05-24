@@ -98,6 +98,19 @@
     }
 }
 
+.profile-info-card__rating-link {
+    margin-left: 8px;
+    font-size: 13px;
+    color: #2bde8c;
+    text-decoration: none;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.profile-info-card__rating-link:hover {
+    text-decoration: underline;
+}
+
 .profile-info-card__balance {
     font-size: 13px;
     color: #666;

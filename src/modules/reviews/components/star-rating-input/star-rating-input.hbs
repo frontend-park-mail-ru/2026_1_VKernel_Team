@@ -1,0 +1,19 @@
+{{!-- Интерактивные звёзды. JS управляет состоянием data-rating и стилями --}}
+<div class="star-rating-input" role="radiogroup" aria-label="Оценка продавца" data-rating="0">
+    <button type="button" class="star-rating-input__star" data-star="1" role="radio" tabindex="0" aria-checked="false" aria-label="1 из 5">
+        <span class="star-rating-input__icon" data-state="empty">{{{icon "star-empty"}}}</span>
+    </button>
+    <button type="button" class="star-rating-input__star" data-star="2" role="radio" tabindex="-1" aria-checked="false" aria-label="2 из 5">
+        <span class="star-rating-input__icon" data-state="empty">{{{icon "star-empty"}}}</span>
+    </button>
+    <button type="button" class="star-rating-input__star" data-star="3" role="radio" tabindex="-1" aria-checked="false" aria-label="3 из 5">
+        <span class="star-rating-input__icon" data-state="empty">{{{icon "star-empty"}}}</span>
+    </button>
+    <button type="button" class="star-rating-input__star" data-star="4" role="radio" tabindex="-1" aria-checked="false" aria-label="4 из 5">
+        <span class="star-rating-input__icon" data-state="empty">{{{icon "star-empty"}}}</span>
+    </button>
+    <button type="button" class="star-rating-input__star" data-star="5" role="radio" tabindex="-1" aria-checked="false" aria-label="5 из 5">
+        <span class="star-rating-input__icon" data-state="empty">{{{icon "star-empty"}}}</span>
+    </button>
+    <span class="star-rating-input__value" aria-live="polite">Выберите оценку</span>
+</div>

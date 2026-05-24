@@ -1,0 +1,123 @@
+.my-reviews {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.my-reviews__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.my-reviews-pending {
+    background: linear-gradient(135deg, #ecfdf5, #f0fdf4);
+    border: 1px solid #a7f3d0;
+    border-radius: 14px;
+    padding: 16px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.my-reviews-pending__head {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.my-reviews-pending__title {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #065f46;
+}
+
+.my-reviews-pending__subtitle {
+    margin: 0;
+    font-size: 13px;
+    color: #047857;
+}
+
+.my-reviews-pending__list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.my-reviews-pending__card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #fff;
+    border: 1px solid #d1fae5;
+    border-radius: 12px;
+    padding: 10px 12px;
+}
+
+.my-reviews-pending__photo {
+    width: 56px;
+    height: 56px;
+    border-radius: 10px;
+    object-fit: cover;
+    background: #f3f4f6;
+    flex: 0 0 auto;
+}
+
+.my-reviews-pending__body {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.my-reviews-pending__product {
+    font-size: 15px;
+    font-weight: 600;
+    color: #111827;
+    text-decoration: none;
+    cursor: pointer;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.my-reviews-pending__product:hover {
+    color: #2bde8c;
+}
+
+.my-reviews-pending__seller {
+    font-size: 13px;
+    color: #4b5563;
+}
+
+.my-reviews-pending__seller-link {
+    color: #2bde8c;
+    text-decoration: none;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.my-reviews-pending__seller-link:hover {
+    text-decoration: underline;
+}
+
+.my-reviews-pending__btn {
+    background: #2bde8c;
+    color: #fff;
+    border: 1px solid #2bde8c;
+    border-radius: 10px;
+    padding: 8px 14px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+    white-space: nowrap;
+}
+
+.my-reviews-pending__btn:hover {
+    background: #25c47c;
+}

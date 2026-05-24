@@ -1,0 +1,46 @@
+{{!-- Ctx: total, reviews [FormattedReview], hasMore, isLoading, isLoadingMore, isEmpty, pending [{productId,title,photo,sellerId,sellerName}] --}}
+<div class="my-reviews">
+    <div class="my-reviews__head">
+        <h2 class="profile-section-title">Мои отзывы{{#if total}} ({{total}}){{/if}}</h2>
+    </div>
+
+    {{#if pending.length}}
+        <section class="my-reviews-pending" aria-label="Можно оставить отзыв">
+            <header class="my-reviews-pending__head">
+                <h3 class="my-reviews-pending__title">Можно оставить отзыв ({{pending.length}})</h3>
+                <p class="my-reviews-pending__subtitle">Вы купили эти товары — поделитесь впечатлением</p>
+            </header>
+            <div class="my-reviews-pending__list">
+                {{#each pending}}
+                    <article class="my-reviews-pending__card">
+                        <img src="{{this.photo}}" alt="{{this.title}}" class="my-reviews-pending__photo">
+                        <div class="my-reviews-pending__body">
+                            <a class="my-reviews-pending__product" data-nav="/ad/{{this.productId}}">{{this.title}}</a>
+                            <span class="my-reviews-pending__seller">
+                                Продавец:
+                                <a class="my-reviews-pending__seller-link" data-nav="/seller/{{this.sellerId}}">{{this.sellerName}}</a>
+                            </span>
+                        </div>
+                        <button type="button"
+                                class="my-reviews-pending__btn"
+                                data-action="pending-write-review"
+                                data-product-id="{{this.productId}}">
+                            Написать отзыв
+                        </button>
+                    </article>
+                {{/each}}
+            </div>
+        </section>
+    {{/if}}
+
+    {{> reviews/components/review-list/review-list
+        reviews=reviews
+        hasMore=hasMore
+        isLoading=isLoading
+        isLoadingMore=isLoadingMore
+        isEmpty=isEmpty
+        showActions=true
+        showReceiver=true
+        emptyTitle="Вы пока не оставляли отзывов"
+        emptyHint="Купите товар у продавца и поделитесь впечатлением"}}
+</div>

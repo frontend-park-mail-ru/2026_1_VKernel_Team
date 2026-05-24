@@ -10,6 +10,10 @@ import { uiActions } from '@/actions/uiActions';
 import { getTemplate as getListTemplate } from '@modules/chat/pages/chat-list/chat-list';
 import { getTemplate as getDetailTemplate } from '@modules/chat/pages/chat-detail/chat-detail';
 import type { ChatPreview, ChatMessage, ChatDetailResponse } from '@modules/chat/types';
+import { myReviewsStore } from '@modules/reviews/store';
+import { reviewsActions, REVIEW_EVENTS } from '@modules/reviews/actions';
+import { ReviewModal } from '@modules/reviews/components/review-modal/review-modal';
+import { eventBus } from '@/core/eventBus';
 
 function getCurrentUserId(): number | null {
     const user = store.user;
@@ -43,7 +47,13 @@ function prepareMessages(
     currentUserId: number | null,
     isSeller: boolean,
     isSold: boolean,
+    ad: { ad_id?: number },
+    partnerId: number | null,
 ) {
+    const adId = ad?.ad_id;
+    const myReview = adId ? myReviewsStore.getByProduct(adId) : undefined;
+    const canReview = !isSeller && isSold && adId !== undefined && partnerId !== null;
+
     return messages.map((msg) => {
         const isOrder = msg.type === 'order';
         return {
@@ -53,10 +63,18 @@ function prepareMessages(
             isOrder,
             isMine: currentUserId !== null && msg.sender_id === currentUserId,
             canConfirm: isOrder && isSeller && !isSold,
+            canReview: isOrder && canReview,
+            hasMyReview: !!myReview,
+            myReviewRating: myReview?.rating ?? 0,
+            adId: adId ?? null,
+            sellerId: partnerId,
             formattedTime: chatService.formatMessageTime(msg.created_at),
         };
     });
 }
+
+let chatReviewSubmittedUnsub: (() => void) | null = null;
+let chatReviewDeletedUnsub: (() => void) | null = null;
 
 export const ChatController = {
     async renderChatList(): Promise<void> {
@@ -131,7 +149,15 @@ export const ChatController = {
             orderMsg !== undefined &&
             orderMsg.sender_id !== currentUserId;
         const isSold = ad?.status === 'sold';
-        const preparedMessages = prepareMessages(messages, currentUserId, isSeller, isSold);
+        const partnerId = data.partner?.id ?? null;
+        const preparedMessages = prepareMessages(
+            messages,
+            currentUserId,
+            isSeller,
+            isSold,
+            ad,
+            partnerId,
+        );
 
         app.innerHTML = template({
             isAuthenticated: store.isAuthenticated,
@@ -183,5 +209,47 @@ export const ChatController = {
                 }
             });
         });
+
+        const reviewBtns = document.querySelectorAll<HTMLElement>(
+            '[data-action="review-from-chat"]',
+        );
+        reviewBtns.forEach((btn) => {
+            btn.addEventListener('click', (e: Event) => {
+                e.preventDefault();
+                e.stopPropagation();
+                const adId = Number(btn.dataset.adId);
+                const sellerId = Number(btn.dataset.sellerId);
+                if (!adId || !sellerId) return;
+
+                const adPhotoEl = document.querySelector<HTMLImageElement>(
+                    '.chat-detail-page__ad-photo img',
+                );
+                const adTitleEl = document.querySelector<HTMLElement>(
+                    '.chat-detail-page__ad-title',
+                );
+                const partnerNameEl = document.querySelector<HTMLElement>(
+                    '.chat-detail-page__partner-name',
+                );
+
+                ReviewModal.open({
+                    mode: 'create',
+                    adId,
+                    sellerId,
+                    productTitle: adTitleEl?.textContent?.trim() || undefined,
+                    productPhoto: adPhotoEl?.src || undefined,
+                    sellerName: partnerNameEl?.textContent?.trim() || undefined,
+                });
+            });
+        });
+
+        if (store.isAuthenticated && !myReviewsStore.getState().isInitialised) {
+            void reviewsActions.loadMyReviews();
+        }
+
+        chatReviewSubmittedUnsub?.();
+        chatReviewDeletedUnsub?.();
+        const refresh = () => this.renderChatDetail(chatId);
+        chatReviewSubmittedUnsub = eventBus.on(REVIEW_EVENTS.SUBMITTED, refresh);
+        chatReviewDeletedUnsub = eventBus.on(REVIEW_EVENTS.DELETED, refresh);
     },
 };
