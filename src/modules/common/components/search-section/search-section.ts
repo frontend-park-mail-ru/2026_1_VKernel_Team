@@ -1,7 +1,6 @@
 import '@modules/common/components/search-section/style.scss';
 import { searchSuggestService, type SuggestItem } from '@/services/searchSuggestService';
 import { eventBus } from '@/core/eventBus';
-import { getIcon } from '@/utils/icons';
 
 const SUGGEST_DEBOUNCE_MS = 250;
 const MIN_QUERY_LENGTH = 2;
@@ -30,10 +29,6 @@ export const SearchSectionComponent = {
             >
             <button class="btn place-ad-btn" id="globalSearchBtn" aria-label="Найти">Найти</button>
             <div class="search-suggestions" id="globalSearchSuggestions" hidden role="listbox"></div>
-        </div>
-        <div class="geo">
-            <span class="icon" aria-hidden="true">${getIcon('pin')}</span>
-            <span class="city">Москва</span>
         </div>
     </div>
 </div>

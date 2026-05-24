@@ -66,32 +66,50 @@
 .place-ad-page .back-btn {
     background: none;
     border: none;
-    font-size: 16px;
-    color: #6c757d;
+    font-size: 15px;
+    color: #6b7280;
     cursor: pointer;
-    padding: 8px 16px;
-    border-radius: 8px;
-    transition: all 0.3s;
+    padding: 0;
+    line-height: 1.2;
+    transition: color 0.2s ease;
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    min-height: 44px;
+    font-family: inherit;
 
     .back-btn__icon {
         display: inline-flex;
         align-items: center;
+        flex-shrink: 0;
 
         svg {
-            width: 18px;
-            height: 18px;
+            width: 16px;
+            height: 16px;
             display: block;
         }
     }
 }
 
 .place-ad-page .back-btn:hover {
-    background: #f8f9fa;
     color: #2bde8c;
+}
+
+.place-ad-page .back-btn:focus-visible {
+    outline: 2px solid #2bde8c;
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
+@media (max-width: 480px) {
+    .place-ad-page .back-btn {
+        font-size: 14px;
+        gap: 4px;
+    }
+
+    .place-ad-page .back-btn .back-btn__icon svg {
+        width: 15px;
+        height: 15px;
+    }
 }
 
 /* ========== ФОРМА ========== */

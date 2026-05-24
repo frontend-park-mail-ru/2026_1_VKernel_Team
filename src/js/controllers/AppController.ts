@@ -516,6 +516,7 @@ export const AppController = {
             isStaff: role === 'support' || role === 'admin',
             isAdmin: role === 'admin',
             moderationCount: role === 'admin' ? moderationStore.count : 0,
+            showProfileNav: store.isAuthenticated && window.location.pathname === '/profile',
         });
     },
 

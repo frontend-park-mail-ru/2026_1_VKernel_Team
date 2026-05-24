@@ -1,6 +1,7 @@
 import { storage } from '@/utils/storage';
 import { widgetAuth } from '@modules/support/widgetAuth';
 import { SupportWidgetController } from '@modules/support/controllers/supportWidgetController';
+import { ICONS } from '@/utils/icons';
 
 import * as HandlebarsFull from 'handlebars';
 
@@ -31,6 +32,11 @@ const registerHelpers = (Hbs: any) => {
 
     Hbs.registerHelper('array', function (...args: any[]) {
         return args.slice(0, -1);
+    });
+
+    Hbs.registerHelper('icon', function (name: string) {
+        const svg = (ICONS as Record<string, string>)[name] || '';
+        return new Hbs.SafeString(svg);
     });
 };
 
