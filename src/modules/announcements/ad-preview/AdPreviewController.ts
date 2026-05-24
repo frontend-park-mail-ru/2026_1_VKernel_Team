@@ -279,6 +279,22 @@ export class AdPreviewController {
         this.currentPhotoIndex = activeIndex;
     }
 
+    private static async resolveCreatedStatus(
+        initial: string | undefined,
+        adId: number | string | undefined,
+    ): Promise<string | undefined> {
+        if (initial || !adId) return initial;
+        try {
+            const adRes = await apiClient.get(API_ENDPOINTS.ADS.GET_BY_ID(adId));
+            if (adRes.success && adRes.data) {
+                return (adRes.data as any).status;
+            }
+        } catch {
+            // не удалось получить статус — считаем, что опубликовано
+        }
+        return undefined;
+    }
+
     private static async publishAd(): Promise<void> {
         window.dispatchEvent(new CustomEvent('app:loading', { detail: { show: true } }));
 
@@ -316,21 +332,34 @@ export class AdPreviewController {
 
             const result = await apiClient.post(API_ENDPOINTS.ADS.CREATE, formData);
 
-            if (result.success) {
-                NotificationComponent.show({
-                    type: 'success',
-                    message: 'Объявление успешно опубликовано!',
-                });
-                await AdDraftService.clear();
-
-                const adId = result.data?.ad_id || result.data?.id;
-                window.location.href = adId ? `/ad/${adId}` : '/profile';
-            } else {
+            if (!result.success) {
                 NotificationComponent.show({
                     type: 'error',
                     message: result.error || 'Ошибка при публикации объявления',
                 });
+                return;
             }
+
+            await AdDraftService.clear();
+
+            const adId = result.data?.ad_id || result.data?.id;
+            const createdStatus = await this.resolveCreatedStatus(result.data?.status, adId);
+
+            if (createdStatus === 'pending_moderation') {
+                NotificationComponent.show({
+                    type: 'info',
+                    message: 'Объявление отправлено на модерацию',
+                    duration: 5000,
+                });
+                window.location.href = '/profile?tab=pending';
+                return;
+            }
+
+            NotificationComponent.show({
+                type: 'success',
+                message: 'Объявление успешно опубликовано!',
+            });
+            window.location.href = adId ? `/ad/${adId}` : '/profile';
         } catch (error) {
             console.error('Error publishing ad:', error);
             if (!networkStatus.isOnline) {

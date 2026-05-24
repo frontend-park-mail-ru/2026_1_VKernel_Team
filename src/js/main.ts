@@ -43,6 +43,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             { name: 'purchases', keyPath: 'order_id', recreate: true },
             { name: 'wallet-balance', keyPath: 'currency' },
             { name: 'wallet-transactions', keyPath: 'id' },
+            { name: 'priceHistory', keyPath: 'adId' },
         ]);
     } catch (error) {
         console.error('IndexedDB initialization failed:', error);

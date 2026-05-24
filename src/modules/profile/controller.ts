@@ -145,8 +145,34 @@ export const ProfileController = {
     },
 
     userAds: [] as any[],
+    userPendingAds: [] as any[],
     userPurchases: [] as PurchaseItem[],
     userFavorites: [] as any[],
+
+    async loadUserPendingAds(): Promise<void> {
+        const userId = store.user?.id;
+        if (!userId || typeof userId !== 'number') return;
+        try {
+            const { moderationApi } = await import('@modules/moderation/api');
+            const result = await moderationApi.getPendingAds(userId);
+            if (result.success && result.data) {
+                const data: any = result.data;
+                let ads: any[] = [];
+                if (Array.isArray(data.ads)) ads = data.ads;
+                else if (Array.isArray(data)) ads = data;
+                else {
+                    const arrays = Object.values(data).filter(Array.isArray);
+                    if (arrays.length > 0) ads = arrays[0] as any[];
+                }
+                this.userPendingAds = ads.map((ad) => formatAdCard(ad));
+                this.rerenderTab(store.user as UserProfile);
+                this.attachEventListeners();
+            }
+        } catch (error) {
+            console.error('Failed to load pending ads:', error);
+            this.userPendingAds = [];
+        }
+    },
 
     async loadUserAds(): Promise<void> {
         const userId = store.user?.id;
@@ -292,6 +318,9 @@ export const ProfileController = {
         if (this.currentTab === 'favorites') {
             this.loadUserFavorites();
         }
+        if (this.currentTab === 'pending') {
+            this.loadUserPendingAds();
+        }
         if (this.currentTab === 'wallet') {
             this.loadWalletData();
         }
@@ -354,6 +383,7 @@ export const ProfileController = {
             user,
             activeAds,
             archivedAds,
+            pendingAds: this.userPendingAds,
             activeAdsCount: activeAds.length,
             archivedAdsCount: archivedAds.length,
             purchases: this.formatPurchases(this.userPurchases),
@@ -401,6 +431,8 @@ export const ProfileController = {
             this.loadWalletData();
         } else if (tab === 'paid_services') {
             this.loadPromoHistory();
+        } else if (tab === 'pending') {
+            this.loadUserPendingAds();
         }
 
         if (tab !== 'reviews') {

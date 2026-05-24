@@ -153,6 +153,10 @@ export const ProductSearchController = {
             createdDate: ad.created_at ? new Date(ad.created_at).toLocaleDateString('ru-RU') : '',
             isOwn: store.isAuthenticated && store.user?.id === ad.seller_id,
             isFavorite: store.favoriteIds.has(Number(ad.id)),
+            showAdminDelete:
+                store.isAuthenticated &&
+                store.user?.role === 'admin' &&
+                store.user?.id !== ad.seller_id,
             seller_id: ad.seller_id,
             seller_name: ad.seller_name,
         };

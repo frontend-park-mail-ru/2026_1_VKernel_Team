@@ -1,4 +1,12 @@
-<div class="rec-card{{#if archived}} rec-card--archived{{/if}}{{#if is_highlighted}} rec-card--highlighted{{/if}}" data-id="{{id}}">
+<div class="rec-card{{#if archived}} rec-card--archived{{/if}}{{#if is_highlighted}} rec-card--highlighted{{/if}}{{#if pendingModeration}} rec-card--pending{{/if}}" data-id="{{id}}" style="position: relative;">
+    {{#if pendingModeration}}
+        <span class="profile-pending-card__badge">На модерации</span>
+    {{/if}}
+    {{#if showAdminDelete}}
+        <button class="admin-delete-btn admin-delete-btn--card" data-action="admin-delete-ad" data-ad-id="{{id}}" data-ad-title="{{title}}" title="Удалить (админ)">
+            ✕
+        </button>
+    {{/if}}
     <div class="rec-card-image-container">
         <img src="{{image}}" alt="{{title}}" class="rec-card-image">
         {{#unless archived}}

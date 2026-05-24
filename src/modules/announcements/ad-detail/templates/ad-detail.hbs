@@ -38,6 +38,13 @@
                     <h1 class="ad-title">{{title}}</h1>
                 </div>
 
+                {{#if showRejectionBanner}}
+                <div class="ad-rejection-banner">
+                    <div class="ad-rejection-banner__title">Объявление отклонено модератором</div>
+                    <div>Причина: {{rejection_reason}}</div>
+                </div>
+                {{/if}}
+
                 <!-- ГАЛЕРЕЯ ФОТО -->
                 <div class="ad-gallery-section">
                     <div class="ad-gallery-container">
@@ -144,8 +151,25 @@
                         </button>
                     </div>
 
+                    <!-- КНОПКА ИСТОРИИ ЦЕН -->
+                    {{#if hasPriceHistory}}
+                    <div class="price-history-row">
+                        <button class="price-history-trigger" data-action="show-price-history" title="История изменения цены">
+                            📈 История цены
+                        </button>
+                    </div>
+                    {{/if}}
+
                     <!-- КНОПКИ ДЕЙСТВИЙ -->
                     <div class="action-buttons">
+                        {{#if isAdmin}}
+                        {{#unless isOwner}}
+                        <button class="admin-delete-btn admin-delete-btn--detail" data-action="admin-delete-ad" data-ad-id="{{id}}" data-ad-title="{{title}}">
+                            <span>{{{icon "trash"}}}</span>
+                            <span>Удалить (админ)</span>
+                        </button>
+                        {{/unless}}
+                        {{/if}}
                         {{#if isOwner}}
                         <button class="action-btn edit-btn" data-action="edit-ad" data-ad-id="{{id}}">
                             Редактировать
