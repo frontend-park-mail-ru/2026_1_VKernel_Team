@@ -404,6 +404,8 @@ export const ProfileController = {
             ...user,
             messages_count: unreadStore.count,
             cart_count: cartStore.getState().items.length,
+            favorites_count: store.favoriteIds.size,
+            pending_count: this.userPendingAds?.length ?? 0,
         };
 
         sidebarEl.innerHTML = profileSidebarTpl({
