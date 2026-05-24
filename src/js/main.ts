@@ -16,8 +16,6 @@ import '@/services/adsServices';
 import '@modules/cart/init';
 import '@/api/apiClient';
 import '@modules/product_search';
-// import '@modules/announcements/price-history/modal/price-history-modal.scss';
-// import '@modules/announcements/price-history';
 
 import { registerServiceWorker } from '@modules/common/offline/service-worker/sw-register';
 import { cloverDB } from '@modules/common/offline/db/indexedDB';
@@ -42,7 +40,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             { name: 'adsList', keyPath: 'id' },
             { name: 'userProfile', keyPath: 'id' },
             { name: 'avatarQueue', keyPath: 'id', autoIncrement: true },
-            { name: 'purchases', keyPath: 'product_id' },
+            { name: 'purchases', keyPath: 'order_id', recreate: true },
             { name: 'wallet-balance', keyPath: 'currency' },
             { name: 'wallet-transactions', keyPath: 'id' },
             { name: 'priceHistory', keyPath: 'adId' },

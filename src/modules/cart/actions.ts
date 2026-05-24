@@ -170,7 +170,9 @@ export const cartActions = {
 
             if (result.success) {
                 const purchasedItems = cartStore.getState().items;
-                await purchasesStore.addPurchases(purchasedItems);
+                await purchasesStore.addOptimisticFromCart(purchasedItems);
+                // Подтягиваем актуальный список с сервера (источник истины).
+                void purchasesStore.fetch({ force: true });
                 cartStore.setState({ items: [], total: 0 });
                 return true;
             }

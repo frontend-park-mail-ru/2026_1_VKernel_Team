@@ -1,0 +1,162 @@
+.review-modal-content {
+    max-width: 520px;
+    width: 100%;
+}
+
+.review-modal {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    padding: 4px;
+}
+
+.review-modal__title {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 700;
+    color: #111827;
+}
+
+.review-modal__product {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #f9fafb;
+    border-radius: 12px;
+    padding: 10px 12px;
+}
+
+.review-modal__product-photo {
+    width: 56px;
+    height: 56px;
+    border-radius: 10px;
+    object-fit: cover;
+    background: #fff;
+    flex: 0 0 auto;
+}
+
+.review-modal__product-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.review-modal__product-label {
+    font-size: 12px;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+
+.review-modal__product-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #111827;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.review-modal__seller {
+    font-size: 13px;
+    color: #4b5563;
+}
+
+.review-modal__seller strong {
+    color: #111827;
+    font-weight: 600;
+}
+
+.review-modal__field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.review-modal__label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #374151;
+}
+
+.review-modal__textarea {
+    min-height: 120px;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    padding: 12px 14px;
+    font-size: 15px;
+    font-family: inherit;
+    resize: vertical;
+    background: #fff;
+    color: #111827;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.review-modal__textarea:focus {
+    outline: none;
+    border-color: #2bde8c;
+    box-shadow: 0 0 0 3px rgba(43, 222, 140, 0.18);
+}
+
+.review-modal__counter {
+    align-self: flex-end;
+    font-size: 12px;
+    color: #6b7280;
+}
+
+.review-modal__counter--invalid {
+    color: #d32f2f;
+}
+
+.review-modal__error {
+    color: #d32f2f;
+    background: #fef2f2;
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-size: 14px;
+    margin: 0;
+}
+
+.review-modal__actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.review-modal__btn {
+    padding: 10px 18px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.review-modal__btn--primary {
+    background: #2bde8c;
+    color: #fff;
+    border-color: #2bde8c;
+
+    &:hover:not(:disabled) {
+        background: #25c47c;
+        border-color: #25c47c;
+    }
+
+    &:disabled {
+        background: #cbd5e1;
+        border-color: #cbd5e1;
+        cursor: not-allowed;
+    }
+}
+
+.review-modal__btn--ghost {
+    background: #fff;
+    color: #374151;
+    border-color: #e5e7eb;
+
+    &:hover {
+        background: #f3f4f6;
+    }
+}

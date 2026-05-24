@@ -21,6 +21,7 @@ import type { ActivePromotion } from '@modules/promotion/types';
 import { walletStore } from '@modules/wallet/store';
 import { walletService } from '@modules/wallet/service';
 import { PROFILE_CONFIG } from '@modules/profile/config';
+import { MyReviewsPage } from '@modules/reviews/pages/my-reviews/my-reviews';
 
 import { apiClient, API_ENDPOINTS } from '@/api/apiClient';
 import { CONFIG } from '@/core/config';
@@ -139,12 +140,39 @@ export const ProfileController = {
     cleanup(): void {
         this._unsubscribers.forEach((unsub) => unsub());
         this._unsubscribers = [];
+        MyReviewsPage.unmount();
         this.isInitialized = false;
     },
 
     userAds: [] as any[],
+    userPendingAds: [] as any[],
     userPurchases: [] as PurchaseItem[],
     userFavorites: [] as any[],
+
+    async loadUserPendingAds(): Promise<void> {
+        const userId = store.user?.id;
+        if (!userId || typeof userId !== 'number') return;
+        try {
+            const { moderationApi } = await import('@modules/moderation/api');
+            const result = await moderationApi.getPendingAds(userId);
+            if (result.success && result.data) {
+                const data: any = result.data;
+                let ads: any[] = [];
+                if (Array.isArray(data.ads)) ads = data.ads;
+                else if (Array.isArray(data)) ads = data;
+                else {
+                    const arrays = Object.values(data).filter(Array.isArray);
+                    if (arrays.length > 0) ads = arrays[0] as any[];
+                }
+                this.userPendingAds = ads.map((ad) => formatAdCard(ad));
+                this.rerenderTab(store.user as UserProfile);
+                this.attachEventListeners();
+            }
+        } catch (error) {
+            console.error('Failed to load pending ads:', error);
+            this.userPendingAds = [];
+        }
+    },
 
     async loadUserAds(): Promise<void> {
         const userId = store.user?.id;
@@ -210,7 +238,13 @@ export const ProfileController = {
     },
 
     async loadUserPurchases(): Promise<void> {
+        // Сначала показываем кэш (мгновенный рендер), потом тянем с сервера.
         await purchasesStore.loadFromCache();
+        this.userPurchases = purchasesStore.getState().items;
+        this.rerenderTab(store.user as UserProfile);
+        this.attachEventListeners();
+
+        await purchasesStore.fetch({ force: true });
         this.userPurchases = purchasesStore.getState().items;
         this.rerenderTab(store.user as UserProfile);
         this.attachEventListeners();
@@ -284,12 +318,24 @@ export const ProfileController = {
         if (this.currentTab === 'favorites') {
             this.loadUserFavorites();
         }
+        if (this.currentTab === 'pending') {
+            this.loadUserPendingAds();
+        }
         if (this.currentTab === 'wallet') {
             this.loadWalletData();
         }
         if (this.currentTab === 'paid_services') {
             this.loadPromoHistory();
         }
+        if (this.currentTab === 'reviews') {
+            this.mountMyReviewsTab();
+        }
+    },
+
+    mountMyReviewsTab(): void {
+        const host = document.getElementById('myReviewsHost');
+        if (!host) return;
+        void MyReviewsPage.mount(host);
     },
 
     renderAll(): void {
@@ -310,10 +356,13 @@ export const ProfileController = {
     formatPurchases(items: PurchaseItem[]) {
         return items.map((item) => ({
             ...item,
-            imageUrl: cartService.getImageUrl(item.image_path),
+            imageUrl: cartService.getImageUrl(item.photo || ''),
             formattedPrice: cartService.formatPrice(item.price),
             location: item.location || 'Не указано',
             purchasedDate: new Date(item.purchased_at).toLocaleDateString('ru-RU'),
+            sellerId: item.seller?.id,
+            sellerName: item.seller?.name || 'Продавец',
+            isChatPurchase: item.source === 'chat' && !!item.chat_id,
         }));
     },
 
@@ -334,6 +383,7 @@ export const ProfileController = {
             user,
             activeAds,
             archivedAds,
+            pendingAds: this.userPendingAds,
             activeAdsCount: activeAds.length,
             archivedAdsCount: archivedAds.length,
             purchases: this.formatPurchases(this.userPurchases),
@@ -381,9 +431,19 @@ export const ProfileController = {
             this.loadWalletData();
         } else if (tab === 'paid_services') {
             this.loadPromoHistory();
+        } else if (tab === 'pending') {
+            this.loadUserPendingAds();
+        }
+
+        if (tab !== 'reviews') {
+            MyReviewsPage.unmount();
         }
 
         this.renderAll();
+
+        if (tab === 'reviews') {
+            this.mountMyReviewsTab();
+        }
     },
 
     attachEventListeners(): void {
@@ -400,6 +460,9 @@ export const ProfileController = {
         // подключить его обработчики (добавление в корзину со страницы
         // «Избранное», «Мои покупки», «Объявления»).
         CartButtonComponent.initAll();
+        if (this.currentTab === 'reviews' && document.getElementById('myReviewsHost')) {
+            this.mountMyReviewsTab();
+        }
     },
 
     async loadProfileData(): Promise<void> {

@@ -33,14 +33,14 @@ if (!fs.existsSync(PUBLIC_DIR)) {
     console.warn(` Внимание: Папка ${PUBLIC_DIR} не существует!`);
 }
 
-console.log('Конфигурация сервера:');
-console.log(`   Порт: ${PORT}`);
-console.log(`   Папка со статикой: ${PUBLIC_DIR}`);
-console.log(`   Файл .env ${fs.existsSync('.env') ? 'найден' : 'не найден'}`);
+('Конфигурация сервера:');
+(`   Порт: ${PORT}`);
+(`   Папка со статикой: ${PUBLIC_DIR}`);
+(`   Файл .env ${fs.existsSync('.env') ? 'найден' : 'не найден'}`);
 
 process.on('uncaughtException', (err) => {
     console.error('Неперехваченная ошибка:', err);
-    console.log('Сервер продолжает работу...');
+    ('Сервер продолжает работу...');
 });
 
 process.on('unhandledRejection', (reason) => {
@@ -127,12 +127,12 @@ const server = http.createServer(async (req, res) => {
                 if (!res.headersSent) {
                     res.writeHead(200, { 'Content-Type': contentType });
                     res.end(data);
-                    console.log(`${req.method} ${req.url}`);
+                    (`${req.method} ${req.url}`);
                 }
                 return;
             } catch (srcError) {
                 if (srcError.code === 'ENOENT') {
-                    console.log(`404 ${req.url} - файл не найден в src`);
+                    (`404 ${req.url} - файл не найден в src`);
                     if (!res.headersSent) {
                         res.writeHead(404, { 'Content-Type': 'text/html; charset=UTF-8' });
                         res.end('<h1>404 - Файл не найден</h1>');
@@ -183,7 +183,7 @@ const server = http.createServer(async (req, res) => {
 
         res.writeHead(200, { 'Content-Type': contentType });
         res.end(data);
-        console.log(`${req.method} ${req.url}`);
+        (`${req.method} ${req.url}`);
     } catch (error) {
         console.error('Ошибка сервера:', error);
 
@@ -211,6 +211,6 @@ server.on('error', (err) => {
 });
 
 server.listen(PORT, () => {
-    console.log(`Сервер запущен на http://localhost:${PORT}`);
-    console.log(`Отдаю файлы из папки: ${PUBLIC_DIR}`);
+    (`Сервер запущен на http://localhost:${PORT}`);
+    (`Отдаю файлы из папки: ${PUBLIC_DIR}`);
 });

@@ -149,9 +149,9 @@ document.cookie.split(";").forEach(function(c) {
 ### Посмотреть текущий токен:
 ```javascript
 // В консоли DevTools
-console.log(document.cookie);
+(document.cookie);
 // или если в localStorage
-console.log(localStorage.getItem('token'));
+(localStorage.getItem('token'));
 ```
 
 ### Испортить токен:

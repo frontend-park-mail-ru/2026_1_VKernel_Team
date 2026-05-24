@@ -1,0 +1,50 @@
+<div class="moderation-card" data-moderation-card data-ad-id="{{id}}">
+    <img
+        src="{{image}}"
+        alt="{{title}}"
+        class="moderation-card__image"
+        data-action="moderation-open-ad"
+        data-ad-id="{{id}}"
+    >
+    <div class="moderation-card__info">
+        <h3
+            class="moderation-card__title"
+            data-action="moderation-open-ad"
+            data-ad-id="{{id}}"
+        >{{title}}</h3>
+        <div class="moderation-card__meta">
+            <span class="moderation-card__price">{{formattedPrice}}</span>
+            {{#if location}}<span>{{location}}</span>{{/if}}
+            {{#if sellerName}}<span>Продавец: {{sellerName}}</span>{{/if}}
+        </div>
+        {{#if description}}
+            <p class="moderation-card__description">{{description}}</p>
+        {{/if}}
+    </div>
+    <div class="moderation-card__actions">
+        <button class="moderation-card__btn moderation-card__btn--approve" data-action="moderation-approve" data-ad-id="{{id}}">
+            Одобрить
+        </button>
+        <button class="moderation-card__btn moderation-card__btn--reject" data-action="moderation-reject-toggle" data-ad-id="{{id}}">
+            Отклонить
+        </button>
+    </div>
+    <form class="moderation-card__reject-form" data-moderation-reject-form data-ad-id="{{id}}" style="display: none;">
+        <label>
+            Причина отклонения:
+            <textarea
+                class="moderation-card__reject-textarea"
+                data-moderation-reject-reason
+                placeholder="Например, объявление не соответствует правилам платформы"
+            ></textarea>
+        </label>
+        <div class="moderation-card__reject-actions">
+            <button type="button" class="moderation-card__btn moderation-card__btn--reject" data-action="moderation-reject-cancel" data-ad-id="{{id}}">
+                Отмена
+            </button>
+            <button type="button" class="moderation-card__btn moderation-card__btn--approve" data-action="moderation-reject-submit" data-ad-id="{{id}}">
+                Отправить
+            </button>
+        </div>
+    </form>
+</div>

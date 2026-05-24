@@ -34,7 +34,18 @@ export interface Ad {
     location?: string;
     lat?: number;
     lon?: number;
-    status?: 'active' | 'draft' | 'reserved' | 'sold' | 'archived';
+    status?:
+        | 'active'
+        | 'draft'
+        | 'reserved'
+        | 'sold'
+        | 'archived'
+        | 'pending_moderation'
+        | 'rejected'
+        | 'admin_deleted';
+    rejection_reason?: string;
+    is_boosted?: boolean;
+    is_highlighted?: boolean;
 
     category_characteristics: ProductCharacteristic[];
     custom_characteristics: ProductCustomCharacteristic[];

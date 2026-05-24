@@ -2,12 +2,14 @@
 export type ProfileTab =
     | 'info'
     | 'ads'
+    | 'pending'
     | 'favorites'
     | 'cart'
     | 'messages'
     | 'purchases'
     | 'paid_services'
     | 'wallet'
+    | 'reviews'
     | 'settings';
 
 /** Статус объявления для фильтрации */

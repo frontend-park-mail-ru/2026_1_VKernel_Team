@@ -43,6 +43,20 @@
                     {{/if}}
                 </a>
             </div>
+            {{#if isAdmin}}
+            <div class="nav-icon">
+                <a href="/moderation" class="nav-link nav-link--with-badge" data-nav="/moderation">
+                    <span class="icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                        </svg></span>
+                    <span class="nav-text">Модерация</span>
+                    {{#if (gt moderationCount 0)}}
+                        <span class="nav-badge">{{moderationCount}}</span>
+                    {{/if}}
+                </a>
+            </div>
+            {{/if}}
             {{#if isStaff}}
             <div class="nav-icon">
                 <a href="/support/stats" class="nav-link" data-nav="/support/stats">

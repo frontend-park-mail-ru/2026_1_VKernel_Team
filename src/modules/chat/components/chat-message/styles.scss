@@ -100,3 +100,74 @@
 .chat-message--order .chat-message__time {
     color: #6b7280;
 }
+
+.chat-message--system {
+    justify-content: center;
+}
+
+.chat-message__system-bubble {
+    background: #eef2ff;
+    color: #1e293b;
+    border: 1px solid #c7d2fe;
+    border-radius: 12px;
+    padding: 12px 16px;
+    max-width: 80%;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    align-items: center;
+}
+
+.chat-message__system-label {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #4338ca;
+    font-weight: 600;
+}
+
+.chat-message__system-text {
+    font-size: 14px;
+    line-height: 1.4;
+    white-space: pre-wrap;
+}
+
+.chat-message--system .chat-message__time {
+    color: #6b7280;
+    align-self: center;
+}
+
+.chat-message__review-btn {
+    align-self: flex-start;
+    background: #fff;
+    color: #2bde8c;
+    border: 1px solid #2bde8c;
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.15s ease;
+}
+
+.chat-message__review-btn:hover {
+    background: #2bde8c;
+    color: #fff;
+}
+
+.chat-message__review-btn-icon svg {
+    width: 16px;
+    height: 16px;
+}
+
+.chat-message__review-mark {
+    align-self: flex-start;
+    font-size: 13px;
+    color: #6b7280;
+    background: #f3f4f6;
+    border-radius: 8px;
+    padding: 6px 10px;
+}

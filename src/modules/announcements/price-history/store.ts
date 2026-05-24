@@ -8,7 +8,6 @@ export const priceHistoryStore = {
         try {
             // Проверяем, открыта ли БД и существует ли store
             if (!cloverDB['db']) {
-                console.warn('IndexedDB not initialized');
                 return;
             }
             await cloverDB.put<{ adId: string; history: PriceHistoryPoint[]; timestamp: number }>(
@@ -21,7 +20,6 @@ export const priceHistoryStore = {
             );
         } catch (error) {
             // Игнорируем ошибки IndexedDB, кэш не критичен
-            console.debug('Cache save failed (non-critical):', error);
         }
     },
 

@@ -14,6 +14,13 @@
             <span class="profile-info-card__stat">
                 <span class="profile-info-card__rating-star">{{{icon "star-filled"}}}</span>
                 Рейтинг: <strong>{{#if user.rating}}{{user.rating}}{{else}}0{{/if}}</strong>
+                {{#if user.id}}
+                    <a class="profile-info-card__rating-link"
+                       href="/seller/{{user.id}}#reviews"
+                       title="Посмотреть все отзывы">
+                        Посмотреть
+                    </a>
+                {{/if}}
             </span>
             {{#if totalAdsCount}}
                 <span class="profile-info-card__stat">
@@ -33,7 +40,7 @@
 </div>
 
 <nav class="profile-nav">
-    {{#each (array 'ads' 'favorites' 'cart' 'messages' 'purchases' 'wallet' 'paid_services' 'settings') as |tab|}}
+    {{#each (array 'ads' 'pending' 'favorites' 'cart' 'messages' 'purchases' 'reviews' 'wallet' 'paid_services' 'settings') as |tab|}}
         <button
             class="profile-nav-item {{#eq ../currentTab tab}}active{{/eq}}"
             data-tab="{{tab}}"
