@@ -32,7 +32,7 @@ registerServiceWorker();
 
 document.addEventListener('DOMContentLoaded', async () => {
     try {
-        await cloverDB.open('clover-db', 6, [
+        await cloverDB.open('clover-db', 7, [
             { name: 'cart', keyPath: 'product_id' },
             { name: 'syncQueue', keyPath: 'id', autoIncrement: true, recreate: true },
             { name: 'adDrafts', keyPath: 'id' },
@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             { name: 'adsList', keyPath: 'id' },
             { name: 'userProfile', keyPath: 'id' },
             { name: 'avatarQueue', keyPath: 'id', autoIncrement: true },
-            { name: 'purchases', keyPath: 'product_id' },
+            { name: 'purchases', keyPath: 'order_id', recreate: true },
             { name: 'wallet-balance', keyPath: 'currency' },
             { name: 'wallet-transactions', keyPath: 'id' },
         ]);

@@ -1,0 +1,125 @@
+.review-summary {
+    background: #fff;
+    border: 1px solid #eef0f3;
+    border-radius: 14px;
+    padding: 20px 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    position: sticky;
+    top: 16px;
+}
+
+.review-summary__big {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    text-align: left;
+}
+
+.review-summary__average {
+    font-size: 44px;
+    font-weight: 700;
+    color: #111827;
+    line-height: 1;
+}
+
+.review-summary__stars {
+    display: inline-flex;
+    color: #f7b500;
+    gap: 1px;
+
+    svg {
+        width: 22px;
+        height: 22px;
+    }
+}
+
+.review-summary__total {
+    font-size: 14px;
+    color: #6b7280;
+}
+
+.review-summary__bars {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.review-summary__bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: none;
+    border: 1px solid transparent;
+    padding: 6px 8px;
+    border-radius: 8px;
+    cursor: pointer;
+    text-align: left;
+    transition: background 0.15s ease;
+
+    &:hover {
+        background: #f3faf6;
+    }
+
+    &:focus-visible {
+        outline: none;
+        box-shadow: 0 0 0 2px rgba(43, 222, 140, 0.45);
+    }
+}
+
+.review-summary__bar--active {
+    background: #ecfdf5;
+    border-color: #a7f3d0;
+}
+
+.review-summary__bar-star {
+    width: 32px;
+    font-size: 13px;
+    color: #374151;
+    font-weight: 600;
+}
+
+.review-summary__bar-track {
+    flex: 1;
+    height: 8px;
+    background: #f1f5f9;
+    border-radius: 99px;
+    overflow: hidden;
+    position: relative;
+}
+
+.review-summary__bar-fill {
+    display: block;
+    height: 100%;
+    background: linear-gradient(90deg, #2bde8c, #6ee7b7);
+    border-radius: 99px;
+    transition: width 0.3s ease;
+}
+
+.review-summary__bar-count {
+    min-width: 24px;
+    text-align: right;
+    font-size: 13px;
+    color: #4b5563;
+}
+
+.review-summary__reset {
+    align-self: flex-start;
+    background: none;
+    border: none;
+    color: #2bde8c;
+    font-size: 13px;
+    padding: 4px 0;
+    cursor: pointer;
+}
+
+.review-summary__reset:hover {
+    text-decoration: underline;
+}
+
+.review-summary__empty {
+    color: #9ca3af;
+    font-size: 14px;
+    margin: 0;
+}

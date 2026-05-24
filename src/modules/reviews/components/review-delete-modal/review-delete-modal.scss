@@ -1,0 +1,29 @@
+.review-delete-modal__description {
+    font-size: 15px;
+    color: #1f2937;
+    margin: 8px 0 8px;
+}
+
+.review-delete-modal__preview {
+    background: #f9fafb;
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-size: 14px;
+    color: #4b5563;
+    margin: 0 0 8px;
+    max-height: 96px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.review-delete-modal__preview:empty {
+    display: none;
+}
+
+.review-delete-modal__hint {
+    font-size: 13px;
+    color: #9ca3af;
+    margin: 0 0 16px;
+}

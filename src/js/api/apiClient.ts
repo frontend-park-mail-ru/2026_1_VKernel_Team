@@ -41,6 +41,17 @@ export const API_ENDPOINTS = {
         CONFIRM: (id: number | string) => `/chats/${id}/confirm`,
         CREATE_ORDER: (adId: number | string) => `/ads/${adId}/order`,
     },
+    REVIEWS: {
+        LIST_BY_USER: (id: number | string) => `/users/${id}/reviews`,
+        SUMMARY: (id: number | string) => `/users/${id}/reviews/summary`,
+        MY: '/profile/reviews',
+        CREATE: '/reviews',
+        UPDATE: (id: number | string) => `/reviews/${id}`,
+        DELETE: (id: number | string) => `/reviews/${id}`,
+    },
+    PURCHASES: {
+        MY: '/profile/purchases',
+    },
 };
 
 const getCookie = (name: string): string | null => {
