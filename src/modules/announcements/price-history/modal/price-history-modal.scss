@@ -1,0 +1,193 @@
+// Сброс стилей для модалки истории цен
+#priceHistoryModal {
+    &.modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10000;
+    }
+    
+    .price-history-modal-content {
+        position: relative;
+        background: white;
+        border-radius: 20px;
+        width: 90%;
+        max-width: 850px;
+        max-height: 85vh;
+        overflow-y: auto;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        animation: slideUp 0.3s ease;
+        padding-left: 10px;
+    }
+}
+
+// Кнопка закрытия
+.price-history-modal-close {
+    position: absolute;
+    top: 16px;
+    right: 20px;
+    background: none;
+    border: none;
+    font-size: 28px;
+    cursor: pointer;
+    color: #999;
+    transition: color 0.2s;
+    z-index: 10;
+    
+    &:hover {
+        color: #333;
+    }
+}
+
+// Заголовок
+.price-history-title {
+    margin: 0;
+    padding: 24px 24px 16px 24px;
+    font-size: 20px;
+    font-weight: 600;
+    color: #1a1a1a;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.price-history-ad-title {
+    color: #2bde8c;
+    font-weight: 500;
+}
+
+// Контейнер для графика
+.price-chart-wrapper {
+    background: #fff;
+    min-height: 320px;
+    
+    > div {
+        width: 100% !important;
+    }
+
+    a[href*="tradingview"] {
+        display: none !important;
+    }
+}
+
+// Статистика
+.price-history-stats {
+    padding: 16px 24px 24px;
+    border-top: 1px solid #f0f0f0;
+    background: #fafafa;
+    border-radius: 0 0 20px 20px;
+}
+
+.price-history-stats-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    justify-content: space-between;
+}
+
+.price-history-stat {
+    flex: 1;
+    min-width: 100px;
+    text-align: center;
+}
+
+.stat-label {
+    display: block;
+    font-size: 12px;
+    color: #999;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+}
+
+.stat-value {
+    display: block;
+    font-size: 20px;
+    font-weight: 700;
+    color: #333;
+}
+
+.stat-value.current-price {
+    color: #2bde8c;
+}
+
+.stat-date {
+    display: block;
+    font-size: 11px;
+    color: #aaa;
+    margin-top: 2px;
+}
+
+// Скрытие лишних блоков
+.extra-stat.hidden {
+    display: none;
+}
+
+// Анимация
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+// Адаптив
+@media (max-width: 768px) {
+    #priceHistoryModal .price-history-modal-content {
+        width: 95%;
+        max-height: 90vh;
+    }
+    
+    .price-history-title {
+        font-size: 18px;
+        padding: 20px 20px 12px;
+    }
+    
+    .price-chart-wrapper {
+        padding: 12px 16px;
+        min-height: 260px;
+    }
+    
+    .price-history-stats {
+        padding: 12px 16px 20px;
+    }
+    
+    .price-history-stats-grid {
+        gap: 12px;
+    }
+    
+    .stat-value {
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .price-history-stats-grid {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .price-history-stat {
+        text-align: left;
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        flex-wrap: wrap;
+    }
+    
+    .stat-label {
+        margin-bottom: 0;
+    }
+    
+    .stat-value {
+        font-size: 18px;
+    }
+}

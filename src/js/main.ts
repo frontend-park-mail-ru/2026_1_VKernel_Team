@@ -16,6 +16,8 @@ import '@/services/adsServices';
 import '@modules/cart/init';
 import '@/api/apiClient';
 import '@modules/product_search';
+// import '@modules/announcements/price-history/modal/price-history-modal.scss';
+// import '@modules/announcements/price-history';
 
 import { registerServiceWorker } from '@modules/common/offline/service-worker/sw-register';
 import { cloverDB } from '@modules/common/offline/db/indexedDB';
@@ -32,7 +34,7 @@ registerServiceWorker();
 
 document.addEventListener('DOMContentLoaded', async () => {
     try {
-        await cloverDB.open('clover-db', 6, [
+        await cloverDB.open('clover-db', 7, [
             { name: 'cart', keyPath: 'product_id' },
             { name: 'syncQueue', keyPath: 'id', autoIncrement: true, recreate: true },
             { name: 'adDrafts', keyPath: 'id' },
@@ -43,6 +45,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             { name: 'purchases', keyPath: 'product_id' },
             { name: 'wallet-balance', keyPath: 'currency' },
             { name: 'wallet-transactions', keyPath: 'id' },
+            { name: 'priceHistory', keyPath: 'adId' },
         ]);
     } catch (error) {
         console.error('IndexedDB initialization failed:', error);

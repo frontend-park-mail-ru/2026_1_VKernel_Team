@@ -47,7 +47,8 @@
   "homepage": "https://github.com/frontend-park-mail-ru/2026_1_VKernel_Team#readme",
   "dependencies": {
     "dotenv": "^17.3.1",
-    "handlebars": "^4.7.8"
+    "handlebars": "^4.7.8",
+    "lightweight-charts": "^5.2.0"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

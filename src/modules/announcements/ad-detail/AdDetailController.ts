@@ -18,6 +18,8 @@ import { eventBus } from '@/core/eventBus';
 import { renderStarsHTML } from '@/utils/icons';
 import { PromoteModal } from '@modules/promotion/components/promote-modal/promote-modal';
 import { promotionService } from '@modules/promotion/service';
+import { PriceHistoryModal } from '../price-history/modal/price-history-modal';
+console.log('✅ PriceHistoryModal импортирован в AdDetailController:', PriceHistoryModal);
 
 const AD_DETAIL_STORE = 'ads';
 
@@ -221,6 +223,9 @@ export class AdDetailController {
             sellerRating: rating,
             sellerStars: sellerStars,
             user: store.user,
+
+            hasPriceHistory: true,
+            adCreatedAt: ad.created_at || new Date().toISOString(),
 
             avatarUrl: (() => {
                 const src = store.user?.avatar_path || store.user?.avatar;
@@ -591,6 +596,63 @@ export class AdDetailController {
             const uniqueKey = `goToSeller_${Math.random()}`;
             this._handlers.set(uniqueKey, handler);
         });
+
+        // В методе attachEventListeners, после рендера
+        const priceHistoryBtn = document.querySelector('[data-action="show-price-history"]');
+        if (priceHistoryBtn) {
+            // Удаляем старый обработчик, если есть
+            if (this._handlers.has('priceHistory')) {
+                priceHistoryBtn.removeEventListener('click', this._handlers.get('priceHistory')!);
+            }
+
+            const handler = (e: Event) => {
+                // ========== ЛОГИ ==========
+                console.log('🔵 1. Обработчик сработал');
+                console.log('🔵 2. this.adId =', this.adId);
+                console.log('🔵 3. PriceHistoryModal =', PriceHistoryModal);
+                // ==========================
+
+                e.preventDefault();
+                e.stopPropagation();
+
+                const adId = this.adId;
+                if (!adId) {
+                    console.log('🔴 Нет adId');
+                    return;
+                }
+
+                const titleEl = document.querySelector('.ad-title');
+                console.log('🔵 4. titleEl =', titleEl);
+                const title = titleEl?.textContent?.trim() || 'Объявление';
+
+                const priceEl = document.querySelector('.current-price');
+                console.log('🔵 5. priceEl =', priceEl);
+                const currentPriceText = priceEl?.textContent?.trim() || '0';
+                const currentPrice = parseInt(currentPriceText.replace(/\D/g, ''), 10) || 0;
+
+                const createdAtEl = document.querySelector('[data-created-at]') as HTMLElement;
+                console.log('🔵 6. createdAtEl =', createdAtEl);
+                const createdAt = createdAtEl?.dataset.createdAt || new Date().toISOString();
+
+                console.log('🔵 7. Данные:', { adId, title, createdAt, currentPrice });
+
+                try {
+                    console.log('🔵 8. Вызываем PriceHistoryModal.getInstance().open()...');
+                    PriceHistoryModal.getInstance().open({
+                        adId: adId,
+                        adTitle: title,
+                        createdAt: createdAt,
+                        currentPrice: currentPrice,
+                    });
+                    console.log('🔵 9. open() выполнен без ошибок');
+                } catch (err) {
+                    console.error('🔴 Ошибка при вызове open():', err);
+                }
+            };
+
+            priceHistoryBtn.addEventListener('click', handler);
+            this._handlers.set('priceHistory', handler);
+        }
     }
 
     private static extractProductFromPage(productId: number): any {
