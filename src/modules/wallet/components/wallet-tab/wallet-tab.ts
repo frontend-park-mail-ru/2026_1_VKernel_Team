@@ -65,13 +65,16 @@ export const WalletTab = {
         const modalEl = document.getElementById('topupModal');
         const isModalOpen = modalEl && modalEl.style.display !== 'none';
 
-        const state = walletStore.getState();
-        const templateData = this.buildTemplateData(state);
-        contentEl.innerHTML = template(templateData);
-
-        if (isModalOpen && modalEl) {
-            contentEl.appendChild(modalEl);
-            TopupModal.init();
+        const walletEl = contentEl.querySelector('.wallet-tab-content');
+        if (walletEl) {
+            const state = walletStore.getState();
+            const templateData = this.buildTemplateData(state);
+            const temp = document.createElement('div');
+            temp.innerHTML = template(templateData);
+            const newWallet = temp.querySelector('.wallet-tab-content');
+            if (newWallet) {
+                walletEl.replaceWith(newWallet);
+            }
         }
 
         this._boundElement = null;

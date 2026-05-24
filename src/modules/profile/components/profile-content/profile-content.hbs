@@ -14,9 +14,9 @@
 
     <div data-profile-ad-content="active">
         {{#if activeAds.length}}
-            <div class="recommendations-row">
+            <div class="profile-ads-row">
                 {{#each activeAds}}
-                    {{> common/components/ad-card/ad-card this showEditButton=true}}
+                    {{> profile/components/profile-ad-card/profile-ad-card this}}
                 {{/each}}
             </div>
         {{else}}
@@ -28,9 +28,9 @@
 
     <div data-profile-ad-content="archived" style="display: none;">
         {{#if archivedAds.length}}
-            <div class="recommendations-row">
+            <div class="profile-ads-row">
                 {{#each archivedAds}}
-                    {{> common/components/ad-card/ad-card this archived=true}}
+                    {{> profile/components/profile-ad-card/profile-ad-card this archived=true}}
                 {{/each}}
             </div>
         {{else}}

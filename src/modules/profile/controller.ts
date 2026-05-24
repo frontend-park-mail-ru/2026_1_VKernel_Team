@@ -35,6 +35,7 @@ interface UserAd {
     id: number;
     title: string;
     price: number;
+    description?: string;
     photos?: string[];
     views_count?: number;
     created_at?: string;
@@ -65,6 +66,11 @@ function formatAdCard(ad: UserAd) {
         views: ad.views_count || 0,
         location: ad.location || 'Москва',
         createdDate: ad.created_at ? new Date(ad.created_at).toLocaleDateString('ru-RU') : '',
+        shortDescription: ad.description
+            ? ad.description.length > 100
+                ? ad.description.slice(0, 100) + '…'
+                : ad.description
+            : '',
     };
 }
 
@@ -250,6 +256,10 @@ export const ProfileController = {
     rerenderTab(user: UserProfile): void {
         const contentEl = document.getElementById('tabContent');
         if (!contentEl) return;
+        const topupModal = document.getElementById('topupModal');
+        if (topupModal && topupModal.style.display !== 'none') return;
+        const promoteModal = document.getElementById('promoteModal');
+        if (promoteModal && promoteModal.style.display !== 'none') return;
 
         const isArchivedStatus = (status?: string) => status === 'archived' || status === 'sold';
         const activeAds = this.userAds.filter((ad) => !isArchivedStatus(ad.status));
