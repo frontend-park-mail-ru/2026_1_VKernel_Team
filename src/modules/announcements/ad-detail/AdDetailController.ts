@@ -760,9 +760,35 @@ export class AdDetailController {
             return;
         }
 
-        const items = res.data.map((p: any) => {
-            const label = p.kind === 'boost' ? 'Поднятие' : 'Выделение';
-            return `<span class="ad-promotion-item ad-promotion-item--${p.kind}">${label}: ещё ${Handlebars.helpers.timeLeft(p.expires_at)}</span>`;
+        const now = Date.now();
+        const byKind: Record<string, number> = {};
+        for (const p of res.data) {
+            const ms = new Date(p.expires_at).getTime() - now;
+            if (ms <= 0) continue;
+            byKind[p.kind] = (byKind[p.kind] || 0) + ms;
+        }
+
+        if (Object.keys(byKind).length === 0) {
+            statusEl.innerHTML = '<p class="ad-promotion-empty">Нет активных продвижений</p>';
+            return;
+        }
+
+        const items = Object.entries(byKind).map(([kind, totalMs]) => {
+            const label = kind === 'boost' ? 'Поднятие' : 'Выделение';
+            const totalHours = Math.floor(totalMs / 3600000);
+            const days = Math.floor(totalHours / 24);
+            const hours = totalHours % 24;
+            const parts: string[] = [];
+            if (days > 0) {
+                const w = days === 1 ? 'день' : days < 5 ? 'дня' : 'дней';
+                parts.push(`${days} ${w}`);
+            }
+            if (hours > 0) {
+                const w = hours === 1 ? 'час' : hours < 5 ? 'часа' : 'часов';
+                parts.push(`${hours} ${w}`);
+            }
+            if (parts.length === 0) parts.push('менее часа');
+            return `<span class="ad-promotion-item ad-promotion-item--${kind}">${label}: ещё ${parts.join(' ')}</span>`;
         });
 
         statusEl.innerHTML = items.join('');

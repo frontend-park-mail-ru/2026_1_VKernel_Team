@@ -1,5 +1,5 @@
 import { test as base, expect } from '@playwright/test';
-import { createAdWithPhoto, loginAndSaveState } from './helpers';
+import { createAdWithPhoto, loginAndSaveState, resetAccount } from './helpers';
 
 const test = base.extend<{ authedPage: import('@playwright/test').Page }>({
     authedPage: async ({ browser }, use) => {
@@ -26,11 +26,18 @@ test.describe('Продвижение объявления', () => {
         await context.close();
     });
 
+    test.afterAll(async ({ browser }) => {
+        const context = await browser.newContext({ storageState: '/tmp/promo-auth.json' });
+        const page = await context.newPage();
+        await resetAccount(page);
+        await context.close();
+    });
+
     async function openPromoteModal(page: import('@playwright/test').Page) {
         await page.goto('/profile');
         await page.waitForSelector('.profile-tab-content');
-        await page.waitForSelector('.rec-card-promote', { timeout: 15000 });
-        await page.click('.rec-card-promote');
+        await page.waitForSelector('.profile-ad-card__btn--promote', { timeout: 15000 });
+        await page.click('.profile-ad-card__btn--promote');
         await expect(page.locator('#promoteModal')).toBeVisible({ timeout: 10000 });
     }
 
@@ -89,15 +96,15 @@ test.describe('Продвижение объявления', () => {
 
         await page.goto('/profile');
         await page.waitForSelector('.profile-tab-content');
-        await page.waitForSelector('.rec-card-promote', { timeout: 15000 });
+        await page.waitForSelector('.profile-ad-card__btn--promote', { timeout: 15000 });
 
-        await page.click('.rec-card-promote');
+        await page.click('.profile-ad-card__btn--promote');
         await expect(page.locator('#promoteModal')).toBeVisible({ timeout: 10000 });
 
         await page.click('#promoteModal [data-plan-code="boost_1d"]');
         await page.click('#promoteModal [data-action="go-to-step2"]');
 
-        const adId = await page.locator('.rec-card').first().getAttribute('data-id');
+        const adId = await page.locator('.profile-ad-card').first().getAttribute('data-id');
         if (adId) {
             await page.evaluate(async (id) => {
                 await fetch('/api/v1/profile', { method: 'GET', credentials: 'include' });

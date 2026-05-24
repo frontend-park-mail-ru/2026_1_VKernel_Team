@@ -10,6 +10,8 @@ import { TopupModal } from '@modules/wallet/components/topup-modal/topup-modal';
 import { PromoteModal } from '@modules/promotion/components/promote-modal/promote-modal';
 import { PromoHistoryTab } from '@modules/promotion/components/history-tab/history-tab';
 import modalTemplate from '@modules/common/components/modal/modal.hbs';
+import profileAdCardTemplate from '@modules/profile/components/profile-ad-card/profile-ad-card.hbs';
+import '@modules/profile/components/profile-ad-card/profile-ad-card.scss';
 import type { HandlebarsTemplateFunction } from '@/types';
 
 declare const Handlebars: any;
@@ -44,6 +46,10 @@ export function loadTemplates(): void {
             PromoHistoryTab.getTemplate(),
         );
         Handlebars.registerPartial('common/components/modal/modal', modalTemplate);
+        Handlebars.registerPartial(
+            'profile/components/profile-ad-card/profile-ad-card',
+            profileAdCardTemplate,
+        );
     } catch (error) {
         console.error('Failed to load profile templates:', error);
     }

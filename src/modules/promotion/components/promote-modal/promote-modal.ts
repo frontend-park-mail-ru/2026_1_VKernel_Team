@@ -108,7 +108,7 @@ export const PromoteModal = {
         this._selectedPlanPrice = 0;
         this._idempotencyKey = '';
 
-        await this.loadPlans();
+        await Promise.all([this.loadPlans(), walletStore.fetchBalance()]);
 
         const container = ensureContainer();
         const existing = document.getElementById('promoteModal');

@@ -87,6 +87,8 @@ export default (env, argv) => {
                             'labelForTab',
                             'ifAuthenticated',
                             'avatarUrl',
+                            'formatDateOnly',
+                            'formatTxType',
                         ],
                         partialDirs: [
                             path.resolve(__dirname, 'src'),

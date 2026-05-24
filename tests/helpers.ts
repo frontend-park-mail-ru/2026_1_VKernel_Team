@@ -7,18 +7,21 @@ export function getAccount(index: number) {
 }
 
 export async function resetAccount(page: import('@playwright/test').Page) {
+    if (!page.url().startsWith('http')) {
+        await page.goto('/');
+    }
     await page.evaluate(async () => {
         await fetch('/api/v1/profile', { method: 'GET', credentials: 'include' });
         const value = `; ${document.cookie}`;
         const parts = value.split(`; csrf_token=`);
         const csrfToken = parts.length === 2 ? parts.pop()!.split(';').shift() : null;
-        if (csrfToken) {
-            await fetch('/api/v1/test/reset', {
-                method: 'POST',
-                credentials: 'include',
-                headers: { 'X-CSRF-Token': csrfToken },
-            });
-        }
+        if (!csrfToken) throw new Error('resetAccount: no csrf token');
+        const res = await fetch('/api/v1/test/reset', {
+            method: 'POST',
+            credentials: 'include',
+            headers: { 'X-CSRF-Token': csrfToken },
+        });
+        if (!res.ok) throw new Error(`resetAccount: ${res.status}`);
     });
 }
 

@@ -1,100 +1,117 @@
-/* === Инфо-карточка (как seller-info-card) === */
 .profile-info-card {
     background: #fff;
     border-radius: 12px;
-    padding: 24px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 12px;
+}
+
+.profile-info-card__main {
+    flex: 1;
+    min-width: 0;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    margin-bottom: 16px;
+    gap: 10px;
+}
+
+.profile-info-card__section {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.profile-info-card__section + .profile-info-card__section {
+    padding-top: 10px;
+    border-top: 1px solid #e9ecef;
 }
 
 .profile-info-card__name-row {
     display: flex;
     align-items: center;
-    gap: 8px;
-    margin-bottom: 6px;
+    gap: 6px;
 }
 
 .profile-info-card__name {
-    font-size: 20px;
+    font-size: 17px;
     font-weight: 600;
     color: #333;
-    text-align: center;
     margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .profile-info-card__edit-btn {
     background: none;
     border: none;
-    color: #1892e5;
-    font-size: 18px;
+    color: #bbb;
     cursor: pointer;
-    padding: 2px 6px;
-    border-radius: 6px;
+    padding: 2px;
+    border-radius: 4px;
     line-height: 1;
-    transition: background 0.2s;
+    transition: color 0.2s, background 0.2s;
+    flex-shrink: 0;
+
+    svg {
+        width: 13px;
+        height: 13px;
+    }
 }
 
 .profile-info-card__edit-btn:hover {
+    color: #1892e5;
     background: #e8f4fd;
 }
 
 .profile-info-card__email {
-    font-size: 14px;
+    font-size: 13px;
     color: #888;
-    margin: 0 0 10px;
-    text-align: center;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-.profile-info-card__rating {
+.profile-info-card__stat {
     display: flex;
     align-items: center;
     gap: 4px;
-    margin-bottom: 12px;
+    font-size: 13px;
+    color: #666;
+}
+
+.profile-info-card__stat strong {
+    color: #333;
 }
 
 .profile-info-card__rating-star {
     color: #f5c518;
     display: inline-flex;
     align-items: center;
-    justify-content: center;
 
     svg {
-        width: 18px;
-        height: 18px;
-        display: block;
+        width: 14px;
+        height: 14px;
     }
 }
 
-.profile-info-card__rating-value {
-    font-size: 16px;
-    font-weight: 600;
-    color: #333;
-}
-
-.profile-info-card__meta {
-    width: 100%;
-    border-top: 1px solid #e9ecef;
-    padding-top: 12px;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-}
-
-.profile-info-card__meta-item {
-    font-size: 14px;
+.profile-info-card__balance {
+    font-size: 13px;
     color: #666;
-    text-align: center;
-    margin: 0;
 }
 
-.profile-info-card__meta-item strong {
-    color: #333;
+.profile-info-card__balance strong {
+    color: #2e7d32;
 }
 
-/* === Навигация === */
+.profile-info-card__date {
+    font-size: 11px;
+    color: #aaa;
+}
+
 .profile-nav {
     display: flex;
     flex-direction: column;
@@ -102,7 +119,7 @@
     background: #fff;
     border-radius: 12px;
     padding: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
 .profile-nav-item {
@@ -153,44 +170,23 @@
     background: #fff1f0;
 }
 
-
 @media (max-width: 900px) {
     body .profile-info-card {
-        padding: 15px;
+        padding: 14px;
         box-shadow: none;
         border: 1px solid #eee;
         margin-bottom: 0;
         width: 100%;
         box-sizing: border-box;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 8px;
-    }
-
-    body .profile-info-card__name-row {
-        margin-bottom: 0;
     }
 
     body .profile-info-card__name {
-        font-size: 18px;
-        text-align: center;
-        word-break: break-word; 
+        font-size: 15px;
+        word-break: break-word;
     }
 
     body .profile-info-card__email {
-        font-size: 13px;
-        margin-bottom: 0;
-        text-align: center;
-        word-break: break-all; 
-    }
-
-    body .profile-info-card__meta {
-        flex-direction: row;
-        justify-content: space-around;
-        padding-top: 10px;
-        margin-top: 5px;
-        width: 100%;
-        box-sizing: border-box;
+        font-size: 12px;
+        word-break: break-all;
     }
 }

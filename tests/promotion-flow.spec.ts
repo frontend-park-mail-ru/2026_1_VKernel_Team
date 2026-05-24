@@ -1,5 +1,5 @@
 import { test as base, expect } from '@playwright/test';
-import { createAdWithPhoto, loginAndSaveState } from './helpers';
+import { createAdWithPhoto, loginAndSaveState, resetAccount } from './helpers';
 
 const test = base.extend<{ authedPage: import('@playwright/test').Page }>({
     authedPage: async ({ browser }, use) => {
@@ -28,24 +28,32 @@ test.describe('Сценарий платного продвижения', () => 
         });
     });
 
+    test.afterAll(async () => {
+        if (page) await resetAccount(page);
+    });
+
     async function topupWallet(amount = 500) {
         await page.goto('/profile?tab=wallet');
         await page.waitForSelector('.wallet-balance-card');
         await page.click('[data-action="open-topup"]');
+        await page.waitForSelector('#topupCardNumber', { state: 'visible' });
         await page.fill('#topupCardNumber', '1234567890123456');
         await page.fill('#topupCardExpiry', '12/28');
         await page.fill('#topupCardCvv', '123');
+        await page.waitForSelector('#topupModal [data-action="go-to-step2"]', { state: 'visible' });
         await page.click('#topupModal [data-action="go-to-step2"]');
-        await page.click(`[data-quick-amount="${amount}"]`);
-        await page.click('[data-action="confirm-topup"]');
+        await page.waitForSelector('#topupStep2', { state: 'visible' });
+        await page.click(`#topupModal [data-quick-amount="${amount}"]`);
+        await expect(page.locator(`[data-quick-amount="${amount}"]`)).toHaveClass(/active/);
+        await page.click('#topupModal [data-action="confirm-topup"]');
         await expect(page.locator('#topupModal')).not.toBeVisible({ timeout: 10000 });
     }
 
     async function openPromoteFromProfile() {
         await page.goto('/profile');
         await page.waitForSelector('.profile-tab-content');
-        await page.waitForSelector('.rec-card-promote', { timeout: 15000 });
-        await page.click('.rec-card-promote');
+        await page.waitForSelector('.profile-ad-card__btn--promote', { timeout: 15000 });
+        await page.click('.profile-ad-card__btn--promote');
         await expect(page.locator('#promoteModal')).toBeVisible({ timeout: 10000 });
     }
 
@@ -82,9 +90,11 @@ test.describe('Сценарий платного продвижения', () => 
     test('карточка объявления получает бейдж boost после покупки', async () => {
         await page.goto('/profile');
         await page.waitForSelector('.profile-tab-content');
-        await page.waitForSelector('.rec-card', { timeout: 15000 });
+        await page.waitForSelector('.profile-ad-card', { timeout: 15000 });
 
-        await expect(page.locator('.rec-card-promo-badge--boost')).toBeVisible({ timeout: 10000 });
+        await expect(page.locator('.profile-ad-card__badge--boost')).toBeVisible({
+            timeout: 10000,
+        });
     });
 
     test('покупка highlight добавляет класс highlighted и бейдж', async () => {
@@ -97,16 +107,15 @@ test.describe('Сценарий платного продвижения', () => 
 
         await page.goto('/profile');
         await page.waitForSelector('.profile-tab-content');
-        await page.waitForSelector('.rec-card', { timeout: 15000 });
+        await page.waitForSelector('.profile-ad-card', { timeout: 15000 });
 
-        await expect(page.locator('.rec-card--highlighted')).toBeVisible({ timeout: 10000 });
-        await expect(page.locator('.rec-card-promo-badge--highlight')).toBeVisible({
+        await expect(page.locator('.profile-ad-card__badge--highlight')).toBeVisible({
             timeout: 10000,
         });
     });
 
     test('страница объявления показывает блок продвижения и статус', async () => {
-        const adId = await page.locator('.rec-card').first().getAttribute('data-id');
+        const adId = await page.locator('.profile-ad-card').first().getAttribute('data-id');
         if (!adId) return;
 
         await page.goto(`/ad/${adId}`);

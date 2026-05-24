@@ -3,6 +3,7 @@ import template from '@modules/wallet/components/wallet-tab/wallet-tab.hbs';
 import { walletService } from '@modules/wallet/service';
 import { walletStore } from '@modules/wallet/store';
 import { TopupModal } from '@modules/wallet/components/topup-modal/topup-modal';
+import { createBaseModal } from '@modules/common/components/modal/modal';
 import { uiActions } from '@/actions/uiActions';
 import { eventBus } from '@/core/eventBus';
 
@@ -11,6 +12,8 @@ declare const Handlebars: any;
 export const WalletTab = {
     _boundElement: null as HTMLElement | null,
     _unsubscribers: [] as Array<() => void>,
+    _clickHandler: null as ((e: Event) => void) | null,
+    _eventBusSubscribed: false,
 
     getTemplate() {
         return template;
@@ -19,22 +22,28 @@ export const WalletTab = {
     init(): void {
         const openTopupBtn = document.querySelector('[data-action="open-topup"]');
         if (!openTopupBtn) return;
-        const content = openTopupBtn.closest('.profile-tab-content') as HTMLElement | null;
+        const content = document.getElementById('tabContent');
         if (!content) return;
         if (content === this._boundElement) return;
         this._boundElement = content;
 
         TopupModal.init();
 
-        this._unsubscribers.forEach((unsub) => unsub());
-        this._unsubscribers = [];
-        this._unsubscribers.push(
-            eventBus.on('wallet:updated', () => {
-                this.rerender();
-            }),
-        );
+        if (!this._eventBusSubscribed) {
+            this._eventBusSubscribed = true;
+            this._unsubscribers.push(
+                eventBus.on('wallet:updated', () => {
+                    if (this._boundElement) {
+                        this.rerender();
+                    }
+                }),
+            );
+        }
 
-        content.closest('.profile-tab-content')?.addEventListener('click', (e) => {
+        if (this._clickHandler) {
+            content.removeEventListener('click', this._clickHandler);
+        }
+        this._clickHandler = (e: Event) => {
             const target = e.target as HTMLElement;
 
             if (target.closest('[data-action="open-topup"]')) {
@@ -45,19 +54,32 @@ export const WalletTab = {
             if (target.closest('[data-action="wallet-load-more"]')) {
                 this.loadMore();
             }
-        });
+        };
+        content.addEventListener('click', this._clickHandler);
     },
 
     rerender(): void {
         const contentEl = document.getElementById('tabContent');
         if (!contentEl) return;
 
-        const state = walletStore.getState();
-        const templateData = this.buildTemplateData(state);
-        contentEl.innerHTML = template(templateData);
+        const modalEl = document.getElementById('topupModal');
+        const isModalOpen = modalEl && modalEl.style.display !== 'none';
+
+        const walletEl = contentEl.querySelector('.wallet-tab-content');
+        if (walletEl) {
+            const state = walletStore.getState();
+            const templateData = this.buildTemplateData(state);
+            const temp = document.createElement('div');
+            temp.innerHTML = template(templateData);
+            const newWallet = temp.querySelector('.wallet-tab-content');
+            if (newWallet) {
+                walletEl.replaceWith(newWallet);
+            }
+        }
+
         this._boundElement = null;
         this.init();
-        TopupModal.init();
+        if (!isModalOpen) TopupModal.init();
     },
 
     buildTemplateData(state: ReturnType<typeof walletStore.getState>) {
@@ -68,8 +90,8 @@ export const WalletTab = {
                 ...tx,
                 formattedAmount:
                     tx.type === 'topup'
-                        ? `+${tx.amount.toLocaleString('ru-RU')} ₽`
-                        : `−${Math.abs(tx.amount).toLocaleString('ru-RU')} ₽`,
+                        ? `${tx.amount.toLocaleString('ru-RU')} ₽`
+                        : `${Math.abs(tx.amount).toLocaleString('ru-RU')} ₽`,
             })),
             nextCursor: state.nextCursor,
         };

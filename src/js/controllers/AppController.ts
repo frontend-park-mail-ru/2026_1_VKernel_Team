@@ -40,6 +40,7 @@ import { CategoriesModal } from '@modules/common/components/categories-modal/cat
 import { store } from '@/core/store';
 import { eventBus } from '@/core/eventBus';
 import { uiActions } from '@/actions/uiActions';
+import { walletStore } from '@modules/wallet/store';
 import type { HandlebarsTemplateFunction, TemplateName, UIConstants } from '@/types';
 import { authActions } from '@/actions/authActions';
 import { storage } from '@/utils/storage';
@@ -133,6 +134,17 @@ const registerHelpers = (Hbs: any) => {
         if (isNaN(date.getTime())) {
             return '—';
         }
+        return (
+            date.toLocaleDateString('ru-RU') +
+            ', ' +
+            date.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })
+        );
+    });
+
+    Hbs.registerHelper('formatDateOnly', function (dateString: string) {
+        if (!dateString) return '—';
+        const date = new Date(dateString);
+        if (isNaN(date.getTime())) return '—';
         return date.toLocaleDateString('ru-RU');
     });
 
@@ -216,6 +228,7 @@ export const AppController = {
             await Promise.all([
                 AdsController.syncFavorites(),
                 cartActions.loadCart().catch(() => {}),
+                walletStore.fetchBalance().catch(() => {}),
             ]);
         }
         eventBus.on('app:navigate', (path: string) => {
@@ -417,6 +430,7 @@ export const AppController = {
                 unreadStore.refreshCountFromServer();
                 cartActions.loadCart().catch(() => {});
                 AdsController.syncFavorites().catch(() => {});
+                walletStore.fetchBalance().catch(() => {});
             }
             if (state.isAuthenticated === false) unreadStore.reset();
         }

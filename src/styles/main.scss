@@ -204,6 +204,7 @@ body .main-container {
     max-height: 80px;
     object-fit: contain;   /* чтобы пропорции сохранялись */
     z-index: 10;
+    cursor: pointer;
 }
 
 .brand-name {
@@ -446,6 +447,7 @@ body .main-container {
     display: flex;
     flex-direction: column;
     border: 1px solid #e9ecef;
+    cursor: pointer;
 }
 
 .rec-card:hover {

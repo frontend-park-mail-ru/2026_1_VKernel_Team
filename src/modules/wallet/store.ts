@@ -1,5 +1,6 @@
 import { EventBus } from '@/core/eventBus';
 import { cloverDB } from '@modules/common/offline/db/indexedDB';
+import { walletService } from './service';
 import type { Transaction, WalletState } from './types';
 
 const WALLET_BALANCE_STORE = 'wallet-balance';
@@ -65,6 +66,17 @@ class WalletStore {
 
     subscribe(callback: (state: WalletState) => void): () => void {
         return this.eventBus.on('walletStateChanged', callback);
+    }
+
+    async fetchBalance(): Promise<void> {
+        try {
+            const res = await walletService.getBalance();
+            if (res.success && res.data) {
+                this.setState({ balance: res.data.balance, isLoading: false });
+            }
+        } catch {
+            // silent
+        }
     }
 
     private async persistBalance(balance: number, currency: string): Promise<void> {
