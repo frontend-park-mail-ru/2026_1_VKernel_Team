@@ -67,11 +67,12 @@ export const SellerPageController = {
 
         const activeAds = enrichWithFavorite(state.activeAds);
         const closedAds = enrichWithFavorite(state.closedAds);
+        const totalAdsCount = activeAds.length + closedAds.length;
 
         app.innerHTML = template({
             isAuthenticated: store.isAuthenticated,
             user: store.user,
-            seller: state.profile,
+            seller: { ...state.profile, adsCount: totalAdsCount },
             activeAds,
             closedAds,
             activeAdsCount: activeAds.length,
