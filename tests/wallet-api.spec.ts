@@ -70,17 +70,17 @@ test.describe('Кошелёк', () => {
         await page.click('#topupModal [data-action="go-to-step2"]');
         await page.waitForSelector('#topupStep2', { state: 'visible' });
 
+        await page.click('#topupModal [data-quick-amount="200"]');
+        expect(await page.locator('#topupAmountInput').inputValue()).toBe('200');
+        await expect(page.locator('[data-quick-amount="200"]')).toHaveClass(/active/);
+
         await page.click('#topupModal [data-quick-amount="500"]');
         expect(await page.locator('#topupAmountInput').inputValue()).toBe('500');
         await expect(page.locator('[data-quick-amount="500"]')).toHaveClass(/active/);
-
-        await page.click('#topupModal [data-quick-amount="100"]');
-        expect(await page.locator('#topupAmountInput').inputValue()).toBe('100');
-        await expect(page.locator('[data-quick-amount="100"]')).toHaveClass(/active/);
-        await expect(page.locator('[data-quick-amount="500"]')).not.toHaveClass(/active/);
+        await expect(page.locator('[data-quick-amount="200"]')).not.toHaveClass(/active/);
 
         await page.fill('#topupAmountInput', '250');
-        await expect(page.locator('[data-quick-amount="100"]')).not.toHaveClass(/active/);
+        await expect(page.locator('[data-quick-amount="200"]')).not.toHaveClass(/active/);
 
         await page.click('#topupModal [data-action="go-to-step1"]');
         await expect(page.locator('#topupStep1')).toBeVisible();
@@ -94,7 +94,7 @@ test.describe('Кошелёк', () => {
         await page.click('[data-action="open-topup"]');
         await expect(page.locator('#topupModal')).toBeVisible();
 
-        await page.click('.modal-close');
+        await page.click('#topupModal .modal-close');
         await expect(page.locator('#topupModal')).not.toBeVisible();
 
         await page.click('[data-action="open-topup"]');
@@ -166,7 +166,7 @@ test.describe('Кошелёк', () => {
         await page.fill('#topupCardExpiry', '12/28');
         await page.fill('#topupCardCvv', '123');
         await page.click('#topupModal [data-action="go-to-step2"]');
-        await page.click('[data-quick-amount="100"]');
+        await page.click('#topupModal [data-quick-amount="200"]');
         await page.click('[data-action="confirm-topup"]');
         await expect(page.locator('#topupModal')).not.toBeVisible({ timeout: 10000 });
 

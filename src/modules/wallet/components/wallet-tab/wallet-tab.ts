@@ -3,6 +3,7 @@ import template from '@modules/wallet/components/wallet-tab/wallet-tab.hbs';
 import { walletService } from '@modules/wallet/service';
 import { walletStore } from '@modules/wallet/store';
 import { TopupModal } from '@modules/wallet/components/topup-modal/topup-modal';
+import { createBaseModal } from '@modules/common/components/modal/modal';
 import { uiActions } from '@/actions/uiActions';
 import { eventBus } from '@/core/eventBus';
 
@@ -61,12 +62,21 @@ export const WalletTab = {
         const contentEl = document.getElementById('tabContent');
         if (!contentEl) return;
 
+        const modalEl = document.getElementById('topupModal');
+        const isModalOpen = modalEl && modalEl.style.display !== 'none';
+
         const state = walletStore.getState();
         const templateData = this.buildTemplateData(state);
         contentEl.innerHTML = template(templateData);
+
+        if (isModalOpen && modalEl) {
+            contentEl.appendChild(modalEl);
+            TopupModal.init();
+        }
+
         this._boundElement = null;
         this.init();
-        TopupModal.init();
+        if (!isModalOpen) TopupModal.init();
     },
 
     buildTemplateData(state: ReturnType<typeof walletStore.getState>) {

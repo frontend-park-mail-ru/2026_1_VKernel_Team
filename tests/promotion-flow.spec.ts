@@ -36,12 +36,15 @@ test.describe('Сценарий платного продвижения', () => 
         await page.goto('/profile?tab=wallet');
         await page.waitForSelector('.wallet-balance-card');
         await page.click('[data-action="open-topup"]');
+        await page.waitForSelector('#topupCardNumber', { state: 'visible' });
         await page.fill('#topupCardNumber', '1234567890123456');
         await page.fill('#topupCardExpiry', '12/28');
         await page.fill('#topupCardCvv', '123');
+        await page.waitForSelector('#topupModal [data-action="go-to-step2"]', { state: 'visible' });
         await page.click('#topupModal [data-action="go-to-step2"]');
         await page.waitForSelector('#topupStep2', { state: 'visible' });
         await page.click(`#topupModal [data-quick-amount="${amount}"]`);
+        await expect(page.locator(`[data-quick-amount="${amount}"]`)).toHaveClass(/active/);
         await page.click('#topupModal [data-action="confirm-topup"]');
         await expect(page.locator('#topupModal')).not.toBeVisible({ timeout: 10000 });
     }

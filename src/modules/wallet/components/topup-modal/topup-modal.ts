@@ -75,6 +75,18 @@ export const TopupModal = {
                 return;
             }
 
+            if (target.closest('[data-action="scroll-left"]')) {
+                const container = modal.querySelector('.topup-quick-amounts');
+                if (container) container.scrollBy({ left: -120, behavior: 'smooth' });
+                return;
+            }
+
+            if (target.closest('[data-action="scroll-right"]')) {
+                const container = modal.querySelector('.topup-quick-amounts');
+                if (container) container.scrollBy({ left: 120, behavior: 'smooth' });
+                return;
+            }
+
             if (target.closest('[data-action="confirm-topup"]')) {
                 this.handleConfirm();
                 return;
@@ -124,6 +136,7 @@ export const TopupModal = {
         const amountInput = document.getElementById('topupAmountInput') as HTMLInputElement;
         if (amountInput) {
             amountInput.addEventListener('input', () => {
+                amountInput.value = amountInput.value.replace(/\D/g, '');
                 modal.querySelectorAll('.topup-quick-btn').forEach((btn) => {
                     btn.classList.remove('active');
                 });
@@ -145,9 +158,9 @@ export const TopupModal = {
             if (amountInput) amountInput.value = '';
 
             const cardError = document.getElementById('topupCardError');
-            if (cardError) cardError.style.display = 'none';
+            if (cardError) cardError.classList.remove('topup-error--visible');
             const error = document.getElementById('topupError');
-            if (error) error.style.display = 'none';
+            if (error) error.classList.remove('topup-error--visible');
 
             modal.querySelectorAll('.topup-quick-btn').forEach((btn) => {
                 btn.classList.remove('active');
@@ -179,8 +192,10 @@ export const TopupModal = {
     showStep(step: number): void {
         const step1 = document.getElementById('topupStep1');
         const step2 = document.getElementById('topupStep2');
+        const stepLoading = document.getElementById('topupStepLoading');
         if (step1) step1.style.display = step === 1 ? '' : 'none';
         if (step2) step2.style.display = step === 2 ? '' : 'none';
+        if (stepLoading) stepLoading.style.display = step === 3 ? '' : 'none';
     },
 
     goToStep2(): void {
@@ -189,12 +204,12 @@ export const TopupModal = {
             const errorEl = document.getElementById('topupCardError');
             if (errorEl) {
                 errorEl.textContent = validation.error;
-                errorEl.style.display = 'block';
+                errorEl.classList.add('topup-error--visible');
             }
             return;
         }
         const cardError = document.getElementById('topupCardError');
-        if (cardError) cardError.style.display = 'none';
+        if (cardError) cardError.classList.remove('topup-error--visible');
         this.showStep(2);
     },
 
@@ -210,40 +225,45 @@ export const TopupModal = {
         if (!amount || amount <= 0) {
             if (errorEl) {
                 errorEl.textContent = 'Введите сумму больше 0';
-                errorEl.style.display = 'block';
+                errorEl.classList.add('topup-error--visible');
             }
             return;
         }
 
-        uiActions.showLoading(true);
+        this.showStep(3);
+        const start = Date.now();
         try {
             const res = await walletService.topup(amount, this._idempotencyKey);
+            const elapsed = Date.now() - start;
+            if (elapsed < 1500) {
+                await new Promise((r) => setTimeout(r, 1500 - elapsed));
+            }
             if (res.success && res.data) {
                 walletStore.setState({
                     balance: res.data.balance,
                     error: null,
                 });
-                uiActions.showSuccess('Кошелёк пополнен');
                 this.close();
+                uiActions.showSuccess(`Кошелёк пополнен на ${amount} ₽`);
                 eventBus.emit('wallet:updated');
                 await this.loadTransactions();
             } else {
+                this.showStep(2);
                 const errorMsg =
                     res.error === 'INVALID_AMOUNT'
                         ? 'Некорректная сумма'
                         : 'Не удалось пополнить кошелёк';
                 if (errorEl) {
                     errorEl.textContent = errorMsg;
-                    errorEl.style.display = 'block';
+                    errorEl.classList.add('topup-error--visible');
                 }
             }
         } catch {
+            this.showStep(2);
             if (errorEl) {
                 errorEl.textContent = 'Ошибка сети';
-                errorEl.style.display = 'block';
+                errorEl.classList.add('topup-error--visible');
             }
-        } finally {
-            uiActions.showLoading(false);
         }
     },
 
