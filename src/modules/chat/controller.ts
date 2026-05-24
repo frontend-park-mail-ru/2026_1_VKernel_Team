@@ -56,12 +56,14 @@ function prepareMessages(
 
     return messages.map((msg) => {
         const isOrder = msg.type === 'order';
+        const isSystem = msg.type === 'system';
         return {
             id: msg.id,
             text: msg.text,
             type: msg.type,
             isOrder,
-            isMine: currentUserId !== null && msg.sender_id === currentUserId,
+            isSystem,
+            isMine: !isSystem && currentUserId !== null && msg.sender_id === currentUserId,
             canConfirm: isOrder && isSeller && !isSold,
             canReview: isOrder && canReview,
             hasMyReview: !!myReview,

@@ -30,6 +30,8 @@ import { unreadStore, UNREAD_CHANGED_EVENT } from '@modules/chat/unread-store';
 import { cartStore } from '@modules/cart/store';
 import { cartActions } from '@modules/cart/actions';
 import { StatsController } from '@modules/support-admin/controllers/statsController';
+import { ModerationController } from '@modules/moderation/controller';
+import { moderationStore, MODERATION_COUNT_CHANGED_EVENT } from '@modules/moderation/store';
 import {
     ProductSearchController,
     loadTemplates as loadProductSearchTemplates,
@@ -115,6 +117,7 @@ const registerHelpers = (Hbs: any) => {
         const labels: Record<string, string> = {
             info: 'Личные данные',
             ads: 'Мои объявления',
+            pending: 'На модерации',
             favorites: 'Избранное',
             cart: 'Корзина',
             messages: 'Сообщения',
@@ -272,7 +275,40 @@ export const AppController = {
             }
         }) as EventListener);
 
+        // Глобальный делегированный обработчик для кнопок «Удалить (админ)»
+        // на карточках в любых листингах. На странице объявления есть свой
+        // обработчик в AdDetailController, поэтому там игнорируем.
+        document.addEventListener('click', (e) => {
+            const target = e.target as HTMLElement;
+            const adminBtn = target.closest(
+                '[data-action="admin-delete-ad"]',
+            ) as HTMLElement | null;
+            if (!adminBtn) return;
+            if (adminBtn.classList.contains('admin-delete-btn--detail')) return;
+
+            e.preventDefault();
+            e.stopPropagation();
+
+            const id = adminBtn.dataset.adId;
+            const title = adminBtn.dataset.adTitle || '';
+            if (!id) return;
+
+            import('@modules/moderation/components/admin-delete-modal/admin-delete-modal').then(
+                ({ AdminDeleteModal }) => {
+                    AdminDeleteModal.open(id, title).then((deleted) => {
+                        if (deleted) {
+                            const card = adminBtn.closest('[data-id]') as HTMLElement | null;
+                            if (card) card.remove();
+                        }
+                    });
+                },
+            );
+        });
+
         window.addEventListener(UNREAD_CHANGED_EVENT, () => {
+            this.renderHeader();
+        });
+        window.addEventListener(MODERATION_COUNT_CHANGED_EVENT, () => {
             this.renderHeader();
         });
         cartStore.subscribe(() => {
@@ -284,6 +320,9 @@ export const AppController = {
 
         if (store.isAuthenticated) {
             unreadStore.refreshCountFromServer();
+            if (store.user?.role === 'admin') {
+                moderationStore.refreshFromServer().catch(() => {});
+            }
         }
 
         initOfflineIndicator();
@@ -475,6 +514,8 @@ export const AppController = {
             unreadChatsCount: store.isAuthenticated ? unreadStore.count : 0,
             cartCount: store.isAuthenticated ? cartStore.getState().items.length : 0,
             isStaff: role === 'support' || role === 'admin',
+            isAdmin: role === 'admin',
+            moderationCount: role === 'admin' ? moderationStore.count : 0,
         });
     },
 
@@ -545,6 +586,11 @@ export const AppController = {
 
         if (path === '/support/stats') {
             StatsController.render();
+            return;
+        }
+
+        if (path === '/moderation') {
+            ModerationController.render();
             return;
         }
 

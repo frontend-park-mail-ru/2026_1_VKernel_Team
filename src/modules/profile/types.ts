@@ -2,6 +2,7 @@
 export type ProfileTab =
     | 'info'
     | 'ads'
+    | 'pending'
     | 'favorites'
     | 'cart'
     | 'messages'

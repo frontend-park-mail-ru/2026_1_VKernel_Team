@@ -39,6 +39,24 @@
     </div>
   {{/if}}
 
+    {{#if (eq currentTab 'pending')}}
+        <h2 class="profile-section-title">На модерации</h2>
+        {{#if pendingAds.length}}
+            <div class="profile-ads-row">
+                {{#each pendingAds}}
+                    <div class="profile-pending-card">
+                        <span class="profile-pending-card__badge">На модерации</span>
+                        {{> profile/components/profile-ad-card/profile-ad-card this readOnly=true}}
+                    </div>
+                {{/each}}
+            </div>
+        {{else}}
+            <p class="profile-pending-empty profile-ads-empty">
+                На модерации нет объявлений.
+            </p>
+        {{/if}}
+    {{/if}}
+
     {{#if (eq currentTab 'favorites')}}
         <h2 class="profile-section-title">Избранное</h2>
     {{#if favorites.length}}

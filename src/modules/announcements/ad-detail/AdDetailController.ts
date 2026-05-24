@@ -216,6 +216,13 @@ export class AdDetailController {
                 const userId = store.user?.id || store.user?.user_id;
                 return !!(userId && Number(userId) === Number(adAny.seller_id));
             })(),
+            isAdmin: store.user?.role === 'admin',
+            rejection_reason: adAny.rejection_reason || '',
+            showRejectionBanner: (() => {
+                const userId = store.user?.id || store.user?.user_id;
+                const isOwner = !!(userId && Number(userId) === Number(adAny.seller_id));
+                return isOwner && ad.status === 'rejected' && !!adAny.rejection_reason;
+            })(),
             sellerSince: sellerData?.registrationDate
                 ? sellerData.registrationDate
                 : adAny.seller_created_at
@@ -579,6 +586,28 @@ export class AdDetailController {
 
             messageBtn.addEventListener('click', handler);
             this._handlers.set('messageSeller', handler);
+        }
+
+        const adminDeleteBtn = document.querySelector(
+            '[data-action="admin-delete-ad"]',
+        ) as HTMLElement | null;
+        if (adminDeleteBtn) {
+            const handler = async (e: Event) => {
+                e.preventDefault();
+                e.stopPropagation();
+                const id = adminDeleteBtn.dataset.adId || adId;
+                const title = adminDeleteBtn.dataset.adTitle || '';
+                const { AdminDeleteModal } =
+                    await import('@modules/moderation/components/admin-delete-modal/admin-delete-modal');
+                const deleted = await AdminDeleteModal.open(id, title);
+                if (deleted) {
+                    window.dispatchEvent(
+                        new CustomEvent('app:navigate', { detail: { path: '/' } }),
+                    );
+                }
+            };
+            adminDeleteBtn.addEventListener('click', handler);
+            this._handlers.set('adminDelete', handler);
         }
 
         const editBtn = document.querySelector('[data-action="edit-ad"]');
