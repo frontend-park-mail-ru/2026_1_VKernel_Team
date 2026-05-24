@@ -151,6 +151,15 @@
                         </button>
                     </div>
 
+                    <!-- КНОПКА ИСТОРИИ ЦЕН -->
+                    {{#if hasPriceHistory}}
+                    <div class="price-history-row">
+                        <button class="price-history-trigger" data-action="show-price-history" title="История изменения цены">
+                            📈 История цены
+                        </button>
+                    </div>
+                    {{/if}}
+
                     <!-- КНОПКИ ДЕЙСТВИЙ -->
                     <div class="action-buttons">
                         {{#if isAdmin}}

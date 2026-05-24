@@ -18,6 +18,7 @@ import { eventBus } from '@/core/eventBus';
 import { renderStarsHTML } from '@/utils/icons';
 import { PromoteModal } from '@modules/promotion/components/promote-modal/promote-modal';
 import { promotionService } from '@modules/promotion/service';
+import { PriceHistoryModal } from '../price-history/modal/price-history-modal';
 import reviewCtaTpl from '@modules/reviews/components/review-cta/review-cta.hbs?raw';
 import { ReviewsModule } from '@modules/reviews/controller';
 import { ReviewModal } from '@modules/reviews/components/review-modal/review-modal';
@@ -239,6 +240,9 @@ export class AdDetailController {
             sellerRating: rating,
             sellerStars: sellerStars,
             user: store.user,
+
+            hasPriceHistory: true,
+            adCreatedAt: ad.created_at || new Date().toISOString(),
 
             avatarUrl: (() => {
                 const src = store.user?.avatar_path || store.user?.avatar;
@@ -750,6 +754,46 @@ export class AdDetailController {
             this._handlers.set(uniqueKey, handler);
         });
 
+        // В методе attachEventListeners, после рендера
+        const priceHistoryBtn = document.querySelector('[data-action="show-price-history"]');
+        if (priceHistoryBtn) {
+            // Удаляем старый обработчик, если есть
+            if (this._handlers.has('priceHistory')) {
+                priceHistoryBtn.removeEventListener('click', this._handlers.get('priceHistory')!);
+            }
+
+            const handler = (e: Event) => {
+
+                e.preventDefault();
+                e.stopPropagation();
+
+                const adId = this.adId;
+                if (!adId) {
+                    ('Нет adId');
+                    return;
+                }
+
+                const titleEl = document.querySelector('.ad-title');
+                const title = titleEl?.textContent?.trim() || 'Объявление';
+
+                const priceEl = document.querySelector('.current-price');
+                const currentPriceText = priceEl?.textContent?.trim() || '0';
+                const currentPrice = parseInt(currentPriceText.replace(/\D/g, ''), 10) || 0;
+
+                const createdAtEl = document.querySelector('[data-created-at]') as HTMLElement;
+                const createdAt = createdAtEl?.dataset.createdAt || new Date().toISOString();
+
+                PriceHistoryModal.getInstance().open({
+                    adId: adId,
+                    adTitle: title,
+                    createdAt: createdAt,
+                    currentPrice: currentPrice,
+                });
+            };
+
+            priceHistoryBtn.addEventListener('click', handler);
+            this._handlers.set('priceHistory', handler);
+        }
         const allReviewsBtns = document.querySelectorAll<HTMLElement>(
             '[data-action="all-reviews"]',
         );
