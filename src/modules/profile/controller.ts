@@ -76,8 +76,7 @@ function formatAdCard(ad: UserAd) {
     };
 }
 
-function formatTimeLeft(expiresAt: string): string {
-    const ms = new Date(expiresAt).getTime() - Date.now();
+function formatTimeLeftFromMs(ms: number): string {
     if (ms <= 0) return 'завершено';
     const totalHours = Math.floor(ms / 3600000);
     const days = Math.floor(totalHours / 24);
@@ -186,23 +185,22 @@ export const ProfileController = {
             if (!ad) return;
 
             const now = Date.now();
-            const activeBoost = promotions.find(
-                (p) => p.kind === 'boost' && new Date(p.expires_at).getTime() > now,
-            );
-            const activeHighlight = promotions.find(
-                (p) => p.kind === 'highlight' && new Date(p.expires_at).getTime() > now,
-            );
+            const activeByKind: Record<string, number> = {};
+            for (const p of promotions) {
+                const ms = new Date(p.expires_at).getTime() - now;
+                if (ms > 0) activeByKind[p.kind] = (activeByKind[p.kind] || 0) + ms;
+            }
 
-            ad.is_boosted = !!activeBoost;
-            ad.is_highlighted = !!activeHighlight;
-            ad.boost_time_left = activeBoost ? formatTimeLeft(activeBoost.expires_at) : '';
-            ad.boost_expires_at = activeBoost ? activeBoost.expires_at : '';
-            ad.highlight_time_left = activeHighlight
-                ? formatTimeLeft(activeHighlight.expires_at)
+            ad.is_boosted = !!activeByKind['boost'];
+            ad.is_highlighted = !!activeByKind['highlight'];
+            ad.boost_time_left = activeByKind['boost']
+                ? formatTimeLeftFromMs(activeByKind['boost'])
                 : '';
-            ad.highlight_expires_at = activeHighlight ? activeHighlight.expires_at : '';
+            ad.highlight_time_left = activeByKind['highlight']
+                ? formatTimeLeftFromMs(activeByKind['highlight'])
+                : '';
 
-            if (activeBoost || activeHighlight) hasActivePromo = true;
+            if (ad.is_boosted || ad.is_highlighted) hasActivePromo = true;
         });
 
         if (hasActivePromo) {
