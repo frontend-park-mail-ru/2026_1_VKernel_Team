@@ -36,24 +36,6 @@
     border: 1px solid #c3c3c3;
 }
 
-.geo {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-
-    .icon {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        color: #2bde8c;
-
-        svg {
-            width: 18px;
-            height: 18px;
-        }
-    }
-}
-
 /* ----- Search suggestions dropdown ----- */
 .search-suggestions {
     position: absolute;
@@ -253,20 +235,4 @@
         }
     }
 
-    body .geo {
-        flex-shrink: 0;
-        display: flex;
-        align-items: center;
-        gap: 4px;
-        order: 4;
-    }
-
-    body .geo .city {
-        display: inline;
-        font-size: 12px;
-        max-width: 60px; 
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
 }
