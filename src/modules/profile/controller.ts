@@ -22,7 +22,7 @@ import { walletStore } from '@modules/wallet/store';
 import { walletService } from '@modules/wallet/service';
 import { PROFILE_CONFIG } from '@modules/profile/config';
 import { MyReviewsPage } from '@modules/reviews/pages/my-reviews/my-reviews';
-
+import { ExitModal } from '@modules/profile/components/exit-modal/exit-modal';
 import { apiClient, API_ENDPOINTS } from '@/api/apiClient';
 import { CONFIG } from '@/core/config';
 import { purchasesStore } from '@modules/profile/purchases-store';
@@ -483,13 +483,18 @@ export const ProfileController = {
     },
 
     async handleLogout(): Promise<void> {
-        try {
-            await ProfileService.logout();
-            store.setState({ isAuthenticated: false, user: null });
-            window.location.href = '/';
-        } catch (err) {
-            uiActions.showError('Ошибка при выходе');
-        }
+        const modal = new ExitModal(async () => {
+            try {
+                await ProfileService.logout();
+                store.setState({ isAuthenticated: false, user: null });
+                window.location.href = '/';
+            } catch (err) {
+                import('@/actions/uiActions').then(({ uiActions }) => {
+                    uiActions.showError('Ошибка при выходе');
+                });
+            }
+        });
+        modal.render();
     },
 
     async loadWalletData(): Promise<void> {

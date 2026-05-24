@@ -8,6 +8,9 @@
 }
 
 .chat-detail-page__back {
+    display: inline-flex;      
+    align-items: center;       
+    gap: 6px;                  
     align-self: flex-start;
     font-size: 14px;
     color: #555;
@@ -16,6 +19,17 @@
 
 .chat-detail-page__back:hover {
     color: #2bde8c;
+}
+
+.chat-detail-page__back-icon {
+    display: inline-flex;
+    align-items: center;
+}
+
+.chat-detail-page__back-icon svg {
+    width: 16px;
+    height: 16px;
+    display: block;
 }
 
 .chat-detail-page__header {
@@ -61,14 +75,27 @@
     text-overflow: ellipsis;
 }
 
-.chat-detail-page__partner:hover .chat-detail-page__partner-name,
 .chat-detail-page__partner:hover .chat-detail-page__partner-hint {
     color: #2bde8c;
 }
 
 .chat-detail-page__partner-hint {
+    display: inline-flex;      
+    align-items: center;       
+    gap: 4px;                  
     font-size: 12px;
     color: #999;
+}
+
+.chat-detail-page__partner-hint-icon {
+    display: inline-flex;
+    align-items: center;
+}
+
+.chat-detail-page__partner-hint-icon svg {
+    width: 12px;         
+    height: 12px;
+    display: block;
 }
 
 .chat-detail-page__ad {

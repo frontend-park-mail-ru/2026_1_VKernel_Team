@@ -321,6 +321,7 @@
     align-items: center;
     gap: 6px;
     min-height: 44px;
+    align-self: flex-start; 
 
     .back-btn__icon {
         display: inline-flex;
@@ -567,14 +568,12 @@
         }
     }
 
-    /* ЦИФРА РЕЙТИНГА */
     .ad-detail-page .rating-value {
         font-size: 14px;
         font-weight: 600;
         color: #333;
     }
 
-    /* КНОПКА "ВСЕ ОТЗЫВЫ" */
     .ad-detail-page .all-reviews-btn {
         background: none;
         border: none;
@@ -582,11 +581,24 @@
         font-size: 12px;
         cursor: pointer;
         padding: 0;
-        display: inline-block;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px; 
     }
 
     .ad-detail-page .all-reviews-btn:hover {
         text-decoration: underline;
+    }
+
+    .ad-detail-page .all-reviews-btn__icon {
+        display: inline-flex;
+        align-items: center;
+    }
+
+    .ad-detail-page .all-reviews-btn__icon svg {
+        width: 14px;
+        height: 14px;
+        display: block;
     }
 
 

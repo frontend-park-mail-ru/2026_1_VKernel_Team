@@ -31,10 +31,6 @@ export const SearchSectionComponent = {
             <button class="btn place-ad-btn" id="globalSearchBtn" aria-label="Найти">Найти</button>
             <div class="search-suggestions" id="globalSearchSuggestions" hidden role="listbox"></div>
         </div>
-        <div class="geo">
-            <span class="icon" aria-hidden="true">${getIcon('pin')}</span>
-            <span class="city">Москва</span>
-        </div>
     </div>
 </div>
         `.trim();
