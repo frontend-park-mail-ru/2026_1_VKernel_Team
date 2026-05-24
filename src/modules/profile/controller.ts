@@ -80,6 +80,9 @@ export const ProfileController = {
             eventBus.on('profile:switch-tab', (tab: ProfileTab) => this.switchTab(tab)),
             eventBus.on('profile:logout', () => this.handleLogout()),
             eventBus.on('profile:update-ui', () => this.refreshUI()),
+            eventBus.on('wallet:updated', () => {
+                if (store.user) this.rerenderSidebar(store.user as UserProfile);
+            }),
             eventBus.on('profile:favorite-removed', (removedAdId: number) => {
                 this.userFavorites = this.userFavorites.filter(
                     (ad) => Number(ad.id) !== removedAdId,
@@ -284,6 +287,7 @@ export const ProfileController = {
             user: userWithUnread,
             totalAdsCount: this.userAds.length,
             isAuthenticated: store.isAuthenticated,
+            walletBalance: walletStore.getState().balance,
         });
     },
 

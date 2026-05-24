@@ -61,11 +61,12 @@
     width: 32px;
     height: 32px;
     border-radius: 50%;
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
     font-weight: 700;
     font-size: 14px;
+    padding-bottom: 1px;
 
     &--topup {
         background: #e8f5e9;

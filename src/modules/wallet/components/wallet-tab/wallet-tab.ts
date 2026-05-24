@@ -87,8 +87,8 @@ export const WalletTab = {
                 ...tx,
                 formattedAmount:
                     tx.type === 'topup'
-                        ? `+${tx.amount.toLocaleString('ru-RU')} ₽`
-                        : `−${Math.abs(tx.amount).toLocaleString('ru-RU')} ₽`,
+                        ? `${tx.amount.toLocaleString('ru-RU')} ₽`
+                        : `${Math.abs(tx.amount).toLocaleString('ru-RU')} ₽`,
             })),
             nextCursor: state.nextCursor,
         };

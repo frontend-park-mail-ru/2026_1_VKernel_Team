@@ -134,7 +134,11 @@ const registerHelpers = (Hbs: any) => {
         if (isNaN(date.getTime())) {
             return '—';
         }
-        return date.toLocaleDateString('ru-RU');
+        return (
+            date.toLocaleDateString('ru-RU') +
+            ', ' +
+            date.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })
+        );
     });
 
     Hbs.registerHelper('formatTxType', function (type: string) {
