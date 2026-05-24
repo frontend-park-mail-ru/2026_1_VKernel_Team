@@ -6,6 +6,7 @@ export type ProfileTab =
     | 'cart'
     | 'messages'
     | 'purchases'
+    | 'paid_services'
     | 'wallet'
     | 'settings';
 

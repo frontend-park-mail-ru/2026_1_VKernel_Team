@@ -1,6 +1,7 @@
 import '@modules/profile/components/profile-content/style.scss';
 import template from '@modules/profile/components/profile-content/profile-content.hbs';
 import { CloseAdModal } from '@modules/profile/components/close-ad-modal/close-ad-modal';
+import { PromoteModal } from '@modules/promotion/components/promote-modal/promote-modal';
 import { eventBus } from '@/core/eventBus';
 
 export const ProfileContent = {
@@ -34,7 +35,9 @@ export const ProfileContent = {
             }
 
             // Кнопка закрытия объявления
-            const closeBtn = target.closest('.rec-card-close') as HTMLElement | null;
+            const closeBtn =
+                (target.closest('.rec-card-close') as HTMLElement | null) ||
+                (target.closest('.profile-ad-card__btn--close') as HTMLElement | null);
             if (closeBtn) {
                 e.stopPropagation();
                 const adId = closeBtn.getAttribute('data-close-id');
@@ -43,8 +46,19 @@ export const ProfileContent = {
                 return;
             }
 
-            // Кнопка редактирования
-            const editBtn = target.closest('.rec-card-edit') as HTMLElement | null;
+            const promoteBtn =
+                (target.closest('.rec-card-promote') as HTMLElement | null) ||
+                (target.closest('.profile-ad-card__btn--promote') as HTMLElement | null);
+            if (promoteBtn) {
+                e.stopPropagation();
+                const adId = promoteBtn.getAttribute('data-promote-id');
+                if (adId) PromoteModal.open(adId);
+                return;
+            }
+
+            const editBtn =
+                (target.closest('.rec-card-edit') as HTMLElement | null) ||
+                (target.closest('.profile-ad-card__btn--edit') as HTMLElement | null);
             if (editBtn) {
                 e.preventDefault();
                 e.stopPropagation();
@@ -55,14 +69,18 @@ export const ProfileContent = {
                 return;
             }
 
-            // Клик по карточке → страница объявления
-            const card = target.closest('.rec-card');
+            const card =
+                (target.closest('.rec-card') as HTMLElement | null) ||
+                (target.closest('.profile-ad-card') as HTMLElement | null);
             if (
                 card &&
                 !target.closest('.rec-card-fav') &&
                 !target.closest('.rec-card-cart') &&
                 !target.closest('.rec-card-edit') &&
-                !target.closest('.rec-card-close')
+                !target.closest('.rec-card-close') &&
+                !target.closest('.rec-card-promote') &&
+                !target.closest('.profile-ad-card__btn') &&
+                !target.closest('.profile-ad-card__actions')
             ) {
                 const adId = card.getAttribute('data-id');
                 if (adId) {

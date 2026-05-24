@@ -13,6 +13,13 @@ import { ProfileContent } from '@modules/profile/components/profile-content/prof
 import { EditNameModal } from '@modules/profile/components/edit-name-modal/edit-name-modal';
 import { CloseAdModal } from '@modules/profile/components/close-ad-modal/close-ad-modal';
 import { FavoriteCard } from '@modules/profile/components/favorite-card/favorite-card';
+import { TopupModal } from '@modules/wallet/components/topup-modal/topup-modal';
+import { WalletTab } from '@modules/wallet/components/wallet-tab/wallet-tab';
+import { PromoHistoryTab } from '@modules/promotion/components/history-tab/history-tab';
+import { promotionService } from '@modules/promotion/service';
+import type { ActivePromotion } from '@modules/promotion/types';
+import { walletStore } from '@modules/wallet/store';
+import { walletService } from '@modules/wallet/service';
 import { PROFILE_CONFIG } from '@modules/profile/config';
 
 import { apiClient, API_ENDPOINTS } from '@/api/apiClient';
@@ -30,6 +37,7 @@ interface UserAd {
     id: number;
     title: string;
     price: number;
+    description?: string;
     photos?: string[];
     views_count?: number;
     created_at?: string;
@@ -60,7 +68,30 @@ function formatAdCard(ad: UserAd) {
         views: ad.views_count || 0,
         location: ad.location || 'Москва',
         createdDate: ad.created_at ? new Date(ad.created_at).toLocaleDateString('ru-RU') : '',
+        shortDescription: ad.description
+            ? ad.description.length > 100
+                ? ad.description.slice(0, 100) + '…'
+                : ad.description
+            : '',
     };
+}
+
+function formatTimeLeftFromMs(ms: number): string {
+    if (ms <= 0) return 'завершено';
+    const totalHours = Math.floor(ms / 3600000);
+    const days = Math.floor(totalHours / 24);
+    const hours = totalHours % 24;
+    const parts: string[] = [];
+    if (days > 0) {
+        const word = days === 1 ? 'день' : days < 5 ? 'дня' : 'дней';
+        parts.push(`${days} ${word}`);
+    }
+    if (hours > 0) {
+        const word = hours === 1 ? 'час' : hours < 5 ? 'часа' : 'часов';
+        parts.push(`${hours} ${word}`);
+    }
+    if (parts.length === 0) parts.push('менее часа');
+    return `ещё ${parts.join(' ')}`;
 }
 
 export const ProfileController = {
@@ -75,6 +106,9 @@ export const ProfileController = {
             eventBus.on('profile:switch-tab', (tab: ProfileTab) => this.switchTab(tab)),
             eventBus.on('profile:logout', () => this.handleLogout()),
             eventBus.on('profile:update-ui', () => this.refreshUI()),
+            eventBus.on('wallet:updated', () => {
+                if (store.user) this.rerenderSidebar(store.user as UserProfile);
+            }),
             eventBus.on('profile:favorite-removed', (removedAdId: number) => {
                 this.userFavorites = this.userFavorites.filter(
                     (ad) => Number(ad.id) !== removedAdId,
@@ -122,12 +156,56 @@ export const ProfileController = {
             );
             if (result.success && result.data?.ads) {
                 this.userAds = result.data.ads.map((ad: UserAd) => formatAdCard(ad));
+                this.loadAdPromotions();
                 this.rerenderTab(store.user as UserProfile);
                 this.attachEventListeners();
             }
         } catch (error) {
             console.error('Failed to load user ads:', error);
             this.userAds = [];
+        }
+    },
+
+    async loadAdPromotions(): Promise<void> {
+        const adIds = this.userAds
+            .filter((ad) => ad.status !== 'archived' && ad.status !== 'sold')
+            .map((ad) => Number(ad.id));
+        if (adIds.length === 0) return;
+
+        const results = await Promise.allSettled(
+            adIds.map((id) => promotionService.getAdPromotions(id)),
+        );
+
+        let hasActivePromo = false;
+        results.forEach((res, i) => {
+            if (res.status !== 'fulfilled' || !res.value.success || !res.value.data) return;
+            const promotions: ActivePromotion[] = res.value.data;
+            const adId = adIds[i];
+            const ad = this.userAds.find((a) => Number(a.id) === adId);
+            if (!ad) return;
+
+            const now = Date.now();
+            const activeByKind: Record<string, number> = {};
+            for (const p of promotions) {
+                const ms = new Date(p.expires_at).getTime() - now;
+                if (ms > 0) activeByKind[p.kind] = (activeByKind[p.kind] || 0) + ms;
+            }
+
+            ad.is_boosted = !!activeByKind['boost'];
+            ad.is_highlighted = !!activeByKind['highlight'];
+            ad.boost_time_left = activeByKind['boost']
+                ? formatTimeLeftFromMs(activeByKind['boost'])
+                : '';
+            ad.highlight_time_left = activeByKind['highlight']
+                ? formatTimeLeftFromMs(activeByKind['highlight'])
+                : '';
+
+            if (ad.is_boosted || ad.is_highlighted) hasActivePromo = true;
+        });
+
+        if (hasActivePromo) {
+            this.rerenderTab(store.user as UserProfile);
+            this.attachEventListeners();
         }
     },
 
@@ -193,7 +271,9 @@ export const ProfileController = {
         const modalContainer = document.createElement('div');
         modalContainer.id = 'modal-root';
         modalContainer.innerHTML =
-            EditNameModal.getTemplate()({ user }) + CloseAdModal.getTemplate()({});
+            EditNameModal.getTemplate()({ user }) +
+            CloseAdModal.getTemplate()({}) +
+            TopupModal.getTemplate()({});
         app.appendChild(modalContainer);
 
         this.renderAll();
@@ -203,6 +283,12 @@ export const ProfileController = {
 
         if (this.currentTab === 'favorites') {
             this.loadUserFavorites();
+        }
+        if (this.currentTab === 'wallet') {
+            this.loadWalletData();
+        }
+        if (this.currentTab === 'paid_services') {
+            this.loadPromoHistory();
         }
     },
 
@@ -234,6 +320,10 @@ export const ProfileController = {
     rerenderTab(user: UserProfile): void {
         const contentEl = document.getElementById('tabContent');
         if (!contentEl) return;
+        const topupModal = document.getElementById('topupModal');
+        if (topupModal && topupModal.style.display !== 'none') return;
+        const promoteModal = document.getElementById('promoteModal');
+        if (promoteModal && promoteModal.style.display !== 'none') return;
 
         const isArchivedStatus = (status?: string) => status === 'archived' || status === 'sold';
         const activeAds = this.userAds.filter((ad) => !isArchivedStatus(ad.status));
@@ -249,6 +339,8 @@ export const ProfileController = {
             purchases: this.formatPurchases(this.userPurchases),
             favorites: this.userFavorites,
             isAuthenticated: store.isAuthenticated,
+            ...WalletTab.buildTemplateData(walletStore.getState()),
+            ...PromoHistoryTab.buildTemplateData(),
         });
     },
 
@@ -269,6 +361,7 @@ export const ProfileController = {
             user: userWithUnread,
             totalAdsCount: this.userAds.length,
             isAuthenticated: store.isAuthenticated,
+            walletBalance: walletStore.getState().balance,
         });
     },
 
@@ -284,6 +377,10 @@ export const ProfileController = {
             this.loadUserPurchases();
         } else if (tab === 'favorites') {
             this.loadUserFavorites();
+        } else if (tab === 'wallet') {
+            this.loadWalletData();
+        } else if (tab === 'paid_services') {
+            this.loadPromoHistory();
         }
 
         this.renderAll();
@@ -296,6 +393,9 @@ export const ProfileController = {
         if (EditNameModal?.init) EditNameModal.init();
         if (CloseAdModal?.init) CloseAdModal.init();
         if (FavoriteCard?.init) FavoriteCard.init();
+        if (TopupModal?.init) TopupModal.init();
+        if (WalletTab?.init) WalletTab.init();
+        if (PromoHistoryTab?.init) PromoHistoryTab.init();
         // На вкладках с карточками рендерится partial cart-button — нужно
         // подключить его обработчики (добавление в корзину со страницы
         // «Избранное», «Мои покупки», «Объявления»).
@@ -314,6 +414,11 @@ export const ProfileController = {
         }
     },
 
+    async loadPromoHistory(): Promise<void> {
+        await PromoHistoryTab.loadHistory();
+        this.attachEventListeners();
+    },
+
     async handleLogout(): Promise<void> {
         try {
             await ProfileService.logout();
@@ -322,5 +427,26 @@ export const ProfileController = {
         } catch (err) {
             uiActions.showError('Ошибка при выходе');
         }
+    },
+
+    async loadWalletData(): Promise<void> {
+        await walletStore.loadFromCache();
+        const balanceRes = await walletService.getBalance();
+        if (balanceRes.success && balanceRes.data) {
+            walletStore.setState({
+                balance: balanceRes.data.balance,
+                currency: balanceRes.data.currency,
+                isLoading: false,
+            });
+        }
+        const txRes = await walletService.getTransactions(20);
+        if (txRes.success && txRes.data) {
+            walletStore.setState({
+                transactions: txRes.data.items,
+                nextCursor: txRes.data.next_cursor ?? null,
+            });
+        }
+        this.rerenderTab(store.user as UserProfile);
+        this.attachEventListeners();
     },
 };

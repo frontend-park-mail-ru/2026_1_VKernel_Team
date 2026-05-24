@@ -1,0 +1,34 @@
+<div class="wallet-tab-content">
+<h2 class="profile-section-title">Кошелёк</h2>
+
+<div class="wallet-balance-card">
+    <div class="wallet-balance-label">Баланс</div>
+    <div class="wallet-balance-value" id="walletBalanceValue">{{formattedBalance}}</div>
+    <button class="btn btn-primary wallet-topup-btn" data-action="open-topup">Пополнить</button>
+</div>
+
+<div class="wallet-transactions">
+    <h3 class="wallet-transactions-title">История операций</h3>
+    {{#if transactions.length}}
+        <ul class="wallet-transaction-list">
+            {{#each transactions}}
+                <li class="wallet-transaction-item">
+                    <span class="wallet-transaction-type wallet-transaction-type--{{this.type}}">
+                        {{#if (eq this.type 'topup')}}+{{else}}−{{/if}}
+                    </span>
+                    <span class="wallet-transaction-amount {{#if (eq this.type 'topup')}}wallet-amount--positive{{else}}wallet-amount--negative{{/if}}">
+                        {{this.formattedAmount}}
+                    </span>
+                    <span class="wallet-transaction-label">{{formatTxType this.type}}</span>
+                    <span class="wallet-transaction-date">{{formatDate this.created_at}}</span>
+                </li>
+            {{/each}}
+        </ul>
+        {{#if nextCursor}}
+            <button class="btn btn-secondary wallet-load-more" data-action="wallet-load-more">Загрузить ещё</button>
+        {{/if}}
+    {{else}}
+        <p class="wallet-empty">У вас пока нет операций</p>
+    {{/if}}
+</div>
+</div>

@@ -40,6 +40,7 @@ import { CategoriesModal } from '@modules/common/components/categories-modal/cat
 import { store } from '@/core/store';
 import { eventBus } from '@/core/eventBus';
 import { uiActions } from '@/actions/uiActions';
+import { walletStore } from '@modules/wallet/store';
 import type { HandlebarsTemplateFunction, TemplateName, UIConstants } from '@/types';
 import { authActions } from '@/actions/authActions';
 import { storage } from '@/utils/storage';
@@ -133,7 +134,47 @@ const registerHelpers = (Hbs: any) => {
         if (isNaN(date.getTime())) {
             return '—';
         }
+        return (
+            date.toLocaleDateString('ru-RU') +
+            ', ' +
+            date.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })
+        );
+    });
+
+    Hbs.registerHelper('formatDateOnly', function (dateString: string) {
+        if (!dateString) return '—';
+        const date = new Date(dateString);
+        if (isNaN(date.getTime())) return '—';
         return date.toLocaleDateString('ru-RU');
+    });
+
+    Hbs.registerHelper('formatTxType', function (type: string) {
+        const labels: Record<string, string> = {
+            topup: 'Пополнение',
+            promotion_charge: 'Списание',
+            refund: 'Возврат',
+        };
+        return labels[type] || type;
+    });
+
+    Hbs.registerHelper('timeLeft', function (expiresAt: string) {
+        if (!expiresAt) return '';
+        const diff = new Date(expiresAt).getTime() - Date.now();
+        if (diff <= 0) return 'Истекло';
+        const minutes = Math.floor(diff / 60000);
+        const hours = Math.floor(minutes / 60);
+        const days = Math.floor(hours / 24);
+        if (days > 0) {
+            const rem = hours % 24;
+            return rem > 0 ? `${days} дн. ${rem} ч.` : `${days} дн.`;
+        }
+        if (hours > 0) return `${hours} ч.`;
+        return `${minutes} мин.`;
+    });
+
+    Hbs.registerHelper('isExpired', function (expiresAt: string) {
+        if (!expiresAt) return true;
+        return new Date(expiresAt).getTime() < Date.now();
     });
 };
 
@@ -187,6 +228,7 @@ export const AppController = {
             await Promise.all([
                 AdsController.syncFavorites(),
                 cartActions.loadCart().catch(() => {}),
+                walletStore.fetchBalance().catch(() => {}),
             ]);
         }
         eventBus.on('app:navigate', (path: string) => {
@@ -388,6 +430,7 @@ export const AppController = {
                 unreadStore.refreshCountFromServer();
                 cartActions.loadCart().catch(() => {});
                 AdsController.syncFavorites().catch(() => {});
+                walletStore.fetchBalance().catch(() => {});
             }
             if (state.isAuthenticated === false) unreadStore.reset();
         }

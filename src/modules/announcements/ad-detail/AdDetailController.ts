@@ -16,6 +16,8 @@ import { networkStatus } from '@modules/common/offline/network/networkStatus';
 import type { Ad } from '@/types';
 import { eventBus } from '@/core/eventBus';
 import { renderStarsHTML } from '@/utils/icons';
+import { PromoteModal } from '@modules/promotion/components/promote-modal/promote-modal';
+import { promotionService } from '@modules/promotion/service';
 
 const AD_DETAIL_STORE = 'ads';
 
@@ -460,6 +462,19 @@ export class AdDetailController {
             this._handlers.set('editAd', handler);
         }
 
+        const promoteBtn = document.querySelector('[data-action="promote-ad"]');
+        if (promoteBtn) {
+            const handler = (e: Event) => {
+                e.preventDefault();
+                const promoteAdId = (promoteBtn as HTMLElement).dataset.promoteAdId;
+                if (promoteAdId) PromoteModal.open(promoteAdId);
+            };
+            promoteBtn.addEventListener('click', handler);
+            this._handlers.set('promoteAd', handler);
+
+            this.loadAdPromotionStatus(adId);
+        }
+
         const favoriteBtn = document.querySelector('[data-action="add-to-favorites"]');
         if (favoriteBtn) {
             if (this._handlers.has('addToFavorites')) {
@@ -733,5 +748,49 @@ export class AdDetailController {
         this._handlers.clear();
         this.currentPhotoIndex = 0;
         this.allPhotosArray = [];
+    }
+
+    private static async loadAdPromotionStatus(adId: string): Promise<void> {
+        const statusEl = document.getElementById('adPromotionStatus');
+        if (!statusEl) return;
+
+        const res = await promotionService.getAdPromotions(adId);
+        if (!res.success || !res.data || res.data.length === 0) {
+            statusEl.innerHTML = '<p class="ad-promotion-empty">Нет активных продвижений</p>';
+            return;
+        }
+
+        const now = Date.now();
+        const byKind: Record<string, number> = {};
+        for (const p of res.data) {
+            const ms = new Date(p.expires_at).getTime() - now;
+            if (ms <= 0) continue;
+            byKind[p.kind] = (byKind[p.kind] || 0) + ms;
+        }
+
+        if (Object.keys(byKind).length === 0) {
+            statusEl.innerHTML = '<p class="ad-promotion-empty">Нет активных продвижений</p>';
+            return;
+        }
+
+        const items = Object.entries(byKind).map(([kind, totalMs]) => {
+            const label = kind === 'boost' ? 'Поднятие' : 'Выделение';
+            const totalHours = Math.floor(totalMs / 3600000);
+            const days = Math.floor(totalHours / 24);
+            const hours = totalHours % 24;
+            const parts: string[] = [];
+            if (days > 0) {
+                const w = days === 1 ? 'день' : days < 5 ? 'дня' : 'дней';
+                parts.push(`${days} ${w}`);
+            }
+            if (hours > 0) {
+                const w = hours === 1 ? 'час' : hours < 5 ? 'часа' : 'часов';
+                parts.push(`${hours} ${w}`);
+            }
+            if (parts.length === 0) parts.push('менее часа');
+            return `<span class="ad-promotion-item ad-promotion-item--${kind}">${label}: ещё ${parts.join(' ')}</span>`;
+        });
+
+        statusEl.innerHTML = items.join('');
     }
 }

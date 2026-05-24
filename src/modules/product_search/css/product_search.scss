@@ -300,6 +300,9 @@
 /* ========== ХЛЕБНЫЕ КРОШКИ ========== */
 
 .breadcrumbs {
+    display: flex;
+    align-items: center; 
+    flex-wrap: wrap; 
     padding: 12px 0 16px 0;
     margin-bottom: 8px;
     font-size: 13px;
@@ -318,9 +321,18 @@
 }
 
 .breadcrumbs__separator {
+    display: inline-flex; 
+    align-items: center;
+    justify-content: center;
     margin: 0 6px;
     color: #ccc;
-    font-size: 12px;
+}
+
+
+.breadcrumbs__separator svg {
+    width: 16px; 
+    height: 16px;
+    display: block; 
 }
 
 .breadcrumbs__current {
@@ -364,8 +376,9 @@
         .breadcrumbs {
         padding: 10px 0 12px 0;
         font-size: 12px;
-        overflow-x: auto;
+        overflow-x: auto; /* Включаем горизонтальный скролл */
         white-space: nowrap;
+        flex-wrap: nowrap; /* Строго запрещаем перенос на мобилках для скролла */
         
         &::-webkit-scrollbar {
             display: none;
@@ -375,7 +388,17 @@
     .breadcrumbs__separator {
         margin: 0 4px;
     }
-}
+    
+    .breadcrumbs__separator svg {
+        width: 14px; 
+        height: 14px;
+    }
+    }
+    
+    .breadcrumbs__separator {
+        margin: 0 4px;
+    }
+
 
 @media (max-width: 480px) {
     .product-search-page .recommendations-row {

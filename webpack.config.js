@@ -79,9 +79,24 @@ export default (env, argv) => {
                         esModule: true,
                         runtime: 'handlebars/dist/handlebars.runtime.js',
                         knownHelpers: [
-                            'if', 'unless', 'each', 'with', 'log', 'lookup',
-                            'formatPrice', 'formatDate', 'eq', 'gt', 'concat',
-                            'array', 'icon', 'labelForTab', 'ifAuthenticated', 'avatarUrl'
+                            'if',
+                            'unless',
+                            'each',
+                            'with',
+                            'log',
+                            'lookup',
+                            'formatPrice',
+                            'formatDate',
+                            'eq',
+                            'gt',
+                            'concat',
+                            'array',
+                            'icon',
+                            'labelForTab',
+                            'ifAuthenticated',
+                            'avatarUrl',
+                            'formatDateOnly',
+                            'formatTxType',
                         ],
                         partialDirs: [
                             path.resolve(__dirname, 'src'),
@@ -97,6 +112,11 @@ export default (env, argv) => {
             new webpack.DefinePlugin({
                 'process.env.BASE_URL': JSON.stringify(
                     envVars.BASE_URL || 'http://clover-go.ru:8000'
+                ),
+                'process.env.YANDEX_JSAPI_KEY': JSON.stringify(envVars.YANDEX_JSAPI_KEY || ''),
+                'process.env.YANDEX_SUGGEST_KEY': JSON.stringify(envVars.YANDEX_SUGGEST_KEY || ''),
+                'process.env.YANDEX_GEOCODER_KEY': JSON.stringify(
+                    envVars.YANDEX_GEOCODER_KEY || '',
                 ),
             }),
             new HtmlWebpackPlugin({

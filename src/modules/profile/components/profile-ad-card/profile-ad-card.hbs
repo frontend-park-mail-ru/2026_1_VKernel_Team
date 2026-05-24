@@ -1,0 +1,47 @@
+<div class="profile-ad-card{{#if archived}} profile-ad-card--archived{{/if}}" data-id="{{id}}">
+    <div class="profile-ad-card__clickable" data-nav="/ad/{{id}}">
+        <div class="profile-ad-card__image-wrap">
+            <img src="{{image}}" alt="{{title}}" class="profile-ad-card__image">
+        </div>
+        <div class="profile-ad-card__body">
+            <div class="profile-ad-card__header">
+                <span class="profile-ad-card__title">{{title}}</span>
+                <div class="profile-ad-card__badges">
+                    {{#if is_boosted}}
+                        <span class="profile-ad-card__badge profile-ad-card__badge--boost" data-tooltip="Поднято{{#if boost_time_left}}: {{boost_time_left}}{{/if}}">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg>
+                            {{#if boost_time_left}}<span class="profile-ad-card__badge-time">{{boost_time_left}}</span>{{/if}}
+                        </span>
+                    {{/if}}
+                    {{#if is_highlighted}}
+                        <span class="profile-ad-card__badge profile-ad-card__badge--highlight" data-tooltip="Выделено{{#if highlight_time_left}}: {{highlight_time_left}}{{/if}}">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                            {{#if highlight_time_left}}<span class="profile-ad-card__badge-time">{{highlight_time_left}}</span>{{/if}}
+                        </span>
+                    {{/if}}
+                </div>
+            </div>
+            {{#if shortDescription}}<span class="profile-ad-card__desc">{{shortDescription}}</span>{{/if}}
+            <div class="profile-ad-card__meta">
+                <span class="profile-ad-card__price">{{formattedPrice}}</span>
+            </div>
+            <span class="profile-ad-card__location">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                <span>{{location}}</span>
+            </span>
+        </div>
+    </div>
+    {{#unless archived}}
+    <div class="profile-ad-card__actions">
+        <button class="profile-ad-card__btn profile-ad-card__btn--edit" data-edit-id="{{id}}" title="Редактировать">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        </button>
+        <button class="profile-ad-card__btn profile-ad-card__btn--promote" data-promote-id="{{id}}" title="Продвигать">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </button>
+        <button class="profile-ad-card__btn profile-ad-card__btn--close" data-close-id="{{id}}" data-close-title="{{title}}" title="Снять с публикации">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
+        </button>
+    </div>
+    {{/unless}}
+</div>

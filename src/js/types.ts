@@ -32,6 +32,8 @@ export interface Ad {
     created_at?: string;
     updated_at?: string;
     location?: string;
+    lat?: number;
+    lon?: number;
     status?: 'active' | 'draft' | 'reserved' | 'sold' | 'archived';
 
     category_characteristics: ProductCharacteristic[];
@@ -187,6 +189,8 @@ export interface CreateAdData {
     price: number;
     status: string;
     location: string;
+    lat?: number;
+    lon?: number;
     category_characteristics?: CharacteristicInput[];
     custom_characteristics?: CustomCharacteristicInput[];
 }
@@ -198,6 +202,8 @@ export interface UpdateAdData {
     price?: number;
     status?: string;
     location?: string;
+    lat?: number;
+    lon?: number;
     category_characteristics?: CharacteristicInput[];
     custom_characteristics?: CustomCharacteristicInput[];
 }

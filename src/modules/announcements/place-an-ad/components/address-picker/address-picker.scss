@@ -1,0 +1,88 @@
+.place-ad-page .address-picker {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.place-ad-page .address-picker__input-wrapper {
+    position: relative;
+}
+
+.place-ad-page .address-picker__input {
+    width: 100%;
+}
+
+.place-ad-page ul.address-picker__suggest {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    margin: 0;
+    padding: 4px 0;
+    list-style: none;
+    background: #fff;
+    border: 1px solid #e1e1e1;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    max-height: 280px;
+    overflow-y: auto;
+    z-index: 50;
+}
+
+.place-ad-page ul.address-picker__suggest[hidden] {
+    display: none;
+}
+
+.place-ad-page ul.address-picker__suggest li {
+    list-style: none;
+    padding: 10px 14px;
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 1.3;
+}
+
+.place-ad-page ul.address-picker__suggest li:hover,
+.place-ad-page ul.address-picker__suggest li.is-active {
+    background: #f3f9f5;
+}
+
+.place-ad-page .address-picker__suggest-title {
+    color: #1a1a1a;
+    font-weight: 500;
+}
+
+.place-ad-page .address-picker__suggest-subtitle {
+    color: #757575;
+    font-size: 12px;
+    margin-top: 2px;
+}
+
+.place-ad-page .address-picker__map {
+    width: 100%;
+    height: 280px;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #f2f2f2;
+}
+
+.place-ad-page .address-picker__map > * {
+    width: 100%;
+    height: 100%;
+}
+
+.place-ad-page .address-picker__map-error {
+    color: #b00020;
+    font-size: 12px;
+    margin-top: 4px;
+}
+
+.place-ad-page .address-picker__marker {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #ff4d4f;
+    border: 3px solid #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    transform: translate(-50%, -50%);
+    cursor: grab;
+}

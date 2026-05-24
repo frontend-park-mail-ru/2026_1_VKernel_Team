@@ -344,3 +344,34 @@ input.error + .eye-btn {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
+
+.toast {
+    position: fixed;
+    bottom: 24px;
+    left: 24px;
+    padding: 14px 20px;
+    border-radius: 10px;
+    font-size: 14px;
+    color: #fff;
+    z-index: 2000;
+    animation: toast-in 0.3s ease, toast-out 0.3s ease 2.7s forwards;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.toast-success {
+    background: #4caf50;
+}
+
+.toast-error {
+    background: #d32f2f;
+}
+
+@keyframes toast-in {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes toast-out {
+    from { opacity: 1; transform: translateY(0); }
+    to { opacity: 0; transform: translateY(12px); }
+}

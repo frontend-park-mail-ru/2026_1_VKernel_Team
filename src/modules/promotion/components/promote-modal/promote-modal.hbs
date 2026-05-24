@@ -1,0 +1,53 @@
+{{#> common/components/modal/modal id="promoteModal" modifier="promote-modal-content"}}
+<div class="promote-step" id="promoteStep1">
+    <h3>Продвинуть объявление</h3>
+
+    {{#if plans.length}}
+    <div class="promote-group">
+        <h4 class="promote-group-title">Поднятие в выдаче</h4>
+        <div class="promote-plans">
+            {{#each boostPlans}}
+            <button class="promote-plan-btn" data-plan-code="{{this.code}}" data-plan-price="{{this.price}}">
+                <span class="promote-plan-name">{{this.duration_days}} дн.</span>
+                <span class="promote-plan-price">{{this.price}} ₽</span>
+            </button>
+            {{/each}}
+        </div>
+    </div>
+
+    <div class="promote-group">
+        <h4 class="promote-group-title">Выделение карточки</h4>
+        <div class="promote-plans">
+            {{#each highlightPlans}}
+            <button class="promote-plan-btn" data-plan-code="{{this.code}}" data-plan-price="{{this.price}}">
+                <span class="promote-plan-name">{{this.duration_days}} дн.</span>
+                <span class="promote-plan-price">{{this.price}} ₽</span>
+            </button>
+            {{/each}}
+        </div>
+    </div>
+
+    <p class="promote-error" id="promoteError" style="display: none;"></p>
+    <div class="promote-balance">Баланс: <span class="promote-balance-value">{{formattedBalance}}</span></div>
+    <div class="modal-actions">
+        <button class="btn btn-primary" data-action="go-to-step2" disabled>Далее</button>
+    </div>
+    {{else}}
+    <p class="promote-loading">Загрузка тарифов…</p>
+    {{/if}}
+</div>
+
+<div class="promote-step" id="promoteStep2" style="display: none;">
+    <h3>Подтверждение</h3>
+    <div class="promote-confirm-info">
+        <p>Тариф: <strong id="promoteConfirmPlan"></strong></p>
+        <p>Стоимость: <strong id="promoteConfirmPrice"></strong></p>
+        <p>Списание с кошелька</p>
+    </div>
+    <p class="promote-error" id="promoteConfirmError" style="display: none;"></p>
+    <div class="modal-actions">
+        <button class="btn btn-secondary" data-action="go-to-step1">Назад</button>
+        <button class="btn btn-primary" data-action="confirm-promote">Оплатить</button>
+    </div>
+</div>
+{{/common/components/modal/modal}}
