@@ -42,7 +42,7 @@ export const sellerPageActions = {
                     const status = ad.status?.toLowerCase();
                     return status ? closedStatuses.has(status) : false;
                 })
-                .map((ad: SellerAd) => sellerService.formatAdCard(ad));
+                .map((ad: SellerAd) => ({ ...sellerService.formatAdCard(ad), archived: true }));
 
             sellerPageStore.setState({
                 profile,

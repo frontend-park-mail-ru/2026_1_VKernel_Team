@@ -466,6 +466,14 @@ body .main-container {
     box-shadow: 0 4px 16px rgba(249, 168, 37, 0.25);
 }
 
+.rec-card--archived {
+    opacity: 0.6;
+}
+
+.rec-card--archived .rec-card-image {
+    filter: grayscale(30%);
+}
+
 .rec-card-image-container {
     position: relative;
     width: 100%;
