@@ -321,6 +321,9 @@ export const ProfileController = {
         if (this.currentTab === 'pending') {
             this.loadUserPendingAds();
         }
+        if (this.currentTab === 'purchases') {
+            this.loadUserPurchases();
+        }
         if (this.currentTab === 'wallet') {
             this.loadWalletData();
         }
