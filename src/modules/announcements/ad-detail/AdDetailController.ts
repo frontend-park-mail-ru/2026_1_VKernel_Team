@@ -763,13 +763,11 @@ export class AdDetailController {
             }
 
             const handler = (e: Event) => {
-
                 e.preventDefault();
                 e.stopPropagation();
 
                 const adId = this.adId;
                 if (!adId) {
-                    ('Нет adId');
                     return;
                 }
 

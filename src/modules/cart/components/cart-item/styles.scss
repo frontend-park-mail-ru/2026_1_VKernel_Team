@@ -52,7 +52,7 @@ a.cart-item-title {
     overflow: hidden;
     text-overflow: ellipsis;
     overflow-wrap: anywhere;
-    word-break: break-all;
+    word-break: break-word;
 }
 
 a.cart-item-title:hover {

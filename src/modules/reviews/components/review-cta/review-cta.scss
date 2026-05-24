@@ -128,3 +128,41 @@
         background: #fef2f2;
     }
 }
+
+@media (max-width: 480px) {
+    .review-cta {
+        padding: 14px;
+    }
+
+    .review-cta__invite {
+        gap: 12px;
+    }
+
+    .review-cta__invite-icon {
+        width: 40px;
+        height: 40px;
+
+        svg {
+            width: 22px;
+            height: 22px;
+        }
+    }
+
+    .review-cta__title {
+        font-size: 15px;
+    }
+
+    .review-cta__subtitle {
+        font-size: 13px;
+    }
+
+    .review-cta__own-actions {
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .review-cta__btn {
+        width: 100%;
+        padding: 10px 16px;
+    }
+}

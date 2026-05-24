@@ -66,7 +66,6 @@ export class PriceHistoryModal {
     }
 
     async open(data: PriceHistoryData): Promise<void> {
-
         if (this.isLoading) return;
 
         // Создаём или получаем модалку

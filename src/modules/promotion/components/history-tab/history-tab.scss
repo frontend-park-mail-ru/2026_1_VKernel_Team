@@ -78,3 +78,29 @@
     display: block;
     margin: 16px auto 0;
 }
+
+@media (max-width: 480px) {
+    .promo-history-item {
+        flex-wrap: wrap;
+        gap: 8px;
+        padding: 10px 0;
+    }
+
+    .promo-history-info {
+        flex: 1 1 60%;
+        min-width: 0;
+    }
+
+    .promo-history-info a {
+        font-size: 14px;
+    }
+
+    .promo-history-price {
+        font-size: 14px;
+    }
+
+    .promo-history-expires {
+        width: 100%;
+        font-size: 12px;
+    }
+}

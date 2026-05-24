@@ -41,3 +41,33 @@
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(43, 222, 140, 0.3);
 }
+
+@media (max-width: 768px) {
+    .preview-actions {
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 24px;
+        padding-top: 16px;
+    }
+
+    .btn-back-edit,
+    .btn-publish-final {
+        width: 100%;
+        padding: 14px 20px;
+        font-size: 15px;
+        text-align: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .preview-actions {
+        gap: 8px;
+    }
+
+    .btn-back-edit,
+    .btn-publish-final {
+        padding: 12px 16px;
+        font-size: 14px;
+        border-radius: 8px;
+    }
+}

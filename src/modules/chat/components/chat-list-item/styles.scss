@@ -104,6 +104,9 @@
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+    line-height: 1.3;
 }
 
 .chat-list-item__ad-title:hover {
@@ -131,6 +134,8 @@
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
+    word-break: break-word;
+    overflow-wrap: anywhere;
 }
 
 .chat-list-item__last-text--order {

@@ -194,3 +194,22 @@
         visibility: visible;
     }
 }
+
+@media (max-width: 480px) {
+    .topup-modal-content {
+        max-width: 100%;
+    }
+
+    .topup-field-row {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .topup-actions-full {
+        flex-direction: column;
+
+        .btn {
+            width: 100%;
+        }
+    }
+}

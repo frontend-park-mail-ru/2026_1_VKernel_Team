@@ -55,17 +55,23 @@
 
 .profile-ad-card__header {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 8px;
+    min-width: 0;
 }
 
 .profile-ad-card__title {
     font-size: 15px;
     font-weight: 600;
     color: #333;
-    white-space: nowrap;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+    line-height: 1.3;
     min-width: 0;
 }
 
@@ -204,5 +210,91 @@
         background: #fff0f0;
         border-color: #e53935;
         color: #e53935;
+    }
+}
+
+@media (max-width: 768px) {
+    .profile-ad-card {
+        gap: 12px;
+        padding: 10px;
+    }
+
+    .profile-ad-card__clickable {
+        gap: 10px;
+    }
+
+    .profile-ad-card__image-wrap {
+        width: 88px;
+        height: 70px;
+        min-width: 88px;
+    }
+
+    .profile-ad-card__title {
+        font-size: 14px;
+    }
+
+    .profile-ad-card__desc {
+        font-size: 12px;
+    }
+
+    .profile-ad-card__price {
+        font-size: 14px;
+    }
+
+    .profile-ad-card__location {
+        font-size: 11px;
+    }
+
+    .profile-ad-card__actions {
+        gap: 4px;
+    }
+
+    .profile-ad-card__btn {
+        width: 30px;
+        height: 30px;
+    }
+}
+
+@media (max-width: 480px) {
+    .profile-ad-card {
+        padding: 8px;
+        gap: 8px;
+    }
+
+    .profile-ad-card__clickable {
+        gap: 8px;
+    }
+
+    .profile-ad-card__image-wrap {
+        width: 72px;
+        height: 60px;
+        min-width: 72px;
+    }
+
+    .profile-ad-card__header {
+        flex-wrap: wrap;
+        gap: 4px;
+    }
+
+    .profile-ad-card__title {
+        font-size: 13px;
+        white-space: normal;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+    }
+
+    .profile-ad-card__badge-time {
+        font-size: 10px;
+    }
+
+    .profile-ad-card__btn {
+        width: 28px;
+        height: 28px;
+
+        svg {
+            width: 14px;
+            height: 14px;
+        }
     }
 }

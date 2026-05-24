@@ -39,7 +39,18 @@
     {{> profile/components/profile-avatar/profile-avatar user=user }}
 </div>
 
+<button class="profile-nav-toggle" type="button" data-action="toggle-profile-nav" aria-label="Открыть меню">
+    <span class="profile-nav-toggle__bar"></span>
+    <span class="profile-nav-toggle__bar"></span>
+    <span class="profile-nav-toggle__bar"></span>
+    <span class="profile-nav-toggle__label">Меню</span>
+</button>
+
+<div class="profile-nav-overlay" data-action="close-profile-nav"></div>
+
 <nav class="profile-nav">
+    <button class="profile-nav__close" type="button" data-action="close-profile-nav" aria-label="Закрыть меню">×</button>
+
     {{#each (array 'ads' 'pending' 'favorites' 'cart' 'messages' 'purchases' 'reviews' 'wallet' 'paid_services' 'settings') as |tab|}}
         <button
             class="profile-nav-item {{#eq ../currentTab tab}}active{{/eq}}"

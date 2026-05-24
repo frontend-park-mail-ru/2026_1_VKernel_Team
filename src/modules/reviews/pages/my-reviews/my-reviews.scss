@@ -80,9 +80,14 @@
     color: #111827;
     text-decoration: none;
     cursor: pointer;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
-    white-space: nowrap;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+    line-height: 1.3;
 }
 
 .my-reviews-pending__product:hover {
@@ -120,4 +125,39 @@
 
 .my-reviews-pending__btn:hover {
     background: #25c47c;
+}
+
+@media (max-width: 768px) {
+    .my-reviews-pending {
+        padding: 14px;
+    }
+
+    .my-reviews-pending__card {
+        flex-wrap: wrap;
+        padding: 10px;
+    }
+
+    .my-reviews-pending__photo {
+        width: 48px;
+        height: 48px;
+    }
+
+    .my-reviews-pending__product {
+        font-size: 14px;
+    }
+
+    .my-reviews-pending__btn {
+        flex: 1 0 100%;
+        text-align: center;
+        padding: 10px 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .my-reviews-pending__product {
+        white-space: normal;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+    }
 }
