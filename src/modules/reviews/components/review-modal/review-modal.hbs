@@ -1,0 +1,45 @@
+{{#> common/components/modal/modal id="reviewModal" modifier="review-modal-content"}}
+<div class="review-modal">
+    <h3 class="review-modal__title" id="reviewModalTitle">{{title}}</h3>
+
+    {{#if productTitle}}
+    <div class="review-modal__product">
+        <img src="{{productPhoto}}" alt="{{productTitle}}" class="review-modal__product-photo">
+        <div class="review-modal__product-info">
+            <span class="review-modal__product-label">Товар</span>
+            <span class="review-modal__product-title">{{productTitle}}</span>
+            {{#if sellerName}}
+                <span class="review-modal__seller">Продавец: <strong>{{sellerName}}</strong></span>
+            {{/if}}
+        </div>
+    </div>
+    {{/if}}
+
+    <div class="review-modal__field">
+        <label class="review-modal__label">Оценка</label>
+        <div id="reviewModalStars"></div>
+    </div>
+
+    <div class="review-modal__field">
+        <label class="review-modal__label" for="reviewModalText">Ваш отзыв</label>
+        <textarea
+            id="reviewModalText"
+            class="review-modal__textarea"
+            placeholder="Что вам понравилось или не понравилось?"
+            maxlength="{{maxLength}}"
+        >{{content}}</textarea>
+        <div class="review-modal__counter">
+            <span id="reviewModalCounter">{{contentLength}}</span> / {{maxLength}}
+        </div>
+    </div>
+
+    <p class="review-modal__error" id="reviewModalError" style="display: none;"></p>
+
+    <div class="review-modal__actions">
+        <button type="button" class="review-modal__btn review-modal__btn--ghost" data-action="close-modal">Отмена</button>
+        <button type="button" class="review-modal__btn review-modal__btn--primary" id="reviewModalSubmit" disabled>
+            {{submitLabel}}
+        </button>
+    </div>
+</div>
+{{/common/components/modal/modal}}

@@ -99,6 +99,9 @@
                                 </span>
                             </div>
                         </div>
+                        <span class="rec-card-seller">Продавец:
+                            <a data-nav="/seller/{{this.sellerId}}" class="rec-card-seller-link">{{this.sellerName}}</a>
+                        </span>
                         <span class="rec-card-date">Куплено: {{this.purchasedDate}}</span>
                     </div>
                 </div>
@@ -115,6 +118,10 @@
 
   {{#if (eq currentTab 'wallet')}}
     {{> wallet/components/wallet-tab/wallet-tab }}
+  {{/if}}
+
+  {{#if (eq currentTab 'reviews')}}
+    <div id="myReviewsHost"></div>
   {{/if}}
 
   {{#if (eq currentTab 'settings')}}

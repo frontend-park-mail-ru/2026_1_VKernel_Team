@@ -17,6 +17,19 @@
                     Подтвердить покупку
                 </button>
             {{/if}}
+            {{#if canReview}}
+                {{#if hasMyReview}}
+                    <span class="chat-message__review-mark" title="Вы уже оставили отзыв">
+                        Отзыв оставлен ★{{myReviewRating}}
+                    </span>
+                {{else}}
+                    <button class="chat-message__review-btn" data-action="review-from-chat"
+                            data-ad-id="{{adId}}" data-seller-id="{{sellerId}}">
+                        <span class="chat-message__review-btn-icon">{{{icon "edit"}}}</span>
+                        Оставить отзыв
+                    </button>
+                {{/if}}
+            {{/if}}
             <span class="chat-message__time">{{formattedTime}}</span>
         </div>
     </div>

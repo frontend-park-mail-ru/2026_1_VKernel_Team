@@ -18,6 +18,13 @@ import { eventBus } from '@/core/eventBus';
 import { renderStarsHTML } from '@/utils/icons';
 import { PromoteModal } from '@modules/promotion/components/promote-modal/promote-modal';
 import { promotionService } from '@modules/promotion/service';
+import reviewCtaTpl from '@modules/reviews/components/review-cta/review-cta.hbs?raw';
+import { ReviewsModule } from '@modules/reviews/controller';
+import { ReviewModal } from '@modules/reviews/components/review-modal/review-modal';
+import { ReviewDeleteModal } from '@modules/reviews/components/review-delete-modal/review-delete-modal';
+import { reviewsActions, REVIEW_EVENTS } from '@modules/reviews/actions';
+import { reviewsService } from '@modules/reviews/service';
+import { myReviewsStore } from '@modules/reviews/store';
 
 const AD_DETAIL_STORE = 'ads';
 
@@ -27,6 +34,10 @@ export class AdDetailController {
     private static _handlers: Map<string, EventListener> = new Map();
     private static adId: string = '';
     private static currentAd: Ad | null = null;
+    private static _reviewCtaTpl: HandlebarsTemplateDelegate | null = null;
+    private static _reviewCtaUnsub: (() => void) | null = null;
+    private static _reviewCtaSubmittedUnsub: (() => void) | null = null;
+    private static _reviewCtaDeletedUnsub: (() => void) | null = null;
 
     private static async cacheAd(ad: Ad): Promise<void> {
         try {
@@ -248,6 +259,124 @@ export class AdDetailController {
             archived: 'Архив',
         };
         return statusMap[status || 'active'] || 'Активно';
+    }
+
+    private static initReviewCtaTpl(): void {
+        if (!this._reviewCtaTpl) {
+            ReviewsModule.registerPartials();
+            this._reviewCtaTpl = Handlebars.compile(reviewCtaTpl);
+        }
+    }
+
+    private static renderReviewCta(): void {
+        const host = document.getElementById('adReviewCta');
+        if (!host) return;
+        const ad = this.currentAd as any;
+        if (!ad) return;
+        if (!store.isAuthenticated) {
+            host.innerHTML = '';
+            return;
+        }
+        const userId = store.user?.id || store.user?.user_id;
+        const isOwner = !!userId && Number(userId) === Number(ad.seller_id);
+        if (isOwner) {
+            host.innerHTML = '';
+            return;
+        }
+
+        this.initReviewCtaTpl();
+
+        const existingReview = myReviewsStore.getByProduct(Number(this.adId));
+        const formatted = existingReview ? reviewsService.format(existingReview) : null;
+
+        host.innerHTML = this._reviewCtaTpl!({
+            hasReview: !!existingReview,
+            review: formatted,
+            canSubmit: true,
+            adId: Number(this.adId),
+            sellerId: Number(ad.seller_id),
+        });
+    }
+
+    private static attachReviewCtaListeners(): void {
+        const host = document.getElementById('adReviewCta');
+        if (!host) return;
+        const handler = (e: Event) => {
+            const target = e.target as HTMLElement;
+            const openBtn = target.closest<HTMLElement>('[data-action="review-open-modal"]');
+            if (openBtn) {
+                e.preventDefault();
+                this.openReviewModal('create');
+                return;
+            }
+            const editBtn = target.closest<HTMLElement>('[data-action="review-edit-own"]');
+            if (editBtn) {
+                e.preventDefault();
+                this.openReviewModal('edit', Number(editBtn.dataset.reviewId));
+                return;
+            }
+            const delBtn = target.closest<HTMLElement>('[data-action="review-delete-own"]');
+            if (delBtn) {
+                e.preventDefault();
+                const id = Number(delBtn.dataset.reviewId);
+                const existing = myReviewsStore.getState().items.find((r) => r.id === id);
+                ReviewDeleteModal.open(id, existing?.content ?? '');
+            }
+        };
+        host.addEventListener('click', handler);
+        this._handlers.set('reviewCta', handler);
+    }
+
+    private static openReviewModal(mode: 'create' | 'edit', reviewId?: number): void {
+        const ad = this.currentAd as any;
+        if (!ad) return;
+        const existing = reviewId
+            ? myReviewsStore.getState().items.find((r) => r.id === reviewId)
+            : myReviewsStore.getByProduct(Number(this.adId));
+
+        const mainPhoto = (() => {
+            const photos = ad.photos as string[] | undefined;
+            if (!photos || !photos.length) return '/images/default-ad.jpg';
+            const first = photos[0];
+            if (first.startsWith('http')) return first;
+            const normalized = first.startsWith('/') ? first : `/${first}`;
+            return `${CONFIG.API.BASE_URL}${normalized}`;
+        })();
+
+        ReviewModal.open({
+            mode,
+            adId: Number(this.adId),
+            sellerId: Number(ad.seller_id),
+            reviewId: existing?.id,
+            productTitle: ad.title || 'Товар',
+            productPhoto: mainPhoto,
+            sellerName: ad.seller_name || 'Продавец',
+            initialRating: existing?.rating ?? 0,
+            initialContent: existing?.content ?? '',
+        });
+    }
+
+    private static initReviewCtaSubscription(): void {
+        this._reviewCtaUnsub?.();
+        this._reviewCtaSubmittedUnsub?.();
+        this._reviewCtaDeletedUnsub?.();
+        this._reviewCtaUnsub = myReviewsStore.subscribe(() => this.renderReviewCta());
+        this._reviewCtaSubmittedUnsub = eventBus.on(REVIEW_EVENTS.SUBMITTED, () =>
+            this.renderReviewCta(),
+        );
+        this._reviewCtaDeletedUnsub = eventBus.on(REVIEW_EVENTS.DELETED, () =>
+            this.renderReviewCta(),
+        );
+
+        // Если my-reviews ещё не загружен — подтянуть в фоне.
+        if (store.isAuthenticated) {
+            const ms = myReviewsStore.getState();
+            if (!ms.isInitialised) {
+                void reviewsActions.loadMyReviews();
+            }
+        }
+
+        this.renderReviewCta();
     }
 
     private static attachEventListeners(): void {
@@ -620,6 +749,25 @@ export class AdDetailController {
             const uniqueKey = `goToSeller_${Math.random()}`;
             this._handlers.set(uniqueKey, handler);
         });
+
+        const allReviewsBtns = document.querySelectorAll<HTMLElement>(
+            '[data-action="all-reviews"]',
+        );
+        allReviewsBtns.forEach((btn) => {
+            const handler = (e: Event) => {
+                e.preventDefault();
+                e.stopPropagation();
+                const sellerId = btn.dataset.sellerId;
+                if (sellerId) {
+                    window.location.href = `/seller/${sellerId}#reviews`;
+                }
+            };
+            btn.addEventListener('click', handler);
+            this._handlers.set(`allReviews_${Math.random()}`, handler);
+        });
+
+        this.attachReviewCtaListeners();
+        this.initReviewCtaSubscription();
     }
 
     private static extractProductFromPage(productId: number): any {
@@ -763,6 +911,8 @@ export class AdDetailController {
                 element = document.querySelector('[data-gallery-next]');
             } else if (key === 'toggle-description') {
                 element = document.querySelector('[data-action="toggle-description"]');
+            } else if (key === 'reviewCta') {
+                element = document.getElementById('adReviewCta');
             } else if (key.startsWith('thumb-')) {
                 const thumbIndex = parseInt(key.split('-')[1]);
                 const thumbnails = document.querySelectorAll('[data-thumbnail]');
@@ -775,6 +925,12 @@ export class AdDetailController {
         });
 
         this._handlers.clear();
+        this._reviewCtaUnsub?.();
+        this._reviewCtaSubmittedUnsub?.();
+        this._reviewCtaDeletedUnsub?.();
+        this._reviewCtaUnsub = null;
+        this._reviewCtaSubmittedUnsub = null;
+        this._reviewCtaDeletedUnsub = null;
         this.currentPhotoIndex = 0;
         this.allPhotosArray = [];
     }

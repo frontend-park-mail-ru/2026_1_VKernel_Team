@@ -1,0 +1,46 @@
+{{!--
+  Универсальная карточка отзыва.
+  ctx: review (FormattedReview), showActions, showReceiver, receiverName
+--}}
+<article class="review-card" data-review-id="{{review.id}}" aria-label="Отзыв пользователя {{review.senderName}}">
+    <header class="review-card__head">
+        <a class="review-card__author" data-nav="/seller/{{review.senderId}}">
+            <img src="{{review.senderAvatar}}" alt="{{review.senderName}}" class="review-card__avatar">
+            <span class="review-card__author-name">{{review.senderName}}</span>
+        </a>
+        <span class="review-card__rating" aria-label="Оценка {{review.rating}} из 5">
+            {{{review.ratingStars}}}
+        </span>
+        <span class="review-card__date">{{review.createdDate}}</span>
+    </header>
+
+    {{#if showReceiver}}
+        <div class="review-card__receiver">
+            Продавцу:
+            <a class="review-card__receiver-link" data-nav="/seller/{{review.receiverId}}">{{receiverName}}</a>
+        </div>
+    {{/if}}
+
+    <a class="review-card__product" data-nav="/ad/{{review.productId}}">
+        <img src="{{review.productPhoto}}" alt="{{review.productTitle}}" class="review-card__product-photo">
+        <span class="review-card__product-title">{{review.productTitle}}</span>
+    </a>
+
+    <p class="review-card__content">{{review.content}}</p>
+
+    <footer class="review-card__footer">
+        {{#if review.isEdited}}
+            <span class="review-card__edited" title="Отзыв был отредактирован">изменён</span>
+        {{/if}}
+        {{#if showActions}}
+            <div class="review-card__actions">
+                <button class="review-card__action review-card__action--edit" data-action="review-edit" data-review-id="{{review.id}}">
+                    Изменить
+                </button>
+                <button class="review-card__action review-card__action--delete" data-action="review-delete" data-review-id="{{review.id}}">
+                    Удалить
+                </button>
+            </div>
+        {{/if}}
+    </footer>
+</article>

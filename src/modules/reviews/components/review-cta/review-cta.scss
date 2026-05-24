@@ -1,0 +1,130 @@
+.review-cta {
+    margin-top: 16px;
+    background: #fff;
+    border: 1px solid #eef0f3;
+    border-radius: 14px;
+    padding: 18px 20px;
+}
+
+.review-cta__invite {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.review-cta__invite-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #fff7e6, #fce8b2);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #f7b500;
+    flex: 0 0 auto;
+
+    svg {
+        width: 28px;
+        height: 28px;
+    }
+}
+
+.review-cta__invite-body {
+    flex: 1;
+    min-width: 200px;
+}
+
+.review-cta__title {
+    margin: 0 0 4px;
+    font-size: 17px;
+    font-weight: 600;
+    color: #111827;
+}
+
+.review-cta__subtitle {
+    margin: 0;
+    color: #6b7280;
+    font-size: 14px;
+}
+
+.review-cta__own {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.review-cta__own-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.review-cta__stars {
+    color: #f7b500;
+    display: inline-flex;
+    gap: 1px;
+
+    svg {
+        width: 18px;
+        height: 18px;
+    }
+}
+
+.review-cta__own-text {
+    margin: 0;
+    color: #1f2937;
+    font-size: 15px;
+    line-height: 1.45;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.review-cta__own-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.review-cta__btn {
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.review-cta__btn--primary {
+    background: #2bde8c;
+    color: #fff;
+    border-color: #2bde8c;
+
+    &:hover {
+        background: #25c47c;
+        border-color: #25c47c;
+    }
+}
+
+.review-cta__btn--ghost {
+    background: #fff;
+    color: #374151;
+    border-color: #e5e7eb;
+
+    &:hover {
+        background: #f3f4f6;
+    }
+}
+
+.review-cta__btn--danger {
+    background: #fff;
+    color: #d32f2f;
+    border-color: #fecaca;
+
+    &:hover {
+        background: #fef2f2;
+    }
+}

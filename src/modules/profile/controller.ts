@@ -21,6 +21,7 @@ import type { ActivePromotion } from '@modules/promotion/types';
 import { walletStore } from '@modules/wallet/store';
 import { walletService } from '@modules/wallet/service';
 import { PROFILE_CONFIG } from '@modules/profile/config';
+import { MyReviewsPage } from '@modules/reviews/pages/my-reviews/my-reviews';
 
 import { apiClient, API_ENDPOINTS } from '@/api/apiClient';
 import { CONFIG } from '@/core/config';
@@ -139,6 +140,7 @@ export const ProfileController = {
     cleanup(): void {
         this._unsubscribers.forEach((unsub) => unsub());
         this._unsubscribers = [];
+        MyReviewsPage.unmount();
         this.isInitialized = false;
     },
 
@@ -236,7 +238,13 @@ export const ProfileController = {
     },
 
     async loadUserPurchases(): Promise<void> {
+        // Сначала показываем кэш (мгновенный рендер), потом тянем с сервера.
         await purchasesStore.loadFromCache();
+        this.userPurchases = purchasesStore.getState().items;
+        this.rerenderTab(store.user as UserProfile);
+        this.attachEventListeners();
+
+        await purchasesStore.fetch({ force: true });
         this.userPurchases = purchasesStore.getState().items;
         this.rerenderTab(store.user as UserProfile);
         this.attachEventListeners();
@@ -319,6 +327,15 @@ export const ProfileController = {
         if (this.currentTab === 'paid_services') {
             this.loadPromoHistory();
         }
+        if (this.currentTab === 'reviews') {
+            this.mountMyReviewsTab();
+        }
+    },
+
+    mountMyReviewsTab(): void {
+        const host = document.getElementById('myReviewsHost');
+        if (!host) return;
+        void MyReviewsPage.mount(host);
     },
 
     renderAll(): void {
@@ -339,10 +356,13 @@ export const ProfileController = {
     formatPurchases(items: PurchaseItem[]) {
         return items.map((item) => ({
             ...item,
-            imageUrl: cartService.getImageUrl(item.image_path),
+            imageUrl: cartService.getImageUrl(item.photo || ''),
             formattedPrice: cartService.formatPrice(item.price),
             location: item.location || 'Не указано',
             purchasedDate: new Date(item.purchased_at).toLocaleDateString('ru-RU'),
+            sellerId: item.seller?.id,
+            sellerName: item.seller?.name || 'Продавец',
+            isChatPurchase: item.source === 'chat' && !!item.chat_id,
         }));
     },
 
@@ -415,7 +435,15 @@ export const ProfileController = {
             this.loadUserPendingAds();
         }
 
+        if (tab !== 'reviews') {
+            MyReviewsPage.unmount();
+        }
+
         this.renderAll();
+
+        if (tab === 'reviews') {
+            this.mountMyReviewsTab();
+        }
     },
 
     attachEventListeners(): void {
@@ -432,6 +460,9 @@ export const ProfileController = {
         // подключить его обработчики (добавление в корзину со страницы
         // «Избранное», «Мои покупки», «Объявления»).
         CartButtonComponent.initAll();
+        if (this.currentTab === 'reviews' && document.getElementById('myReviewsHost')) {
+            this.mountMyReviewsTab();
+        }
     },
 
     async loadProfileData(): Promise<void> {

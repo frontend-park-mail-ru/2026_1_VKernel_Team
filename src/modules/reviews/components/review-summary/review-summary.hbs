@@ -1,0 +1,34 @@
+{{!-- ctx: average, total, totalLabel, ratingStars, bars [{star, count, percent}], filterRating --}}
+<aside class="review-summary" aria-label="Сводка отзывов">
+    <div class="review-summary__big">
+        <span class="review-summary__average">{{average}}</span>
+        <span class="review-summary__stars" aria-hidden="true">{{{ratingStars}}}</span>
+        <span class="review-summary__total">{{total}} {{totalLabel}}</span>
+    </div>
+
+    {{#if total}}
+        <div class="review-summary__bars" role="group" aria-label="Распределение оценок">
+            {{#each bars}}
+                <button
+                    class="review-summary__bar {{#if (eq ../filterRating this.star)}}review-summary__bar--active{{/if}}"
+                    type="button"
+                    data-filter-rating="{{this.star}}"
+                    aria-label="Фильтр: {{this.star}} звёзд, {{this.count}} отзывов"
+                >
+                    <span class="review-summary__bar-star">{{this.star}} ★</span>
+                    <span class="review-summary__bar-track">
+                        <span class="review-summary__bar-fill" style="width: {{this.percent}}%;"></span>
+                    </span>
+                    <span class="review-summary__bar-count">{{this.count}}</span>
+                </button>
+            {{/each}}
+            {{#if filterRating}}
+                <button class="review-summary__reset" type="button" data-action="reset-rating-filter">
+                    Сбросить фильтр
+                </button>
+            {{/if}}
+        </div>
+    {{else}}
+        <p class="review-summary__empty">Пока нет отзывов</p>
+    {{/if}}
+</aside>

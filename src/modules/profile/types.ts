@@ -9,6 +9,7 @@ export type ProfileTab =
     | 'purchases'
     | 'paid_services'
     | 'wallet'
+    | 'reviews'
     | 'settings';
 
 /** Статус объявления для фильтрации */

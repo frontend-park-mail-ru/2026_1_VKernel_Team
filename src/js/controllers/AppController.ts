@@ -124,6 +124,7 @@ const registerHelpers = (Hbs: any) => {
             purchases: 'Мои покупки',
             wallet: 'Кошелёк',
             paid_services: 'Платные услуги',
+            reviews: 'Мои отзывы',
             settings: 'Настройки',
         };
         return labels[tab] || tab;
