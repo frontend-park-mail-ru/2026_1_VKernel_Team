@@ -62,8 +62,9 @@
     font-weight: 700;
     color: #333;
     margin: 0;
-    overflow-wrap: break-word;
+    overflow-wrap: anywhere;
     word-break: break-word;
+    hyphens: auto;
 }
 
 .ad-detail-page .ad-gallery-section {
@@ -618,6 +619,34 @@
     overflow-wrap: normal !important;
     word-break: normal !important;
     white-space: nowrap !important;
+}
+
+@media (max-width: 992px) {
+    .ad-detail-page .ad-gallery-container {
+        gap: 12px;
+    }
+
+    .ad-detail-page .ad-main-photo-wrapper {
+        flex: 0 0 60%;
+    }
+
+    .ad-detail-page .ad-thumbnails-vertical {
+        flex: 0 0 35%;
+        max-height: 380px;
+    }
+
+    .ad-detail-page .ad-title {
+        font-size: 22px;
+    }
+
+    .ad-detail-page .section-title {
+        font-size: 18px;
+    }
+
+    .ad-detail-page .attributes-grid {
+        grid-template-columns: 1fr;
+        gap: 4px 16px;
+    }
 }
 
 @media (max-width: 768px) {

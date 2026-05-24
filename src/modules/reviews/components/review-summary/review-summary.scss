@@ -123,3 +123,40 @@
     font-size: 14px;
     margin: 0;
 }
+
+@media (max-width: 900px) {
+    .review-summary {
+        position: static;
+        padding: 16px;
+    }
+
+    .review-summary__average {
+        font-size: 36px;
+    }
+
+    .review-summary__stars svg {
+        width: 18px;
+        height: 18px;
+    }
+}
+
+@media (max-width: 480px) {
+    .review-summary {
+        padding: 14px;
+        gap: 14px;
+    }
+
+    .review-summary__average {
+        font-size: 30px;
+    }
+
+    .review-summary__bar {
+        gap: 8px;
+        padding: 4px 6px;
+    }
+
+    .review-summary__bar-star {
+        width: 28px;
+        font-size: 12px;
+    }
+}

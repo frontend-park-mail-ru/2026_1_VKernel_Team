@@ -47,3 +47,20 @@
     color: #666;
     min-width: 96px;
 }
+
+@media (max-width: 480px) {
+    .star-rating-input {
+        flex-wrap: wrap;
+    }
+
+    .star-rating-input__icon svg {
+        width: 24px;
+        height: 24px;
+    }
+
+    .star-rating-input__value {
+        margin-left: 8px;
+        font-size: 13px;
+        min-width: auto;
+    }
+}

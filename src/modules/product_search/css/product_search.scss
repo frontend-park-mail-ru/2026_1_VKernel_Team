@@ -362,6 +362,10 @@
         position: static;
     }
 
+    .product-search-page .filters-card {
+        padding: 16px;
+    }
+
     .product-search-page .recommendations-row {
         grid-template-columns: repeat(2, 1fr);
         gap: 12px;
@@ -373,35 +377,47 @@
         align-items: flex-start;
     }
 
-        .breadcrumbs {
+    .product-search-page .sorting-dropdown,
+    .product-search-page .sorting-trigger {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .breadcrumbs {
         padding: 10px 0 12px 0;
         font-size: 12px;
         overflow-x: auto; /* Включаем горизонтальный скролл */
         white-space: nowrap;
         flex-wrap: nowrap; /* Строго запрещаем перенос на мобилках для скролла */
-        
+
         &::-webkit-scrollbar {
             display: none;
         }
     }
-    
+
     .breadcrumbs__separator {
         margin: 0 4px;
     }
-    
+
     .breadcrumbs__separator svg {
-        width: 14px; 
+        width: 14px;
         height: 14px;
     }
-    }
-    
-    .breadcrumbs__separator {
-        margin: 0 4px;
-    }
+}
 
 
 @media (max-width: 480px) {
+    .product-search-page .main-content {
+        padding: 70px 10px 30px;
+    }
+
     .product-search-page .recommendations-row {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+    }
+
+    .product-search-page .price-inputs {
+        flex-wrap: wrap;
+        gap: 6px;
     }
 }

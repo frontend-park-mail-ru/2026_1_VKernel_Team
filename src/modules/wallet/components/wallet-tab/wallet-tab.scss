@@ -118,3 +118,49 @@
     width: 100%;
     margin-top: 12px;
 }
+
+@media (max-width: 768px) {
+    .wallet-balance-card {
+        padding: 18px;
+    }
+
+    .wallet-balance-value {
+        font-size: 26px;
+    }
+
+    .wallet-transaction-item {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .wallet-transaction-label {
+        flex: 1 1 60%;
+        font-size: 13px;
+    }
+
+    .wallet-transaction-amount {
+        font-size: 14px;
+        min-width: 70px;
+    }
+
+    .wallet-transaction-date {
+        font-size: 12px;
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .wallet-balance-card {
+        padding: 16px;
+        gap: 10px;
+    }
+
+    .wallet-balance-value {
+        font-size: 22px;
+    }
+
+    .wallet-topup-btn {
+        width: 100%;
+        text-align: center;
+    }
+}

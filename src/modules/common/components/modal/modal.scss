@@ -58,3 +58,27 @@
     font-size: 16px;
     box-sizing: border-box;
 }
+
+@media (max-width: 480px) {
+    .modal-content {
+        width: 100%;
+        max-width: calc(100% - 24px);
+        padding: 20px;
+        border-radius: 14px;
+    }
+
+    .modal-content h3 {
+        font-size: 18px;
+        margin-bottom: 16px;
+    }
+
+    .modal-actions {
+        flex-direction: column-reverse;
+        gap: 8px;
+    }
+
+    .modal-actions .btn,
+    .modal-actions button {
+        width: 100%;
+    }
+}

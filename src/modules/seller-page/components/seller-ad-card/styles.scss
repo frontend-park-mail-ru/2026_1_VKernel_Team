@@ -93,7 +93,10 @@
     line-clamp: 2;
     overflow: hidden;
     text-overflow: ellipsis;
+    word-break: break-word;
+    overflow-wrap: anywhere;
     line-height: 1.3;
+    min-height: 2.6em;
 }
 
 .rec-card-price {
@@ -157,4 +160,50 @@
 .rec-card-cart:hover {
     background: #e8f5e9;
     transform: scale(1.1);
+}
+
+@media (max-width: 768px) {
+    .rec-card {
+        height: auto;
+        min-height: 240px;
+    }
+
+    .rec-card-image-container {
+        height: 130px;
+    }
+
+    .rec-card-content {
+        padding: 10px;
+    }
+
+    .rec-card-title {
+        font-size: 13px;
+        line-height: 1.25;
+    }
+
+    .rec-card-price {
+        font-size: 14px;
+    }
+
+    .rec-card-location {
+        font-size: 11px;
+    }
+
+    .rec-card-fav {
+        width: 28px;
+        height: 28px;
+        top: 6px;
+        right: 6px;
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .rec-card {
+        min-height: 220px;
+    }
+
+    .rec-card-image-container {
+        height: 110px;
+    }
 }

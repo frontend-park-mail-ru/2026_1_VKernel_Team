@@ -170,3 +170,85 @@
     border-color: #fecaca;
     color: #d32f2f;
 }
+
+@media (max-width: 768px) {
+    .review-card {
+        padding: 14px;
+        gap: 10px;
+    }
+
+    .review-card__head {
+        gap: 8px;
+    }
+
+    .review-card__avatar {
+        width: 32px;
+        height: 32px;
+    }
+
+    .review-card__author-name {
+        font-size: 14px;
+    }
+
+    .review-card__rating svg {
+        width: 16px;
+        height: 16px;
+    }
+
+    .review-card__date {
+        width: 100%;
+        margin-left: 0;
+        font-size: 12px;
+        order: 5;
+    }
+
+    .review-card__product-title {
+        max-width: none;
+        white-space: normal;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+    }
+
+    .review-card__product-photo {
+        width: 40px;
+        height: 40px;
+    }
+
+    .review-card__content {
+        font-size: 14px;
+    }
+
+    .review-card__footer {
+        gap: 8px;
+    }
+
+    .review-card__actions {
+        margin-left: 0;
+        width: 100%;
+        justify-content: flex-end;
+    }
+}
+
+@media (max-width: 480px) {
+    .review-card {
+        padding: 12px;
+        border-radius: 12px;
+    }
+
+    .review-card__product {
+        width: 100%;
+        align-self: stretch;
+    }
+
+    .review-card__actions {
+        flex-wrap: wrap;
+    }
+
+    .review-card__action {
+        flex: 1;
+        min-width: 0;
+        text-align: center;
+        padding: 8px 10px;
+    }
+}

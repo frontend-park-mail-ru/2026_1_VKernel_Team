@@ -91,3 +91,31 @@
     text-align: center;
     padding: 24px 0;
 }
+
+@media (max-width: 480px) {
+    .promote-modal-content {
+        max-width: 100%;
+    }
+
+    .promote-plans {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .promote-plan-btn {
+        flex-direction: row;
+        justify-content: space-between;
+        padding: 12px 14px;
+    }
+
+    .promote-plan-name {
+        font-size: 14px;
+    }
+
+    .promote-plan-price {
+        margin-top: 0;
+        font-size: 14px;
+        font-weight: 600;
+        color: #4caf50;
+    }
+}
