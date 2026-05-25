@@ -1,17 +1,30 @@
 <div class="seller-info-card">
-    <div class="seller-avatar-wrapper">
-        <img src="{{seller.avatarUrl}}" alt="{{seller.name}}" class="seller-avatar">
-    </div>
-    <h2 class="seller-name">{{seller.name}}</h2>
+    <div class="seller-info-card__main">
+        <div class="seller-info-card__section">
+            <div class="seller-info-card__name-row">
+                <h2 class="seller-info-card__name">{{seller.name}}</h2>
+            </div>
+        </div>
 
-    <div class="seller-rating-row">
-        <span class="seller-rating-value">{{seller.rating}}</span>
-        <span class="seller-rating-stars">{{{seller.ratingStars}}}</span>
-        <a href="#" class="seller-reviews-link">{{seller.reviewsText}}</a>
+        <div class="seller-info-card__section seller-info-card__stats">
+            <span class="seller-info-card__stat">
+                <span class="seller-info-card__rating-star">{{{icon "star-filled"}}}</span>
+                Рейтинг: <strong>{{#if seller.rating}}{{seller.rating}}{{else}}0{{/if}}</strong>
+                
+                <a class="seller-info-card__rating-link" href="#reviews" title="Посмотреть все отзывы">
+                    Посмотреть
+                </a>
+            </span>
+            
+            <span class="seller-info-card__stat">
+                Объявлений: <strong>{{seller.adsCount}}</strong>
+            </span>
+        </div>
+
+        <span class="seller-info-card__date">Зарегистрирован {{seller.registrationDate}}</span>
     </div>
 
-    <div class="seller-meta">
-        <p class="seller-meta-item">Зарегистрирован {{seller.registrationDate}}</p>
-        <p class="seller-meta-item">Всего объявлений: <strong>{{seller.adsCount}}</strong></p>
+    <div class="seller-info-card__avatar-wrapper">
+        <img src="{{seller.avatarUrl}}" alt="{{seller.name}}" class="seller-info-card__avatar">
     </div>
 </div>

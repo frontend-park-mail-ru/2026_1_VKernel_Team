@@ -1,4 +1,3 @@
-/* Стили для страницы предпросмотра */
 .preview-actions {
     display: flex;
     gap: 16px;
@@ -9,12 +8,17 @@
 }
 
 .btn-back-edit {
-    background: none;
-    border: none;
-    padding: 0;
-    font-size: 15px;
-    font-family: inherit;
-    line-height: 1.2;
+    display: inline-flex;      
+    align-items: center;       
+    justify-content: center;  
+    gap: 8px;                  
+    
+    padding: 12px 28px;
+    background: #f8f9fa;
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 500;
     cursor: pointer;
     transition: color 0.2s ease;
     color: #6b7280;
@@ -44,6 +48,18 @@
     outline: 2px solid #2bde8c;
     outline-offset: 2px;
     border-radius: 4px;
+}
+
+
+.btn-back-edit__icon {
+    display: inline-flex;
+    align-items: center;
+}
+
+.btn-back-edit__icon svg {
+    width: 18px;
+    height: 18px;
+    display: block; 
 }
 
 .btn-publish-final {

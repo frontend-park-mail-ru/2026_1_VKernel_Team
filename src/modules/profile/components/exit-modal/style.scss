@@ -1,0 +1,107 @@
+.exit-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.25s ease, visibility 0.25s ease;
+
+    &.is-open {
+        opacity: 1;
+        visibility: visible;
+    }
+}
+
+.exit-modal {
+    background: #fff;
+    border-radius: 16px;
+    padding: 24px;
+    width: 90%;
+    max-width: 360px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    position: relative;
+    text-align: center;
+    transform: translateY(20px);
+    transition: transform 0.25s ease;
+
+    .exit-modal-overlay.is-open & {
+        transform: translateY(0);
+    }
+
+    &__close {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        background: none;
+        border: none;
+        font-size: 24px;
+        color: #999;
+        cursor: pointer;
+        width: 32px;
+        height: 32px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        transition: background 0.2s, color 0.2s;
+
+        &:hover {
+            background: #f5f5f5;
+            color: #333;
+        }
+    }
+
+    &__title {
+        margin: 0 0 12px;
+        font-size: 20px;
+        color: #333;
+        font-weight: 600;
+    }
+
+    &__text {
+        margin: 0 0 24px;
+        color: #666;
+        font-size: 15px;
+        line-height: 1.5;
+    }
+
+    &__actions {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+    }
+
+    &__btn {
+        flex: 1;
+        padding: 12px;
+        border-radius: 10px;
+        font-size: 15px;
+        font-weight: 500;
+        cursor: pointer;
+        border: none;
+        transition: all 0.2s;
+
+        &--cancel {
+            background: #f5f5f5;
+            color: #333;
+
+            &:hover {
+                background: #e9ecef;
+            }
+        }
+
+        &--confirm {
+            background: #ffe3e3;
+            color: #ff4d4f;
+
+            &:hover {
+                background: #ff4d4f;
+                color: #fff;
+            }
+        }
+    }
+}

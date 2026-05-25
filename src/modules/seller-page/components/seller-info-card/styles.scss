@@ -1,109 +1,124 @@
 .seller-info-card {
     background: #fff;
     border-radius: 12px;
-    padding: 24px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 24px 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: center;
+    text-align: center;
+    gap: 16px;
+    width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 12px;
+}
+
+.seller-info-card__main {
+    width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
+    gap: 12px;
 }
 
-.seller-avatar-wrapper {
-    width: 140px;
-    height: 140px;
-    border-radius: 50%;
-    overflow: hidden;
-    background: #e9ecef;
-    margin-bottom: 16px;
-    flex-shrink: 0;
-}
-
-.seller-avatar {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.seller-name {
-    font-size: 20px;
-    font-weight: 600;
-    color: #333;
-    text-align: center;
-    margin-bottom: 8px;
-}
-
-.seller-rating-row {
+.seller-info-card__section {
     display: flex;
+    flex-direction: column;
     align-items: center;
     gap: 6px;
-    margin-bottom: 12px;
-    flex-wrap: wrap;
-    justify-content: center;
+    width: 100%;
 }
 
-.seller-rating-value {
+.seller-info-card__section + .seller-info-card__section {
+    padding-top: 12px;
+    border-top: 1px solid #e9ecef;
+}
+
+.seller-info-card__name-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+.seller-info-card__name {
     font-size: 18px;
-    font-weight: 700;
+    font-weight: 600;
+    color: #333;
+    margin: 0;
+    word-break: break-word;
+}
+
+.seller-info-card__stat {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    font-size: 13px;
+    color: #666;
+}
+
+.seller-info-card__stat strong {
     color: #333;
 }
 
-.seller-rating-stars {
+.seller-info-card__rating-star {
     color: #f5c518;
-    font-size: 18px;
-    letter-spacing: 1px;
+    display: inline-flex;
+    align-items: center;
 }
 
-.seller-reviews-link {
-    font-size: 14px;
+.seller-info-card__rating-star svg {
+    width: 16px;
+    height: 16px;
+    display: block;
+}
+
+.seller-info-card__rating-link {
+    margin-left: 6px;
+    font-size: 13px;
     color: #2bde8c;
     text-decoration: none;
     font-weight: 500;
+    cursor: pointer;
 }
 
-.seller-reviews-link:hover {
+.seller-info-card__rating-link:hover {
     text-decoration: underline;
 }
 
-.seller-meta {
+.seller-info-card__date {
+    font-size: 12px;
+    color: #aaa;
+    margin-top: 4px;
+}
+
+.seller-info-card__avatar-wrapper {
+    width: 90px;
+    height: 90px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    overflow: hidden;
+    background: #f0f0f0;
+    border: 1px solid #eee;
+}
+
+.seller-info-card__avatar {
     width: 100%;
-    border-top: 1px solid #e9ecef;
-    padding-top: 12px;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
+    height: 100%;
+    object-fit: cover;
+    display: block;
 }
 
-.seller-meta-item {
-    font-size: 14px;
-    color: #666;
-    text-align: center;
-}
-
-.seller-meta-item strong {
-    color: #333;
-}
-
-.seller-rating-stars svg {
-    width: 18px;
-    height: 18px;
-    display: inline-block;
-    vertical-align: middle;
-}
-
-@media (max-width: 480px) {
-    .seller-info-card {
-        padding: 18px;
+@media (max-width: 900px) {
+    body .seller-info-card {
+        padding: 16px;
+        box-shadow: none;
+        border: 1px solid #eee;
+        margin-bottom: 0;
     }
-    .seller-avatar-wrapper {
-        width: 110px;
-        height: 110px;
-        margin-bottom: 12px;
-    }
-    .seller-name {
-        font-size: 18px;
-    }
-    .seller-rating-stars svg {
-        width: 16px;
-        height: 16px;
+
+    body .seller-info-card__name {
+        font-size: 16px;
     }
 }
