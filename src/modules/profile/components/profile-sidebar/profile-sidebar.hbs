@@ -39,10 +39,13 @@
     {{> profile/components/profile-avatar/profile-avatar user=user }}
 </div>
 
+<<<<<<< HEAD
 <button class="profile-nav-toggle" type="button" data-action="toggle-profile-nav" aria-label="Открыть меню">
     <span class="profile-nav-toggle__label">Меню</span>
 </button>
 
+=======
+>>>>>>> main
 <div class="profile-nav-overlay" data-action="close-profile-nav"></div>
 
 <nav class="profile-nav">
@@ -54,10 +57,8 @@
             data-tab="{{tab}}"
         >
             <span class="nav-label">{{labelForTab tab}}</span>
-            {{#if (eq tab 'messages')}}
-                {{#if (gt (lookup ../user (concat tab '_count')) 0)}}
-                    <span class="nav-badge">{{lookup ../user (concat tab '_count')}}</span>
-                {{/if}}
+            {{#if (gt (lookup ../user (concat tab '_count')) 0)}}
+                <span class="nav-badge">{{lookup ../user (concat tab '_count')}}</span>
             {{/if}}
         </button>
     {{/each}}

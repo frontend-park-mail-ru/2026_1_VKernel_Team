@@ -24,15 +24,17 @@ export const ProfileSidebar = {
         if (!sidebar || sidebar === this._boundElement) return;
         this._boundElement = sidebar;
 
+        document.addEventListener('click', (e) => {
+            const target = e.target as HTMLElement;
+            if (!target.closest('[data-action="toggle-profile-nav"]')) return;
+            e.stopPropagation();
+            e.preventDefault();
+            const nav = sidebar.querySelector('.profile-nav');
+            setNavOpen(sidebar, !nav?.classList.contains('is-open'));
+        });
+
         sidebar.addEventListener('click', (e) => {
             const target = e.target as HTMLElement;
-
-            if (target.closest('[data-action="toggle-profile-nav"]')) {
-                e.stopPropagation();
-                const nav = sidebar.querySelector('.profile-nav');
-                setNavOpen(sidebar, !nav?.classList.contains('is-open'));
-                return;
-            }
 
             if (target.closest('[data-action="close-profile-nav"]')) {
                 e.stopPropagation();

@@ -23,10 +23,11 @@ import { purchasesStore } from '@modules/profile/purchases-store';
 import { NotificationComponent } from '@modules/common/notifications/notification';
 import type { Review } from '@modules/reviews/types';
 
-const enrichWithFavorite = (ads: any[]): any[] =>
+const enrichWithFavorite = (ads: any[], isOwn: boolean): any[] =>
     ads.map((ad) => ({
         ...ad,
         isFavorite: store.favoriteIds.has(Number(ad.id)),
+        isOwn,
     }));
 
 let summaryTpl: HandlebarsTemplateDelegate | null = null;
@@ -65,13 +66,14 @@ export const SellerPageController = {
         const isOwner = store.isAuthenticated && store.user?.id === state.profile.id;
         const showCartButton = store.isAuthenticated && !isOwner;
 
-        const activeAds = enrichWithFavorite(state.activeAds);
-        const closedAds = enrichWithFavorite(state.closedAds);
+        const activeAds = enrichWithFavorite(state.activeAds, isOwner);
+        const closedAds = enrichWithFavorite(state.closedAds, isOwner);
+        const totalAdsCount = activeAds.length + closedAds.length;
 
         app.innerHTML = template({
             isAuthenticated: store.isAuthenticated,
             user: store.user,
-            seller: state.profile,
+            seller: { ...state.profile, adsCount: totalAdsCount },
             activeAds,
             closedAds,
             activeAdsCount: activeAds.length,
@@ -161,6 +163,11 @@ export const SellerPageController = {
 
         document.querySelectorAll(ADS_SELECTORS.FAVORITE_BTN).forEach((btn) => {
             btn.addEventListener('click', AdsController.handleFavoriteClick.bind(AdsController));
+        });
+
+        document.querySelectorAll(ADS_SELECTORS.CARD).forEach((card) => {
+            card.addEventListener('click', AdsController.handleCardClick.bind(AdsController));
+            (card as HTMLElement).style.cursor = 'pointer';
         });
     },
 

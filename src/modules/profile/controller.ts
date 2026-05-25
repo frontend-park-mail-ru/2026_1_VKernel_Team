@@ -321,6 +321,9 @@ export const ProfileController = {
         if (this.currentTab === 'pending') {
             this.loadUserPendingAds();
         }
+        if (this.currentTab === 'purchases') {
+            this.loadUserPurchases();
+        }
         if (this.currentTab === 'wallet') {
             this.loadWalletData();
         }
@@ -404,6 +407,8 @@ export const ProfileController = {
             ...user,
             messages_count: unreadStore.count,
             cart_count: cartStore.getState().items.length,
+            favorites_count: store.favoriteIds.size,
+            pending_count: this.userPendingAds?.length ?? 0,
         };
 
         sidebarEl.innerHTML = profileSidebarTpl({

@@ -1,5 +1,12 @@
 <div class="header">
     <div class="header-content">
+        {{#if showProfileNav}}
+        <button class="header__profile-menu" type="button" data-action="toggle-profile-nav" aria-label="Меню профиля">
+            <span class="header__profile-menu-bar"></span>
+            <span class="header__profile-menu-bar"></span>
+            <span class="header__profile-menu-bar"></span>
+        </button>
+        {{/if}}
         <div class="header-left">
             <div class="nav-icon">
                 <a href="/chats" class="nav-link nav-link--with-badge" data-nav="/chats">

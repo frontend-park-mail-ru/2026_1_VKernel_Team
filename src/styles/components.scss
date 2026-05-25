@@ -234,19 +234,77 @@ input.error {
 .auth-header .back-link {
     position: absolute;
     left: 0;
-    display: flex;
+    top: 50%;
+    transform: translateY(-50%);
+    display: inline-flex;
     align-items: center;
-    justify-content: center;
-    color: #667eea;
+    gap: 6px;
+    color: #6b7280;
     text-decoration: none;
-    font-size: 24px;
+    font-size: 15px;
     font-weight: 500;
-    transition: all 0.3s;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.auth-header .back-link svg {
+    width: 16px;
+    height: 16px;
+    display: block;
 }
 
 .auth-header .back-link:hover {
-    color: #5a67d8;
-    transform: translateX(-3px);
+    color: #2bde8c;
+}
+
+/* ========== УНИВЕРСАЛЬНАЯ КНОПКА «НАЗАД» ========== */
+/* Используется на страницах: seller, product_search, и как fallback */
+.btn-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 15px;
+    color: #6b7280;
+    text-decoration: none;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+    line-height: 1.2;
+    transition: color 0.2s ease;
+    font-family: inherit;
+}
+
+.btn-back svg {
+    width: 16px;
+    height: 16px;
+    display: block;
+    flex-shrink: 0;
+}
+
+.btn-back:hover {
+    color: #2bde8c;
+}
+
+.btn-back:focus-visible {
+    outline: 2px solid #2bde8c;
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
+@media (max-width: 480px) {
+    .btn-back {
+        font-size: 14px;
+        gap: 4px;
+    }
+
+    .btn-back svg {
+        width: 15px;
+        height: 15px;
+    }
 }
 
 /* ========== ПОЛЕ ПАРОЛЯ С ГЛАЗИКОМ ========== */

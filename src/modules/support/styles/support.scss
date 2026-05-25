@@ -99,18 +99,59 @@
 
 .support-btn--back {
     background: none;
-    color: #667eea;
-    padding: 4px 0;
-    font-size: 14px;
-    font-weight: 500;
+    color: #6b7280;
+    padding: 0;
+    font-size: 15px;
+    font-weight: 400;
     margin-bottom: 12px;
     box-shadow: none;
     letter-spacing: normal;
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    line-height: 1.2;
+    transition: color 0.2s ease;
+    font-family: inherit;
+    text-transform: none;
+}
+
+.support-btn--back .support-btn--back__icon {
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.support-btn--back .support-btn--back__icon svg {
+    width: 16px;
+    height: 16px;
+    display: block;
 }
 
 .support-btn--back:hover {
-    color: #5a67d8;
-    transform: translateX(-3px);
+    color: #2bde8c;
+    transform: none;
+    background: none;
+    box-shadow: none;
+}
+
+.support-btn--back:focus-visible {
+    outline: 2px solid #2bde8c;
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
+@media (max-width: 480px) {
+    .support-btn--back {
+        font-size: 14px;
+        gap: 4px;
+    }
+
+    .support-btn--back .support-btn--back__icon svg {
+        width: 15px;
+        height: 15px;
+    }
 }
 
 .support-btn--full {

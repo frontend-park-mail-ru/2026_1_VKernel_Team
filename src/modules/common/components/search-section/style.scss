@@ -37,8 +37,6 @@
 }
 
 
-
-/* ----- Search suggestions dropdown ----- */
 .search-suggestions {
     position: absolute;
     top: calc(100% + 4px);
@@ -237,14 +235,4 @@
         }
     }
 
-
-
-    body .geo .city {
-        display: inline;
-        font-size: 12px;
-        max-width: 60px; 
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
 }

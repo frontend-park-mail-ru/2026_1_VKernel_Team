@@ -213,6 +213,28 @@
     }
 }
 
+@media (max-width: 900px) {
+    .profile-ad-card__badge-time {
+        display: none;
+    }
+
+    .profile-ad-card__badges {
+        gap: 4px;
+        flex-wrap: wrap;
+    }
+
+    .profile-ad-card__badge {
+        height: 20px;
+        padding: 0 4px;
+        gap: 2px;
+
+        svg {
+            width: 12px;
+            height: 12px;
+        }
+    }
+}
+
 @media (max-width: 768px) {
     .profile-ad-card {
         gap: 12px;
@@ -284,8 +306,24 @@
         -webkit-box-orient: vertical;
     }
 
+    .profile-ad-card__badges {
+        gap: 4px;
+        flex-wrap: wrap;
+    }
+
+    .profile-ad-card__badge {
+        height: 20px;
+        padding: 0 4px;
+        gap: 2px;
+
+        svg {
+            width: 12px;
+            height: 12px;
+        }
+    }
+
     .profile-ad-card__badge-time {
-        font-size: 10px;
+        display: none;
     }
 
     .profile-ad-card__btn {

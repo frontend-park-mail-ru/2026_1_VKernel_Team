@@ -1,7 +1,6 @@
 import '@modules/common/components/search-section/style.scss';
 import { searchSuggestService, type SuggestItem } from '@/services/searchSuggestService';
 import { eventBus } from '@/core/eventBus';
-import { getIcon } from '@/utils/icons';
 
 const SUGGEST_DEBOUNCE_MS = 250;
 const MIN_QUERY_LENGTH = 2;
