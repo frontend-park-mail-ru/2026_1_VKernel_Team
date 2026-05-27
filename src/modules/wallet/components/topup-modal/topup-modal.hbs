@@ -1,30 +1,6 @@
 {{#> common/components/modal/modal id="topupModal" modifier="topup-modal-content"}}
-<div class="topup-step" id="topupStep1">
-    <h3>Данные карты</h3>
-    <div class="topup-card-form">
-        <div class="topup-field">
-            <label class="topup-label" for="topupCardNumber">Номер карты</label>
-            <input type="text" id="topupCardNumber" class="modal-input" placeholder="От 16 до 19 цифр" maxlength="23" inputmode="numeric" autocomplete="off">
-        </div>
-        <div class="topup-field-row">
-            <div class="topup-field topup-field--half">
-                <label class="topup-label" for="topupCardExpiry">Срок действия</label>
-                <input type="text" id="topupCardExpiry" class="modal-input" placeholder="мм/гг" maxlength="5" inputmode="numeric" autocomplete="off">
-            </div>
-            <div class="topup-field topup-field--half">
-                <label class="topup-label" for="topupCardCvv">CVV/CVC</label>
-                <input type="text" id="topupCardCvv" class="modal-input" placeholder="3 цифры" maxlength="3" inputmode="numeric" autocomplete="off">
-            </div>
-        </div>
-    </div>
-    <p class="topup-error" id="topupCardError">&nbsp;</p>
-    <div class="modal-actions topup-actions-full">
-        <button class="btn btn-primary" data-action="go-to-step2">Далее</button>
-    </div>
-</div>
-
-<div class="topup-step" id="topupStep2" style="display: none;">
-    <h3><button class="topup-back-btn" data-action="go-to-step1">{{{icon "arrow-left"}}}</button>Сумма пополнения</h3>
+<div class="topup-step" id="topupStepAmount">
+    <h3>Пополнение кошелька</h3>
     <div class="topup-quick-amounts-wrapper">
         <button class="topup-scroll-btn topup-scroll-btn--left" data-action="scroll-left">{{{icon "arrow-left"}}}</button>
         <div class="topup-quick-amounts">
@@ -37,16 +13,17 @@
         <button class="topup-scroll-btn topup-scroll-btn--right" data-action="scroll-right">{{{icon "arrow-right"}}}</button>
     </div>
     <input type="text" id="topupAmountInput" class="modal-input" placeholder="Сумма, ₽" inputmode="numeric" autocomplete="off">
+    <p class="topup-hint">Оплата картой проходит через защищённую страницу ЮКассы.</p>
     <p class="topup-error" id="topupError">&nbsp;</p>
     <div class="modal-actions topup-actions-stack">
-        <button class="btn btn-primary" data-action="confirm-topup">Пополнить</button>
+        <button class="btn btn-primary" data-action="confirm-topup">Перейти к оплате</button>
     </div>
 </div>
 
 <div class="topup-step" id="topupStepLoading" style="display: none;">
     <div class="topup-loading">
         <div class="topup-spinner"></div>
-        <p class="topup-loading-text">Пополнение...</p>
+        <p class="topup-loading-text">Создаём платёж…</p>
     </div>
 </div>
 {{/common/components/modal/modal}}

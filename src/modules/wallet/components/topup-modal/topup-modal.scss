@@ -20,32 +20,8 @@
     }
 }
 
-.topup-card-form {
-    margin-bottom: 4px;
-}
-
-.topup-label {
-    display: block;
-    font-size: 11px;
-    color: #999;
-    margin-bottom: 4px;
-}
-
 .topup-modal-content .modal-input {
     margin: 0;
-}
-
-.topup-field {
-    margin-bottom: 12px;
-}
-
-.topup-field-row {
-    display: flex;
-    gap: 12px;
-}
-
-.topup-field--half {
-    flex: 1;
 }
 
 .topup-quick-amounts-wrapper {
@@ -115,35 +91,6 @@
     }
 }
 
-.topup-actions-full {
-    margin-top: 12px;
-    justify-content: stretch;
-
-    .btn {
-        flex: 1;
-    }
-}
-
-.topup-back-btn {
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: #666;
-    padding: 0 6px 0 0;
-    line-height: 1;
-    display: inline-flex;
-    align-items: center;
-
-    svg {
-        width: 16px;
-        height: 16px;
-    }
-
-    &:hover {
-        color: #333;
-    }
-}
-
 .topup-actions-stack {
     flex-direction: column;
     margin-top: 12px;
@@ -151,6 +98,12 @@
     .btn {
         width: 100%;
     }
+}
+
+.topup-hint {
+    font-size: 12px;
+    color: #888;
+    margin: 8px 0 0;
 }
 
 .topup-loading {
@@ -198,18 +151,5 @@
 @media (max-width: 480px) {
     .topup-modal-content {
         max-width: 100%;
-    }
-
-    .topup-field-row {
-        flex-direction: column;
-        gap: 10px;
-    }
-
-    .topup-actions-full {
-        flex-direction: column;
-
-        .btn {
-            width: 100%;
-        }
     }
 }

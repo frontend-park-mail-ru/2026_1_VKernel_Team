@@ -25,6 +25,13 @@ export const uiActions = {
         document.body.appendChild(toast);
         setTimeout(() => toast.remove(), 3000);
     },
+    showInfo(message: string): void {
+        const toast = document.createElement('div');
+        toast.className = 'toast toast-info';
+        toast.textContent = message;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 4000);
+    },
     clearError(): void {
         if (store.getState().error !== null) {
             store.setState({ error: null });
