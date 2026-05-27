@@ -116,6 +116,12 @@ export const WalletTab = {
                         : `${Math.abs(tx.amount).toLocaleString('ru-RU')} ₽`,
             })),
             nextCursor: state.nextCursor,
+            pendingTopup: state.pendingTopup
+                ? {
+                      ...state.pendingTopup,
+                      formattedAmount: `${state.pendingTopup.amount.toLocaleString('ru-RU')} ₽`,
+                  }
+                : null,
         };
     },
 

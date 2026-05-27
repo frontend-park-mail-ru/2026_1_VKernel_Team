@@ -7,6 +7,19 @@
     <button class="btn btn-primary wallet-topup-btn" data-action="open-topup">Пополнить</button>
 </div>
 
+{{#if pendingTopup}}
+    <div class="wallet-pending-banner" role="status" aria-live="polite">
+        <span class="wallet-pending-spinner" aria-hidden="true"></span>
+        <div class="wallet-pending-text">
+            <div class="wallet-pending-title">Ожидаем подтверждение от банка</div>
+            <div class="wallet-pending-sub">
+                Платёж на <strong>{{pendingTopup.formattedAmount}}</strong> обрабатывается.
+                Деньги поступят на баланс в течение нескольких минут, можно не закрывать страницу.
+            </div>
+        </div>
+    </div>
+{{/if}}
+
 <div class="wallet-transactions">
     <h3 class="wallet-transactions-title">История операций</h3>
     {{#if transactions.length}}

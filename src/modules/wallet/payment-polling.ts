@@ -59,54 +59,90 @@ function getPendingPaymentId(): number | null {
     return Number.isFinite(id) && id > 0 ? id : null;
 }
 
-// handleTopupReturn вызывается при заходе на /wallet с ?topup=done. Дожидается
-// результата на бэке, показывает тост, обновляет баланс.
+function getPendingAmount(): number {
+    const raw = sessionStorage.getItem(TOPUP_PENDING_AMOUNT_KEY);
+    const n = raw ? Number.parseInt(raw, 10) : 0;
+    return Number.isFinite(n) && n > 0 ? n : 0;
+}
+
+// markPending выставляет в стор баннер «Ожидаем подтверждение от банка»
+// и эмитит wallet:updated, чтобы вкладка кошелька перерендерилась с баннером.
+function markPending(paymentId: number, amount: number): void {
+    walletStore.setState({ pendingTopup: { paymentId, amount } });
+    eventBus.emit('wallet:updated');
+}
+
+// finalizePending очищает sessionStorage, снимает баннер, обновляет баланс
+// и подгружает свежий список транзакций (чтобы появилась строка пополнения).
+async function finalizePending(): Promise<void> {
+    clearPendingPayment();
+    walletStore.setState({ pendingTopup: null });
+
+    await walletStore.fetchBalance();
+    const txRes = await walletService.getTransactions(20);
+    if (txRes.success && txRes.data) {
+        walletStore.setState({
+            transactions: txRes.data.items,
+            nextCursor: txRes.data.next_cursor ?? null,
+        });
+    }
+
+    eventBus.emit('wallet:updated');
+}
+
+// handleTopupReturn вызывается при заходе на /profile?tab=wallet&topup=done.
+// Показывает баннер ожидания, поллит статус, при успехе перерендеривает
+// кошелёк (свежий баланс + новая строка в истории операций).
 async function handleTopupReturn(): Promise<void> {
     const paymentId = getPendingPaymentId();
     if (!paymentId) {
         return;
     }
 
-    uiActions.showInfo('Ожидаем подтверждение от банка…');
+    markPending(paymentId, getPendingAmount());
+
     const result = await pollPaymentStatus(paymentId);
 
     if (result.status === 'succeeded') {
-        await walletStore.fetchBalance();
+        await finalizePending();
         uiActions.showSuccess(`Зачислено ${result.amount.toLocaleString('ru-RU')} ₽`);
-        eventBus.emit('wallet:updated');
-        clearPendingPayment();
-    } else if (result.status === 'failed' || result.status === 'cancelled') {
-        uiActions.showError('Оплата не прошла');
-        clearPendingPayment();
-    } else {
-        // timeout: webhook ещё не дошёл / reconciler подберёт позже
-        uiActions.showInfo(
-            'Платёж обрабатывается. Баланс обновится автоматически в течение нескольких минут.',
-        );
-        // sessionStorage НЕ чистим — при следующем заходе на /wallet поллинг
-        // пройдёт ещё раз и подберёт финальный статус.
+        return;
     }
+
+    if (result.status === 'failed' || result.status === 'cancelled') {
+        clearPendingPayment();
+        walletStore.setState({ pendingTopup: null });
+        eventBus.emit('wallet:updated');
+        uiActions.showError('Оплата не прошла');
+        return;
+    }
+
+    // timeout: webhook ещё не дошёл / reconciler подберёт позже. Баннер
+    // оставляем на странице — юзер видит, что платёж в обработке. При
+    // следующем заходе на /wallet silentPollPendingPayment подберёт статус.
 }
 
 // silentPollPendingPayment вызывается при обычном заходе на /wallet (без query-param):
-// если у юзера лежит незавершённый payment_id в sessionStorage — тихо чекнем его
-// статус один раз и обновим баланс, если зачислился.
+// если у юзера лежит незавершённый payment_id в sessionStorage — показываем баннер
+// ожидания, тихо чекаем статус один раз и перерендериваем при необходимости.
 async function silentPollPendingPayment(): Promise<void> {
     const paymentId = getPendingPaymentId();
     if (!paymentId) return;
+
+    markPending(paymentId, getPendingAmount());
 
     const res = await walletService.getPaymentStatus(paymentId);
     if (!res.success || !res.data) {
         return;
     }
     if (res.data.status === 'succeeded') {
-        await walletStore.fetchBalance();
-        eventBus.emit('wallet:updated');
-        clearPendingPayment();
+        await finalizePending();
     } else if (res.data.status === 'failed' || res.data.status === 'cancelled') {
         clearPendingPayment();
+        walletStore.setState({ pendingTopup: null });
+        eventBus.emit('wallet:updated');
     }
-    // pending — оставляем, попробуем при следующем заходе
+    // pending — оставляем баннер, попробуем при следующем заходе
 }
 
 export { handleTopupReturn, silentPollPendingPayment, clearPendingPayment, getPendingPaymentId };

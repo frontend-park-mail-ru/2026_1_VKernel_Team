@@ -39,6 +39,11 @@ export interface PaymentStatusResponse {
     confirmation_url?: string;
 }
 
+export interface PendingTopup {
+    paymentId: number;
+    amount: number;
+}
+
 export interface WalletState {
     balance: number;
     currency: string;
@@ -46,4 +51,5 @@ export interface WalletState {
     nextCursor: number | null;
     error: string | null;
     isLoading: boolean;
+    pendingTopup: PendingTopup | null;
 }
