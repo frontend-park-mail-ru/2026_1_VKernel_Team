@@ -14,6 +14,7 @@ class WalletStore {
         nextCursor: null,
         error: null,
         isLoading: false,
+        pendingTopup: null,
     };
 
     private eventBus: EventBus;

@@ -36,6 +36,52 @@
     }
 }
 
+.wallet-pending-banner {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    background: #fff8e1;
+    border: 1px solid #ffe082;
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 20px;
+    color: #5d4037;
+}
+
+.wallet-pending-spinner {
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: 2px solid #ffb300;
+    border-top-color: transparent;
+    animation: wallet-pending-spin 0.9s linear infinite;
+    margin-top: 2px;
+}
+
+@keyframes wallet-pending-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.wallet-pending-text {
+    flex: 1;
+    line-height: 1.4;
+}
+
+.wallet-pending-title {
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 4px;
+    color: #4e342e;
+}
+
+.wallet-pending-sub {
+    font-size: 13px;
+    color: #6d4c41;
+}
+
 .wallet-transactions-title {
     font-size: 16px;
     font-weight: 600;
