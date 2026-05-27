@@ -81,10 +81,11 @@ export class PriceHistoryModal {
 
         if (chartPoints.length === 0) {
             this.showError('Не удалось загрузить данные для графика');
+            this.showLoader(false);
             return;
         }
 
-        const stats = calculateStats(chartPoints, data.currentPrice, history.length);
+        const stats = calculateStats(chartPoints, data.currentPrice, history);
         const hasMultiplePrices = stats.minPrice !== stats.maxPrice;
 
         this.updateStats(stats, data, hasMultiplePrices);
@@ -112,7 +113,10 @@ export class PriceHistoryModal {
     }
 
     private async renderChart(points: any[]): Promise<void> {
-        await new Promise((resolve) => setTimeout(resolve, 50));
+        // Ждём 2 кадра — гарантируем, что модалка вычислила свою ширину
+        await new Promise<void>((resolve) =>
+            requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
+        );
 
         const container = document.getElementById('priceHistoryChartContainer');
         if (!container) return;
@@ -146,6 +150,7 @@ export class PriceHistoryModal {
         const maxPriceEl = this.modalElement.querySelector('.max-price');
         const maxDateEl = this.modalElement.querySelector('.max-date');
         const changesEl = this.modalElement.querySelector('.changes-count');
+        const changesTodayEl = this.modalElement.querySelector('.changes-today');
         const extraStats = this.modalElement.querySelectorAll('.extra-stat');
 
         if (hasMultiplePrices) {
@@ -154,6 +159,7 @@ export class PriceHistoryModal {
             if (maxPriceEl) maxPriceEl.textContent = `${stats.maxPrice.toLocaleString('ru-RU')} ₽`;
             if (maxDateEl) maxDateEl.textContent = stats.maxPriceDate;
             if (changesEl) changesEl.textContent = String(stats.changesCount);
+            if (changesTodayEl) changesTodayEl.textContent = String(stats.changesToday);
             extraStats.forEach((el) => el.classList.remove('hidden'));
         } else {
             extraStats.forEach((el) => el.classList.add('hidden'));

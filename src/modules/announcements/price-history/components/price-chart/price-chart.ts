@@ -1,4 +1,11 @@
-import { createChart, ColorType, CrosshairMode, IChartApi, ISeriesApi } from 'lightweight-charts';
+import {
+    createChart,
+    ColorType,
+    CrosshairMode,
+    LineSeries,
+    IChartApi,
+    ISeriesApi,
+} from 'lightweight-charts';
 import type { ChartPoint } from '../../types';
 import { formatDateForDisplay } from '../../utils';
 
@@ -7,6 +14,9 @@ export class PriceHistoryChart {
     private series: ISeriesApi<'Line'> | null = null;
     private container: HTMLElement | null = null;
     private tooltip: HTMLElement | null = null;
+    private resizeObserver: ResizeObserver | null = null;
+    private resizeHandler: (() => void) | null = null;
+    private pendingData: ChartPoint[] | null = null;
 
     init(containerId: string): void {
         this.container = document.getElementById(containerId) as HTMLElement | null;
@@ -36,11 +46,19 @@ export class PriceHistoryChart {
         this.container?.appendChild(this.tooltip);
     }
 
+    private getContainerWidth(): number {
+        if (!this.container) return 0;
+        const rect = this.container.getBoundingClientRect();
+        return Math.max(rect.width || this.container.clientWidth || 0, 0);
+    }
+
     private createChart(): void {
         if (!this.container) return;
 
+        const initialWidth = this.getContainerWidth() || 600;
+
         this.chart = createChart(this.container, {
-            width: this.container.clientWidth,
+            width: initialWidth,
             height: 280,
             layout: {
                 background: { type: ColorType.Solid, color: '#ffffff' },
@@ -55,7 +73,7 @@ export class PriceHistoryChart {
                 vertLine: {
                     width: 1,
                     color: '#2bde8c',
-                    style: 2, // LineStyle.Dashed
+                    style: 2,
                     labelBackgroundColor: '#2bde8c',
                 },
                 horzLine: {
@@ -68,8 +86,7 @@ export class PriceHistoryChart {
             rightPriceScale: {
                 borderColor: '#e0e0e0',
                 textColor: '#666',
-                // visible: true,
-                mode: 0, // 0 = normal, 1 = logarithmic, 2 = percentage
+                mode: 0,
                 scaleMargins: {
                     top: 0.15,
                     bottom: 0.15,
@@ -80,15 +97,12 @@ export class PriceHistoryChart {
                 borderColor: '#e0e0e0',
                 tickMarkFormatter: (time: number | string) => {
                     let date: Date;
-
                     if (typeof time === 'string') {
                         date = new Date(time);
                     } else {
                         date = new Date(time * 1000);
                     }
-
                     if (isNaN(date.getTime())) return '';
-
                     const day = date.getDate().toString().padStart(2, '0');
                     const month = (date.getMonth() + 1).toString().padStart(2, '0');
                     return `${day}.${month}`;
@@ -100,7 +114,6 @@ export class PriceHistoryChart {
             },
         });
 
-        // Используем addSeries вместо addLineSeries
         this.series = this.chart.addSeries(LineSeries, {
             color: '#2bde8c',
             lineWidth: 2,
@@ -112,31 +125,34 @@ export class PriceHistoryChart {
             crosshairMarkerBackgroundColor: '#2bde8c',
             priceFormat: {
                 type: 'price',
-                precision: 0, // ← 0 знаков после запятой
-                minMove: 1, // ← минимальный шаг 1
+                precision: 0,
+                minMove: 1,
             },
         });
 
-        // Подписка на движение курсора
         this.chart.subscribeCrosshairMove((param) => {
-            if (!this.tooltip || !param.point || !param.time) {
+            if (!this.tooltip || !param.point || !param.time || !this.series) {
                 this.hideTooltip();
                 return;
             }
 
-            // Получаем цену через seriesData
-            const price = param.seriesData.get(this.series!);
-            if (!price || typeof price === 'object') {
+            const price = param.seriesData.get(this.series);
+            if (!price || typeof price !== 'object' || !('value' in price)) {
                 this.hideTooltip();
                 return;
             }
 
-            const date = new Date((param.time as number) * 1000);
+            let date: Date;
+            if (typeof param.time === 'string') {
+                date = new Date(param.time);
+            } else {
+                date = new Date((param.time as number) * 1000);
+            }
             const dateStr = formatDateForDisplay(date.toISOString());
 
+            const priceValue = (price as { value: number }).value;
             this.tooltip.style.display = 'block';
-            this.tooltip.innerHTML = `${dateStr}<br><strong>${price} ₽</strong>`;
-
+            this.tooltip.innerHTML = `${dateStr}<br><strong>${priceValue.toLocaleString('ru-RU')} ₽</strong>`;
             this.tooltip.style.left = `${param.point.x}px`;
             this.tooltip.style.top = `${param.point.y - 40}px`;
         });
@@ -145,21 +161,33 @@ export class PriceHistoryChart {
             this.hideTooltip();
         });
 
-        window.addEventListener('resize', () => this.resize());
+        // ResizeObserver вместо window resize — реагирует на изменения родителя
+        if (typeof ResizeObserver !== 'undefined') {
+            this.resizeObserver = new ResizeObserver(() => this.resize());
+            this.resizeObserver.observe(this.container);
+        }
+
+        this.resizeHandler = () => this.resize();
+        window.addEventListener('resize', this.resizeHandler);
     }
 
     setData(points: ChartPoint[]): void {
-        if (!this.series) return;
+        if (!this.series || !this.chart) return;
 
         const chartData = points.map((point) => ({
-            time: point.time,
+            time: point.time as never,
             value: point.value,
         }));
 
+        this.pendingData = points;
         this.series.setData(chartData);
 
-        if (this.chart && chartData.length > 0) {
-            this.chart.timeScale().fitContent();
+        if (chartData.length > 0) {
+            // Если контейнер только что показан и ширина была 0 — ждём кадр и подгоняем
+            requestAnimationFrame(() => {
+                this.resize();
+                this.chart?.timeScale().fitContent();
+            });
         }
     }
 
@@ -170,12 +198,11 @@ export class PriceHistoryChart {
     }
 
     resize(): void {
-        if (this.chart && this.container) {
-            this.chart.applyOptions({ width: this.container.clientWidth });
-            setTimeout(() => {
-                this.chart?.timeScale().fitContent();
-            }, 100);
-        }
+        if (!this.chart || !this.container) return;
+        const width = this.getContainerWidth();
+        if (width <= 0) return;
+        this.chart.applyOptions({ width });
+        this.chart.timeScale().fitContent();
     }
 
     showLoader(show: boolean): void {
@@ -193,6 +220,14 @@ export class PriceHistoryChart {
     }
 
     destroy(): void {
+        if (this.resizeObserver) {
+            this.resizeObserver.disconnect();
+            this.resizeObserver = null;
+        }
+        if (this.resizeHandler) {
+            window.removeEventListener('resize', this.resizeHandler);
+            this.resizeHandler = null;
+        }
         if (this.chart) {
             this.chart.remove();
             this.chart = null;
@@ -202,8 +237,6 @@ export class PriceHistoryChart {
             this.tooltip.remove();
             this.tooltip = null;
         }
+        this.pendingData = null;
     }
 }
-
-// Импортируем LineSeries после createChart
-import { LineSeries } from 'lightweight-charts';

@@ -83,32 +83,38 @@
 }
 
 .price-history-stats-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 24px;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+    align-items: start;
 }
 
 .price-history-stat {
-    flex: 1;
-    min-width: 100px;
+    min-width: 0;
     text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
 }
 
 .stat-label {
     display: block;
-    font-size: 12px;
+    font-size: 11px;
+    line-height: 1.2;
     color: #999;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: 4px;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+    margin-bottom: 0;
 }
 
 .stat-value {
     display: block;
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 700;
     color: #333;
+    white-space: nowrap;
 }
 
 .stat-value.current-price {
@@ -145,49 +151,45 @@
         width: 95%;
         max-height: 90vh;
     }
-    
+
     .price-history-title {
         font-size: 18px;
         padding: 20px 20px 12px;
     }
-    
+
     .price-chart-wrapper {
         padding: 12px 16px;
         min-height: 260px;
     }
-    
+
     .price-history-stats {
         padding: 12px 16px 20px;
     }
-    
+
     .price-history-stats-grid {
-        gap: 12px;
+        gap: 8px;
     }
-    
+
+    .stat-label {
+        font-size: 10px;
+    }
+
     .stat-value {
-        font-size: 16px;
+        font-size: 14px;
     }
 }
 
 @media (max-width: 480px) {
     .price-history-stats-grid {
-        flex-direction: column;
-        gap: 10px;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
     }
-    
+
     .price-history-stat {
-        text-align: left;
-        display: flex;
-        justify-content: space-between;
-        align-items: baseline;
-        flex-wrap: wrap;
+        text-align: center;
     }
-    
-    .stat-label {
-        margin-bottom: 0;
-    }
-    
+
     .stat-value {
-        font-size: 18px;
+        font-size: 16px;
     }
 }

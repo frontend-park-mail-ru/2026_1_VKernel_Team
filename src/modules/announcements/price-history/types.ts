@@ -18,6 +18,7 @@ export interface ChartStats {
     maxPrice: number;
     maxPriceDate: string;
     changesCount: number;
+    changesToday: number;
 }
 
 export interface PriceHistoryData {
