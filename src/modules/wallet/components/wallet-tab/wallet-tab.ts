@@ -6,6 +6,7 @@ import { TopupModal } from '@modules/wallet/components/topup-modal/topup-modal';
 import { createBaseModal } from '@modules/common/components/modal/modal';
 import { uiActions } from '@/actions/uiActions';
 import { eventBus } from '@/core/eventBus';
+import { handleTopupReturn, silentPollPendingPayment } from '@modules/wallet/payment-polling';
 
 declare const Handlebars: any;
 
@@ -56,6 +57,27 @@ export const WalletTab = {
             }
         };
         content.addEventListener('click', this._clickHandler);
+
+        this.handlePaymentReturn();
+    },
+
+    // handlePaymentReturn — отрабатывает редирект с ЮКассы (?topup=done) или
+    // тихо доактивирует ранее начатый pending-платёж, если юзер вернулся на /wallet
+    // без query-param (например, закрыл вкладку у ЮКассы и сам зашёл обратно).
+    handlePaymentReturn(): void {
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('topup') === 'done') {
+            // Уберём query-param из URL, чтобы при F5 поллинг не запускался повторно.
+            params.delete('topup');
+            const newQuery = params.toString();
+            const newUrl =
+                window.location.pathname + (newQuery ? `?${newQuery}` : '') + window.location.hash;
+            window.history.replaceState({}, '', newUrl);
+
+            void handleTopupReturn();
+            return;
+        }
+        void silentPollPendingPayment();
     },
 
     rerender(): void {

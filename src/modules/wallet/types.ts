@@ -21,9 +21,22 @@ export interface TopupRequest {
     idempotency_key: string;
 }
 
+export type PaymentStatus = 'pending' | 'succeeded' | 'failed' | 'cancelled';
+
 export interface TopupResponse {
     balance: number;
     payment_id: number;
+    status: PaymentStatus;
+    // Непустой только для асинхронных провайдеров (ЮКасса). Фронт должен сделать
+    // window.location.href = confirmation_url, юзер оплачивает на стороне ЮКассы.
+    confirmation_url?: string;
+}
+
+export interface PaymentStatusResponse {
+    payment_id: number;
+    status: PaymentStatus;
+    amount: number;
+    confirmation_url?: string;
 }
 
 export interface WalletState {

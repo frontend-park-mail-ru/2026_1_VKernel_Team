@@ -1,6 +1,11 @@
 import { apiClient } from '@/api/apiClient';
 import { WALLET_API_ENDPOINTS } from './config';
-import type { WalletBalance, TransactionsResponse, TopupResponse } from './types';
+import type {
+    WalletBalance,
+    TransactionsResponse,
+    TopupResponse,
+    PaymentStatusResponse,
+} from './types';
 
 const walletService = {
     async getBalance() {
@@ -20,6 +25,12 @@ const walletService = {
             url += `&cursor=${cursor}`;
         }
         return apiClient.get<TransactionsResponse>(url);
+    },
+
+    async getPaymentStatus(paymentId: number) {
+        return apiClient.get<PaymentStatusResponse>(
+            `${WALLET_API_ENDPOINTS.GET_PAYMENT_STATUS}/${paymentId}`,
+        );
     },
 };
 

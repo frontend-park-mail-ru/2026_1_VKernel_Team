@@ -5,47 +5,21 @@ import { walletService } from '@modules/wallet/service';
 import { walletStore } from '@modules/wallet/store';
 import { uiActions } from '@/actions/uiActions';
 import { eventBus } from '@/core/eventBus';
-
-function formatCardNumber(value: string): string {
-    const digits = value.replace(/\D/g, '').slice(0, 19);
-    return digits.replace(/(\d{4})(?=\d)/g, '$1 ');
-}
-
-function formatExpiry(value: string): string {
-    const digits = value.replace(/\D/g, '').slice(0, 4);
-    if (digits.length >= 3) {
-        return digits.slice(0, 2) + '/' + digits.slice(2);
-    }
-    return digits;
-}
-
-function validateCardFields(): { valid: boolean; error: string } {
-    const cardNumber =
-        (document.getElementById('topupCardNumber') as HTMLInputElement)?.value.replace(
-            /\s/g,
-            '',
-        ) || '';
-    const expiry = (document.getElementById('topupCardExpiry') as HTMLInputElement)?.value || '';
-    const cvv = (document.getElementById('topupCardCvv') as HTMLInputElement)?.value || '';
-
-    if (cardNumber.length < 16 || cardNumber.length > 19) {
-        return { valid: false, error: 'Номер карты: 16–19 цифр' };
-    }
-    if (!/^\d{2}\/\d{2}$/.test(expiry)) {
-        return { valid: false, error: 'Срок действия: ММ/ГГ' };
-    }
-    const month = parseInt(expiry.slice(0, 2), 10);
-    if (month < 1 || month > 12) {
-        return { valid: false, error: 'Месяц: 01–12' };
-    }
-    if (!/^\d{3}$/.test(cvv)) {
-        return { valid: false, error: 'CVV/CVC: 3 цифры' };
-    }
-    return { valid: true, error: '' };
-}
+import { TOPUP_PENDING_AMOUNT_KEY, TOPUP_PENDING_PAYMENT_KEY } from '@modules/wallet/config';
 
 const base = createBaseModal({ id: 'topupModal' });
 
+// TopupModal — модалка пополнения кошелька. Собирает только сумму.
+// Реальные данные карты собираются на стороне ЮКассы (PCI DSS — не касаемся PAN).
+//
+// Flow:
+//   1. Юзер вводит сумму, жмёт «Перейти к оплате».
+//   2. POST /wallet/topup. Если бэк ответил succeeded (mock-провайдер в dev)
+//      — закрываем модалку, тост, обновляем баланс.
+//   3. Если бэк ответил pending + confirmation_url (ЮКасса) — сохраняем
+//      payment_id в sessionStorage и редиректим на confirmation_url.
+//      Дальше юзер платит у ЮКассы, возвращается на /wallet?topup=done.
+//      Обработка возврата живёт в @modules/wallet/payment-polling.
 export const TopupModal = {
     _boundElement: null as HTMLElement | null,
     _idempotencyKey: '',
@@ -64,16 +38,6 @@ export const TopupModal = {
 
         modal.addEventListener('click', (e) => {
             const target = e.target as HTMLElement;
-
-            if (target.closest('[data-action="go-to-step2"]')) {
-                this.goToStep2();
-                return;
-            }
-
-            if (target.closest('[data-action="go-to-step1"]')) {
-                this.goToStep1();
-                return;
-            }
 
             if (target.closest('[data-action="scroll-left"]')) {
                 const container = modal.querySelector('.topup-quick-amounts');
@@ -108,31 +72,6 @@ export const TopupModal = {
             }
         });
 
-        const cardNumberInput = document.getElementById('topupCardNumber') as HTMLInputElement;
-        if (cardNumberInput) {
-            cardNumberInput.addEventListener('input', () => {
-                const pos = cardNumberInput.selectionStart || 0;
-                const before = cardNumberInput.value;
-                cardNumberInput.value = formatCardNumber(cardNumberInput.value);
-                const diff = cardNumberInput.value.length - before.length;
-                cardNumberInput.setSelectionRange(pos + diff, pos + diff);
-            });
-        }
-
-        const expiryInput = document.getElementById('topupCardExpiry') as HTMLInputElement;
-        if (expiryInput) {
-            expiryInput.addEventListener('input', () => {
-                expiryInput.value = formatExpiry(expiryInput.value);
-            });
-        }
-
-        const cvvInput = document.getElementById('topupCardCvv') as HTMLInputElement;
-        if (cvvInput) {
-            cvvInput.addEventListener('input', () => {
-                cvvInput.value = cvvInput.value.replace(/\D/g, '').slice(0, 3);
-            });
-        }
-
         const amountInput = document.getElementById('topupAmountInput') as HTMLInputElement;
         if (amountInput) {
             amountInput.addEventListener('input', () => {
@@ -147,74 +86,37 @@ export const TopupModal = {
     open(): void {
         this._idempotencyKey = crypto.randomUUID();
         const modal = base.getElement();
-        if (modal) {
-            const cardNumber = document.getElementById('topupCardNumber') as HTMLInputElement;
-            const expiry = document.getElementById('topupCardExpiry') as HTMLInputElement;
-            const cvv = document.getElementById('topupCardCvv') as HTMLInputElement;
-            const amountInput = document.getElementById('topupAmountInput') as HTMLInputElement;
-            if (cardNumber) cardNumber.value = '';
-            if (expiry) expiry.value = '';
-            if (cvv) cvv.value = '';
-            if (amountInput) amountInput.value = '';
+        if (!modal) return;
 
-            const cardError = document.getElementById('topupCardError');
-            if (cardError) cardError.classList.remove('topup-error--visible');
-            const error = document.getElementById('topupError');
-            if (error) error.classList.remove('topup-error--visible');
+        const amountInput = document.getElementById('topupAmountInput') as HTMLInputElement;
+        if (amountInput) amountInput.value = '';
 
-            modal.querySelectorAll('.topup-quick-btn').forEach((btn) => {
-                btn.classList.remove('active');
-            });
+        const error = document.getElementById('topupError');
+        if (error) error.classList.remove('topup-error--visible');
 
-            this.showStep(1);
-            base.open();
-        }
+        modal.querySelectorAll('.topup-quick-btn').forEach((btn) => {
+            btn.classList.remove('active');
+        });
+
+        this.showStep('amount');
+        base.open();
     },
 
     openWithAmount(amount: number): void {
         this.open();
-
-        const modal = base.getElement();
-        if (modal) {
-            this.showStep(2);
-            const amountInput = document.getElementById('topupAmountInput') as HTMLInputElement;
-            if (amountInput) amountInput.value = String(amount);
-            modal.querySelectorAll('.topup-quick-btn').forEach((btn) => {
-                btn.classList.remove('active');
-            });
-        }
+        const amountInput = document.getElementById('topupAmountInput') as HTMLInputElement;
+        if (amountInput) amountInput.value = String(amount);
     },
 
     close(): void {
         base.close();
     },
 
-    showStep(step: number): void {
-        const step1 = document.getElementById('topupStep1');
-        const step2 = document.getElementById('topupStep2');
-        const stepLoading = document.getElementById('topupStepLoading');
-        if (step1) step1.style.display = step === 1 ? '' : 'none';
-        if (step2) step2.style.display = step === 2 ? '' : 'none';
-        if (stepLoading) stepLoading.style.display = step === 3 ? '' : 'none';
-    },
-
-    goToStep2(): void {
-        const validation = validateCardFields();
-        if (!validation.valid) {
-            const errorEl = document.getElementById('topupCardError');
-            if (errorEl) {
-                errorEl.textContent = validation.error;
-                errorEl.classList.add('topup-error--visible');
-            }
-            return;
-        }
-        const cardError = document.getElementById('topupCardError');
-        if (cardError) cardError.classList.remove('topup-error--visible');
-        this.showStep(2);
-    },
-
-    goToStep1(): void {
-        this.showStep(1);
+    showStep(step: 'amount' | 'loading'): void {
+        const amountStep = document.getElementById('topupStepAmount');
+        const loadingStep = document.getElementById('topupStepLoading');
+        if (amountStep) amountStep.style.display = step === 'amount' ? '' : 'none';
+        if (loadingStep) loadingStep.style.display = step === 'loading' ? '' : 'none';
     },
 
     async handleConfirm(): Promise<void> {
@@ -230,25 +132,13 @@ export const TopupModal = {
             return;
         }
 
-        this.showStep(3);
-        const start = Date.now();
+        this.showStep('loading');
+
         try {
             const res = await walletService.topup(amount, this._idempotencyKey);
-            const elapsed = Date.now() - start;
-            if (elapsed < 1500) {
-                await new Promise((r) => setTimeout(r, 1500 - elapsed));
-            }
-            if (res.success && res.data) {
-                walletStore.setState({
-                    balance: res.data.balance,
-                    error: null,
-                });
-                this.close();
-                uiActions.showSuccess(`Кошелёк пополнен на ${amount} ₽`);
-                eventBus.emit('wallet:updated');
-                await this.loadTransactions();
-            } else {
-                this.showStep(2);
+
+            if (!res.success || !res.data) {
+                this.showStep('amount');
                 const errorMsg =
                     res.error === 'INVALID_AMOUNT'
                         ? 'Некорректная сумма'
@@ -257,9 +147,39 @@ export const TopupModal = {
                     errorEl.textContent = errorMsg;
                     errorEl.classList.add('topup-error--visible');
                 }
+                return;
+            }
+
+            const data = res.data;
+
+            // Асинхронный провайдер (ЮКасса): редиректим юзера на confirmation_url.
+            // Сохраняем payment_id в sessionStorage, чтобы после возврата на /wallet
+            // знать, какой платёж поллить (см. modules/wallet/payment-polling).
+            if (data.status === 'pending' && data.confirmation_url) {
+                sessionStorage.setItem(TOPUP_PENDING_PAYMENT_KEY, String(data.payment_id));
+                sessionStorage.setItem(TOPUP_PENDING_AMOUNT_KEY, String(amount));
+                window.location.href = data.confirmation_url;
+                return;
+            }
+
+            // Синхронный провайдер (mock в dev / idempotency-hit): баланс уже зачислен.
+            if (data.status === 'succeeded') {
+                walletStore.setState({ balance: data.balance, error: null });
+                this.close();
+                uiActions.showSuccess(`Кошелёк пополнен на ${amount} ₽`);
+                eventBus.emit('wallet:updated');
+                await this.loadTransactions();
+                return;
+            }
+
+            // failed / cancelled.
+            this.showStep('amount');
+            if (errorEl) {
+                errorEl.textContent = 'Оплата не прошла. Попробуйте ещё раз';
+                errorEl.classList.add('topup-error--visible');
             }
         } catch {
-            this.showStep(2);
+            this.showStep('amount');
             if (errorEl) {
                 errorEl.textContent = 'Ошибка сети';
                 errorEl.classList.add('topup-error--visible');
