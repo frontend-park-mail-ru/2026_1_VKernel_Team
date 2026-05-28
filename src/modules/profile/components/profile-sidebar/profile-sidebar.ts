@@ -6,32 +6,59 @@ import { EditNameModal } from '@modules/profile/components/edit-name-modal/edit-
 function setNavOpen(root: HTMLElement, open: boolean): void {
     const nav = root.querySelector('.profile-nav') as HTMLElement | null;
     const overlay = root.querySelector('.profile-nav-overlay') as HTMLElement | null;
-    if (!nav || !overlay) return;
+
+    if (!nav) return;
+
     nav.classList.toggle('is-open', open);
-    overlay.classList.toggle('is-open', open);
+
+    if (overlay) {
+        overlay.classList.toggle('is-open', open);
+    }
+
     document.body.classList.toggle('profile-nav-locked', open);
 }
 
 export const ProfileSidebar = {
     _boundElement: null as HTMLElement | null,
+    _isGlobalBound: false,
 
     getTemplate() {
         return template;
     },
 
     init(): void {
-        const sidebar = document.querySelector('#sidebarContainer') as HTMLElement | null;
+        const sidebar = document.querySelector<HTMLElement>('#sidebarContainer');
+
         if (!sidebar || sidebar === this._boundElement) return;
+
         this._boundElement = sidebar;
 
-        document.addEventListener('click', (e) => {
-            const target = e.target as HTMLElement;
-            if (!target.closest('[data-action="toggle-profile-nav"]')) return;
-            e.stopPropagation();
-            e.preventDefault();
-            const nav = sidebar.querySelector('.profile-nav');
-            setNavOpen(sidebar, !nav?.classList.contains('is-open'));
-        });
+        if (!this._isGlobalBound) {
+            document.addEventListener('click', (e) => {
+                const target = e.target as HTMLElement;
+                const toggleBtn = target.closest('[data-action="toggle-profile-nav"]');
+
+                if (toggleBtn) {
+                    e.stopPropagation();
+                    e.preventDefault();
+
+                    const currentSidebar = document.querySelector<HTMLElement>('#sidebarContainer');
+                    if (currentSidebar) {
+                        const nav = currentSidebar.querySelector('.profile-nav');
+                        setNavOpen(currentSidebar, !nav?.classList.contains('is-open'));
+                    }
+                }
+            });
+
+            window.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    const currentSidebar = document.querySelector<HTMLElement>('#sidebarContainer');
+                    if (currentSidebar) setNavOpen(currentSidebar, false);
+                }
+            });
+
+            this._isGlobalBound = true;
+        }
 
         sidebar.addEventListener('click', (e) => {
             const target = e.target as HTMLElement;
@@ -46,18 +73,21 @@ export const ProfileSidebar = {
             if (tabBtn) {
                 const tab = (tabBtn as HTMLElement).dataset.tab;
                 setNavOpen(sidebar, false);
+
                 if (tab === 'messages') {
                     window.dispatchEvent(
                         new CustomEvent('app:navigate', { detail: { path: '/chats' } }),
                     );
                     return;
                 }
+
                 if (tab === 'cart') {
                     window.dispatchEvent(
                         new CustomEvent('app:navigate', { detail: { path: '/cart' } }),
                     );
                     return;
                 }
+
                 eventBus.emit('profile:switch-tab', tab);
                 return;
             }
@@ -72,10 +102,6 @@ export const ProfileSidebar = {
                 setNavOpen(sidebar, false);
                 eventBus.emit('profile:logout');
             }
-        });
-
-        window.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') setNavOpen(sidebar, false);
         });
     },
 };
