@@ -431,10 +431,24 @@ body .main-container {
     box-shadow: 0 8px 20px rgba(0,0,0,0.12);
 }
 
+// .rec-card--highlighted {
+//     border: 2px solid #f9a825;
+//     box-shadow: 0 4px 16px rgba(249, 168, 37, 0.25);
+// }
+
 .rec-card--highlighted {
-    border: 2px solid #f9a825;
-    box-shadow: 0 4px 16px rgba(249, 168, 37, 0.25);
+    border: 3px solid transparent;
+    background: linear-gradient(white, white) padding-box,
+                linear-gradient(135deg, #2bde8c, #2bc0de) border-box;
+    box-shadow: 0 4px 20px rgba(43, 222, 140, 0.35);
+    transition: all 0.3s ease;
+    
+    &:hover {
+        box-shadow: 0 6px 28px rgba(43, 222, 140, 0.5);
+        transform: translateY(-3px);
+    }
 }
+
 
 .rec-card--archived {
     opacity: 0.6;
@@ -620,6 +634,18 @@ body .main-container {
     width: 14px;
     height: 14px;
     object-fit: cover;  /* чтобы фото не искажалось */
+}
+
+
+
+.page-home .content-grid {
+    display: block;
+}
+
+.page-home .main-column {
+    width: 100%;
+    margin: 0 auto;
+    float: none;
 }
 
 

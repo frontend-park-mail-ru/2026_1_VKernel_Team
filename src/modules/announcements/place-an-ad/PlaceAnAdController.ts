@@ -842,6 +842,11 @@ export class PlaceAnAdController {
             });
         });
 
+        const priceInput = document.getElementById('price');
+        if (priceInput) {
+            priceInput.addEventListener('wheel', (e) => e.preventDefault());
+        }
+
         document
             .getElementById('saveDraftBtn')
             ?.addEventListener('click', () => this.handleSaveDraft());

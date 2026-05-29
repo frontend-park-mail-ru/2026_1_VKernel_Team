@@ -4,7 +4,7 @@
 
     {{#if plans.length}}
     <div class="promote-group">
-        <h4 class="promote-group-title">Поднятие в выдаче</h4>
+        <h4 class="promote-group-title">Ваше объявление будет выше в результатах поиска</h4>
         <div class="promote-plans">
             {{#each boostPlans}}
             <button class="promote-plan-btn" data-plan-code="{{this.code}}" data-plan-price="{{this.price}}">
@@ -16,7 +16,7 @@
     </div>
 
     <div class="promote-group">
-        <h4 class="promote-group-title">Выделение карточки</h4>
+        <h4 class="promote-group-title">Карточка объявления будет подсвечиваться на фоне других</h4>
         <div class="promote-plans">
             {{#each highlightPlans}}
             <button class="promote-plan-btn" data-plan-code="{{this.code}}" data-plan-price="{{this.price}}">
