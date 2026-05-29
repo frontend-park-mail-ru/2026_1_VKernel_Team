@@ -13,6 +13,11 @@ body.auth-page #app {
     width: 100%;
 }
 
+body.auth-page .support-trigger-btn,
+body.auth-page .support-iframe-wrapper {
+    display: none !important;
+}
+
 /* ========== КОНТЕЙНЕРЫ ========== */
 .auth-container,
 .profile-container {

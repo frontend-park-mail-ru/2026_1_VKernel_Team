@@ -93,13 +93,13 @@
     position: relative;
 
     &--boost {
-        background: #e3f2fd;
-        color: #1565c0;
+        background: rgba(43, 222, 140, 0.15);
+        color: #15b86e;
     }
 
     &--highlight {
-        background: #fff8e1;
-        color: #f57f17;
+        background: #e3f2fd;
+        color: #1565c0;
     }
 
     &[data-tooltip]:hover::after {
