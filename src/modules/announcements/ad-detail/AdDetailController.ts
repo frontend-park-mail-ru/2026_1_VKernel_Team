@@ -1001,17 +1001,17 @@ export class AdDetailController {
         }
 
         const items = Object.entries(byKind).map(([kind, totalMs]) => {
-            const label = kind === 'boost' ? 'Поднятие' : 'Выделение';
+            const label = kind === 'boost' ? 'Выше в поиске' : 'Выделение цветом';
             const totalHours = Math.floor(totalMs / 3600000);
             const days = Math.floor(totalHours / 24);
             const hours = totalHours % 24;
             const parts: string[] = [];
             if (days > 0) {
-                const w = days === 1 ? 'день' : days < 5 ? 'дня' : 'дней';
+                const w = days === 1 ? 'день' : days%10 < 5 ? 'дня' : 'дней';
                 parts.push(`${days} ${w}`);
             }
             if (hours > 0) {
-                const w = hours === 1 ? 'час' : hours < 5 ? 'часа' : 'часов';
+                const w = hours === 1 ? 'час' : hours%10 < 5 ? 'часа' : 'часов';
                 parts.push(`${hours} ${w}`);
             }
             if (parts.length === 0) parts.push('менее часа');

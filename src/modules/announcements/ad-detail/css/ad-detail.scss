@@ -845,25 +845,31 @@
 }
 
 .ad-promotion-item--boost {
-    background: #e3f2fd;
-    color: #1565c0;
+    background: rgba(43, 222, 140, 0.15);
+    color: #15b86e;
+    border: 1px solid rgba(43, 222, 140, 0.3);
 }
 
 .ad-promotion-item--highlight {
-    background: #fff8e1;
-    color: #f57f17;
+    background: rgba(43, 192, 222, 0.15);
+    color: #0fabca;
+    border: 1px solid rgba(43, 192, 222, 0.3);
 }
 
+
 .ad-detail-page .promote-btn {
-    background: #fff8e1;
-    color: #f57f17;
-    border: 1px solid #f9a825;
+    background: linear-gradient(135deg, #2bde8c, #2bc0de);
+    color: white;
+    border: none;
     margin-top: 4px;
+    box-shadow: 0 2px 8px rgba(43, 222, 140, 0.3);
+    transition: all 0.3s ease;
 }
 
 .ad-detail-page .promote-btn:hover {
-    background: #f9a825;
-    color: #fff;
+    background: linear-gradient(135deg, #24b875, #1a8ca3);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(43, 222, 140, 0.4);
 }
 
 

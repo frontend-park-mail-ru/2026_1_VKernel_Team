@@ -431,24 +431,47 @@ body .main-container {
     box-shadow: 0 8px 20px rgba(0,0,0,0.12);
 }
 
-// .rec-card--highlighted {
-//     border: 2px solid #f9a825;
-//     box-shadow: 0 4px 16px rgba(249, 168, 37, 0.25);
-// }
-
+/* 1. НАСТРОЙКА РАМКИ КАРТОЧКИ */
 .rec-card--highlighted {
-    border: 3px solid transparent;
-    background: linear-gradient(white, white) padding-box,
-                linear-gradient(135deg, #2bde8c, #2bc0de) border-box;
+    border: 4px solid transparent !important;
+    background: linear-gradient(white, white) padding-box, 
+                linear-gradient(135deg, 
+                    rgba(43, 222, 140, 0.7),    /* зелёный */
+                    rgba(43, 192, 222, 0.7),    /* голубой */
+                    rgba(74, 144, 226, 0.7),    /* синий */
+                    rgba(43, 192, 222, 0.7),    /* голубой */
+                    rgba(43, 222, 140, 0.7)     /* зелёный */
+                ) border-box !important;
     box-shadow: 0 4px 20px rgba(43, 222, 140, 0.35);
     transition: all 0.3s ease;
-    
-    &:hover {
-        box-shadow: 0 6px 28px rgba(43, 222, 140, 0.5);
-        transform: translateY(-3px);
-    }
 }
 
+/* 2. ГРАДИЕНТНЫЙ ФОН ОПИСАНИЯ ПОД ФОТОГРАФИЕЙ */
+.rec-card--highlighted .rec-card-content {
+    background: linear-gradient(135deg, 
+        rgba(43, 222, 140, 0.1),    /* зелёный (полупрозрачный) */
+        rgba(43, 192, 222, 0.1),    /* голубой */
+        rgba(74, 144, 226, 0.1),    /* синий */
+        rgba(43, 192, 222, 0.1),    /* голубой */
+        rgba(43, 222, 140, 0.1)     /* зелёный */
+    ) !important;
+}
+
+/* 3. ОСТАВЛЯЕМ ТЕКСТ И КАРТИНКУ СТАНДАРТНЫМИ */
+.rec-card--highlighted .rec-card-image,
+.rec-card--highlighted .rec-card-title,
+.rec-card--highlighted .rec-card-price,
+.rec-card--highlighted .rec-card-location {
+    filter: none !important;
+    background: transparent !important; 
+    color: initial !important; 
+}
+
+/* 4. ПОВЕДЕНИЕ ПРИ НАВЕДЕНИИ МЫШИ */
+.rec-card--highlighted:hover {
+    box-shadow: 0 6px 28px rgba(43, 222, 140, 0.5);
+    transform: translateY(-3px);
+}
 
 .rec-card--archived {
     opacity: 0.6;
